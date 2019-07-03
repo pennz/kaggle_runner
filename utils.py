@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import pickle
 import logging
@@ -9,6 +10,30 @@ from tensorflow.python.ops import math_ops
 import os
 import pandas as pd
 import pydicom
+
+
+from collections import defaultdict, deque
+import datetime
+import pickle
+import time
+import torch.distributed as dist
+import errno
+
+import collections
+import os
+import numpy as np
+import torch
+import torch.utils.data
+from PIL import Image, ImageFile
+import pandas as pd
+from tqdm import tqdm
+from torchvision import transforms
+import torchvision
+import random
+from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
+
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 from IPython.core.debugger import set_trace
 
@@ -657,6 +682,12 @@ class KaggleKernel:
 
         self._stage = KernelRunningState.INIT_DONE
 
+    def save_model(self):
+        pass
+
+    def load_model_weight(self):
+        pass
+
     def build_and_set_model(self):
         pass
 
@@ -686,23 +717,20 @@ class KaggleKernel:
     def after_prepare_data_hook(self):
         pass
 
-    def prepare_train_data(self):
-        pass
-
-    def prepare_dev_data(self):
+    def prepare_train_dev_data(self):
         pass
 
     def prepare_test_data(self):
         pass
 
-    def save_result(self):
+    def predict_on_test(self):
         pass
 
     def dump_state(self, exec_flag=False):
         logger.debug(f'state {self._stage}')
         if exec_flag:
             logger.debug(f'dumping state {self._stage}')
-            dump_obj(self, f'run_state_{self._stage}.pkl')
+            dump_obj(self, f'run_state_{self._stage}.pkl', force=True)
             #dump_obj(self, 'run_state.pkl', force=True)  # too large
 
     def run(self, start_stage=None, end_stage=KernelRunningState.SAVE_SUBMISSION_DONE, dump_flag=False):
@@ -722,9 +750,7 @@ class KaggleKernel:
 
         if self._stage.value < KernelRunningState.PREPARE_DATA_DONE.value:
             self.pre_prepare_data_hook()
-            self.prepare_train_data()
-            self.prepare_dev_data()
-            self.prepare_test_data()
+            self.prepare_train_dev_data()
             self.after_prepare_data_hook()
 
             self._stage = KernelRunningState.PREPARE_DATA_DONE
@@ -736,6 +762,8 @@ class KaggleKernel:
             self.build_and_set_model()
             self.train_model()
             self.after_train()
+
+            self.save_model()
 
             self._stage = KernelRunningState.TRAINING_DONE
             self.dump_state(exec_flag=dump_flag)
@@ -749,7 +777,10 @@ class KaggleKernel:
             if self._stage.value >= end_stage.value: return
 
         if self._stage.value < KernelRunningState.SAVE_SUBMISSION_DONE.value:
-            self.save_result()
+            self.pre_test()
+            self.prepare_test_data()
+            self.predict_on_test()
+            self.after_test()
 
             self._stage = KernelRunningState.SAVE_SUBMISSION_DONE
             self.dump_state(exec_flag=dump_flag)
@@ -767,6 +798,9 @@ class KaggleKernel:
         logger.debug(f'restore from {file_name}')
         return get_obj_or_dump(filename=file_name)
 
+    def load_state_data_only(self, file_name='run_state.pkl'):
+        pass
+
     @classmethod
     def load_state_continue_run(cls, file_name='run_state.pkl'):
         """
@@ -781,6 +815,12 @@ class KaggleKernel:
         pass
 
     def after_train(self):
+        pass
+
+    def pre_test(self):
+        pass
+
+    def after_test(self):
         pass
 
 
@@ -799,7 +839,7 @@ def dice_coef(y_true, y_pred, smooth=1, threshold=0.5):
     return (2. * intersection + smooth) / (K.sum(y_true_b) + K.sum(y_pred_b) + smooth)
 
 def rle2mask(rle, width, height):
-    mask= np.zeros(width * height)
+    mask = np.zeros(width * height)
     array = np.asarray([int(x) for x in rle.split()])
     starts = array[0::2]
     lengths = array[1::2]
@@ -810,3 +850,376 @@ def rle2mask(rle, width, height):
         mask[current_position:current_position+lengths[index]] = 1
         current_position += lengths[index]
 
+    return mask.reshape(width, height)
+
+class SmoothedValue(object):
+    """Track a series of values and provide access to smoothed values over a
+    window or the global series average.
+    """
+
+    def __init__(self, window_size=20, fmt=None):
+        if fmt is None:
+            fmt = "{median:.4f} ({global_avg:.4f})"
+        self.deque = deque(maxlen=window_size)
+        self.total = 0.0
+        self.count = 0
+        self.fmt = fmt
+
+    def update(self, value, n=1):
+        self.deque.append(value)
+        self.count += n
+        self.total += value * n
+
+    def synchronize_between_processes(self):
+        """
+        Warning: does not synchronize the deque!
+        """
+        if not is_dist_avail_and_initialized():
+            return
+        t = torch.tensor([self.count, self.total], dtype=torch.float64, device='cuda')
+        dist.barrier()
+        dist.all_reduce(t)
+        t = t.tolist()
+        self.count = int(t[0])
+        self.total = t[1]
+
+    @property
+    def median(self):
+        d = torch.tensor(list(self.deque))
+        return d.median().item()
+
+    @property
+    def avg(self):
+        d = torch.tensor(list(self.deque), dtype=torch.float32)
+        return d.mean().item()
+
+    @property
+    def global_avg(self):
+        return self.total / self.count
+
+    @property
+    def max(self):
+        return max(self.deque)
+
+    @property
+    def value(self):
+        return self.deque[-1]
+
+    def __str__(self):
+        return self.fmt.format(
+            median=self.median,
+            avg=self.avg,
+            global_avg=self.global_avg,
+            max=self.max,
+            value=self.value)
+
+
+def all_gather(data):
+    """
+    Run all_gather on arbitrary picklable data (not necessarily tensors)
+    Args:
+        data: any picklable object
+    Returns:
+        list[data]: list of data gathered from each rank
+    """
+    world_size = get_world_size()
+    if world_size == 1:
+        return [data]
+
+    # serialized to a Tensor
+    buffer = pickle.dumps(data)
+    storage = torch.ByteStorage.from_buffer(buffer)
+    tensor = torch.ByteTensor(storage).to("cuda")
+
+    # obtain Tensor size of each rank
+    local_size = torch.tensor([tensor.numel()], device="cuda")
+    size_list = [torch.tensor([0], device="cuda") for _ in range(world_size)]
+    dist.all_gather(size_list, local_size)
+    size_list = [int(size.item()) for size in size_list]
+    max_size = max(size_list)
+
+    # receiving Tensor from all ranks
+    # we pad the tensor because torch all_gather does not support
+    # gathering tensors of different shapes
+    tensor_list = []
+    for _ in size_list:
+        tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
+    if local_size != max_size:
+        padding = torch.empty(size=(max_size - local_size,), dtype=torch.uint8, device="cuda")
+        tensor = torch.cat((tensor, padding), dim=0)
+    dist.all_gather(tensor_list, tensor)
+
+    data_list = []
+    for size, tensor in zip(size_list, tensor_list):
+        buffer = tensor.cpu().numpy().tobytes()[:size]
+        data_list.append(pickle.loads(buffer))
+
+    return data_list
+
+
+def reduce_dict(input_dict, average=True):
+    """
+    Args:
+        input_dict (dict): all the values will be reduced
+        average (bool): whether to do average or sum
+    Reduce the values in the dictionary from all processes so that all processes
+    have the averaged results. Returns a dict with the same fields as
+    input_dict, after reduction.
+    """
+    world_size = get_world_size()
+    if world_size < 2:
+        return input_dict
+    with torch.no_grad():
+        names = []
+        values = []
+        # sort the keys so that they are consistent across processes
+        for k in sorted(input_dict.keys()):
+            names.append(k)
+            values.append(input_dict[k])
+        values = torch.stack(values, dim=0)
+        dist.all_reduce(values)
+        if average:
+            values /= world_size
+        reduced_dict = {k: v for k, v in zip(names, values)}
+    return reduced_dict
+
+
+class MetricLogger(object):
+    def __init__(self, delimiter="\t"):
+        self.meters = defaultdict(SmoothedValue)
+        self.delimiter = delimiter
+
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
+            if isinstance(v, torch.Tensor):
+                v = v.item()
+            assert isinstance(v, (float, int))
+            self.meters[k].update(v)
+
+    def __getattr__(self, attr):
+        if attr in self.meters:
+            return self.meters[attr]
+        if attr in self.__dict__:
+            return self.__dict__[attr]
+        raise AttributeError("'{}' object has no attribute '{}'".format(
+            type(self).__name__, attr))
+
+    def __str__(self):
+        loss_str = []
+        for name, meter in self.meters.items():
+            loss_str.append(
+                "{}: {}".format(name, str(meter))
+            )
+        return self.delimiter.join(loss_str)
+
+    def synchronize_between_processes(self):
+        for meter in self.meters.values():
+            meter.synchronize_between_processes()
+
+    def add_meter(self, name, meter):
+        self.meters[name] = meter
+
+    def log_every(self, iterable, print_freq, header=None):
+        i = 0
+        if not header:
+            header = ''
+        start_time = time.time()
+        end = time.time()
+        iter_time = SmoothedValue(fmt='{avg:.4f}')
+        data_time = SmoothedValue(fmt='{avg:.4f}')
+        space_fmt = ':' + str(len(str(len(iterable)))) + 'd'
+        log_msg = self.delimiter.join([
+            header,
+            '[{0' + space_fmt + '}/{1}]',
+            'eta: {eta}',
+            '{meters}',
+            'time: {time}',
+            'data: {data}',
+            'max mem: {memory:.0f}'
+        ])
+        MB = 1024.0 * 1024.0
+        for obj in iterable:
+            data_time.update(time.time() - end)
+            yield obj
+            iter_time.update(time.time() - end)
+            if i % print_freq == 0 or i == len(iterable) - 1:
+                eta_seconds = iter_time.global_avg * (len(iterable) - i)
+                eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
+                print(log_msg.format(
+                    i, len(iterable), eta=eta_string,
+                    meters=str(self),
+                    time=str(iter_time), data=str(data_time),
+                    memory=torch.cuda.max_memory_allocated() / MB))
+            i += 1
+            end = time.time()
+        total_time = time.time() - start_time
+        total_time_str = str(datetime.timedelta(seconds=int(total_time)))
+        print('{} Total time: {} ({:.4f} s / it)'.format(
+            header, total_time_str, total_time / len(iterable)))
+
+
+def collate_fn(batch):
+    return tuple(zip(*batch))
+
+
+def warmup_lr_scheduler(optimizer, warmup_iters, warmup_factor):
+
+    def f(x):
+        if x >= warmup_iters:
+            return 1
+        alpha = float(x) / warmup_iters
+        return warmup_factor * (1 - alpha) + alpha
+
+    return torch.optim.lr_scheduler.LambdaLR(optimizer, f)
+
+
+def mkdir(path):
+    try:
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+
+def setup_for_distributed(is_master):
+    """
+    This function disables printing when not in master process
+    """
+    import builtins as __builtin__
+    builtin_print = __builtin__.print
+
+    def print(*args, **kwargs):
+        force = kwargs.pop('force', False)
+        if is_master or force:
+            builtin_print(*args, **kwargs)
+
+    __builtin__.print = print
+
+
+def is_dist_avail_and_initialized():
+    if not dist.is_available():
+        return False
+    if not dist.is_initialized():
+        return False
+    return True
+
+
+def get_world_size():
+    if not is_dist_avail_and_initialized():
+        return 1
+    return dist.get_world_size()
+
+
+def get_rank():
+    if not is_dist_avail_and_initialized():
+        return 0
+    return dist.get_rank()
+
+
+def is_main_process():
+    return get_rank() == 0
+
+
+def save_on_master(*args, **kwargs):
+    if is_main_process():
+        torch.save(*args, **kwargs)
+
+
+def init_distributed_mode(args):
+    if 'RANK' in os.environ and 'WORLD_SIZE' in os.environ:
+        args.rank = int(os.environ["RANK"])
+        args.world_size = int(os.environ['WORLD_SIZE'])
+        args.gpu = int(os.environ['LOCAL_RANK'])
+    elif 'SLURM_PROCID' in os.environ:
+        args.rank = int(os.environ['SLURM_PROCID'])
+        args.gpu = args.rank % torch.cuda.device_count()
+    else:
+        print('Not using distributed mode')
+        args.distributed = False
+        return
+
+    args.distributed = True
+
+    torch.cuda.set_device(args.gpu)
+    args.dist_backend = 'nccl'
+    print('| distributed init (rank {}): {}'.format(
+        args.rank, args.dist_url), flush=True)
+    torch.distributed.init_process_group(backend=args.dist_backend, init_method=args.dist_url,
+                                         world_size=args.world_size, rank=args.rank)
+    torch.distributed.barrier()
+    setup_for_distributed(args.rank == 0)
+
+def mask_to_rle(img, width, height):
+    rle = []
+    lastColor = 0
+    currentPixel = 0
+    runStart = -1
+    runLength = 0
+
+    for x in range(width):
+        for y in range(height):
+            currentColor = img[x][y]
+            if currentColor != lastColor:
+                if currentColor == 1:
+                    runStart = currentPixel
+                    runLength = 1
+                else:
+                    rle.append(str(runStart))
+                    rle.append(str(runLength))
+                    runStart = -1
+                    runLength = 0
+                    currentPixel = 0
+            elif runStart > -1:
+                runLength += 1
+            lastColor = currentColor
+            currentPixel+=1
+    return " " + " ".join(rle)
+
+# refer to https://gist.github.com/stefanonardo/693d96ceb2f531fa05db530f3e21517d
+class EarlyStopping(object):
+    def __init__(self, mode='min', min_delta=0, patience=10, percentage=False):
+        self.mode = mode
+        self.min_delta = min_delta
+        self.patience = patience
+        self.best = None
+        self.num_bad_epochs = 0
+        self.is_better = None
+        self._init_is_better(mode, min_delta, percentage)
+
+        if patience == 0:
+            self.is_better = lambda a, b: True
+            self.step = lambda a: False
+
+    def step(self, metrics):
+        if self.best is None:
+            self.best = metrics
+            return False
+
+        if np.isnan(metrics):
+            return True
+
+        if self.is_better(metrics, self.best):
+            self.num_bad_epochs = 0
+            self.best = metrics
+        else:
+            self.num_bad_epochs += 1
+
+        if self.num_bad_epochs >= self.patience:
+            return True
+
+        return False
+
+    def _init_is_better(self, mode, min_delta, percentage):
+        if mode not in {'min', 'max'}:
+            raise ValueError('mode ' + mode + ' is unknown!')
+        if not percentage:
+            if mode == 'min':
+                self.is_better = lambda a, best: a < best - min_delta
+            if mode == 'max':
+                self.is_better = lambda a, best: a > best + min_delta
+        else:
+            if mode == 'min':
+                self.is_better = lambda a, best: a < best - (
+                            best * min_delta / 100)
+            if mode == 'max':
+                self.is_better = lambda a, best: a > best + ( best * min_delta / 100)
