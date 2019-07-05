@@ -865,6 +865,11 @@ class SmoothedValue(object):
         self.count = 0
         self.fmt = fmt
 
+    def clear(self):
+        self.total = 0.0
+        self.count = 0
+        self.deque.clear()
+
     def update(self, value, n=1):
         self.deque.append(value)
         self.count += n
@@ -906,6 +911,8 @@ class SmoothedValue(object):
         return self.deque[-1]
 
     def __str__(self):
+        if len(self.deque) == 0:
+            return "_NULL_"
         return self.fmt.format(
             median=self.median,
             avg=self.avg,
@@ -985,9 +992,14 @@ def reduce_dict(input_dict, average=True):
 
 
 class MetricLogger(object):
-    def __init__(self, delimiter="\t"):
+    def __init__(self, delimiter="\t", log_file_name="metric.log"):
         self.meters = defaultdict(SmoothedValue)
         self.delimiter = delimiter
+        self.log_file = open(log_file_name, 'a', buffering=1)
+
+    def __del__(self):
+        self.log_file.close()
+
 
     def update(self, **kwargs):
         for k, v in kwargs.items():
@@ -995,6 +1007,12 @@ class MetricLogger(object):
                 v = v.item()
             assert isinstance(v, (float, int))
             self.meters[k].update(v)
+
+    def clear(self):
+        for meter in self.meters.values():
+            if meter is not None:
+                meter.clear()
+
 
     def __getattr__(self, attr):
         if attr in self.meters:
@@ -1020,7 +1038,7 @@ class MetricLogger(object):
         self.meters[name] = meter
 
     def log_every(self, iterable, print_freq, header=None):
-        i = 0
+        i = 1
         if not header:
             header = ''
         start_time = time.time()
@@ -1042,10 +1060,10 @@ class MetricLogger(object):
             data_time.update(time.time() - end)
             yield obj
             iter_time.update(time.time() - end)
-            if i % print_freq == 0 or i == len(iterable) - 1:
+            if i % (print_freq) == 1 or i == len(iterable):  # print the first to let you know it is running....
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
-                print(log_msg.format(
+                self._print_and_log_file(log_msg.format(
                     i, len(iterable), eta=eta_string,
                     meters=str(self),
                     time=str(iter_time), data=str(data_time),
@@ -1054,8 +1072,12 @@ class MetricLogger(object):
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        print('{} Total time: {} ({:.4f} s / it)'.format(
+        self._print_and_log_file('{} Total time: {} ({:.4f} s / it)'.format(
             header, total_time_str, total_time / len(iterable)))
+
+    def _print_and_log_file(self, s):
+        print(s)
+        self.log_file.write(s+'\n')
 
 
 def collate_fn(batch):
