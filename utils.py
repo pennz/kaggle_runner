@@ -1060,10 +1060,10 @@ class MetricLogger(object):
             data_time.update(time.time() - end)
             yield obj
             iter_time.update(time.time() - end)
-            if i % (print_freq) == 1 or i == len(iterable):  # print the first to let you know it is running....
+            if i % (print_freq) == 0 or i == len(iterable):  # print the first to let you know it is running....
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
-                self._print_and_log_file(log_msg.format(
+                self.print_and_log_to_file(log_msg.format(
                     i, len(iterable), eta=eta_string,
                     meters=str(self),
                     time=str(iter_time), data=str(data_time),
@@ -1072,10 +1072,10 @@ class MetricLogger(object):
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        self._print_and_log_file('{} Total time: {} ({:.4f} s / it)'.format(
+        self.print_and_log_to_file('{} Total time: {} ({:.4f} s / it)'.format(
             header, total_time_str, total_time / len(iterable)))
 
-    def _print_and_log_file(self, s):
+    def print_and_log_to_file(self, s):
         print(s)
         self.log_file.write(s+'\n')
 
@@ -1245,3 +1245,44 @@ class EarlyStopping(object):
                             best * min_delta / 100)
             if mode == 'max':
                 self.is_better = lambda a, best: a > best + ( best * min_delta / 100)
+
+# credit xwkuang5 @https://discuss.pytorch.org/t/about-normalization-using-pre-trained-vgg16-networks/23560/7
+def online_mean_and_sd(loader, data_map=None):
+    """Compute the mean and sd in an online fashion
+
+        Var[x] = E[X^2] - E^2[X]
+    """
+    cnt = 0
+    #fst_moment = torch.empty(3)
+    #snd_moment = torch.empty(3)
+    fst_moment = np.zeros(3)
+    snd_moment = np.zeros(3)
+
+    for data in loader:
+        if data_map is not None:
+            data = data_map(data)
+        data = np.array([t.numpy() for t in data])
+        b, c, h, w = data.shape  # data here is tuple... if loader batch > 1
+        nb_pixels = b * h * w
+        #sum_ = torch.sum(data, dim=[0, 2, 3])
+        sum_ = data.sum(axis=0).sum(axis=-1).sum(axis=-1)
+        #sum_of_square = torch.sum(data ** 2, dim=[0, 2, 3])
+        sum_of_square = (data ** 2).sum(axis=0).sum(axis=-1).sum(axis=-1)
+        fst_moment = (cnt * fst_moment + sum_) / (cnt + nb_pixels)
+        snd_moment = (cnt * snd_moment + sum_of_square) / (cnt + nb_pixels)
+
+        cnt += nb_pixels
+
+    #return fst_moment, torch.sqrt(snd_moment - fst_moment ** 2)
+    return fst_moment, np.sqrt(snd_moment - fst_moment ** 2)
+
+
+#dataset = MyDataset()
+#loader = DataLoader(
+#    dataset,
+#    batch_size=1,
+#    num_workers=1,
+#    shuffle=False
+#)
+#
+#mean, std = online_mean_and_sd(loader)
