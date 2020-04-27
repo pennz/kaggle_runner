@@ -1,4 +1,9 @@
 from __future__ import print_function
+from enum import Enum
+from tensorflow.keras.layers import Layer
+import tensorflow.keras.backend as K
+from tensorflow.keras import initializers, regularizers, constraints
+from IPython.core.debugger import set_trace
 import os
 import pickle
 import logging
@@ -35,11 +40,10 @@ from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-from IPython.core.debugger import set_trace
 
-#BIN_FOLDER = './'
-#if os.path.isdir('/content/gdrivedata'):
-BIN_FOLDER = '/content/gdrivedata/My Drive/' if os.path.isdir('/content/gdrivedata') else './'
+BIN_FOLDER = '/content/gdrivedata/My Drive/' if os.path.isdir(
+    '/content/gdrivedata') else './'
+
 
 def get_logger():
     FORMAT = '[%(levelname)s]%(asctime)s:%(name)s:%(message)s'
@@ -48,7 +52,9 @@ def get_logger():
     logger.setLevel(logging.DEBUG)
     return logger
 
+
 logger = get_logger()
+
 
 def dump_obj(obj, filename, fullpath=False, force=False):
     if not fullpath:
@@ -61,6 +67,7 @@ def dump_obj(obj, filename, fullpath=False, force=False):
         logger.debug(f"Overwrite {path}!")
         with open(path, 'wb') as f:
             pickle.dump(obj, f)
+
 
 def get_obj_or_dump(filename, fullpath=False, default=None):
     if not fullpath:
@@ -78,6 +85,7 @@ def get_obj_or_dump(filename, fullpath=False, default=None):
             dump_obj(default, filename)
         return default
 
+
 def file_exist(filename, fullpath=False):
     if not fullpath:
         path = BIN_FOLDER+filename
@@ -85,19 +93,29 @@ def file_exist(filename, fullpath=False):
         path = filename
     return os.path.isfile(path)
 
-def binary_crossentropy_with_focal_seasoned(y_true, logit_pred, beta=0., gamma=1., alpha=0.5, custom_weights_in_Y_true=True):  # 0.5 means no rebalance
+
+# 0.5 means no rebalance
+def binary_crossentropy_with_focal_seasoned(y_true, logit_pred, beta=0.,
+                                            gamma=1., alpha=0.5,
+                                            custom_weights_in_Y_true=True):
     """
-    :param alpha:weight for positive classes **loss**. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
-        for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
+    :param alpha:weight for positive classes **loss**. default to 1- true
+        positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
+        for calss -1.   In practiceαmay be set by inverse class freqency or
+        hyperparameter.
     :param custom_weights_in_Y_true:
     :return:
     """
     balanced = gamma*logit_pred + beta
     y_pred = math_ops.sigmoid(balanced)
-    return binary_crossentropy_with_focal(y_true, y_pred, gamma=0, alpha=alpha, custom_weights_in_Y_true=custom_weights_in_Y_true)  # only use gamma in this layer, easier to split out factor
+    # only use gamma in this layer, easier to split out factor
+    return binary_crossentropy_with_focal(y_true, y_pred, gamma=0, alpha=alpha,
+                                          custom_weights_in_Y_true=custom_weights_in_Y_true)
 
 
-def binary_crossentropy_with_focal(y_true, y_pred, gamma=1., alpha=0.5, custom_weights_in_Y_true=True):  # 0.5 means no rebalance
+# 0.5 means no rebalance
+def binary_crossentropy_with_focal(y_true, y_pred, gamma=1., alpha=0.5,
+                                   custom_weights_in_Y_true=True):
     """
     https://arxiv.org/pdf/1708.02002.pdf
 
@@ -108,13 +126,15 @@ def binary_crossentropy_with_focal(y_true, y_pred, gamma=1., alpha=0.5, custom_w
     :param y_true:
     :param y_pred:
     :param gamma: make easier ones weights down
-    :param alpha: weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
-        for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
+    :param alpha: weight for positive classes. default to 1 - (true positive cnts / all cnts),
+        alpha range [0,1] for class 1 and 1-alpha for calss -1.   In practice
+        α may be set by inverse class freqency or hyperparameter.
     :return:
     """
     # assert 0 <= alpha <= 1 and gamma >= 0
     # hyper parameters, just use the one for binary?
-    # alpha = 1. # maybe smaller one can help, as multi-class will make the error larger
+    # alpha = 1. # maybe smaller one can help, as multi-class will make the
+    # error larger
     # gamma = 1.5 # for our problem, try different gamma
 
     # for binary_crossentropy, the implementation is in  tensorflow/tensorflow/python/keras/backend.py
@@ -128,14 +148,18 @@ def binary_crossentropy_with_focal(y_true, y_pred, gamma=1., alpha=0.5, custom_w
         y_true = y_true[:, :1]
 
     if 1. - eps <= gamma <= 1. + eps:
-        bce = alpha * math_ops.multiply(1. - y_pred, math_ops.multiply(y_true, math_ops.log(y_pred + eps)))
+        bce = alpha * \
+            math_ops.multiply(
+                1. - y_pred, math_ops.multiply(y_true, math_ops.log(y_pred + eps)))
         bce += (1 - alpha) * math_ops.multiply(y_pred,
                                                math_ops.multiply((1. - y_true), math_ops.log(1. - y_pred + eps)))
     elif 0. - eps <= gamma <= 0. + eps:
         bce = alpha * math_ops.multiply(y_true, math_ops.log(y_pred + eps))
-        bce += (1 - alpha) * math_ops.multiply((1. - y_true), math_ops.log(1. - y_pred + eps))
+        bce += (1 - alpha) * math_ops.multiply((1. - y_true),
+                                               math_ops.log(1. - y_pred + eps))
     else:
-        gamma_tensor = tf.broadcast_to(tf.constant(gamma), tf.shape(input=y_pred))
+        gamma_tensor = tf.broadcast_to(
+            tf.constant(gamma), tf.shape(input=y_pred))
         bce = alpha * math_ops.multiply(math_ops.pow(1. - y_pred, gamma_tensor),
                                         math_ops.multiply(y_true, math_ops.log(y_pred + eps)))
         bce += (1 - alpha) * math_ops.multiply(math_ops.pow(y_pred, gamma_tensor),
@@ -146,26 +170,25 @@ def binary_crossentropy_with_focal(y_true, y_pred, gamma=1., alpha=0.5, custom_w
     else:
         return -bce
 
+
 def reinitLayers(model):
     session = K.get_session()
     for layer in model.layers:
-        #if isinstance(layer, keras.engine.topology.Container):
+        # if isinstance(layer, keras.engine.topology.Container):
         if isinstance(layer, tf.keras.Model):
             reinitLayers(layer)
             continue
         print("LAYER::", layer.name)
-        if layer.trainable == False:
+        if layer.trainable is False:
             continue
         for v in layer.__dict__:
             v_arg = getattr(layer, v)
-            if hasattr(v_arg,'initializer'):  # not work for layer wrapper, like Bidirectional
+            if hasattr(v_arg, 'initializer'):
+                # not work for layer wrapper, like Bidirectional
                 initializer_method = getattr(v_arg, 'initializer')
                 initializer_method.run(session=session)
                 print('reinitializing layer {}.{}'.format(layer.name, v))
 
-from tensorflow.keras.layers import Layer
-from tensorflow.keras import initializers, regularizers, constraints
-import tensorflow.keras.backend as K
 
 class AttentionRaffel(Layer):
     def __init__(self, step_dim,
@@ -212,7 +235,8 @@ class AttentionRaffel(Layer):
                 constraints.serialize(self.b_constraint),
         }
         base_config = super(AttentionRaffel, self).get_config()
-        if 'cell' in base_config: del base_config['cell']
+        if 'cell' in base_config:
+            del base_config['cell']
         return dict(list(base_config.items()) + list(config.items()))
 
     def build(self, input_shape):
@@ -243,12 +267,14 @@ class AttentionRaffel(Layer):
         return None
 
     def call(self, x, mask=None):
-        # more like the alignment model, which scores how the inputs around position j and the output
-        # at position i match
+        # more like the alignment model, which scores how the inputs around
+        # position j and the output at position i match
         features_dim = self.features_dim
         step_dim = self.step_dim
 
-        eij = K.reshape(K.dot(K.reshape(x, (-1, features_dim)), K.reshape(self.W, (features_dim, 1))), (-1, step_dim))
+        eij = K.reshape(K.dot(K.reshape(x, (-1, features_dim)),
+                              K.reshape(self.W, (features_dim, 1))),
+                        (-1, step_dim))
 
         if self.bias:
             eij += self.b
@@ -263,11 +289,13 @@ class AttentionRaffel(Layer):
             # Cast the mask to floatX to avoid float64 upcasting in theano
             a *= K.cast(mask, K.floatx())
 
-        # in some cases especially in the early stages of training the sum may be almost zero
+        # in some cases especially in the early stages of training the sum may
+        # be almost zero
         a /= K.cast(K.sum(a, axis=1, keepdims=True) + K.epsilon(), K.floatx())
 
         a = K.expand_dims(a)
-        weighted_input = x * a  # context vector c_i (or for this, only one c_i)
+        # context vector c_i (or for this, only one c_i)
+        weighted_input = x * a
         # print weigthted_input.shape
         return K.sum(weighted_input, axis=1)
 
@@ -275,16 +303,19 @@ class AttentionRaffel(Layer):
         # return input_shape[0], input_shape[-1]
         return input_shape[0], self.features_dim
 
+
 class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
-    def __init__(self, count_mode='samples', stateful_metrics=None, display_per_batches=1000, verbose=1,
-                 early_stop=False, patience_displays=0, epsilon=1e-7, batch_size=1024):
+    def __init__(self, count_mode='samples', stateful_metrics=None,
+                 display_per_batches=1000, verbose=1, early_stop=False,
+                 patience_displays=0, epsilon=1e-7, batch_size=1024):
         super(NBatchProgBarLogger, self).__init__(count_mode, stateful_metrics)
         self.display_per_batches = 1 if display_per_batches < 1 else display_per_batches
         self.step_idx = 0  # across epochs
         self.display_idx = 0  # across epochs
         self.verbose = verbose
 
-        self.early_stop = early_stop  # better way is subclass EearlyStopping callback.
+        # better way is subclass EearlyStopping callback.
+        self.early_stop = early_stop
         self.patience_displays = patience_displays
         self.losses = np.empty(patience_displays, dtype=np.float32)
         self.losses_sum_display = 0
@@ -298,8 +329,9 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
     def on_batch_end(self, batch, logs=None):
         logs = logs or {}
         batch_size = logs.get('size', 0)
-        # In case of distribution strategy we can potentially run multiple steps
-        # at the same time, we should account for that in the `seen` calculation.
+        # In case of distribution strategy we can potentially run multiple
+        # steps at the same time, we should account for that in the `seen`
+        # calculation.
         num_steps = logs.get('num_steps', 1)
         if self.use_steps:
             self.seen += num_steps
@@ -314,7 +346,8 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         # Skip progbar update for the last batch;
         # will be handled by on_epoch_end.
         if self.early_stop:
-            loss = logs.get('loss')  # only record for this batch, not the display. Should work
+            # only record for this batch, not the display. Should work
+            loss = logs.get('loss')
             self.losses_sum_display += loss
 
         if self.step_idx % self.display_per_batches == 0:
@@ -324,8 +357,10 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
             if self.early_stop:
                 avg_loss_per_display = self.losses_sum_display / self.display_per_batches
                 self.losses_sum_display = 0  # clear mannually...
-                self.losses[self.display_idx % self.patience_displays] = avg_loss_per_display
-                # but it still SGD, variance still, it just smaller by factor of display_per_batches
+                self.losses[self.display_idx %
+                            self.patience_displays] = avg_loss_per_display
+                # but it still SGD, variance still, it just smaller by factor of
+                # display_per_batches
                 display_info_start_step = self.step_idx - self.display_per_batches + 1
                 print(
                     f'\nmean: {avg_loss_per_display}, Step {display_info_start_step }({display_info_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display step')
@@ -334,7 +369,8 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                 if self.display_idx >= self.patience_displays:
                     std = np.std(
                         self.losses)  # as SGD, always variance, so not a good way, need to learn from early stopping
-                    std_start_step = self.step_idx - self.display_per_batches * self.patience_displays + 1
+                    std_start_step = self.step_idx - \
+                        self.display_per_batches * self.patience_displays + 1
                     print(f'mean: {np.mean(self.losses)}, std:{std} for Step {std_start_step}({std_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display steps')
                     if std < self.epsilon:
                         self.stopped_step = self.step_idx
@@ -346,7 +382,6 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         if self.stopped_step > 0 and self.verbose > 0:
             print('Step %05d: early stopping' % (self.stopped_step + 1))
 
-from enum import Enum
 
 class KernelRunningState(Enum):
     INIT_DONE = 1
@@ -355,11 +390,13 @@ class KernelRunningState(Enum):
     EVL_DEV_DONE = 4
     SAVE_SUBMISSION_DONE = 5
 
+
 class PS_TF_DataHandler():
     def __init__(self):
         self.fns = None
 
-    def to_tf_from_disk(self, fns, df, TARGET_COLUMN, im_height, im_width, im_chan):
+    def to_tf_from_disk(self, fns, df, TARGET_COLUMN, im_height, im_width,
+                        im_chan):
         self.df = df
         self.TARGET_COLUMN = TARGET_COLUMN
         self.im_height = im_height
@@ -367,19 +404,24 @@ class PS_TF_DataHandler():
         self.im_chan = im_chan
 
         fns_ds = tf.data.Dataset.from_tensor_slices(fns)
-        image_ds = fns_ds.map(self.load_and_preprocess_image(imgPreprocessFlag=False), num_parallel_calls=2)
+        image_ds = fns_ds.map(self.load_and_preprocess_image(
+            imgPreprocessFlag=False), num_parallel_calls=2)
         return image_ds
 
     def load_and_preprocess_image(self, imgPreprocessFlag=True):
         def _preprocess_image(img):
             raise NotImplementedError()
 
-        def _load_and_preprocess_image(path):  # hard to do, as read_file, _id.split needs complicate op of tensor, easier to first read numpy then save to tfrecord
-            X_train = np.zeros((self.im_height, self.im_width, self.im_chan), dtype=np.uint8)
-            Y_train = np.zeros((self.im_height, self.im_width, 1), dtype=np.uint8)
+        # hard to do, as read_file, _id.split needs complicate op of tensor,
+        # easier to first read numpy then save to tfrecord
+        def _load_and_preprocess_image(path):
+            X_train = np.zeros(
+                (self.im_height, self.im_width, self.im_chan), dtype=np.uint8)
+            Y_train = np.zeros(
+                (self.im_height, self.im_width, 1), dtype=np.uint8)
             print('Getting train images and masks ... ')
             _id = path
-            #sys.stdout.flush()
+            # sys.stdout.flush()
             dataset = pydicom.read_file(_id)
             _id_keystr = _id.split('/')[-1][:-4]
             X_train = np.expand_dims(dataset.pixel_array, axis=2)
@@ -391,30 +433,39 @@ class PS_TF_DataHandler():
                 else:
                     if type(mask_data) == str:
                         Y_train = np.expand_dims(
-                            rle2mask(self.df.loc[_id_keystr, self.TARGET_COLUMN], 1024, 1024), axis=2)
+                            rle2mask(self.df.loc[_id_keystr,
+                                                 self.TARGET_COLUMN], 1024,
+                                     1024),
+                            axis=2)
                     else:
                         Y_train = np.zeros((1024, 1024, 1))
                         for x in mask_data:
-                            Y_train = Y_train + np.expand_dims(rle2mask(x, 1024, 1024), axis=2)
+                            Y_train = Y_train + \
+                                np.expand_dims(rle2mask(x, 1024, 1024), axis=2)
             except KeyError:
-                print(f"Key {_id.split('/')[-1][:-4]} without mask, assuming healthy patient.")
-                Y_train = np.zeros((1024, 1024, 1))  # Assume missing masks are empty masks.
+                print(
+                    f"Key {_id.split('/')[-1][:-4]} without mask, assuming healthy patient.")
+                # Assume missing masks are empty masks.
+                Y_train = np.zeros((1024, 1024, 1))
 
-            if imgPreprocessFlag: return _preprocess_image(X_train),_preprocess_image(Y_train)
-            return (X_train,Y_train)
+            if imgPreprocessFlag:
+                return _preprocess_image(X_train), _preprocess_image(Y_train)
+            return (X_train, Y_train)
         return _load_and_preprocess_image
 
     @staticmethod
     def maybe_download():
-        # By default the file at the url origin is downloaded to the cache_dir ~/.keras,
-        # placed in the cache_subdir datasets, and given the filename fname
-        train_path = tf.keras.utils.get_file(TRAIN_URL.split('/')[-1], TRAIN_URL)
+        # By default the file at the url origin is downloaded to the cache_dir
+        # ~/.keras, placed in the cache_subdir datasets, and given the filename
+        # fname
+        train_path = tf.keras.utils.get_file(
+            TRAIN_URL.split('/')[-1], TRAIN_URL)
         test_path = tf.keras.utils.get_file(TEST_URL.split('/')[-1], TEST_URL)
 
         return train_path, test_path
 
     @staticmethod
-    def get_train_dataset(train_X_np,train_Y_np): #join(dataset_dir,'labels.csv')
+    def get_train_dataset(train_X_np, train_Y_np):  # join(dataset_dir,'labels.csv')
         image_ds = tf.data.Dataset.from_tensor_slices(train_X_np)
         image_mask_ds = tf.data.Dataset.from_tensor_slices(train_Y_np)
 
@@ -423,55 +474,69 @@ class PS_TF_DataHandler():
     @staticmethod
     def load_data(train_path, test_path):
         """Returns the iris dataset as (train_x, train_y), (test_x, test_y)."""
-        #train_path, test_path = maybe_download() # here the test is really no lable
-        # we need to do CV in train part
-        train_X = pickle.load(open(train_path,"rb")) #(None, 2048)
-        to_predict_X = pickle.load(open(test_path,"rb")) #(None, 2048) 2048 features from xception net
+        # train_path, test_path = maybe_download()
+        # here the test is really no lable we need to do CV in train part
+        train_X = pickle.load(open(train_path, "rb"))  # (None, 2048)
+        # (None, 2048) 2048 features from xception net
+        to_predict_X = pickle.load(open(test_path, "rb"))
 
         try:
             labels = pd.read_csv(os.path.join(DATASET_DIR, 'labels.csv'))
         except FileNotFoundError:
             labels = pd.read_csv(os.path.join(DATASET_DIR2, 'labels.csv'))
 
-        labels = labels['breed'].values.tolist() # for all training data
+        labels = labels['breed'].values.tolist()  # for all training data
         global SPECIES
         SPECIES = sorted(list(set(labels)))
-        _label_id_map = dict((name, index) for index,name in enumerate(SPECIES))
+        _label_id_map = dict((name, index)
+                             for index, name in enumerate(SPECIES))
         train_y = [_label_id_map[label] for label in labels]
 
         return (train_X, train_y), to_predict_X
 
     @staticmethod
-    def train_input_fn_bt(features, labels, batch_size, cv, cv_train=True, split_id=None, n_splits=None, ds=None, ds_len=-1):
+    def train_input_fn_bt(features, labels, batch_size, cv, cv_train=True,
+                          split_id=None, n_splits=None, ds=None, ds_len=-1):
         # for boost tree, need to prepare feature columns
         # 2048? columns, all float
         if cv:
-            return PS_TF_DataHandler._input_fn_bt(features, labels, batch_size, shuffle=True, split_id=split_id, n_splits=n_splits,cv_train=cv_train, ds=ds, ds_len=ds_len)
+            return PS_TF_DataHandler._input_fn_bt(features, labels, batch_size,
+                                                  shuffle=True,
+                                                  split_id=split_id,
+                                                  n_splits=n_splits,
+                                                  cv_train=cv_train, ds=ds,
+                                                  ds_len=ds_len)
         else:
-            return PS_TF_DataHandler._input_fn_bt(features, labels, batch_size, shuffle=True, cv=False, ds=ds)
+            return PS_TF_DataHandler._input_fn_bt(features, labels, batch_size,
+                                                  shuffle=True,
+                                                  cv=False,
+                                                  ds=ds)
 
     @staticmethod
     def eval_input_fn_bt(features, labels, batch_size, cv, split_id=None, n_splits=None):
         if cv:
-            return PS_TF_DataHandler._input_fn_bt(features, labels, batch_size,with_y=True, repeat=False, shuffle=False, split_id=split_id, n_splits=n_splits,cv_train=False)
+            return PS_TF_DataHandler._input_fn_bt(features, labels, batch_size, with_y=True, repeat=False, shuffle=False, split_id=split_id, n_splits=n_splits, cv_train=False)
         else:
-            return PS_TF_DataHandler._input_fn_bt(features, labels, batch_size,with_y=True, repeat=False, shuffle=False, cv=False)
+            return PS_TF_DataHandler._input_fn_bt(features, labels, batch_size, with_y=True, repeat=False, shuffle=False, cv=False)
 
     @staticmethod
     def pred_input_fn_bt(features, batch_size):
         return PS_TF_DataHandler._input_fn_bt(features, None, batch_size, with_y=False, repeat=False, shuffle=False, cv=False)
 
     @staticmethod
-    def _input_fn_bt(features, labels, batch_size, with_y=True,repeat=True, shuffle=True, split_id=-1, n_splits=10, cv=True, cv_train=True, ds=None, ds_len=-1): # for these, we will need to extract all the points before:
+    # for these, we will need to extract all the points before:
+    def _input_fn_bt(features, labels, batch_size, with_y=True, repeat=True, shuffle=True, split_id=-1, n_splits=10, cv=True, cv_train=True, ds=None, ds_len=-1):
         if ds is not None:
             if shuffle and ds_len <= 0:
                 raise ValueError('shuffle need to now data length')
             data_len = ds_len
         else:
             data_len = len(labels)
+
             def _to_dict(f):
                 # first to pandas data frame
-                df = pd.DataFrame(f, columns=[str(i) for i in range(features.shape[-1])])
+                df = pd.DataFrame(f, columns=[str(i)
+                                              for i in range(features.shape[-1])])
                 return dict(df)
             features = _to_dict(features)
             if with_y:
@@ -484,14 +549,17 @@ class PS_TF_DataHandler():
             if cv_train:
                 ds = [ds.shard(n_splits, i) for i in range(n_splits)]
 
-                shards_cross = [ds[val_id] for val_id in range(n_splits) if val_id != split_id]
+                shards_cross = [ds[val_id]
+                                for val_id in range(n_splits) if val_id != split_id]
 
                 ds = shards_cross[0]
                 for t in shards_cross[1:]:
                     ds = ds.concatenate(t)
 
                 if shuffle:
-                    ds = ds.shuffle(buffer_size=int(data_len*(n_splits-1)/n_splits)) # just memory is not enough ...
+                    # just memory is not enough ...
+                    ds = ds.shuffle(buffer_size=int(
+                        data_len*(n_splits-1)/n_splits))
             else:  # cv part for evaluation, no need to shuffle
                 ds = ds.shard(n_splits, split_id)
         else:
@@ -510,7 +578,8 @@ class PS_TF_DataHandler():
         return ds.batch(batch_size).prefetch(1)
 
     @staticmethod
-    def train_input_fn(features, labels, batch_size,split_id=-1, n_splits=10, cv=True): # for these, we will need to extract all the points before:
+    # for these, we will need to extract all the points before:
+    def train_input_fn(features, labels, batch_size, split_id=-1, n_splits=10, cv=True):
         """An input function for training"""
         # read from the tfrecord file (save the extracted ones)(read the data)
         ds = tf.data.Dataset.from_tensor_slices((features, labels))
@@ -518,13 +587,15 @@ class PS_TF_DataHandler():
             assert split_id >= 0 and n_splits > 1 and split_id < n_splits
             ds = [ds.shard(n_splits, i) for i in range(n_splits)]
 
-            shards_cross = [ds[val_id] for val_id in range(n_splits) if val_id != split_id]
+            shards_cross = [ds[val_id]
+                            for val_id in range(n_splits) if val_id != split_id]
 
             s = shards_cross[0]
             for t in shards_cross[1:]:
                 s = s.concatenate(t)
 
-            ds = s.shuffle(buffer_size=int(len(labels)*(n_splits-1)/n_splits)) # just memory is not enough ...
+            # just memory is not enough ...
+            ds = s.shuffle(buffer_size=int(len(labels)*(n_splits-1)/n_splits))
         else:
             ds = ds.shuffle(buffer_size=len(labels))
         # after shuffle, we do cross validtation split
@@ -573,18 +644,15 @@ class PS_TF_DataHandler():
         return ds
 
     @staticmethod
-    def to_tfrecord(ds, file_name='train_dev.tfrec'):  # specific to data structure, need to split out later
-        # self.dev_ds.take(1)
-        # <TakeDataset shapes: ((None, 1024, 1024, 1), (None, 1024, 1024, 1)), types: (tf.uint8, tf.uint8)>
-        #ds = ds.map(lambda a, b: (tf.io.encode_jpeg(tf.reshape(a, a.shape[1:])), tf.io.encode_jpeg(tf.reshape(b, b.shape[1:])) ) )
-        #ds = ds.map(lambda a, b: (tf.image.encode_png(a), tf.image.encode_png(b) ) )
-        ds = ds.map(lambda a, b: (tf.io.encode_jpeg(a), tf.io.encode_jpeg(b) ) )
+    # specific to data structure, need to split out later
+    def to_tfrecord(ds, file_name='train_dev.tfrec'):
+        ds = ds.map(lambda a, b: (tf.io.encode_jpeg(a), tf.io.encode_jpeg(b)))
 
         writer = tf.data.experimental.TFRecordWriter(file_name)
-        #writer.write(tf.data.Dataset.zip(a_jpeg,b_jpeg))
         writer.write(ds.map(lambda a, b: a))
 
-        target_writer = tf.data.experimental.TFRecordWriter(f'target_{file_name}')
+        target_writer = tf.data.experimental.TFRecordWriter(
+            f'target_{file_name}')
         target_writer.write(ds.map(lambda a, b: b))
 
         return
@@ -600,7 +668,8 @@ class PS_TF_DataHandler():
             return ds
         image_data_wildcard = 'train_dev.*.tfrec'
         mask_data_wildcard = 'target_train_dev.*.tfrec'
-        return tf.data.Dataset.zip((_tf_read_jpeg(image_data_wildcard), _tf_read_jpeg(mask_data_wildcard)))
+        return tf.data.Dataset.zip((_tf_read_jpeg(image_data_wildcard),
+                                    _tf_read_jpeg(mask_data_wildcard)))
 
     @staticmethod
     def serialize_PS_example(feature0, feature1):
@@ -608,10 +677,11 @@ class PS_TF_DataHandler():
         NOT WORKING... don't know why
         Creates a tf.Example message ready to be written to a file.
         """
-        # Create a dictionary mapping the feature name to the tf.Example-compatible
-        # data type.
+        # Create a dictionary mapping the feature name to the
+        # tf.Example-compatible data type.
         assert feature0.shape[0] == 1 and feature0.shape[1] == 128
-        assert feature0.shape[0] == feature1.shape[0] and feature0.shape[1] == feature1.shape[1]
+        assert feature0.shape[0] == feature1.shape[0] and \
+        feature0.shape[1] == feature1.shape[1]
 
         f0 = tf.reshape(feature0, [-1])
         f1 = tf.reshape(feature1, [-1])
@@ -623,17 +693,21 @@ class PS_TF_DataHandler():
         # Create a Features message using tf.train.Example.
         logger.debug('in transforming to tf example proto')
 
-        example_proto = tf.train.Example(features=tf.train.Features(feature=feature))
+        example_proto = tf.train.Example(
+            features=tf.train.Features(feature=feature))
         logger.debug('after transforming one feature to tf example proto')
         return example_proto.SerializeToString()
 
     @staticmethod
     def tf_serialize_example(f0, f1):
         print(PS_TF_DataHandler.serialize_PS_example(f0, f1))
+        # the return type is
+        # <a href="../../../versions/r2.0/api_docs/python/tf#string">
+        # <code>tf.string</code></a>.
         tf_string = tf.py_function(
             PS_TF_DataHandler.serialize_PS_example,
             (f0, f1),  # pass these args to the above function.
-            tf.string)  # the return type is <a href="../../../versions/r2.0/api_docs/python/tf#string"><code>tf.string</code></a>.
+            tf.string)
         return tf.reshape(tf_string, ())  # The result is a scalar
 
     @staticmethod
@@ -646,23 +720,29 @@ class PS_TF_DataHandler():
 # The following functions can be used to convert a value to a type compatible
 # with tf.Example.
 
+
 def _bytes_feature(value):
-  """Returns a bytes_list from a string / byte."""
-  if isinstance(value, type(tf.constant(0))):
-    value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
-  return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+    """Returns a bytes_list from a string / byte."""
+    if isinstance(value, type(tf.constant(0))):
+        # BytesList won't unpack a string from an EagerTensor.
+        value = value.numpy()
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
 
 def _float_feature(value):
-  """Returns a float_list from a float / double."""
-  return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
+    """Returns a float_list from a float / double."""
+    return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
+
 
 def _int64_feature(value):
-  """Returns an int64_list from a bool / enum / int / uint."""
-  return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+    """Returns an int64_list from a bool / enum / int / uint."""
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
 
 def _int64_feature_from_list(value):
     """Returns an int64_list from a bool / enum / int / uint."""
     return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
+
 
 class KaggleKernel:
     def __init__(self):
@@ -730,10 +810,14 @@ class KaggleKernel:
         logger.debug(f'state {self._stage}')
         if exec_flag:
             logger.debug(f'dumping state {self._stage}')
+            # dump_obj(self, 'run_state.pkl', force=True)  # too large
             dump_obj(self, f'run_state_{self._stage}.pkl', force=True)
-            #dump_obj(self, 'run_state.pkl', force=True)  # too large
 
-    def run(self, start_stage=None, end_stage=KernelRunningState.SAVE_SUBMISSION_DONE, dump_flag=False):
+    def run(
+            self,
+            start_stage=None,
+            end_stage=KernelRunningState.SAVE_SUBMISSION_DONE,
+            dump_flag=False):
         """
 
         :param start_stage: if set, will overwrite the stage
@@ -741,9 +825,14 @@ class KaggleKernel:
         :param dump_flag:
         :return:
         """
-        self.continue_run(start_stage=start_stage, end_stage=end_stage, dump_flag=dump_flag)
+        self.continue_run(start_stage=start_stage,
+                          end_stage=end_stage, dump_flag=dump_flag)
 
-    def continue_run(self, start_stage=None, end_stage=KernelRunningState.SAVE_SUBMISSION_DONE, dump_flag=False):
+    def continue_run(
+                    self,
+                    start_stage=None,
+                    end_stage=KernelRunningState.SAVE_SUBMISSION_DONE,
+                    dump_flag=False):
         if start_stage is not None:
             assert start_stage.value < end_stage.value
             self._stage = start_stage
@@ -755,7 +844,8 @@ class KaggleKernel:
 
             self._stage = KernelRunningState.PREPARE_DATA_DONE
             self.dump_state(exec_flag=dump_flag)
-            if self._stage.value >= end_stage.value: return
+            if self._stage.value >= end_stage.value:
+                return
 
         if self._stage.value < KernelRunningState.TRAINING_DONE.value:
             self.pre_train()
@@ -767,14 +857,16 @@ class KaggleKernel:
 
             self._stage = KernelRunningState.TRAINING_DONE
             self.dump_state(exec_flag=dump_flag)
-            if self._stage.value >= end_stage.value: return
+            if self._stage.value >= end_stage.value:
+                return
 
         if self._stage.value < KernelRunningState.EVL_DEV_DONE.value:
             self.set_result_analyzer()
 
             self._stage = KernelRunningState.EVL_DEV_DONE
             self.dump_state(exec_flag=dump_flag)
-            if self._stage.value >= end_stage.value: return
+            if self._stage.value >= end_stage.value:
+                return
 
         if self._stage.value < KernelRunningState.SAVE_SUBMISSION_DONE.value:
             self.pre_test()
@@ -784,7 +876,8 @@ class KaggleKernel:
 
             self._stage = KernelRunningState.SAVE_SUBMISSION_DONE
             self.dump_state(exec_flag=dump_flag)
-            if self._stage.value >= end_stage.value: return
+            if self._stage.value >= end_stage.value:
+                return
 
     @classmethod
     def _load_state(cls, stage=None, file_name='run_state.pkl'):
@@ -824,8 +917,8 @@ class KaggleKernel:
         pass
 
 
-#Evaluation metric
-#ref https://www.kaggle.com/jesperdramsch/intro-chest-xray-dicom-viz-u-nets-full-data
+# Evaluation metric
+# ref https://www.kaggle.com/jesperdramsch/intro-chest-xray-dicom-viz-u-nets-full-data
 def dice_coef(y_true, y_pred, smooth=1, threshold=0.5):
     threshold = math_ops.cast(threshold, y_pred.dtype)
 
@@ -836,7 +929,9 @@ def dice_coef(y_true, y_pred, smooth=1, threshold=0.5):
     y_true_b = math_ops.cast(y_true_f > threshold, y_pred.dtype)
 
     intersection = K.sum(y_true_b * y_pred_b)
-    return (2. * intersection + smooth) / (K.sum(y_true_b) + K.sum(y_pred_b) + smooth)
+    return (2. * intersection + smooth) / \
+        (K.sum(y_true_b) + K.sum(y_pred_b) + smooth)
+
 
 def rle2mask(rle, width, height):
     mask = np.zeros(width * height)
@@ -851,6 +946,7 @@ def rle2mask(rle, width, height):
         current_position += lengths[index]
 
     return mask.reshape(width, height)
+
 
 class SmoothedValue(object):
     """Track a series of values and provide access to smoothed values over a
@@ -881,7 +977,8 @@ class SmoothedValue(object):
         """
         if not is_dist_avail_and_initialized():
             return
-        t = torch.tensor([self.count, self.total], dtype=torch.float64, device='cuda')
+        t = torch.tensor([self.count, self.total],
+                         dtype=torch.float64, device='cuda')
         dist.barrier()
         dist.all_reduce(t)
         t = t.tolist()
@@ -950,9 +1047,11 @@ def all_gather(data):
     # gathering tensors of different shapes
     tensor_list = []
     for _ in size_list:
-        tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
+        tensor_list.append(torch.empty(
+            (max_size,), dtype=torch.uint8, device="cuda"))
     if local_size != max_size:
-        padding = torch.empty(size=(max_size - local_size,), dtype=torch.uint8, device="cuda")
+        padding = torch.empty(size=(max_size - local_size,),
+                              dtype=torch.uint8, device="cuda")
         tensor = torch.cat((tensor, padding), dim=0)
     dist.all_gather(tensor_list, tensor)
 
@@ -969,8 +1068,8 @@ def reduce_dict(input_dict, average=True):
     Args:
         input_dict (dict): all the values will be reduced
         average (bool): whether to do average or sum
-    Reduce the values in the dictionary from all processes so that all processes
-    have the averaged results. Returns a dict with the same fields as
+    Reduce the values in the dictionary from all processes so that all
+    processes have the averaged results. Returns a dict with the same fields as
     input_dict, after reduction.
     """
     world_size = get_world_size()
@@ -1000,7 +1099,6 @@ class MetricLogger(object):
     def __del__(self):
         self.log_file.close()
 
-
     def update(self, **kwargs):
         for k, v in kwargs.items():
             if isinstance(v, torch.Tensor):
@@ -1012,7 +1110,6 @@ class MetricLogger(object):
         for meter in self.meters.values():
             if meter is not None:
                 meter.clear()
-
 
     def __getattr__(self, attr):
         if attr in self.meters:
@@ -1060,7 +1157,8 @@ class MetricLogger(object):
             data_time.update(time.time() - end)
             yield obj
             iter_time.update(time.time() - end)
-            if i % (print_freq) == 0 or i == len(iterable):  # print the first to let you know it is running....
+            # print the first to let you know it is running....
+            if i % (print_freq) == 0 or i == len(iterable):
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
                 self.print_and_log_to_file(log_msg.format(
@@ -1166,10 +1264,14 @@ def init_distributed_mode(args):
     args.dist_backend = 'nccl'
     print('| distributed init (rank {}): {}'.format(
         args.rank, args.dist_url), flush=True)
-    torch.distributed.init_process_group(backend=args.dist_backend, init_method=args.dist_url,
-                                         world_size=args.world_size, rank=args.rank)
+    torch.distributed.init_process_group(
+            backend=args.dist_backend,
+            init_method=args.dist_url,
+            world_size=args.world_size,
+            rank=args.rank)
     torch.distributed.barrier()
     setup_for_distributed(args.rank == 0)
+
 
 def mask_to_rle(img, width, height):
     rle = []
@@ -1194,12 +1296,16 @@ def mask_to_rle(img, width, height):
             elif runStart > -1:
                 runLength += 1
             lastColor = currentColor
-            currentPixel+=1
+            currentPixel += 1
     return " " + " ".join(rle)
 
-# refer to https://gist.github.com/stefanonardo/693d96ceb2f531fa05db530f3e21517d
+
 class EarlyStopping(object):
-    def __init__(self, mode='min', min_delta=0, patience=10, percentage=False):
+    """EarlyStop for pytorch
+    refer to
+    https://gist.github.com/stefanonardo/693d96ceb2f531fa05db530f3e21517d"""
+
+   def __init__(self, mode='min', min_delta=0, patience=10, percentage=False):
         self.mode = mode
         self.min_delta = min_delta
         self.patience = patience
@@ -1242,19 +1348,22 @@ class EarlyStopping(object):
         else:
             if mode == 'min':
                 self.is_better = lambda a, best: a < best - (
-                            best * min_delta / 100)
+                    best * min_delta / 100)
             if mode == 'max':
-                self.is_better = lambda a, best: a > best + ( best * min_delta / 100)
+                self.is_better = lambda a, best: a > best + \
+                    (best * min_delta / 100)
 
-# credit xwkuang5 @https://discuss.pytorch.org/t/about-normalization-using-pre-trained-vgg16-networks/23560/7
+
 def online_mean_and_sd(loader, data_map=None):
     """Compute the mean and sd in an online fashion
 
         Var[x] = E[X^2] - E^2[X]
+    credit xwkuang5
+    @https://discuss.pytorch.org/t/about-normalization-using-pre-trained-vgg16-networks/23560/7
     """
     cnt = 0
-    #fst_moment = torch.empty(3)
-    #snd_moment = torch.empty(3)
+    # fst_moment = torch.empty(3)
+    # snd_moment = torch.empty(3)
     fst_moment = np.zeros(3)
     snd_moment = np.zeros(3)
 
@@ -1264,25 +1373,19 @@ def online_mean_and_sd(loader, data_map=None):
         data = np.array([t.numpy() for t in data])
         b, c, h, w = data.shape  # data here is tuple... if loader batch > 1
         nb_pixels = b * h * w
-        #sum_ = torch.sum(data, dim=[0, 2, 3])
+        # sum_ = torch.sum(data, dim=[0, 2, 3])
         sum_ = data.sum(axis=0).sum(axis=-1).sum(axis=-1)
-        #sum_of_square = torch.sum(data ** 2, dim=[0, 2, 3])
+        # sum_of_square = torch.sum(data ** 2, dim=[0, 2, 3])
         sum_of_square = (data ** 2).sum(axis=0).sum(axis=-1).sum(axis=-1)
         fst_moment = (cnt * fst_moment + sum_) / (cnt + nb_pixels)
         snd_moment = (cnt * snd_moment + sum_of_square) / (cnt + nb_pixels)
 
         cnt += nb_pixels
 
-    #return fst_moment, torch.sqrt(snd_moment - fst_moment ** 2)
     return fst_moment, np.sqrt(snd_moment - fst_moment ** 2)
 
 
-#dataset = MyDataset()
-#loader = DataLoader(
-#    dataset,
-#    batch_size=1,
-#    num_workers=1,
-#    shuffle=False
-#)
+# dataset = MyDataset() loader = DataLoader( dataset, batch_size=1,
+# num_workers=1, shuffle=False)
 #
-#mean, std = online_mean_and_sd(loader)
+# mean, std = online_mean_and_sd(loader)
