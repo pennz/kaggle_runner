@@ -6,11 +6,9 @@ class Coordinator:
 
     def add_runner(self):
         """add_runner will create kernel folders and change the code"""
-        pass
 
     def push(self):
         "Push the code to server/kagger docker"
-        pass
 
     def push_listen(self):
         self.push()
@@ -20,4 +18,3 @@ class Coordinator:
         """use the message queue, just use this right after push, listen for
         result, debug local first"""
         "use RE change source code to add the log collector"
-        pass

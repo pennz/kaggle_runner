@@ -1,10 +1,8 @@
-import collections
 import datetime
 import errno
 import logging
 import os
 import pickle
-import random
 import time
 from collections import defaultdict, deque
 from glob import glob
