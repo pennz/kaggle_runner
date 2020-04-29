@@ -7,7 +7,6 @@ import pickle
 import random
 import time
 from collections import defaultdict, deque
-from enum import Enum
 from glob import glob
 
 import numpy as np
@@ -27,8 +26,6 @@ from torchvision import transforms
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 from tqdm import tqdm
-
-import pydicom
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -416,14 +413,6 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
     def on_train_end(self, logs=None):
         if self.stopped_step > 0 and self.verbose > 0:
             print("Step %05d: early stopping" % (self.stopped_step + 1))
-
-
-class KernelRunningState(Enum):
-    INIT_DONE = 1
-    PREPARE_DATA_DONE = 2
-    TRAINING_DONE = 3
-    EVL_DEV_DONE = 4
-    SAVE_SUBMISSION_DONE = 5
 
 
 class PS_TF_DataHandler:
