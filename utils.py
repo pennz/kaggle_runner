@@ -28,6 +28,26 @@ from tqdm import tqdm
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
+class AMQPURL:
+    # host = "termite.rmq.cloudamqp.com"  # (Load balanced)
+    # passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"
+    # username = "drdsfaew"
+    # Vhost = "drdsfaew"
+    host = "127.0.0.1"  # (Load balanced)
+    passwd = "guest"
+    username = "guest"
+    Vhost = "/"
+
+    def __init__(self, host, passwd, Vhost, username):
+        self.host = host
+        self.passwd = passwd
+        self.Vhost = Vhost
+        self.username = username
+
+    def string(self):
+        return f"amqp://{self.username}:{self.passwd}@{self.host}{self.Vhost}"
+
+
 BIN_FOLDER = (
     "/content/gdrivedata/My Drive/" if os.path.isdir(
         "/content/gdrivedata") else "./"

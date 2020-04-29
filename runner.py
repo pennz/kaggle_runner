@@ -1,19 +1,30 @@
 import pdb
+import time
 
+import parse
+import pysnooper
 from python_logging_rabbitmq import RabbitMQHandler
 
 import utils
 
 
-class AMQPURL:
-    # host = "termite.rmq.cloudamqp.com"  # (Load balanced)
-    # passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"
-    # username = "drdsfaew"
-    # Vhost = "drdsfaew"
-    host = "127.0.0.1"  # (Load balanced)
-    passwd = "guest"
-    username = "guest"
-    Vhost = "/"
+def parse_AMQP(url_str):
+    Vhost = None
+    res = parse.parse("amqp://{}:{}@{}/{}", url_str)
+    if res is None:
+        res = parse.parse("amqp://{}:{}@{}/", url_str)
+        if res is None:
+            raise RuntimeError("AMQP URL error")
+        else:
+            Vhost = "/"
+            username, passwd, host = res
+    else:
+        username, passwd, host, Vhost = res
+
+    try:
+        return utils.AMQPURL(host, passwd, Vhost, username)
+    except TypeError as e:
+        utils.logger.debug(e)
 
 
 class Runner:  # blade runner
@@ -23,7 +34,8 @@ class Runner:  # blade runner
 
     def __init__(self, kernel_code="TestKernel", AMQPURL=None, **kwargs):
         self.kernel_name = kernel_code
-        self.AMQPURL = AMQPURL
+        self.AMQPURL = parse_AMQP(AMQPURL)
+        pdb.set_trace()
 
     def _attach_data_collector(self, kernel):
         """
@@ -47,8 +59,10 @@ class Runner:  # blade runner
         # kernel and run
         logger.addHandler(rabbit)
 
-        pdb.set_trace()
         logger.debug("test")
         logger.debug("more test")
+        while True:
+            time.sleep(1)
+            logger.debug("more test")
 
         # kernel.set_logger(self.kernel_name, handler=rabbit)
