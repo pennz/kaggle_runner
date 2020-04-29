@@ -1,9 +1,16 @@
+import coordinator
 import pytest
+import shutil
+import os
+
 class TestCoordinator():
+    coordinator = None
+    tmp_path = "."
+
     @classmethod
     def setup_class(cls):
         cls.tmp_path = ".runners"
-        cls.coordinator = coordinator.Coordinator()
+        cls.coordinator = coordinator.Coordinator(cls.tmp_path)
         print("setup_class called once for the class")
 
     @classmethod
@@ -12,8 +19,9 @@ class TestCoordinator():
 
 
     def setup_method(self, method):
-        shutil.rmtree(self.tmp_path)
-        os.mkdir(self.tmp_path)
+        if os.path.exists(self.tmp_path):
+            shutil.rmtree(self.tmp_path)
+            os.mkdir(self.tmp_path)
         print("setup_method called for every method")
 
     def teardown_method(self, method):
