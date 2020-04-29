@@ -1,28 +1,5 @@
-import importlib
-import os
-import time
-import shutil
-import sys
-import unittest
-
-import numpy as np
-import torch
-from IPython.core.debugger import set_trace
-from torch.autograd import Variable
-
-import kernel
-
-# import modelTester
-import pytorchKernel
-
-# from kernel import Kernel
-import utils
-from kernel import KernelRunningState
-import coordinator
 import pytest
-
-
-class CoordinatorTest():
+class TestCoordinator():
     @classmethod
     def setup_class(cls):
         cls.tmp_path = ".runners"
