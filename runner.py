@@ -35,7 +35,6 @@ class Runner:  # blade runner
     def __init__(self, kernel_code="TestKernel", AMQPURL=None, **kwargs):
         self.kernel_name = kernel_code
         self.AMQPURL = parse_AMQP(AMQPURL)
-        pdb.set_trace()
 
     def _attach_data_collector(self, kernel):
         """
