@@ -18,10 +18,8 @@ class Coordinator:
         """use the message queue, just use this right after push, listen for
         result, debug local first"""
         "use RE change source code to add the log collector"
-        pass
 
     def create_runner(self, config):
         """
         config will be size and model right now
         """
-        pass

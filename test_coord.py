@@ -3,7 +3,8 @@ import pytest
 import shutil
 import os
 
-class TestCoordinator():
+
+class TestCoordinator:
     coordinator = None
     tmp_path = "."
 
@@ -16,7 +17,6 @@ class TestCoordinator():
     @classmethod
     def teardown_class(cls):
         print("teardown_class called once for the class")
-
 
     def setup_method(self, method):
         if os.path.exists(self.tmp_path):
@@ -53,4 +53,3 @@ class TestCoordinator():
         for c in runner_configs:
             r = self.coordinator.create_runner(c)
         assert r.AMQPURL is not None
-
