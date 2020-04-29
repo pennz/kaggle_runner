@@ -40,7 +40,7 @@ class TestCoordinator:
         # shutil.rmtree(self.tmp_path)  # for debug
         print("teardown_method called for every method")
 
-    @pytest.mark.timeout(5)
+    @pytest.mark.timeout(15)
     def test_push_runner(self, runner_configs):
         path = self.coordinator.create_runner(runner_configs[1], 19999)
         ret = self.coordinator.push(path)

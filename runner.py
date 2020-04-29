@@ -88,7 +88,7 @@ class Runner:  # blade runner
         logger.addHandler(rabbit)
 
         cnt = 0
-        while cnt < 50:
+        while cnt < 10:
             time.sleep(1)
             logger.debug("hello test")
             cnt += 1
