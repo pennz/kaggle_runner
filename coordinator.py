@@ -1,12 +1,14 @@
-import os
-import shutil
-from subprocess import call
 import json
+import os
 import re
-import slug
+import shutil
 from string import Template
-import utils
+from subprocess import call
+
 import parse
+import slug
+
+import utils
 
 
 class Coordinator:
@@ -68,11 +70,14 @@ PHASE=$1
 shift
 PARAMS=$@
 
+pip install slug parse # should move local codes out
+pip install pysnooper python_logging_rabbitmq
+
 ( test -d ${REPO} || git clone --depth=1 \
 https://github.com/${USER}/${REPO}.git ) && cd ${REPO} && \
 ([[ x$(git rev-parse --abbrev-ref HEAD) == x${BRANCH} ]] || \
 git checkout -b ${BRANCH} --track origin/${BRANCH} ) && \
-( [[ x"$PHASE" == x"dev" ]]  && python -m pytest -v) && python main.py $PARAMS
+python main.py $PARAMS
 \"\"\"
     )
 call(

@@ -48,6 +48,7 @@ class TestCoordinator:
         # just use a timeout, not within then return error
 
     @pytest.mark.timeout(10)
+    @pytest.mark.skip("runner runs in computation server, no need test local")
     def test_get_mq_back(self, runner_configs):
         path = self.coordinator.create_runner(runner_configs[1], 20202)
         ret = self.coordinator.push(path)
