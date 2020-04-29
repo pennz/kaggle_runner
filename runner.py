@@ -1,11 +1,41 @@
+import json
+import logging
 import pdb
 import time
+import types
+from socket import gethostname
 
 import parse
 import pysnooper
 from python_logging_rabbitmq import RabbitMQHandler
+from python_logging_rabbitmq.compat import text_type
 
 import utils
+
+
+def format(self, record):
+    data = record.__dict__.copy()
+
+    if record.args:
+        msg = record.msg % record.args
+    else:
+        msg = record.msg
+
+    data.update(
+        host=gethostname(), msg=msg, args=tuple(text_type(arg) for arg in record.args)
+    )
+
+    if "exc_info" in data and data["exc_info"]:
+        data["exc_info"] = self.formatException(data["exc_info"])
+
+    if self.include:
+        data = {f: data[f] for f in self.include}
+    elif self.exclude:
+        for f in self.exclude:
+            if f in data:
+                del data[f]
+
+    return json.dumps(data)
 
 
 def parse_AMQP(url_str):
@@ -56,6 +86,7 @@ class Runner:  # blade runner
         )
         # rabbit.connection_params["virtual_host"] = self.AMQPURL.Vhost create
         # kernel and run
+        rabbit.formatter.format = types.MethodType(format, rabbit.formatter)
         logger.addHandler(rabbit)
 
         cnt = 0

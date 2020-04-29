@@ -33,7 +33,9 @@ class AMQPURL_DEV:
     passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"
     username = "drdsfaew"
     Vhost = "drdsfaew"
-    # host = "127.0.0.1"  # (Load balanced) passwd = "guest" username = "guest"
+    # host = "127.0.0.1"  # (Load balanced)
+    # passwd = "guest"
+    # username = "guest"
     # Vhost = "/"
 
 

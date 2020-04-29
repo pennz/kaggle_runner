@@ -66,6 +66,19 @@ class TestCoordinator:
 
 
 class TestMain:
+    def test_call_remote_mq(self):
+        call_params = [
+            "python",
+            "main.py",
+            "amqp://drdsfaew:QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI@termite.rmq.cloudamqp.com/drdsfaew",
+            "384",  # size 256+128
+            "123",
+            "intercept-resnet",
+        ]
+        utils.logger.debug(" ".join(call_params))
+        ret = call(call_params)
+        assert ret == 0
+
     def test_call_local(self):
         call_params = [
             "python",
