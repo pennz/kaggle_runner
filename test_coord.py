@@ -1,8 +1,10 @@
-import coordinator
-import pytest
-import shutil
 import os
+import shutil
 from subprocess import call
+
+import pytest
+
+import coordinator
 import utils
 
 
@@ -63,7 +65,7 @@ class TestCoordinator:
 
 
 class TestMain:
-    def test_call(self):
+    def test_call_local(self):
         call_params = [
             "python",
             "main.py",

@@ -59,10 +59,10 @@ class Runner:  # blade runner
         # kernel and run
         logger.addHandler(rabbit)
 
-        logger.debug("test")
-        logger.debug("more test")
-        while True:
+        cnt = 0
+        while cnt < 50:
             time.sleep(1)
-            logger.debug("more test")
+            logger.debug("hello test")
+            cnt += 1
 
         # kernel.set_logger(self.kernel_name, handler=rabbit)
