@@ -28,18 +28,17 @@ from tqdm import tqdm
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
-class AMQPURL_DEV:
-    host = "termite.rmq.cloudamqp.com"  # (Load balanced)
-    passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"
-    username = "drdsfaew"
-    Vhost = "drdsfaew"
-    # host = "127.0.0.1"  # (Load balanced)
-    # passwd = "guest"
-    # username = "guest"
-    # Vhost = "/"
-
-
 class AMQPURL:
+    class AMQPURL_DEV:
+        host = "termite.rmq.cloudamqp.com"  # (Load balanced)
+        passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"
+        username = "drdsfaew"
+        Vhost = "drdsfaew"
+        # host = "127.0.0.1"  # (Load balanced)
+        # passwd = "guest"
+        # username = "guest"
+        # Vhost = "/"
+
     def __init__(
         self,
         host=AMQPURL_DEV.host,
