@@ -124,7 +124,7 @@ def binary_crossentropy_with_focal(
     :param alpha: weight for positive classes. default to 1 - (true positive cnts / all cnts),
         alpha range [0,1] for class 1 and 1-alpha for calss -1.   In practice
         α may be set by inverse class freqency or hyperparameter.
-    :return:
+    :return: bce
     """
     # assert 0 <= alpha <= 1 and gamma >= 0
     # hyper parameters, just use the one for binary?
