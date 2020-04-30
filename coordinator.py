@@ -70,7 +70,7 @@ shift
 PARAMS=$@
 
 pip install parse # should move local codes out
-pip install pysnooper python_logging_rabbitmq  # for debugging
+pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
 ( test -d ${REPO} || git clone --depth=1 \
 https://github.com/${USER}/${REPO}.git ) && cd ${REPO} && \
