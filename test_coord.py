@@ -37,7 +37,7 @@ class TestCoordinator:
         print("setup_method called for every method")
 
     def teardown_method(self, method):
-        shutil.rmtree(self.tmp_path)  # for debug
+        # shutil.rmtree(self.tmp_path)  # for debug
         print("teardown_method called for every method")
 
     @pytest.mark.timeout(15)

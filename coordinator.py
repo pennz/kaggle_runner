@@ -75,7 +75,7 @@ pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 ( test -d ${REPO} || git clone --depth=1 \
 https://github.com/${USER}/${REPO}.git ) && cd ${REPO} && \
 ([[ x$(git rev-parse --abbrev-ref HEAD) == x${BRANCH} ]] || \
-git checkout -b ${BRANCH} --track origin/${BRANCH} ) && \
+git checkout ${BRANCH}) && \
 { if [ x"${PHASE}" == x"dev" ]; then pytest -v; else true; fi } && \
 python main.py $PARAMS
 \"\"\"
@@ -86,7 +86,7 @@ call(
         "runner.sh",
         "pennz",
         "PneumothoraxSegmentation",
-        "master",
+        "dev",
         "dev",  # phase
         "$AMQPURL",
         "$size",  # size 256+128
