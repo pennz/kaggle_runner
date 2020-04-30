@@ -72,10 +72,8 @@ PARAMS=$@
 pip install parse # should move local codes out
 pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
-( test -d ${REPO} || git clone --depth=1 \
+( test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ) && cd ${REPO} && \
-([[ x$(git rev-parse --abbrev-ref HEAD) == x${BRANCH} ]] || \
-git checkout ${BRANCH}) && \
 { if [ x"${PHASE}" == x"dev" ]; then pytest -v; else true; fi } && \
 python main.py $PARAMS
 \"\"\"
