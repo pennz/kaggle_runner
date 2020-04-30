@@ -76,7 +76,7 @@ pip install pysnooper python_logging_rabbitmq  # for debugging
 https://github.com/${USER}/${REPO}.git ) && cd ${REPO} && \
 ([[ x$(git rev-parse --abbrev-ref HEAD) == x${BRANCH} ]] || \
 git checkout -b ${BRANCH} --track origin/${BRANCH} ) && \
-{ if [ x${PAHSE} == xxdev ]; then pytest -v; else true; fi } && \
+{ if [ x"${PHASE}" == x"dev" ]; then pytest -v; else true; fi } && \
 python main.py $PARAMS
 \"\"\"
     )
