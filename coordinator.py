@@ -5,6 +5,7 @@ import shutil
 from string import Template
 from subprocess import call
 
+import pysnooper
 import slug
 
 import utils
@@ -40,12 +41,20 @@ class Coordinator:
         "use RE change source code to add the log collector"
 
     @staticmethod
-    def _change_kernel_meta_info(folder, name):
+    def _change_kernel_meta_info(folder, name, script):
         with open(os.path.join(folder, "kernel-metadata.json"), "r+") as jf:
             data = json.load(jf)
+            if not script:
+                name = name + " nb"
             slug_name = slug.slug(name)
             data["id"] = re.sub(r"/.*", "/" + slug_name, data["id"])
             data["title"] = slug_name
+            if not script:
+                data["kernel_type"] = "notebook"
+                data["code_file"] = "main.ipynb"
+            else:
+                data["kernel_type"] = "script"
+                data["code_file"] = "main.py"
             jf.seek(0)
             json.dump(data, jf)
             jf.truncate()
@@ -74,7 +83,7 @@ pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
 ( test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ) && cd ${REPO} && \
-{ if [ x"${PHASE}" == x"dev" ]; then pytest -v; else true; fi } && \
+{ if [ x"${PHASE}" == x"dev" ]; then pytest -v -s; else true; fi } && \
 python main.py $PARAMS
 \"\"\"
     )
@@ -101,7 +110,8 @@ call(
         with open(os.path.join(path, "main.py"), "w") as jf:
             jf.write(ss)
 
-    def create_runner(self, config, seed="2020"):
+    @pysnooper.snoop()
+    def create_runner(self, config, seed="2020", script=True):
         """
         config will be size and model right now
         """
@@ -112,8 +122,11 @@ call(
 
         path = os.path.join(self.tmp_path, name)
         shutil.copytree(self.template_path, path)
-        self._change_kernel_meta_info(path, self.title_prefix + " " + name)
+        self._change_kernel_meta_info(
+            path, self.title_prefix + " " + name, script)
         self._change_main_py(path, size, net, AMQPURL, seed)
+        if not script:
+            call(("jupytext --to notebook " + os.path.join(path, "main.py")).split())
 
         self.runners.append(path)
 
