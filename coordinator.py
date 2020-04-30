@@ -83,7 +83,6 @@ python main.py $PARAMS
 call(
     [
         "bash",
-        "-x",
         "runner.sh",
         "pennz",
         "PneumothoraxSegmentation",
