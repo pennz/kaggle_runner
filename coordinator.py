@@ -5,7 +5,6 @@ import shutil
 from string import Template
 from subprocess import call
 
-import parse
 import slug
 
 import utils
@@ -70,13 +69,14 @@ PHASE=$1
 shift
 PARAMS=$@
 
-pip install slug parse # should move local codes out
-pip install pysnooper python_logging_rabbitmq
+pip install parse # should move local codes out
+pip install pysnooper python_logging_rabbitmq  # for debugging
 
 ( test -d ${REPO} || git clone --depth=1 \
 https://github.com/${USER}/${REPO}.git ) && cd ${REPO} && \
 ([[ x$(git rev-parse --abbrev-ref HEAD) == x${BRANCH} ]] || \
 git checkout -b ${BRANCH} --track origin/${BRANCH} ) && \
+{ if [ x${PAHSE} == xxdev ]; then pytest -v; else true; fi } && \
 python main.py $PARAMS
 \"\"\"
     )
