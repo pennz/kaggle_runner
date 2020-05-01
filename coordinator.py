@@ -2,8 +2,8 @@ import json
 import os
 import re
 import shutil
+import subprocess
 from string import Template
-from subprocess import call
 
 import pysnooper
 import slug
@@ -29,7 +29,7 @@ class Coordinator:
         "Push the code to server/kagger docker"
         utils.logger.debug(
             " ".join(["kaggle", "kernels", "push", "-p", runner]))
-        return call(["kaggle", "kernels", "push", "-p", runner])
+        return subprocess.run(["kaggle", "kernels", "push", "-p", runner])
 
     def push_listen(self):
         self.push_all()
@@ -63,7 +63,7 @@ class Coordinator:
     def _change_main_py(path, size, net, AMQPURL, seed):
         s = Template(
             """#!/usr/bin/env python3
-from subprocess import call
+import subprocess
 
 with open("runner.sh", "w") as f:
     f.write(
@@ -85,25 +85,18 @@ pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 (test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
 find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) && \
-{ if [ x"${PHASE}" != x"dev" ]; then python main.py $PARAMS; fi }
+{ if [ x"${PHASE}" != x"dev" ]; \
+      then python main.py $PARAMS; \
+  else \
+      python3 -m pytest -v -s -k "test_pytorch" 2>&1 | nc -q 3 vtool.duckdns.org 23454; \
+  fi }
 \"\"\"
     )
-call(
-    [
-        "bash",
-        "runner.sh",
-        "pennz",
-        "PneumothoraxSegmentation",
-        "dev",
-        "dev",  # phase
-        "$AMQPURL",
-        "$size",  # size 256+128
-        "$seed",  # size 256+128
-        "$network",
-    ]
-)
+subprocess.run(
+'bash runner.sh pennz PneumothoraxSegmentation dev dev "$AMQPURL" "$size" "$seed" "$network"', shell=True)
 
-# %run -m pytest -v
+# %%
+# #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
 """
         )
 
@@ -112,6 +105,10 @@ call(
 
         with open(os.path.join(path, "main.py"), "w") as jf:
             jf.write(ss)
+
+    @pysnooper.snoop()
+    def run_local(self, path):
+        return subprocess.run("python " + os.path.join(path, "main.py"), shell=True)
 
     @pysnooper.snoop()
     def create_runner(self, config, seed="2020", script=True):
@@ -129,7 +126,9 @@ call(
             path, self.title_prefix + " " + name, script)
         self._change_main_py(path, size, net, AMQPURL, seed)
         if not script:
-            call(("jupytext --to notebook " + os.path.join(path, "main.py")).split())
+            subprocess.run(
+                ("jupytext --to notebook " + os.path.join(path, "main.py")).split()
+            )
 
         self.runners.append(path)
 

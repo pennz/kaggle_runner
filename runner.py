@@ -1,10 +1,9 @@
 import json
-import logging
-import time
 import types
 from socket import gethostname
 
 import parse
+import pysnooper
 from python_logging_rabbitmq import RabbitMQHandler
 from python_logging_rabbitmq.compat import text_type
 
@@ -63,6 +62,7 @@ class Runner:  # blade runner
     def __init__(self, kernel_code="TestKernel", AMQPURL=None, **kwargs):
         self.kernel_name = kernel_code
         self.AMQPURL = parse_AMQP(AMQPURL)
+        self.logger = None
 
     def _attach_data_collector(self, kernel):
         """
@@ -86,11 +86,5 @@ class Runner:  # blade runner
         # kernel and run
         rabbit.formatter.format = types.MethodType(format, rabbit.formatter)
         logger.addHandler(rabbit)
-
-        cnt = 0
-        while cnt < 10:
-            time.sleep(1)
-            logger.debug("hello test")
-            cnt += 1
-
+        self.logger = logger
         # kernel.set_logger(self.kernel_name, handler=rabbit)
