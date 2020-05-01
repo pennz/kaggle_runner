@@ -78,13 +78,14 @@ PHASE=$1
 shift
 PARAMS=$@
 
+pip install pydicom
 pip install parse # should move local codes out
 pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
 (test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
-find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) && \
-{ if [ x"${PHASE}" == x"dev" ]; then true; else python main.py $PARAMS; fi }
+find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} cp -r {} $OLDPWD && popd) && \
+{ if [ x"${PHASE}" != x"dev" ]; then python main.py $PARAMS; fi }
 \"\"\"
     )
 call(
