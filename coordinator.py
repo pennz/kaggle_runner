@@ -81,10 +81,10 @@ PARAMS=$@
 pip install parse # should move local codes out
 pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
-( test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
-https://github.com/${USER}/${REPO}.git ) && cd ${REPO} && \
-{ if [ x"${PHASE}" == x"dev" ]; then pytest -v -s; else true; fi } && \
-python main.py $PARAMS
+(test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
+https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
+find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) && \
+{ if [ x"${PHASE}" == x"dev" ]; then true; else python main.py $PARAMS; fi }
 \"\"\"
     )
 call(
@@ -101,6 +101,8 @@ call(
         "$network",
     ]
 )
+
+# %run -m pytest -v
 """
         )
 

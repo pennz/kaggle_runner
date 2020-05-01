@@ -41,11 +41,17 @@ class TestCoordinator:
         print("teardown_method called for every method")
 
     @pytest.mark.timeout(15)
+    @pytest.mark.skip()
     def test_push_runner(self, runner_configs):
         path = self.coordinator.create_runner(runner_configs[1], 19999)
         ret = self.coordinator.push(path)
         assert ret == 0
         # just use a timeout, not within then return error
+
+    def test_push_runner_nb(self, runner_configs):
+        path = self.coordinator.create_runner(runner_configs[1], 19999, False)
+        ret = self.coordinator.push(path)
+        assert ret == 0
 
     @pytest.mark.timeout(10)
     @pytest.mark.skip("runner runs in computation server, no need test local")
@@ -65,6 +71,7 @@ class TestCoordinator:
         assert r.AMQPURL is not None
 
 
+@pytest.mark.skip("test done")
 class TestMain:
     def test_call_remote_mq(self):
         call_params = [
