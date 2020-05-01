@@ -84,7 +84,7 @@ pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
 (test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
-find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} cp -r {} $OLDPWD && popd) && \
+find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) && \
 { if [ x"${PHASE}" != x"dev" ]; then python main.py $PARAMS; fi }
 \"\"\"
     )
