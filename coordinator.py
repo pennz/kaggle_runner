@@ -78,6 +78,8 @@ PHASE=$1
 shift
 PARAMS=$@
 
+apt install netcat -y
+
 pip install pydicom
 pip install parse # should move local codes out
 pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
