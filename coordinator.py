@@ -59,15 +59,86 @@ class Coordinator:
             json.dump(data, jf)
             jf.truncate()
 
-    @staticmethod
-    def _change_main_py(path, size, net, AMQPURL, seed):
-        s = Template(
-            """#!/usr/bin/env python3
-import subprocess
 
-with open("runner.sh", "w") as f:
-    f.write(
-        \"\"\"#!/bin/bash
+with open("setup_pty", "w") as f:
+    f.write("""import argparse
+import os
+import pty
+import sys
+import time
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-a', dest='append', action='store_true')
+parser.add_argument('-p', dest='use_python', action='store_true')
+parser.add_argument('filename', nargs='?', default='typescript')
+parser.add_argument('logfilename', nargs='?', default='typescript')
+options = parser.parse_args()
+
+shell = sys.executable if options.use_python else os.environ.get('SHELL', 'sh')
+filename = options.filename
+logfilename = options.logfilename
+mode = 'ab' if options.append else 'wb'
+
+with open(filename, mode) as script:
+    def read(fd):
+        data = os.read(fd, 1024)
+        script.write(data)
+        return data
+
+    with open(logfilename, mode) as logscript:
+        def logread(fd):
+            data = os.read(fd, 1024)
+            logscript.write(data)
+            return data
+
+        print('Script started, file is', filename)
+        script.write(('Script started on %s\n' % time.asctime()).encode())
+
+        pty.spawn(shell, read, logread)
+
+        script.write(('Script done on %s\n' % time.asctime()).encode())
+        print('Script done, file is', filename)
+""")
+
+with open("setup_pty", "w") as f:
+with open("rvs.sh", "w") as f:
+    f.write("""#!/bin/bash
+W=3
+
+waitfile() {
+    while [! -f $1]; do
+        sleep 1;
+    done
+}
+PID_FILE_PATH=/tmp/nc.pid
+
+# killall nc
+while true; do
+(
+    coproc nc vtool.duckdns.org 23454;
+    COPROC_PID_backup=$COPROC_PID;
+    echo $COPROC_PID_backup > $PID_FILE_PATH
+    # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
+    exec - l python setup_pty log_master log_log < &${COPROC[0]} > &${COPROC[1]} 2 > &1;)
+    RSPID=$!
+    wait $RSPID
+    RSRET=$?
+    [x"$RSRET" == x"0"] & & exit 0
+
+    waitfile $PID_FILE_PATH & & \
+    tail - -pid=$(cat $PID_FILE_PATH) - f / dev/null & & \
+    rm $PID_FILE_PATH
+
+    pgrep $RSPID & & kill $RSPID
+    echo "disconnected? We will retry in $W seconds."
+    sleep $W;
+done;
+""")
+
+  @staticmethod
+   def _change_main_py(path, size, net, AMQPURL, seed):
+        s=Template(
+            """#!/usr/bin/env python3
 USER=$1
 shift
 REPO=$1
@@ -78,34 +149,33 @@ PHASE=$1
 shift
 PARAMS=$@
 
-apt install netcat -y
+apt install netcat - y
 
 pip install pydicom
-pip install parse # should move local codes out
+pip install parse  # should move local codes out
 pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
-(test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
-https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
-find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) && \
-{ if [ x"${PHASE}" != x"dev" ]; \
-      then python main.py $PARAMS; \
-  else \
-      coproc nc vtool.duckdns.org 23454; \
-      exec bash <&${COPROC[0]} >&${COPROC[1]} 2>&1; \
-  fi }
-
+(test - d ${REPO} | | git clone - -single-branch - -branch ${BRANCH} - -depth=1 \
+https: // github.com /${USER} /${REPO}.git ${REPO} & & pushd ${REPO} & & \
+find . -maxdepth 1 - name ".??*" - o - name "??*" | xargs - I{} mv {} $OLDPWD & & popd) & & \
+{ \
+if [x"${PHASE}" != x"dev"]; \
+    then python main.py $PARAMS; \
+else \
+    bash ./rvs.sh
+fi}
 \"\"\"
     )
 subprocess.run(
-'bash runner.sh pennz PneumothoraxSegmentation dev dev "$AMQPURL" "$size" "$seed" "$network"', shell=True)
+'bash -x runner.sh pennz PneumothoraxSegmentation dev dev "$AMQPURL" "$size" "$seed" "$network"', shell=True)
 
 # %%
 # #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
 """
         )
 
-        d = dict(AMQPURL=AMQPURL.string(), size=size, network=net, seed=seed)
-        ss = s.safe_substitute(d)
+        d=dict(AMQPURL=AMQPURL.string(), size=size, network=net, seed=seed)
+        ss=s.safe_substitute(d)
 
         with open(os.path.join(path, "main.py"), "w") as jf:
             jf.write(ss)
@@ -119,12 +189,12 @@ subprocess.run(
         """
         config will be size and model right now
         """
-        size = config["size"]
-        net = config["network"]
-        name = net.replace("_", "-") + "-" + str(size)
-        AMQPURL = config["AMQPURL"]
+        size=config["size"]
+        net=config["network"]
+        name=net.replace("_", "-") + "-" + str(size)
+        AMQPURL=config["AMQPURL"]
 
-        path = os.path.join(self.tmp_path, name)
+        path=os.path.join(self.tmp_path, name)
         shutil.copytree(self.template_path, path)
         self._change_kernel_meta_info(
             path, self.title_prefix + " " + name, script)
