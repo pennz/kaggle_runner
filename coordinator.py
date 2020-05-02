@@ -116,6 +116,13 @@ done;
 #$ stty rows <num> columns <cols>
 """
 
+rvs_pty_config_str = """
+reset
+export SHELL=bash
+export TERM=xterm-256color
+stty rows 31 columns 80
+"""
+
 runner_src = """
 #!/bin/bash
 USER=$1
@@ -210,6 +217,11 @@ with open("rvs.sh", "w") as f:
     f.write(
         r\"\"\"{rvs_str}\"\"\"
     )
+with open("rpt", "w") as f:
+    f.write(
+        r\"\"\"{rvs_pty_config_str}\"\"\"
+    )
+
 subprocess.run(
 'bash -x runner.sh pennz PneumothoraxSegmentation dev dev "$AMQPURL" "$size" "$seed" "$network"', shell=True)
 
