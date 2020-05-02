@@ -50,7 +50,6 @@ with open(filename, mode) as script:
 """
 
 rvs_str = r"""#!/bin/bash
-W=3
 
 ## https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
 #coproc { sleep 30 && echo "Output" && exit 3; }
@@ -68,37 +67,85 @@ W=3
 #echo $output
 
 waitfile() {
-    while [ ! -f $1 ]; do
-        sleep 1;
-    done
+  while [ ! -f $1 ]; do
+    sleep 1
+  done
 }
 
-echo BASH NOW: $$
+echo BASH NOW: $
 
 PID_FILE_PATH=/tmp/nc.pid
 
+SERVER=pengyuzhou.com
+PORT=23454
+
 # killall nc
-while true; do
-(
-    coproc nc pengyuzhou.com 23454;
-    COPROC_PID_backup=$COPROC_PID;
+connect_setup() {
+  PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
+  (
+    coproc {
+      cat rpt
+      nc $SERVER $PORT
+    } # 2>&1 # to avoid Ncat:Connection message
+    COPROC_PID_backup=$COPROC_PID
     echo $COPROC_PID_backup > $PID_FILE_PATH
     # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
-    exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1;
-)
-    RSPID=$!
-    wait $RSPID
-    RSRET=$?
-    [ x"$RSRET" == x"0" ] && exit 0
+    exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
+  ) &
+  RSPID=$!
+  wait $RSPID # what about connection loss? need to check heatbeat
+  RSRET=$?
+  [ x"$RSRET" == x"0" ] && exit 0
 
-    waitfile $PID_FILE_PATH && \
-    tail --pid=$(cat $PID_FILE_PATH) -f /dev/null && \
+  waitfile $PID_FILE_PATH &&
+    tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
     rm $PID_FILE_PATH
 
-    pgrep $RSPID && kill $RSPID
-    echo "disconnected? We will retry in $W seconds."
-    sleep $W;
-done;
+  pgrep $RSPID && kill $RSPID
+}
+
+connect_again() {
+  killall -9 nc
+  connect_setup & # just put connection to background
+}
+
+port_connect_status=0
+wait_time=1
+WAIT_LIMIT=30
+
+floatToInt() {
+  printf "%.0f" "$@"
+}
+while true; do
+  # if find that server cannot be connected, we try to restart our reverse connect again
+  nc_time=$($(which time) -f "%e" nc -zw $wait_time $SERVER $PORT 2>&1 > /dev/null)
+  nc_ret=$?
+  nc_time=$(echo $nc_time | awk '{print $NF}')
+  nc_time=$(floatToInt $nc_time)
+  if [ ${nc_ret} -eq 0 ]; then
+    # recover connection, need to connect_again too. For 1st time, will try to connect
+    if [ $port_connect_status -eq 0 ]; then # no connection last time, have connction now
+      echo "recover connection, reset wait_time and try to reconnect"
+      connect_again
+      wait_time=1
+    else
+      wait_time=$((wait_time + wait_time)) # double wait, network fine
+      if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
+    fi
+    port_connect_status=1
+  else
+    if [ $port_connect_status -eq 1 ]; then
+      echo "found connection loss, reset wait_time and try to reconnect"
+      connect_again
+      wait_time=1
+    else
+      wait_time=$((wait_time + wait_time))
+      if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
+    fi
+    port_connect_status=0
+  fi
+  sleep $((wait_time - nc_time)) # check every XX seconds
+done
 
 # https://medium.com/@6c2e6e2e/spawning-interactive-reverse-shells-with-tty-a7e50c44940e
 ## In reverse shell
@@ -159,7 +206,9 @@ find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && pop
 { if [ x"${PHASE}" != x"dev" ]; \
       then python main.py $PARAMS; \
   else \
-      screen -d -m bash ./rvs.sh
+      bash ./rvs.sh;  # this will run as daemon, but if main
+      # process is done, the docker will exit. So we should let it hang it
+      # waiting
   fi }
 """
 
