@@ -114,9 +114,10 @@ connect_again() {
   connect_setup & # just put connection to background
 }
 
+WAIT_LIMIT=128
+INIT_WAIT=8
 port_connect_status=0
-wait_time=1
-WAIT_LIMIT=30
+wait_time=$INIT_WAIT
 
 floatToInt() {
   parsed=$(printf "%.0f" "$@")
@@ -203,7 +204,7 @@ PHASE=$1
 shift
 PARAMS=$@
 
-apt install screen tmux netcat -y
+apt install time screen tmux netcat -y
 
 pip install pydicom
 pip install parse  # should move local codes out
