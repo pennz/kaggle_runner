@@ -81,6 +81,7 @@ test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
 SERVER=pengyuzhou.com
 PORT=23454
+CHECK_PORT=$(( PORT + 1 ))
 
 # killall nc
 connect_setup() {
@@ -110,7 +111,7 @@ connect_setup() {
 }
 
 connect_again() {
-  killall -9 nc
+  pkill nc
   connect_setup & # just put connection to background
 }
 
@@ -128,7 +129,7 @@ floatToInt() {
 while true; do
   test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0
   # if find that server cannot be connected, we try to restart our reverse connect again
-  nc_time=$($(which time) -f "%e" nc -zw $wait_time $SERVER $PORT 2>&1 > /dev/null)
+  nc_time=$($(which time) -f "%e" nc -zw $wait_time $SERVER $CHECK_PORT 2>&1 > /dev/null)
   nc_ret=$?
   nc_time=$(echo $nc_time | awk '{print $NF}')
   nc_time=$(floatToInt $nc_time)
