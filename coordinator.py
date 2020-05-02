@@ -114,9 +114,10 @@ connect_again() {
   connect_setup & # just put connection to background
 }
 
+WAIT_LIMIT=128
+INIT_WAIT=8
 port_connect_status=0
-wait_time=1
-WAIT_LIMIT=30
+wait_time=$INIT_WAIT
 
 floatToInt() {
   parsed=$(printf "%.0f" "$@")
@@ -136,7 +137,7 @@ while true; do
     if [ $port_connect_status -eq 0 ]; then # no connection last time, have connction now
       echo "recover connection, reset wait_time and try to reconnect"
       connect_again
-      wait_time=1
+      wait_time=$INIT_WAIT
     else
       wait_time=$((wait_time + wait_time)) # double wait, network fine
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
@@ -146,7 +147,7 @@ while true; do
     if [ $port_connect_status -eq 1 ]; then
       echo "found connection loss, reset wait_time and try to reconnect"
       connect_again
-      wait_time=1
+      wait_time=$INIT_WAIT
     else
       wait_time=$((wait_time + wait_time))
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
@@ -203,7 +204,7 @@ PHASE=$1
 shift
 PARAMS=$@
 
-apt install screen tmux netcat -y
+apt install time screen tmux netcat -y
 
 pip install pydicom
 pip install parse  # should move local codes out
