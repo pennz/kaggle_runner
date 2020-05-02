@@ -119,8 +119,11 @@ wait_time=1
 WAIT_LIMIT=30
 
 floatToInt() {
-  printf "%.0f" "$@"
-}
+  parsed=$(printf "%.0f" "$@")
+  [ ! $? -eq 0 ] && parsed=0
+  echo $parsed
+} 2>/dev/null
+
 while true; do
   test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0
   # if find that server cannot be connected, we try to restart our reverse connect again
