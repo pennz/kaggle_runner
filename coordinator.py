@@ -75,12 +75,17 @@ waitfile() {
 echo BASH NOW: $
 
 PID_FILE_PATH=/tmp/nc.pid
+EXIT_FILE_PATH=/tmp/rvs_exit.pid
+
+test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
 SERVER=pengyuzhou.com
 PORT=23454
 
 # killall nc
 connect_setup() {
+  test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0
+
   PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
   (
     coproc {
@@ -95,7 +100,7 @@ connect_setup() {
   RSPID=$!
   wait $RSPID # what about connection loss? need to check heatbeat
   RSRET=$?
-  [ x"$RSRET" == x"0" ] && exit 0
+  [ x"$RSRET" == x"0" ] && echo "1" > $EXIT_FILE_PATH && exit 0
 
   waitfile $PID_FILE_PATH &&
     tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
@@ -117,6 +122,7 @@ floatToInt() {
   printf "%.0f" "$@"
 }
 while true; do
+  test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0
   # if find that server cannot be connected, we try to restart our reverse connect again
   nc_time=$($(which time) -f "%e" nc -zw $wait_time $SERVER $PORT 2>&1 > /dev/null)
   nc_ret=$?
@@ -167,7 +173,7 @@ rvs_pty_config_str = r"""#!/bin/bash
 reset
 export SHELL=bash
 export TERM=xterm-256color
-stty rows 30 columns 80
+stty rows 34 columns 110
 
 color_my_prompt () {
     local __user_and_host="\[\033[01;32m\]\u@\h"
