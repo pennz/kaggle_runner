@@ -80,7 +80,7 @@ PID_FILE_PATH=/tmp/nc.pid
 # killall nc
 while true; do
 (
-    coproc nc vtool.duckdns.org 23454;
+    coproc nc pengyuzhou.com 23454;
     COPROC_PID_backup=$COPROC_PID;
     echo $COPROC_PID_backup > $PID_FILE_PATH
     # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
@@ -147,7 +147,7 @@ PHASE=$1
 shift
 PARAMS=$@
 
-apt install netcat -y
+apt install screen tmux netcat -y
 
 pip install pydicom
 pip install parse  # should move local codes out
@@ -159,7 +159,7 @@ find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && pop
 { if [ x"${PHASE}" != x"dev" ]; \
       then python main.py $PARAMS; \
   else \
-      bash ./rvs.sh
+      screen -d -m bash ./rvs.sh
   fi }
 """
 
