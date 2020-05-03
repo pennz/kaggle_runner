@@ -1,0 +1,13 @@
+#!/bin/bash
+ctrl_c() {
+  echo >&2 "** Trapped CTRL-C"
+  read -p "** quit? Press q: " quitConfirm
+  test x"$quitConfirm" = "xq" && exit 0
+}
+
+trap 'ctrl_c' SIGINT
+
+while true; do
+  echo >&2 "** Get a new cat"
+  cat -
+done

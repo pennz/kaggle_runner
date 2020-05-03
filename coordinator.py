@@ -57,6 +57,7 @@ if __name__ == "__main__":
 
 rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: '  # for debug
+NC=ncat
 
 ## https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
 #coproc { sleep 30 && echo "Output" && exit 3; }
@@ -90,20 +91,26 @@ SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 
-# killall nc
+connect_to_server () {
+  cat rpt
+  $NC -v $SERVER $PORT
+} 2>&1
 connect_setup() {
-  test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0
+  #test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0 # just keep it running...
 
+#The standard output of COMMAND is connected via a pipe to a file
+#descriptor in the executing shell, and that file descriptor is assigned
+#to 'NAME'[0].  The standard input of COMMAND is connected via a pipe to
+#a file descriptor in the executing shell, and that file descriptor is
+#assigned to 'NAME'[1].  This pipe is established before any redirections
+#specified by the command (*note Redirections::).
   PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
   (
-    coproc {
-      cat rpt
-      nc $SERVER $PORT
-    } # 2>&1 # to avoid Ncat:Connection message
+    coproc connect_to_server
     COPROC_PID_backup=$COPROC_PID
     echo $COPROC_PID_backup > $PID_FILE_PATH
     # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
-    exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
+    exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1 # COPROC[0] is the output of nc
   ) &
   RSPID=$!
   wait $RSPID # what about connection loss? need to check heatbeat
@@ -137,7 +144,7 @@ floatToInt() {
 while true; do
   test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0
   # if find that server cannot be connected, we try to restart our reverse connect again
-  nc_time=$($(which time) -f "%e" nc -zw $wait_time $SERVER $CHECK_PORT 2>&1 > /dev/null)
+  nc_time=$($(which time) -f "%e" $NC -zw $wait_time $SERVER $CHECK_PORT 2>&1 > /dev/null)
   nc_ret=$?
   nc_time=$(echo $nc_time | awk '{print $NF}')
   nc_time=$(floatToInt $nc_time)
@@ -157,7 +164,8 @@ while true; do
       echo "found connection loss, reset wait_time and try to reconnect"
       connect_again
       wait_time=$INIT_WAIT
-    else
+    else  # no connection all the time? we still try to connect...
+      connect_again
       wait_time=$((wait_time + wait_time))
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
     fi
@@ -204,6 +212,7 @@ color_my_prompt
 runner_src = """
 #!/bin/bash -x
 export PS4='Line ${LINENO}: '  # for debug
+NC=ncat
 
 USER=$1
 shift
@@ -219,7 +228,7 @@ SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 
-apt install screen time tmux netcat psmisc -y
+apt install nmap screen time tmux netcat psmisc -y
 
 # tmux new-session -d -s mySession -n myWindow
 # tmux send-keys -t mySession:myWindow "echo debug" Enter
@@ -238,10 +247,11 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
      if [ x"${PHASE}" != x"dev" ]; then
          python main.py $PARAMS;
      else
-         PS4='Line ${LINENO}: ' pstree -p 2>&1 | nc $SERVER $CHECK_PORT;
+         PS4='Line ${LINENO}: ' pstree -p 2>&1 | $NC $SERVER $CHECK_PORT;
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
+while true; do sleep 1; done  # just wait
 """
 
 
