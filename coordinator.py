@@ -219,27 +219,28 @@ SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 
-apt install time tmux netcat -y
+apt install screen time tmux netcat psmisc -y
 
-tmux new-session -d -s mySession -n myWindow
-tmux send-keys -t mySession:myWindow "bash -x ./rvs.sh 2>&1 | nc $SERVER $CHECK_PORT" Enter
-tmux ls
+# tmux new-session -d -s mySession -n myWindow
+# tmux send-keys -t mySession:myWindow "echo debug" Enter
+# tmux ls
+pip install pysnooper  # for debug rvs
+screen -d -m bash ./rvs.sh
 
-pip install pydicom parse pytest-logger pysnooper python_logging_rabbitmq &
+pip install pydicom parse pytest-logger python_logging_rabbitmq &
 # pip install parse  # should move local codes out
 # pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
 (test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
-find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) && \
-{ if [ x"${PHASE}" != x"dev" ]; \
-      then python main.py $PARAMS; \
-  else \
-      PS4='Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | nc $SERVER $CHECK_PORT;
-      # this cannot run as daemon, if main
-      # process is done, the docker will exit. So we should let it hang it
-      # waiting
-  fi }
+ find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) \
+ && {
+     if [ x"${PHASE}" != x"dev" ]; then
+         python main.py $PARAMS;
+     else
+         PS4='Line ${LINENO}: ' pstree -p 2>&1 | nc $SERVER $CHECK_PORT;
+     fi
+    } 2 >&1
 """
 
 
