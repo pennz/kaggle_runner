@@ -7,7 +7,7 @@ function ctrl_c() {
         echo "** Trapped CTRL-C"
 }
 
-addNewPort() {
+getNewPort() {
   serverNodes=$1
   lastServer=$(tail -n 1 $serverNodes)
   if [ $? -eq 0 -a x"$lastServer" != x ]; then
@@ -18,10 +18,22 @@ addNewPort() {
   echo $newNode >> $serverNodes
   echo $newNode
 }
+connect() {
+    local newPort=$1
+    $NC -vvlp $newPort
+    ret=$?
+    sed -i "/^$newPort\$/d" $2 1>/dev/null 2>&1
+    return $ret
+}
 
-newPort=$(addNewPort serverNodes)
-$NC -vvvvvlp $newPort
-sed -i "/^$newPort\$/d" serverNodes 1>/dev/null 2>&1
+port=$(getNewPort serverNodes)
+connect $port serverNodes
+
+if [ ! $? -eq 0 ]; then
+    port=$((port + 1))
+    connect $port serverNodes
+fi
+
 # so reverse shell server named to RSS
 # so tcpserver instance named to TSins
 #   RSS output -> TSins[0]

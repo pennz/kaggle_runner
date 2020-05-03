@@ -195,9 +195,10 @@ rvs_pty_config_str = r"""#!/bin/bash
 reset
 export SHELL=bash
 export TERM=xterm-256color
-stty intr ^\k
-stty -echo
-stty rows 29 columns 59
+stty intr ^\k susp ^\x -echo rows 29 columns 59 opost
+#https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
+unsetopt ZLE # for zsh
+# for ourside stty raw isig -echo icrnl time 3 echoprt opost
 
 color_my_prompt () {
     local __user_and_host="\[\033[01;32m\]\u@\h"
