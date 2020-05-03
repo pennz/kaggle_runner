@@ -240,7 +240,8 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
      else
          PS4='Line ${LINENO}: ' pstree -p 2>&1 | nc $SERVER $CHECK_PORT;
      fi
-    } 2 >&1
+    }
+# GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
 """
 
 
