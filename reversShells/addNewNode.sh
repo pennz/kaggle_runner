@@ -20,7 +20,7 @@ addNewPort() {
 }
 
 newPort=$(addNewPort serverNodes)
-$NC -vlp $newPort
+$NC -vvvvvlp $newPort
 sed -i "/^$newPort\$/d" serverNodes 1>/dev/null 2>&1
 # so reverse shell server named to RSS
 # so tcpserver instance named to TSins

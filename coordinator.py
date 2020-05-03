@@ -80,10 +80,10 @@ waitfile() {
   done
 }
 
-echo BASH NOW: $
+echo BASH NOW: $$
 
 PID_FILE_PATH=/tmp/nc.pid
-EXIT_FILE_PATH=/tmp/rvs_exit.pid
+EXIT_FILE_PATH=/tmp/rvs_exit.$BASHPID.pid
 
 test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
@@ -93,10 +93,10 @@ CHECK_PORT=$(( PORT + 1 ))
 
 connect_to_server () {
   cat rpt
-  $NC -v $SERVER $PORT
+  $NC -w $1 $SERVER $PORT
 } 2>&1
 connect_setup() {
-  #test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0 # just keep it running...
+  test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && rm $EXIT_FILE_PATH && exit 0
 
 #The standard output of COMMAND is connected via a pipe to a file
 #descriptor in the executing shell, and that file descriptor is assigned
@@ -106,7 +106,7 @@ connect_setup() {
 #specified by the command (*note Redirections::).
   PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
   (
-    coproc connect_to_server
+    coproc connect_to_server $1
     COPROC_PID_backup=$COPROC_PID
     echo $COPROC_PID_backup > $PID_FILE_PATH
     # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
@@ -122,12 +122,13 @@ connect_setup() {
     rm $PID_FILE_PATH
 
   pgrep $RSPID && kill $RSPID
+  echo "1" > $EXIT_FILE_PATH && exit 0  # exit
 }
 
 connect_again() {
   # pkill -f "nc.*$PORT"  # no need now, our listen server can accept multiple
   # connection now
-  connect_setup & # just put connection to background
+  connect_setup $1 & # just put connection to background
 }
 
 WAIT_LIMIT=128
@@ -142,7 +143,7 @@ floatToInt() {
 } 2>/dev/null
 
 while true; do
-  test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && exit 0
+  test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && rm $EXIT_FILE_PATH && exit 0
   # if find that server cannot be connected, we try to restart our reverse connect again
   nc_time=$($(which time) -f "%e" $NC -zw $wait_time $SERVER $CHECK_PORT 2>&1 > /dev/null)
   nc_ret=$?
@@ -152,8 +153,8 @@ while true; do
     # recover connection, need to connect_again too. For 1st time, will try to connect
     if [ $port_connect_status -eq 0 ]; then # no connection last time, have connction now
       echo "recover connection, reset wait_time and try to reconnect"
-      connect_again
       wait_time=$INIT_WAIT
+      connect_again $wait_time
     else
       wait_time=$((wait_time + wait_time)) # double wait, network fine
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
@@ -162,12 +163,12 @@ while true; do
   else
     if [ $port_connect_status -eq 1 ]; then
       echo "found connection loss, reset wait_time and try to reconnect"
-      connect_again
       wait_time=$INIT_WAIT
+      connect_again $wait_time
     else  # no connection all the time? we still try to connect...
-      connect_again
       wait_time=$((wait_time + wait_time))
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
+      connect_again $wait_time
     fi
     port_connect_status=0
   fi
@@ -194,7 +195,9 @@ rvs_pty_config_str = r"""#!/bin/bash
 reset
 export SHELL=bash
 export TERM=xterm-256color
-stty rows 34 columns 110
+stty intr ^\k
+stty -echo
+stty rows 29 columns 59
 
 color_my_prompt () {
     local __user_and_host="\[\033[01;32m\]\u@\h"
