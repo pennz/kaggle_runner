@@ -15,6 +15,7 @@ import os
 import pty
 import sys
 import time
+import pysnooper
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-a', dest='append', action='store_true')
@@ -28,28 +29,34 @@ filename = options.filename
 logfilename = options.logfilename
 mode = 'ab' if options.append else 'wb'
 
-with open(filename, mode) as script:
-    def read(fd):
-        data = os.read(fd, 1024)
-        script.write(data)
-        return data
-
-    with open(logfilename, mode) as logscript:
-        def logread(fd):
+@pysnooper.snoop()
+def main():
+    with open(filename, mode) as script:
+        def read(fd):
             data = os.read(fd, 1024)
-            logscript.write(data)
+            script.write(data)
             return data
 
-        print('Script started, file is', filename)
-        script.write(('Script started on %s\n' % time.asctime()).encode())
+        with open(logfilename, mode) as logscript:
+            def logread(fd):
+                data = os.read(fd, 1024)
+                logscript.write(data)
+                return data
 
-        pty.spawn(shell, read, logread)
+            print('Script started, file is', filename)
+            script.write(('Script started on %s\n' % time.asctime()).encode())
 
-        script.write(('Script done on %s\n' % time.asctime()).encode())
-        print('Script done, file is', filename)
+            pty.spawn(shell, read, logread)
+
+            script.write(('Script done on %s\n' % time.asctime()).encode())
+            print('Script done, file is', filename)
+
+if __name__ == "__main__":
+     main()
 """
 
-rvs_str = r"""#!/bin/bash
+rvs_str = r"""#!/bin/bash -x
+export PS4='Line ${LINENO}: '  # for debug
 
 ## https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
 #coproc { sleep 30 && echo "Output" && exit 3; }
@@ -79,7 +86,7 @@ EXIT_FILE_PATH=/tmp/rvs_exit.pid
 
 test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
-SERVER=pengyuzhou.com
+SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 
@@ -111,7 +118,8 @@ connect_setup() {
 }
 
 connect_again() {
-  pkill nc
+  # pkill -f "nc.*$PORT"  # no need now, our listen server can accept multiple
+  # connection now
   connect_setup & # just put connection to background
 }
 
@@ -194,7 +202,9 @@ color_my_prompt
 """
 
 runner_src = """
-#!/bin/bash
+#!/bin/bash -x
+export PS4='Line ${LINENO}: '  # for debug
+
 USER=$1
 shift
 REPO=$1
@@ -205,11 +215,19 @@ PHASE=$1
 shift
 PARAMS=$@
 
-apt install time screen tmux netcat -y
+SERVER=vtool.duckdns.org
+PORT=23454
+CHECK_PORT=$(( PORT + 1 ))
 
-pip install pydicom
-pip install parse  # should move local codes out
-pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
+apt install time tmux netcat -y
+
+tmux new-session -d -s mySession -n myWindow
+tmux send-keys -t mySession:myWindow "bash -x ./rvs.sh 2>&1 | nc $SERVER $CHECK_PORT" Enter
+tmux ls
+
+pip install pydicom parse pytest-logger pysnooper python_logging_rabbitmq &
+# pip install parse  # should move local codes out
+# pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
 (test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
@@ -217,7 +235,8 @@ find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && pop
 { if [ x"${PHASE}" != x"dev" ]; \
       then python main.py $PARAMS; \
   else \
-      bash ./rvs.sh;  # this will run as daemon, but if main
+      PS4='Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | nc $SERVER $CHECK_PORT;
+      # this cannot run as daemon, if main
       # process is done, the docker will exit. So we should let it hang it
       # waiting
   fi }
@@ -277,17 +296,19 @@ class Coordinator:
         s = Template(
             f"""#!/usr/bin/env python3
 import subprocess
+
+# runner -> rvs.sh (setup reverse connection) -> setup pseudo tty
 with open("runner.sh", "w") as f:
     f.write(
         r\"\"\"{runner_src}\"\"\"
     )
-with open("setup_pty", "w") as f:
-    f.write(
-        r\"\"\"{setup_pty_str}\"\"\"
-    )
 with open("rvs.sh", "w") as f:
     f.write(
         r\"\"\"{rvs_str}\"\"\"
+    )
+with open("setup_pty", "w") as f:
+    f.write(
+        r\"\"\"{setup_pty_str}\"\"\"
     )
 with open("rpt", "w") as f:
     f.write(
