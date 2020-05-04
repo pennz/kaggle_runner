@@ -321,7 +321,7 @@ tar xf siim-train-test.tar.gz -C /kaggle/input
 """
 
 
-runner_src = """
+runner_src = r"""
 #!/bin/bash -x
 export PS4 = 'Line ${LINENO}: '  # for debug
 NC = ncat
@@ -582,9 +582,8 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
+while true; do sleep 60; done  # just wait
 """
-
-# while true; do sleep 1; done"""  # just wait
 
 
 class Coordinator:
@@ -639,8 +638,8 @@ class Coordinator:
     @staticmethod
     def _change_main_py(path, size, net, AMQPURL, seed):
         s = Template(
-            f"""  # !/usr/bin/env python3
-
+            f"""#!/usr/bin/env python3
+import subprocess
 # runner -> rvs.sh (setup reverse connection) -> setup pseudo tty
 with open("runner.sh", "w") as f:
     f.write(
