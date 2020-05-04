@@ -237,8 +237,7 @@ tgzfile () {
   tar cf - $1 -P | pv -s $(du -sb $1 | awk '{print $1}') | gzip > /home/$1.tar.gz
 }
 cd /kaggle/input
-find . -maxdepth 1 -type d -name "??*" | \
-while read -r line; do
+find . -maxdepth 1 -type d -name "??*" | while read -r line; do
 	echo $line
 	tgzfile $line
 done
@@ -264,15 +263,179 @@ toUpLoadFiles = glob.glob(toUpload+"/*")
 folders = drive.ListFile(
     {'q': "title='" + folderName + "' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
 # print(folders)
-for folder in folders:
-    if folder['title'] == folderName:
-        for f in toUpLoadFiles:
-            file2 = drive.CreateFile({'parents': [{'id': folder['id']}]})
-            file2.SetContentFile(f)
-            file2.Upload()
-        break
+for f in toUpLoadFiles:
+    print(f)
+    file2 = drive.CreateFile({"title": f})
+    file2.SetContentFile(f)
+    file2.Upload()
+#for folder in folders:
+#    if folder['title'] == folderName:
+#        break
+EOF
+
+cat > .tmux.conf <<EOF
+#unbind-key C-b
+#set -g prefix C-a
+set -g prefix2 \
+#bind-key C-o send-prefix
+bind-key ` send `
+bind-key C new-window \; command-prompt -p "Name for this new window: " "rename-window '%%'"
+## set the default TERM
+set -g default-terminal screen
+set -g allow-rename off
+
+## update the TERM variable of terminal emulator when creating a new session or attaching a existing session
+set -g update-environment 'DISPLAY SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY TERM'
+## determine if we should enable 256-colour support
+if "[[ ${TERM} =~ 256color || ${TERM} == fbterm ]]" 'set -g default-terminal screen-256color'
+
+# makes sure that if I try to attach and no sessions are alive, one is created.
+#new-session -n $HOST
+
+# 0 is too far from ` ;)
+set -g base-index 1
+
+# Automatically set window title
+set-window-option -g automatic-rename off
+set-option -g set-titles on
+
+set -g status-keys vi
+set -g history-limit 10000
+
+setw -g mode-keys vi
+setw -g mouse on
+setw -g monitor-activity on
+
+bind-key v split-window -h
+bind-key s split-window -v
+
+bind-key o display-panes
+#bind-key h select-pane -L #resize-pane -D 5
+#bind-key j select-pane -D #resize-pane -U 5
+#bind-key k select-pane -U #resize-pane -L 5
+#bind-key l select-pane -R #resize-pane -R 5
+
+bind-key M-j resize-pane -D
+bind-key M-k resize-pane -U
+bind-key M-h resize-pane -L
+bind-key M-l resize-pane -R
+
+# Vim style pane selection
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# Use Alt-vim keys without prefix key to switch panes
+bind -n M-h select-pane -L
+bind -n M-j select-pane -D
+bind -n M-k select-pane -U
+bind -n M-l select-pane -R
 
 
+# Use Alt-arrow keys without prefix key to switch panes
+#bind -n M-Left select-pane -L
+#bind -n M-Right select-pane -R
+#bind -n M-Up select-pane -U
+#bind -n M-Down select-pane -D
+
+# Alt-[".",","] to switch windows
+bind -n M-. next-window
+bind -n M-, previous-window
+
+# No delay for escape key press
+set -sg escape-time 0
+
+# Reload tmux config
+bind r source-file ~/.tmux.conf
+
+#set -g status-utf8 on
+set -g status-justify left
+set -g status-interval 30
+
+# window status
+setw -g window-status-format " #F#I:#W#F "
+setw -g window-status-current-format " #F#I:#W#F "
+setw -g window-status-format "#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8] #W "
+setw -g window-status-current-format "#[bg=brightmagenta]#[fg=colour8] #I #[fg=colour8]#[bg=colour14] #W "
+set -g status-left-length 30
+set -g status-left 'P#P #[fg=green][#W] in (#S)#[fg=gray] as #(whoami) '
+#set -g status-right '#[fg=yellow]#(cut -d " " -f 1-3 /proc/loadavg)#[default] #[fg=white]%H:%M#[default]'
+set -g status-right-length 60
+
+# loud or quiet?
+set-option -g visual-activity off
+set-option -g visual-bell off
+set-option -g visual-silence off
+set-window-option -g monitor-activity off
+set-option -g bell-action none
+
+unbind [
+bind [ copy-mode
+unbind p
+bind p paste-buffer
+bind-key -Tcopy-mode-vi 'C-v' send -X begin-selection \; send -X rectangle-toggle
+bind-key -Tcopy-mode-vi 'v' send -X begin-selection
+bind-key -Tcopy-mode-vi 'y' send -X copy-selection-and-cancel
+
+
+# The modes {
+setw -g clock-mode-colour colour135
+setw -g mode-style bg=colour238,fg=colour196,bold
+
+# }
+# The panes {
+
+# highlight selected pane, tab
+#set -g window-style 'fg=colour247,bg=colour236'
+#set -g window-active-style 'fg=colour250,bg=black'
+#set -g pane-border-style fg=colour238,bg=colour235
+set -g pane-border-style bg=colour236,fg=colour51
+set -g pane-active-border-style bg=colour236,fg=colour51
+
+# }
+# The statusbar {
+
+set -g status-position bottom
+set -g status-style bg=colour234,fg=colour137,dim
+set -g status-right '#[fg=colour233,bg=colour241,bold] %d/%m #[fg=colour233,bg=colour245,bold] %H:%M:%S '
+set -g status-right-length 50
+
+setw -g window-status-current-style bg=colour238,fg=colour81,bold
+setw -g window-status-current-format ' #I#[fg=colour250]:#[fg=colour255]#W#[fg=colour50]#F '
+
+setw -g window-status-style bg=colour235,fg=colour138,none
+setw -g window-status-format ' #I#[fg=colour237]:#[fg=colour250]#W#[fg=colour244]#F '
+
+setw -g window-status-bell-style bg=colour1,fg=colour255,bold
+
+# }
+# The messages {
+
+set -g message-style bg=colour166,fg=colour232,bold
+
+# }
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @plugin 'tmux-plugins/tmux-yank'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @continuum-restore 'on'
+
+# Other examples:
+# set -g @plugin 'github_username/plugin_name'
+# set -g @plugin 'git@github.com/user/plugin'
+# set -g @plugin 'git@bitbucket.com/user/plugin'
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run -b '~/.tmux/plugins/tpm/tpm'
+bind | split-window -h
+bind - split-window -v
+bind-key P command-prompt -p 'save history to filename:' -I '~/tmux.history' 'capture-pane -S -32768 ; save-buffer %1 ; delete-buffer'
+bind-key W command-prompt -p "Switch to pane with pid:" "run-shell 'pane=\$(ps eww %% | sed \"1d; s/^.*TMUX_PANE=//;s/ .*//\"); [[ -z \$pane ]] && tmux display-message \"could not find pid\" || tmux switch-client -t \$pane'"
 EOF
 
 cat > ENVS <<EOF
