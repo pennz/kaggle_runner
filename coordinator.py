@@ -98,6 +98,7 @@ connect_to_server() {
   cat rpt
   echo
   echo
+  echo
   echo "#" $(date) started connection
   $NC -w $1 $SERVER $PORT
 } 2>&1
@@ -266,7 +267,7 @@ MPLBACKEND=module://ipykernel.pylab.backend_inline
 # CUDA_VERSION=10.1.243
 # NVIDIA_DRIVER_CAPABILITIES=compute,utility
 SHLVL=3
-#PYTHONPATH=/env/python
+# PYTHONPATH=/env/python
 # NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
 # COLAB_GPU=0
 # GLIBCXX_FORCE_NEW=1
@@ -552,7 +553,7 @@ MPLBACKEND=module://ipykernel.pylab.backend_inline
 # CUDA_VERSION=10.1.243
 # NVIDIA_DRIVER_CAPABILITIES=compute,utility
 SHLVL=3
-#PYTHONPATH=/env/python
+# PYTHONPATH=/env/python
 # NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
 # COLAB_GPU=0
 # GLIBCXX_FORCE_NEW=1
@@ -581,8 +582,9 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
-while true; do sleep 1; done  # just wait
 """
+
+# while true; do sleep 1; done"""  # just wait
 
 
 class Coordinator:
