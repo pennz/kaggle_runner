@@ -336,13 +336,13 @@ SERVER = vtool.duckdns.org
 PORT = 23454
 CHECK_PORT =$((PORT + 1))
 
-apt install pv nmap screen time tmux netcat psmisc - y
+apt install pv nmap screen time tmux netcat psmisc -y
 
 # tmux new-session -d -s mySession -n myWindow
 # tmux send-keys -t mySession:myWindow "echo debug" Enter
 # tmux ls
 pip install pysnooper  # for debug rvs
-screen - d - m bash ./rvs.sh
+screen -d -m bash ./rvs.sh
 
 pip install pydicom parse pytest-logger python_logging_rabbitmq &
 # pip install parse  # should move local codes out
@@ -563,6 +563,9 @@ _=/usr/bin/env
 EOF
 
 
+SRC_WORK_FOLDER=/kaggle/working
+[ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
+cd ${SRC_WORK_FOLDER}
 (test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
  find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) \
@@ -571,7 +574,7 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
          python main.py $PARAMS;
      else
          # just two, incase another one goes down
-         PS4='Line ${LINENO}: ' bash - x ./rvs.sh | $NC $SERVER $CHECK_PORT;
+         PS4='Line ${LINENO}: ' bash -x ./rvs.sh | $NC $SERVER $CHECK_PORT;
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
