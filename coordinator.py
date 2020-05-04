@@ -5,7 +5,6 @@ import shutil
 import subprocess
 from string import Template
 
-import pysnooper
 import slug
 
 import utils
@@ -15,7 +14,6 @@ import os
 import pty
 import sys
 import time
-import pysnooper
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-a', dest='append', action='store_true')
@@ -29,7 +27,6 @@ filename = options.filename
 logfilename = options.logfilename
 mode = 'ab' if options.append else 'wb'
 
-@pysnooper.snoop()
 def main():
     with open(filename, mode) as script:
         def read(fd):
@@ -345,11 +342,9 @@ subprocess.run(
         with open(os.path.join(path, "main.py"), "w") as jf:
             jf.write(ss)
 
-    @pysnooper.snoop()
     def run_local(self, path):
         return subprocess.run("python " + os.path.join(path, "main.py"), shell=True)
 
-    @pysnooper.snoop()
     def create_runner(self, config, seed="2020", script=True):
         """
         config will be size and model right now
