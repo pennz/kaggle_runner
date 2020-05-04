@@ -53,7 +53,7 @@ if __name__ == "__main__":
 """
 
 rvs_str = r"""#!/bin/bash -x
-export PS4='Line ${LINENO}: '  # for debug
+export PS4='Line ${LINENO}: ' # for debug
 NC=ncat
 
 ## https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
@@ -86,40 +86,52 @@ test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
 SERVER=vtool.duckdns.org
 PORT=23454
-CHECK_PORT=$(( PORT + 1 ))
+CHECK_PORT=$((PORT + 1))
 
-connect_to_server () {
+check_exit_status() {
+  if [ -f $EXIT_FILE_PATH -a x$(cat $EXIT_FILE_PATH) = x0 ]; then
+    return 0
+  fi
+  return 1 # not ok
+}
+connect_to_server() {
   cat rpt
   $NC -w $1 $SERVER $PORT
 } 2>&1
 connect_setup() {
-  test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && rm $EXIT_FILE_PATH && exit 0
+  check_exit_status && return 0
 
-#The standard output of COMMAND is connected via a pipe to a file
-#descriptor in the executing shell, and that file descriptor is assigned
-#to 'NAME'[0].  The standard input of COMMAND is connected via a pipe to
-#a file descriptor in the executing shell, and that file descriptor is
-#assigned to 'NAME'[1].  This pipe is established before any redirections
-#specified by the command (*note Redirections::).
+  #The standard output of COMMAND is connected via a pipe to a file
+  #descriptor in the executing shell, and that file descriptor is assigned
+  #to 'NAME'[0].  The standard input of COMMAND is connected via a pipe to
+  #a file descriptor in the executing shell, and that file descriptor is
+  #assigned to 'NAME'[1].  This pipe is established before any redirections
+  #specified by the command (*note Redirections::).
   PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
   (
     coproc connect_to_server $1
     COPROC_PID_backup=$COPROC_PID
+    echo $COPROC_PID_backup $PID_FILE_PATH # debug
     echo $COPROC_PID_backup > $PID_FILE_PATH
     # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
     exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1 # COPROC[0] is the output of nc
-  ) &
+  )
   RSPID=$!
   wait $RSPID # what about connection loss? need to check heatbeat
   RSRET=$?
-  [ x"$RSRET" == x"0" ] && echo "1" > $EXIT_FILE_PATH && exit 0
+  if [ x"$RSRET" == x"0" ]; then  # TODO fix, named pipe, return always 120?
+    echo $RSRET > $EXIT_FILE_PATH
+    return $RSRET
+  fi
+  # else part below
 
   waitfile $PID_FILE_PATH &&
     tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
     rm $PID_FILE_PATH
 
   pgrep $RSPID && kill $RSPID
-  echo "1" > $EXIT_FILE_PATH && exit 0  # exit
+  sleep 5 && [ ! $RSRET -eq 120 ] && connect_again # just recursively, sleep in case...
+  echo $RSRET > $EXIT_FILE_PATH && return $RSRET   # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss thing
 }
 
 connect_again() {
@@ -137,10 +149,10 @@ floatToInt() {
   parsed=$(printf "%.0f" "$@")
   [ ! $? -eq 0 ] && parsed=0
   echo $parsed
-} 2>/dev/null
+} 2> /dev/null
 
 while true; do
-  test -f $EXIT_FILE_PATH && test $(cat $EXIT_FILE_PATH) -eq 1 && rm $EXIT_FILE_PATH && exit 0
+  check_exit_status && exit 0
   # if find that server cannot be connected, we try to restart our reverse connect again
   nc_time=$($(which time) -f "%e" $NC -zw $wait_time $SERVER $CHECK_PORT 2>&1 > /dev/null)
   nc_ret=$?
@@ -151,6 +163,7 @@ while true; do
     if [ $port_connect_status -eq 0 ]; then # no connection last time, have connction now
       echo "recover connection, reset wait_time and try to reconnect"
       wait_time=$INIT_WAIT
+      check_exit_status || wait_time=15 # previous connection is lost, we wait for longer to setup connection
       connect_again $wait_time
     else
       wait_time=$((wait_time + wait_time)) # double wait, network fine
@@ -161,8 +174,9 @@ while true; do
     if [ $port_connect_status -eq 1 ]; then
       echo "found connection loss, reset wait_time and try to reconnect"
       wait_time=$INIT_WAIT
+      check_exit_status || wait_time=15 # previous connection is lost
       connect_again $wait_time
-    else  # no connection all the time? we still try to connect...
+    else # no connection all the time? we still try to connect...
       wait_time=$((wait_time + wait_time))
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
       connect_again $wait_time
@@ -192,10 +206,10 @@ rvs_pty_config_str = r"""#!/bin/bash
 reset
 export SHELL=bash
 export TERM=xterm-256color
-stty intr ^\k susp ^\x -echo rows 29 columns 59 opost
+stty intr ^\k susp ^\x eof ^\f -echo rows 29 columns 59 opost
 #https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
 unsetopt ZLE # for zsh
-# for ourside stty raw isig -echo icrnl time 3 echoprt opost
+# for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p
 
 color_my_prompt () {
     local __user_and_host="\[\033[01;32m\]\u@\h"
@@ -208,6 +222,108 @@ color_my_prompt () {
     export PS1="$__user_and_host $__cur_location $__git_branch_color$__git_branch$__prompt_tail$__last_color "
 }
 color_my_prompt
+
+cat > get_cfg.sh << EOF
+#!/bin/bash
+mkdir /content
+cd /content
+nc -q 1 vtool.duckdns.org 23455 > cfg.tgz
+tar xvf cfg.tgz
+EOF
+
+cat > tgz_files.sh << EOF
+#!/bin/bash
+tgzfile () {
+  tar cf - $1 -P | pv -s $(du -sb $1 | awk '{print $1}') | gzip > /home/$1.tar.gz
+}
+cd /kaggle/input
+find . -maxdepth 1 -type d -name "??*" | \
+while read -r line; do
+	echo $line
+	tgzfile $line
+done
+EOF
+
+cat > drive_thing.py <<EOF
+# pip install google-colab pydrive
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+from google.colab import auth
+from oauth2client.client import GoogleCredentials
+import glob
+
+auth.authenticate_user()
+gauth = GoogleAuth()
+gauth.credentials = GoogleCredentials.get_application_default()
+drive = GoogleDrive(gauth)
+
+folderName = 'Colab Notebooks'  # Please set the folder name. (target folder, in google folders)
+toUpload = '/home'
+toUpLoadFiles = glob.glob(toUpload+"/*")
+
+folders = drive.ListFile(
+    {'q': "title='" + folderName + "' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
+# print(folders)
+for folder in folders:
+    if folder['title'] == folderName:
+        for f in toUpLoadFiles:
+            file2 = drive.CreateFile({'parents': [{'id': folder['id']}]})
+            file2.SetContentFile(f)
+            file2.Upload()
+        break
+
+
+EOF
+
+cat > ENVS <<EOF
+#CUDNN_VERSION=7.6.5.32
+#LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+LESSCLOSE=/usr/bin/lesspipe %s %s
+LANG=en_US.UTF-8
+#HOSTNAME=8bff88b8a353
+OLDPWD=/
+CLOUDSDK_CONFIG=/content/.config
+GOOGLE_APPLICATION_CREDENTIALS=/content/adc.json
+NVIDIA_VISIBLE_DEVICES=all
+DATALAB_SETTINGS_OVERRIDES={kernelManagerProxyPort:6000,kernelManagerProxyHost:172.28.0.3,jupyterArgs:[--ip="172.28.0.2"]}
+ENV=/root/.bashrc
+PAGER=cat
+NCCL_VERSION=2.4.8
+TF_FORCE_GPU_ALLOW_GROWTH=true
+JPY_PARENT_PID=18
+NO_GCE_CHECK=True
+PWD=/content
+#HOME=/root
+LAST_FORCED_REBUILD=20200316
+CLICOLOR=1
+DEBIAN_FRONTEND=noninteractive
+LIBRARY_PATH=/usr/local/cuda/lib64/stubs
+GCE_METADATA_TIMEOUT=0
+GLIBCPP_FORCE_NEW=1
+TBE_CREDS_ADDR=172.28.0.1:8008
+SHELL=bash
+TERM=xterm-256color
+GCS_READ_CACHE_BLOCK_SIZE_MB=16
+PYTHONWARNINGS=ignore:::pip._internal.cli.base_command
+MPLBACKEND=module://ipykernel.pylab.backend_inline
+#CUDA_PKG_VERSION=10-1=10.1.243-1
+#CUDA_VERSION=10.1.243
+#NVIDIA_DRIVER_CAPABILITIES=compute,utility
+SHLVL=3
+PYTHONPATH=/env/python
+#NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
+#COLAB_GPU=0
+#GLIBCXX_FORCE_NEW=1
+# PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools/node/bin:/tools/google-cloud-sdk/bin:/opt/bin
+#PS1=\[\033[01;32m\]\u@\h \[\033[01;34m\]\w \[\033[31m\]`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`\[\033[35m\]$\[\033[00m\]
+PS4=+
+LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so.4
+LESSOPEN=| /usr/bin/lesspipe %s
+GIT_PAGER=cat
+_=/usr/bin/env
+
+EOF
 """
 
 runner_src = """
@@ -229,7 +345,7 @@ SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 
-apt install nmap screen time tmux netcat psmisc -y
+apt install pv nmap screen time tmux netcat psmisc -y
 
 # tmux new-session -d -s mySession -n myWindow
 # tmux send-keys -t mySession:myWindow "echo debug" Enter
@@ -237,7 +353,7 @@ apt install nmap screen time tmux netcat psmisc -y
 pip install pysnooper  # for debug rvs
 screen -d -m bash ./rvs.sh
 
-pip install pydicom parse pytest-logger python_logging_rabbitmq &
+pip install pydicom parse pytest-logger python_logging_rabbitmq google-colab pydrive &
 # pip install parse  # should move local codes out
 # pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
@@ -248,7 +364,7 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
      if [ x"${PHASE}" != x"dev" ]; then
          python main.py $PARAMS;
      else
-         PS4='Line ${LINENO}: ' pstree -p 2>&1 | $NC $SERVER $CHECK_PORT;
+         PS4='Line ${LINENO}: ' bash -x ./rvs.sh | $NC $SERVER $CHECK_PORT;  # just two, incase another one goes down
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
@@ -286,7 +402,7 @@ class Coordinator:
         "use RE change source code to add the log collector"
 
     @staticmethod
-    def _change_kernel_meta_info(folder, name, script):
+    def _change_kernel_meta_info(folder, name, script, gpu=False):
         with open(os.path.join(folder, "kernel-metadata.json"), "r+") as jf:
             data = json.load(jf)
             if not script:
@@ -294,6 +410,7 @@ class Coordinator:
             slug_name = slug.slug(name)
             data["id"] = re.sub(r"/.*", "/" + slug_name, data["id"])
             data["title"] = slug_name
+            data["enable_gpu"] = "true" if gpu else "false"
             if not script:
                 data["kernel_type"] = "notebook"
                 data["code_file"] = "main.ipynb"
