@@ -96,6 +96,9 @@ check_exit_status() {
 }
 connect_to_server() {
   cat rpt
+  echo
+  echo
+  echo "#" $(date) started connection
   $NC -w $1 $SERVER $PORT
 } 2>&1
 connect_setup() {
