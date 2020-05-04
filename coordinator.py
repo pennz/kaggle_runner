@@ -56,20 +56,20 @@ rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: ' # for debug
 NC=ncat
 
-## https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
-#coproc { sleep 30 && echo "Output" && exit 3; }
-## Saving the coprocess's PID for later, as COPROC_PID apparently unsets when its finished
-#COPROC_PID_backup=$COPROC_PID
+# https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
+# coproc { sleep 30 && echo "Output" && exit 3; }
+# Saving the coprocess's PID for later, as COPROC_PID apparently unsets when its finished
+# COPROC_PID_backup=$COPROC_PID
 #
-## Retrieving the coprocess's output
-#output=$(cat <&$COPROC)
+# Retrieving the coprocess's output
+# output=$(cat <&$COPROC)
 #
-## Retrieving the coprocess's exit code
-#wait $COPROC_PID_backup
+# Retrieving the coprocess's exit code
+# wait $COPROC_PID_backup
 #
-## Echoing out the results
-#echo $?
-#echo $output
+# Echoing out the results
+# echo $?
+# echo $output
 
 waitfile() {
   while [ ! -f $1 ]; do
@@ -77,7 +77,7 @@ waitfile() {
   done
 }
 
-echo BASH NOW: $$
+echo BASH NOW: $BASHPID
 
 PID_FILE_PATH=/tmp/nc.pid
 EXIT_FILE_PATH=/tmp/rvs_exit.$BASHPID.pid
@@ -101,12 +101,12 @@ connect_to_server() {
 connect_setup() {
   check_exit_status && return 0
 
-  #The standard output of COMMAND is connected via a pipe to a file
-  #descriptor in the executing shell, and that file descriptor is assigned
-  #to 'NAME'[0].  The standard input of COMMAND is connected via a pipe to
-  #a file descriptor in the executing shell, and that file descriptor is
-  #assigned to 'NAME'[1].  This pipe is established before any redirections
-  #specified by the command (*note Redirections::).
+  # The standard output of COMMAND is connected via a pipe to a file
+  # descriptor in the executing shell, and that file descriptor is assigned
+  # to 'NAME'[0].  The standard input of COMMAND is connected via a pipe to
+  # a file descriptor in the executing shell, and that file descriptor is
+  # assigned to 'NAME'[1].  This pipe is established before any redirections
+  # specified by the command (*note Redirections::).
   PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
   (
     coproc connect_to_server $1
@@ -114,7 +114,8 @@ connect_setup() {
     echo $COPROC_PID_backup $PID_FILE_PATH # debug
     echo $COPROC_PID_backup > $PID_FILE_PATH
     # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
-    exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1 # COPROC[0] is the output of nc
+    # COPROC[0] is the output of nc
+    exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
   )
   RSPID=$!
   wait $RSPID # what about connection loss? need to check heatbeat
@@ -130,8 +131,10 @@ connect_setup() {
     rm $PID_FILE_PATH
 
   pgrep $RSPID && kill $RSPID
-  sleep 5 && [ ! $RSRET -eq 120 ] && connect_again # just recursively, sleep in case...
-  echo $RSRET > $EXIT_FILE_PATH && return $RSRET   # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss thing
+  # just recursively, sleep in case...
+  sleep 5 && [ ! $RSRET -eq 120 ] && connect_again
+  # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss thing
+  echo $RSRET > $EXIT_FILE_PATH && return $RSRET
 }
 
 connect_again() {
@@ -160,10 +163,12 @@ while true; do
   nc_time=$(floatToInt $nc_time)
   if [ ${nc_ret} -eq 0 ]; then
     # recover connection, need to connect_again too. For 1st time, will try to connect
-    if [ $port_connect_status -eq 0 ]; then # no connection last time, have connction now
+    # no connection last time, have connction now
+    if [ $port_connect_status -eq 0 ]; then
       echo "recover connection, reset wait_time and try to reconnect"
       wait_time=$INIT_WAIT
-      check_exit_status || wait_time=15 # previous connection is lost, we wait for longer to setup connection
+      # previous connection is lost, we wait for longer to setup connection
+      check_exit_status || wait_time=15
       connect_again $wait_time
     else
       wait_time=$((wait_time + wait_time)) # double wait, network fine
@@ -187,19 +192,19 @@ while true; do
 done
 
 # https://medium.com/@6c2e6e2e/spawning-interactive-reverse-shells-with-tty-a7e50c44940e
-## In reverse shell
-#$ python -c 'import pty; pty.spawn("/bin/bash")'
-#Ctrl-Z
+# In reverse shell
+# $ python -c 'import pty; pty.spawn("/bin/bash")'
+# Ctrl-Z
 #
-## In Attacker console
-#$ stty raw -echo
-#$ fg
+# In Attacker console
+# $ stty raw -echo
+# $ fg
 #
-## In reverse shell
-#$ reset
-#$ export SHELL=bash
-#$ export TERM=xterm-256color
-#$ stty rows <num> columns <cols>
+# In reverse shell
+# $ reset
+# $ export SHELL=bash
+# $ export TERM=xterm-256color
+# $ stty rows <num> columns <cols>
 """
 
 rvs_pty_config_str = r"""#!/bin/bash
@@ -207,7 +212,7 @@ reset
 export SHELL=bash
 export TERM=xterm-256color
 stty intr ^\k susp ^\x eof ^\f -echo rows 29 columns 59 opost
-#https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
+# https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
 unsetopt ZLE # for zsh
 # for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p
 
@@ -215,7 +220,7 @@ color_my_prompt () {
     local __user_and_host="\[\033[01;32m\]\u@\h"
     local __cur_location="\[\033[01;34m\]\w"
     local __git_branch_color="\[\033[31m\]"
-    #local __git_branch="\`ruby -e \"print (%x{git branch 2> /dev/null}.grep(/^\*/).first || '').gsub(/^\* (.+)$/, '(\1) ')\"\`"
+    # local __git_branch="\`ruby -e \"print (%x{git branch 2> /dev/null}.grep(/^\*/).first || '').gsub(/^\* (.+)$/, '(\1) ')\"\`"
     local __git_branch='`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`'
     local __prompt_tail="\[\033[35m\]$"
     local __last_color="\[\033[00m\]"
@@ -223,74 +228,144 @@ color_my_prompt () {
 }
 color_my_prompt
 
-cat > get_cfg.sh << EOF
-#!/bin/bash
-mkdir /content
-cd /content
-nc -q 1 vtool.duckdns.org 23455 > cfg.tgz
-tar xvf cfg.tgz
-EOF
+# CUDNN_VERSION=7.6.5.32
+# LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+# LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+LESSCLOSE=/usr/bin/lesspipe %s %s
+LANG=en_US.UTF-8
+# HOSTNAME=8bff88b8a353
+OLDPWD=/
+CLOUDSDK_CONFIG=/content/.config
+GOOGLE_APPLICATION_CREDENTIALS=/content/adc.json
+NVIDIA_VISIBLE_DEVICES=all
+DATALAB_SETTINGS_OVERRIDES={kernelManagerProxyPort:6000,kernelManagerProxyHost:172.28.0.3,jupyterArgs:[--ip="172.28.0.2"]}
+ENV=/root/.bashrc
+PAGER=cat
+NCCL_VERSION=2.4.8
+TF_FORCE_GPU_ALLOW_GROWTH=true
+JPY_PARENT_PID=18
+NO_GCE_CHECK=True
+PWD=/content
+# HOME=/root
+LAST_FORCED_REBUILD=20200316
+CLICOLOR=1
+DEBIAN_FRONTEND=noninteractive
+LIBRARY_PATH=/usr/local/cuda/lib64/stubs
+GCE_METADATA_TIMEOUT=0
+GLIBCPP_FORCE_NEW=1
+TBE_CREDS_ADDR=172.28.0.1:8008
+SHELL=bash
+TERM=xterm-256color
+GCS_READ_CACHE_BLOCK_SIZE_MB=16
+PYTHONWARNINGS=ignore:::pip._internal.cli.base_command
+MPLBACKEND=module://ipykernel.pylab.backend_inline
+# CUDA_PKG_VERSION=10-1=10.1.243-1
+# CUDA_VERSION=10.1.243
+# NVIDIA_DRIVER_CAPABILITIES=compute,utility
+SHLVL=3
+#PYTHONPATH=/env/python
+# NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
+# COLAB_GPU=0
+# GLIBCXX_FORCE_NEW=1
+# PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools/node/bin:/tools/google-cloud-sdk/bin:/opt/bin
+# PS1=\[\033[01;32m\]\u@\h \[\033[01;34m\]\w \[\033[31m\]`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`\[\033[35m\]$\[\033[00m\]
+PS4=+
+LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so.4
+LESSOPEN=| /usr/bin/lesspipe %s
+GIT_PAGER=cat
+_=/usr/bin/env
+"""
 
-cat > tgz_files.sh << EOF
-#!/bin/bash
-tgzfile () {
-  tar cf - $1 -P | pv -s $(du -sb $1 | awk '{print $1}') | gzip > /home/$1.tar.gz
+gdrive_str = r"""#!/bin/bash
+wget https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64
+chmod +x gdrive-linux-x64
+cp gdrive-linux-x64 /bin/gdrive
+
+mkdir ~/.gdrive
+
+# auth file
+cat > ~/.gdrive/a.json << EOF
+{
+  "type": "service_account",
+  "project_id": "go-2-learn",
+  "private_key_id": "00c8bf796e900c9afe68129c9fbdef6f42084bef",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC8XTKTpSpxiiu+\nB29mfkVWVwjUZhoYBC9td8QtjZYRGaa0HNPSPYQkKY69GGGGwbzocuuhhFFW9P8g\nCFbjKIfLKTgJTBJ0PZy78LmZL+YjUo7N/x3MMRQKPzY4JSMQVVTVXhHBD2IxtFJ5\nKD6tojmuLblaNEUn2kwWvMBMZnTmtHZkNVsnRWhqNYxoJePGJOygDbWmUGyMLDmY\nihdysNdvNYGyI9pVwQCMwEWesuykA438cehj9v0p3YunghDa2EBH7GKAAk4aoie3\ndoNjmGeOV/DXb01heLBxlumhQX3qGt+cpVSv7wFQRq/z+CMsK1rkbJmE+WZg8EAE\nOJ3HxPJ1AgMBAAECggEAFfNxHBj4rpfrgQ8HbGpKqkUk7PD5GX4OCN5sKOLXGicN\nxkTrFRUWJnYGrFgAWt6OT92/QpNTkflQbJXhikIEO9NnNFjTzbgLC9vXGoL6eXil\ngQa58jxwmWvEZcaYz3kiPxCMq8hJ09ZacMQVNHwzPJkXgJZBeON3pS6vOjgLvNbC\ncQLKPl9NU4GucXECtdCdsLxhfAxkgbPrHh2DBkIX5jw+qB1DpkxfnT/icuNW6yWo\nb8snh/zU58iHNGlXwdWoTIajrRPBUEbAO/KBbkhz3H6o/GdMDEx4zg/lhDmvEDFn\nuCOtoXHZxYgkIbUEZGRMmbbrcGN80ppaGI9uLOaWAQKBgQDdigypRFzs7bqlN1eJ\nTEn45WqmLrZcNFs1veqCAMOdD6QjOM18zigA8QqDP8d8dD1fFwQEyEy8j8303uTo\ntKQjvPudKgYn0LfUqSM1gI5oIjgpauTbfxK8Vzvly6LyobnM2C/ZawUI/LZ81VvQ\nZIbYjK5Cmb+rm3brykDWlerVKwKBgQDZqhKvs8ALqQb+gUV0WQdZOcNX8cYF3ADa\nfV+Lqj8quEcxopdmtNNv6VA6O6/B74gHkAj+2s3Azf2RKmIcsNZ0ETurSh2iOHul\n6kz01R8FVbF47iPnkurJvRpb1JLQUJZCtzSSsftK2ZPPCQe9MNN+Hms3kVb2dJuV\nvN3PLwLG3wKBgC0DU7dA0LDDTN0s9XhMK+uKkbTaYOszKCUvRWrMxPIwr2UIsZfe\nO3qVf1FTsDC1XZLolkRyfkUB4xMSBujRa1hnmahBVabZXcCz7Rd923GFImwn8AA5\nPZFPGDiEu8MY4Suh8Xb3q7o7vsh2gYVCJ7PwQaf+nVc861jVa38uTtypAoGAJ5lk\naujF0JlAt36nNyKXTqlOm6pVv20mDpnujwc7FLeP5DzTVJEjQmHtAZsoP50nX1Da\nAhumgSQ4tHdEgDm/2j/kXiZOu9uQyz+UHprDWQIdFoYkrBWzd15a9Ef5KcLvg1W3\nT9TnhdeNp4XaDZZbc79u/B4J9y6Bu70vkWjZFXsCgYEAzD/vhTXZQeBDM9oMOMp2\nkukN3jHwG2cAFb5127ygJHZns2071AwoeQYnpsnpAC4z7C7sjoeYWfktno5oFbnq\nGyquWXdHrC/jELYKcgJzZgncoXjilI8EODvq7a6GVGp4Rlz1mGQW7BQnHcPM+Jri\n/hjKqXujhl6U29XgaDkDEUk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "drive-322@go-2-learn.iam.gserviceaccount.com",
+  "client_id": "112374369447770992406",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/drive-322%40go-2-learn.iam.gserviceaccount.com"
 }
-cd /kaggle/input
-find . -maxdepth 1 -type d -name "??*" | while read -r line; do
-	echo $line
-	tgzfile $line
-done
 EOF
 
-cat > drive_thing.py <<EOF
-# pip install google-colab pydrive
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-from google.colab import auth
-from oauth2client.client import GoogleCredentials
-import glob
+gdrive --service-account a.json list  # just test
+gdrive --service-account a.json download -r 1CHDWIN0M6PD4SQyplbWefBCzNzdPVd-m
+# cat > tgz_files.sh << EOF
+# #!/bin/bash
+# tgzfile () {
+#   tar cf - $1 -P | pv -s $(du -sb $1 | awk '{print $1}') | gzip > /home/$1.tar.gz
+# }
+# cd /kaggle/input
+# find . -maxdepth 1 -type d -name "??*" | while read -r line; do
+# 	echo $line
+# 	tgzfile $line
+# done
+# EOF
+[ -d /kaggle/input ] || mkdir -p /kaggle/input
+tar xf siim-train-test.tar.gz -C /kaggle/input
+"""
 
-auth.authenticate_user()
-gauth = GoogleAuth()
-gauth.credentials = GoogleCredentials.get_application_default()
-drive = GoogleDrive(gauth)
 
-folderName = 'Colab Notebooks'  # Please set the folder name. (target folder, in google folders)
-toUpload = '/home'
-toUpLoadFiles = glob.glob(toUpload+"/*")
+runner_src = """
+#!/bin/bash -x
+export PS4 = 'Line ${LINENO}: '  # for debug
+NC = ncat
 
-folders = drive.ListFile(
-    {'q': "title='" + folderName + "' and mimeType='application/vnd.google-apps.folder' and trashed=false"}).GetList()
-# print(folders)
-for f in toUpLoadFiles:
-    print(f)
-    file2 = drive.CreateFile({"title": f})
-    file2.SetContentFile(f)
-    file2.Upload()
-#for folder in folders:
-#    if folder['title'] == folderName:
-#        break
-EOF
+USER =$1
+shift
+REPO =$1
+shift
+BRANCH =$1
+shift
+PHASE =$1
+shift
+PARAMS =$@
+
+SERVER = vtool.duckdns.org
+PORT = 23454
+CHECK_PORT =$((PORT + 1))
+
+apt install pv nmap screen time tmux netcat psmisc - y
+
+# tmux new-session -d -s mySession -n myWindow
+# tmux send-keys -t mySession:myWindow "echo debug" Enter
+# tmux ls
+pip install pysnooper  # for debug rvs
+screen - d - m bash ./rvs.sh
+
+pip install pydicom parse pytest-logger python_logging_rabbitmq &
+# pip install parse  # should move local codes out
+# pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
 cat > .tmux.conf <<EOF
-#unbind-key C-b
-#set -g prefix C-a
+# unbind-key C-b
+# set -g prefix C-a
 set -g prefix2 \
-#bind-key C-o send-prefix
+# bind-key C-o send-prefix
 bind-key ` send `
 bind-key C new-window \; command-prompt -p "Name for this new window: " "rename-window '%%'"
-## set the default TERM
+# set the default TERM
 set -g default-terminal screen
 set -g allow-rename off
 
-## update the TERM variable of terminal emulator when creating a new session or attaching a existing session
+# update the TERM variable of terminal emulator when creating a new session or attaching a existing session
 set -g update-environment 'DISPLAY SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY TERM'
-## determine if we should enable 256-colour support
+# determine if we should enable 256-colour support
 if "[[ ${TERM} =~ 256color || ${TERM} == fbterm ]]" 'set -g default-terminal screen-256color'
 
 # makes sure that if I try to attach and no sessions are alive, one is created.
-#new-session -n $HOST
+# new-session -n $HOST
 
 # 0 is too far from ` ;)
 set -g base-index 1
@@ -310,10 +385,10 @@ bind-key v split-window -h
 bind-key s split-window -v
 
 bind-key o display-panes
-#bind-key h select-pane -L #resize-pane -D 5
-#bind-key j select-pane -D #resize-pane -U 5
-#bind-key k select-pane -U #resize-pane -L 5
-#bind-key l select-pane -R #resize-pane -R 5
+# bind-key h select-pane -L #resize-pane -D 5
+# bind-key j select-pane -D #resize-pane -U 5
+# bind-key k select-pane -U #resize-pane -L 5
+# bind-key l select-pane -R #resize-pane -R 5
 
 bind-key M-j resize-pane -D
 bind-key M-k resize-pane -U
@@ -334,10 +409,10 @@ bind -n M-l select-pane -R
 
 
 # Use Alt-arrow keys without prefix key to switch panes
-#bind -n M-Left select-pane -L
-#bind -n M-Right select-pane -R
-#bind -n M-Up select-pane -U
-#bind -n M-Down select-pane -D
+# bind -n M-Left select-pane -L
+# bind -n M-Right select-pane -R
+# bind -n M-Up select-pane -U
+# bind -n M-Down select-pane -D
 
 # Alt-[".",","] to switch windows
 bind -n M-. next-window
@@ -349,7 +424,7 @@ set -sg escape-time 0
 # Reload tmux config
 bind r source-file ~/.tmux.conf
 
-#set -g status-utf8 on
+# set -g status-utf8 on
 set -g status-justify left
 set -g status-interval 30
 
@@ -360,7 +435,7 @@ setw -g window-status-format "#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8
 setw -g window-status-current-format "#[bg=brightmagenta]#[fg=colour8] #I #[fg=colour8]#[bg=colour14] #W "
 set -g status-left-length 30
 set -g status-left 'P#P #[fg=green][#W] in (#S)#[fg=gray] as #(whoami) '
-#set -g status-right '#[fg=yellow]#(cut -d " " -f 1-3 /proc/loadavg)#[default] #[fg=white]%H:%M#[default]'
+# set -g status-right '#[fg=yellow]#(cut -d " " -f 1-3 /proc/loadavg)#[default] #[fg=white]%H:%M#[default]'
 set -g status-right-length 60
 
 # loud or quiet?
@@ -387,9 +462,9 @@ setw -g mode-style bg=colour238,fg=colour196,bold
 # The panes {
 
 # highlight selected pane, tab
-#set -g window-style 'fg=colour247,bg=colour236'
-#set -g window-active-style 'fg=colour250,bg=black'
-#set -g pane-border-style fg=colour238,bg=colour235
+# set -g window-style 'fg=colour247,bg=colour236'
+# set -g window-active-style 'fg=colour250,bg=black'
+# set -g pane-border-style fg=colour238,bg=colour235
 set -g pane-border-style bg=colour236,fg=colour51
 set -g pane-active-border-style bg=colour236,fg=colour51
 
@@ -439,12 +514,12 @@ bind-key W command-prompt -p "Switch to pane with pid:" "run-shell 'pane=\$(ps e
 EOF
 
 cat > ENVS <<EOF
-#CUDNN_VERSION=7.6.5.32
-#LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
-LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+# CUDNN_VERSION=7.6.5.32
+# LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+# LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
 LESSCLOSE=/usr/bin/lesspipe %s %s
 LANG=en_US.UTF-8
-#HOSTNAME=8bff88b8a353
+# HOSTNAME=8bff88b8a353
 OLDPWD=/
 CLOUDSDK_CONFIG=/content/.config
 GOOGLE_APPLICATION_CREDENTIALS=/content/adc.json
@@ -457,7 +532,7 @@ TF_FORCE_GPU_ALLOW_GROWTH=true
 JPY_PARENT_PID=18
 NO_GCE_CHECK=True
 PWD=/content
-#HOME=/root
+# HOME=/root
 LAST_FORCED_REBUILD=20200316
 CLICOLOR=1
 DEBIAN_FRONTEND=noninteractive
@@ -470,64 +545,33 @@ TERM=xterm-256color
 GCS_READ_CACHE_BLOCK_SIZE_MB=16
 PYTHONWARNINGS=ignore:::pip._internal.cli.base_command
 MPLBACKEND=module://ipykernel.pylab.backend_inline
-#CUDA_PKG_VERSION=10-1=10.1.243-1
-#CUDA_VERSION=10.1.243
-#NVIDIA_DRIVER_CAPABILITIES=compute,utility
+# CUDA_PKG_VERSION=10-1=10.1.243-1
+# CUDA_VERSION=10.1.243
+# NVIDIA_DRIVER_CAPABILITIES=compute,utility
 SHLVL=3
-PYTHONPATH=/env/python
-#NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
-#COLAB_GPU=0
-#GLIBCXX_FORCE_NEW=1
+#PYTHONPATH=/env/python
+# NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
+# COLAB_GPU=0
+# GLIBCXX_FORCE_NEW=1
 # PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools/node/bin:/tools/google-cloud-sdk/bin:/opt/bin
-#PS1=\[\033[01;32m\]\u@\h \[\033[01;34m\]\w \[\033[31m\]`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`\[\033[35m\]$\[\033[00m\]
+# PS1=\[\033[01;32m\]\u@\h \[\033[01;34m\]\w \[\033[31m\]`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`\[\033[35m\]$\[\033[00m\]
 PS4=+
 LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so.4
 LESSOPEN=| /usr/bin/lesspipe %s
 GIT_PAGER=cat
 _=/usr/bin/env
-
 EOF
-"""
 
-runner_src = """
-#!/bin/bash -x
-export PS4='Line ${LINENO}: '  # for debug
-NC=ncat
-
-USER=$1
-shift
-REPO=$1
-shift
-BRANCH=$1
-shift
-PHASE=$1
-shift
-PARAMS=$@
-
-SERVER=vtool.duckdns.org
-PORT=23454
-CHECK_PORT=$(( PORT + 1 ))
-
-apt install pv nmap screen time tmux netcat psmisc -y
-
-# tmux new-session -d -s mySession -n myWindow
-# tmux send-keys -t mySession:myWindow "echo debug" Enter
-# tmux ls
-pip install pysnooper  # for debug rvs
-screen -d -m bash ./rvs.sh
-
-pip install pydicom parse pytest-logger python_logging_rabbitmq google-colab pydrive &
-# pip install parse  # should move local codes out
-# pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
 
 (test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
  find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) \
  && {
-     if [ x"${PHASE}" != x"dev" ]; then
+     if [x"${PHASE}" != x"dev"]; then
          python main.py $PARAMS;
      else
-         PS4='Line ${LINENO}: ' bash -x ./rvs.sh | $NC $SERVER $CHECK_PORT;  # just two, incase another one goes down
+         # just two, incase another one goes down
+         PS4='Line ${LINENO}: ' bash - x ./rvs.sh | $NC $SERVER $CHECK_PORT;
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
@@ -587,8 +631,7 @@ class Coordinator:
     @staticmethod
     def _change_main_py(path, size, net, AMQPURL, seed):
         s = Template(
-            f"""#!/usr/bin/env python3
-import subprocess
+            f"""  # !/usr/bin/env python3
 
 # runner -> rvs.sh (setup reverse connection) -> setup pseudo tty
 with open("runner.sh", "w") as f:
@@ -607,9 +650,13 @@ with open("rpt", "w") as f:
     f.write(
         r\"\"\"{rvs_pty_config_str}\"\"\"
     )
+with open("gdrive_setup", "w") as f:
+    f.write(
+        r\"\"\"{gdrive_str}\"\"\"
+    )
 
 subprocess.run(
-'bash -x runner.sh pennz PneumothoraxSegmentation dev dev "$AMQPURL" "$size" "$seed" "$network"', shell=True)
+'bash gdrive_setup &; bash -x runner.sh pennz PneumothoraxSegmentation dev dev "$AMQPURL" "$size" "$seed" "$network"', shell=True)
 
 # %%
 # #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
