@@ -321,24 +321,23 @@ tar xf siim-train-test.tar.gz -C /kaggle/input
 """
 
 
-runner_src = r"""
-#!/bin/bash -x
-export PS4 = 'Line ${LINENO}: '  # for debug
-NC = ncat
+runner_src = r"""#!/bin/bash -x
+export PS4='Line ${LINENO}: '  # for debug
+NC=ncat
 
-USER =$1
+USER=$1
 shift
-REPO =$1
+REPO=$1
 shift
-BRANCH =$1
+BRANCH=$1
 shift
-PHASE =$1
+PHASE=$1
 shift
-PARAMS =$@
+PARAMS=$@
 
-SERVER = vtool.duckdns.org
-PORT = 23454
-CHECK_PORT =$((PORT + 1))
+SERVER=vtool.duckdns.org
+PORT=23454
+CHECK_PORT=$(( PORT + 1 ))
 
 apt install pv nmap screen time tmux netcat psmisc -y
 
