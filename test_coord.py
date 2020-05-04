@@ -43,9 +43,9 @@ class TestCoordinator:
     @pytest.mark.timeout(15)
     def test_push_runner_nb(self, runner_configs):
         path = self.coordinator.create_runner(runner_configs[1], 19999, False)
-        ret = self.coordinator.push(path)  # just push first
-        assert ret.returncode == 0
         ret = self.coordinator.run_local(path)
+        assert ret.returncode == 0
+        ret = self.coordinator.push(path)  # just push first
         assert ret.returncode == 0
 
     @pytest.mark.timeout(10)

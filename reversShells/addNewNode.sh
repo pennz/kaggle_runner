@@ -1,10 +1,12 @@
 #!/bin/bash -x
 # trap ctrl-c and call ctrl_c()
+PS4=+
+
 trap ctrl_c INT
 NC=ncat
 
 function ctrl_c() {
-        echo "** Trapped CTRL-C"
+        >&2 echo "** Trapped CTRL-C"
 }
 
 getNewPort() {
@@ -29,10 +31,11 @@ connect() {
 port=$(getNewPort serverNodes)
 connect $port serverNodes
 
-if [ ! $? -eq 0 ]; then
+while [ ! $? -eq 0 ]; do
+    echo "$port" >> serverNodes
     port=$((port + 1))
     connect $port serverNodes
-fi
+done
 
 # so reverse shell server named to RSS
 # so tcpserver instance named to TSins
