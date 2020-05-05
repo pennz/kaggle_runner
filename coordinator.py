@@ -112,8 +112,7 @@ connect_setup() {
     coproc connect_to_server $1
     COPROC_PID_backup=$COPROC_PID
     # echo $COPROC_PID_backup $PID_FILE_PATH # debug -> this will be output to
-    echo $(grep 'cpu ' /proc/stat;sleep 0.1;grep 'cpu ' /proc/stat)|awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}' "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo)
-    echo $(uptime | awk '{print $1 " " $2 " " $3}')
+    echo "#" $(grep 'cpu ' /proc/stat;sleep 0.1;grep 'cpu ' /proc/stat)|awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}' "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) $(uptime | awk '{print $1 " " $2 " " $3}')
 
     # CONNECT_CHECK, server status can be put here.
     echo $COPROC_PID_backup > $PID_FILE_PATH
