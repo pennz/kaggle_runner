@@ -96,9 +96,6 @@ check_exit_status() {
 }
 connect_to_server() {
   cat rpt
-  echo
-  echo
-  echo
   echo "#" $(date) started connection
   $NC -w $1 $SERVER $PORT
 } 2>&1
@@ -304,7 +301,14 @@ cat > ~/.gdrive/a.json << EOF
 EOF
 
 gdrive --service-account a.json list  # just test
-gdrive --service-account a.json download -r 1CHDWIN0M6PD4SQyplbWefBCzNzdPVd-m
+
+SRC_WORK_FOLDER=/kaggle/input
+[ -d ${SRC_WORK_FOLDER} ] || {
+    mkdir -p ${SRC_WORK_FOLDER}
+    cd ${SRC_WORK_FOLDER}
+    gdrive --service-account a.json download -r 1CHDWIN0M6PD4SQyplbWefBCzNzdPVd-m
+    tar xf siim-train-test.tar.gz -C /kaggle/input
+}
 # cat > tgz_files.sh << EOF
 # #!/bin/bash
 # tgzfile () {
@@ -316,10 +320,7 @@ gdrive --service-account a.json download -r 1CHDWIN0M6PD4SQyplbWefBCzNzdPVd-m
 #     tgzfile $line
 # done
 # EOF
-[ -d /kaggle/input ] || mkdir -p /kaggle/input
-tar xf siim-train-test.tar.gz -C /kaggle/input
 """
-
 
 runner_src = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: '  # for debug
