@@ -144,7 +144,7 @@ connect_again() {
   connect_setup $1 & # just put connection to background
 }
 
-WAIT_LIMIT=128
+WAIT_LIMIT=1024
 INIT_WAIT=8
 port_connect_status=0
 wait_time=$INIT_WAIT
@@ -206,6 +206,7 @@ done
 # $ export SHELL=bash
 # $ export TERM=xterm-256color
 # $ stty rows <num> columns <cols>
+while true; do sleep 60; done
 """
 
 rvs_pty_config_str = r"""#!/bin/bash
@@ -582,7 +583,7 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
-while true; do sleep 60; done  # just wait
+# while true; do sleep 60; done  # just wait
 """
 
 

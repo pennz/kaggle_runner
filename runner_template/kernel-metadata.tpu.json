@@ -1,0 +1,25 @@
+{
+  "id": "k1gaggle/test-runner-intercept-resnet-384-nb",
+  "id_no": 9216851,
+  "title": "test-runner-intercept-resnet-384-nb",
+  "code_file": "test-runner-intercept-resnet-384-nb.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": true,
+  "keywords": [
+    "tpu",
+    "gpu"
+  ],
+  "dataset_sources": [
+    "pytorch/resnet34",
+    "seesee/siim-train-test",
+    "iafoss/siimacr-pneumothorax-segmentation-data-128",
+    "iafoss/siimacr-pneumothorax-segmentation-data-256"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [
+    "siim-acr-pneumothorax-segmentation"
+  ]
+}
