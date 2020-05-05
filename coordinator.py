@@ -124,7 +124,7 @@ connect_setup() {
   RSPID=$!
   wait $RSPID # what about connection loss? need to check heatbeat
   RSRET=$?
-  if [ x"$RSRET" == x"0" ]; then  # TODO fix, named pipe, return always 120?
+  if [ x"$RSRET" = x"0" ]; then  # TODO fix, named pipe, return always 120?
     echo $RSRET > $EXIT_FILE_PATH
     return $RSRET
   fi
@@ -312,8 +312,8 @@ gdrive --service-account a.json download -r 1CHDWIN0M6PD4SQyplbWefBCzNzdPVd-m
 # }
 # cd /kaggle/input
 # find . -maxdepth 1 -type d -name "??*" | while read -r line; do
-# 	echo $line
-# 	tgzfile $line
+#     echo $line
+#     tgzfile $line
 # done
 # EOF
 [ -d /kaggle/input ] || mkdir -p /kaggle/input
@@ -637,38 +637,102 @@ class Coordinator:
     @staticmethod
     def _change_main_py(path, size, net, AMQPURL, seed):
         s = Template(
-            f"""#!/usr/bin/env python3
+            """#!/usr/bin/env python3
+import selectors
 import subprocess
-# runner -> rvs.sh (setup reverse connection) -> setup pseudo tty
+import sys
+
+# runner (gdrive setting the same time) -> rvs.sh (setup reverse connection) ->
+# setup pseudo tty
 with open("runner.sh", "w") as f:
     f.write(
-        r\"\"\"{runner_src}\"\"\"
+r\"\"\"${runner_src}\"\"\"
     )
 with open("rvs.sh", "w") as f:
     f.write(
-        r\"\"\"{rvs_str}\"\"\"
+r\"\"\"${rvs_str}\"\"\"
     )
 with open("setup_pty", "w") as f:
     f.write(
-        r\"\"\"{setup_pty_str}\"\"\"
+r\"\"\"${setup_pty_str}\"\"\"
     )
 with open("rpt", "w") as f:
     f.write(
-        r\"\"\"{rvs_pty_config_str}\"\"\"
+r\"\"\"${rvs_pty_config_str}\"\"\"
     )
 with open("gdrive_setup", "w") as f:
     f.write(
-        r\"\"\"{gdrive_str}\"\"\"
+r\"\"\"${gdrive_str}\"\"\"
+    )
+with open("entry.sh", "w") as f:
+    f.write(
+r\"\"\"#!/bin/bash
+PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz PneumothoraxSegmentation dev dev "$AMQPURL" "$size" "$seed" "$network" >>logrunner
+\"\"\"
     )
 
-subprocess.run(
-'bash gdrive_setup &; bash -x runner.sh pennz PneumothoraxSegmentation dev dev "$AMQPURL" "$size" "$seed" "$network"', shell=True)
 
+p = subprocess.Popen(
+'bash -x entry.sh',
+#capture_output=True,
+stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+shell=True)
+
+sel = selectors.DefaultSelector()
+sel.register(p.stdout, selectors.EVENT_READ)
+sel.register(p.stderr, selectors.EVENT_READ)
+
+while True:
+   for key, _ in sel.select():
+       data = key.fileobj.read1().decode()
+       if not data:
+           exit()
+       if key.fileobj is p.stdout:
+           print(data, end="")
+       else:
+           print(data, end="", file=sys.stderr)
+# URL:
+# https://stackoverflow.com/questions/31833897/python-read-from-subprocess-stdout-and-stderr-separately-while-pr
+# eserving-order
+# Title: Python read from subprocess stdout and stderr separately while preserving order - Stack Overflow
+#
+# Size: 110088
+# Codepage: Unicode UTF-8
+# SSL Cipher: 128-bit TLSv1.2 ECDHE-RSA-AES128-GCM-SHA256
+# Encoding: gzip
+# Date: Mon, 04 May 2020 23:38:11 GMT
+# Last modified: Mon, 04 May 2020 23:38:11 GMT
+# Time since loading: 13:08
+# Last visit time: Tue May  5 07:41:07 2020
+#
+# Link: https://stackoverflow.com/a/56918582
+# Link title: short permalink to this answer
+
+# just a test problem
+# import sys
+# from time import sleep
+#
+# for i in range(10):
+#     print(f" x{i} ", file=sys.stderr, end="")
+#     sleep(0.1)
+#     print(f" y{i} ", end="")
+#     sleep(0.1)
 # %%
 # #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
     """
         )
-        d = dict(AMQPURL=AMQPURL.string(), size=size, network=net, seed=seed)
+        d = dict(
+            gdrive_str=gdrive_str,
+            rvs_pty_config_str=rvs_pty_config_str,
+            setup_pty_str=setup_pty_str,
+            rvs_str=rvs_str,
+            runner_src=runner_src,
+            AMQPURL=AMQPURL.string(),
+            size=size,
+            network=net,
+            seed=seed,
+        )
         ss = s.safe_substitute(d)
         print(ss)
 
