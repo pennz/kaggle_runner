@@ -130,7 +130,7 @@ connect_setup() {
   fi
   # else part below
 
-  waitfile $PID_FILE_PATH &&
+    sleep 15 # wait PID FILE PATH created, 15s should be fine
     tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
     rm $PID_FILE_PATH
 
@@ -348,7 +348,7 @@ SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 
-apt install ctags htop tree pv nmap screen time tmux netcat psmisc -y
+apt install tig ctags htop tree pv nmap screen time tmux netcat psmisc -y
 
 # tmux new-session -d -s mySession -n myWindow
 # tmux send-keys -t mySession:myWindow "echo debug" Enter
