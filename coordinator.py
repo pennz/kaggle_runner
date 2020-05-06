@@ -6,6 +6,7 @@ import subprocess
 from string import Template
 
 import slug
+
 import utils
 
 setup_pty_str = r"""import argparse
@@ -112,7 +113,7 @@ connect_setup() {
     coproc connect_to_server $1
     COPROC_PID_backup=$COPROC_PID
     # echo $COPROC_PID_backup $PID_FILE_PATH # debug -> this will be output to
-    echo "#" $(grep 'cpu ' /proc/stat;sleep 0.1;grep 'cpu ' /proc/stat)|awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}' "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) $(uptime | awk '{print $1 " " $2 " " $3}')
+    >&2 echo "#" $(grep 'cpu ' /proc/stat;sleep 0.1;grep 'cpu ' /proc/stat)|awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}' "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) $(uptime | awk '{print $1 " " $2 " " $3}')
 
     # CONNECT_CHECK, server status can be put here.
     echo $COPROC_PID_backup > $PID_FILE_PATH
@@ -236,6 +237,25 @@ cat > test-pt << EOF
 [[ ! x"$(git pull)" =~ "Already" ]] && pytest test_kernels.py  -k "train_dev" -s -v
 EOF
 
+cat > install_IDE << EOF
+#!/bin/bash
+[ -d ~/.fzf ] || { git clone --depth=1 https://github.com/pennz/dotfiles
+rsync -r dotfiles/.* ~
+pushd ~
+git submodule update --init
+.fzf/install --all
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+vim -u ~/.vimrc_back +PlugInstall &
+ln -s .shrc_customised.macos .shrc_customised
+popd
+}
+EOF
+
+echo "alias gdrive='gdrive  --service-account a.json'" >> .bash_aliases
+echo "unalias vim" >> .bash_aliases
+source .bashrc
+
+bash install_IDE &
 # CUDNN_VERSION=7.6.5.32
 # LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
 # LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
@@ -346,6 +366,11 @@ PARAMS=$@
 SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
+apt install netcat -y
+
+if [ x"${PHASE}" = x"dev" ]; then
+    PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT;
+fi
 
 apt install tig ctags htop tree pv nmap screen time tmux netcat psmisc -y
 
@@ -358,171 +383,6 @@ screen -d -m bash ./rvs.sh
 pip install pydicom parse pytest-logger python_logging_rabbitmq &
 # pip install parse  # should move local codes out
 # pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
-
-cat > .tmux.conf <<EOF
-# unbind-key C-b
-# set -g prefix C-a
-set -g prefix2 \
-# bind-key C-o send-prefix
-bind-key ` send `
-bind-key C new-window \; command-prompt -p "Name for this new window: " "rename-window '%%'"
-# set the default TERM
-set -g default-terminal screen
-set -g allow-rename off
-
-# update the TERM variable of terminal emulator when creating a new session or attaching a existing session
-set -g update-environment 'DISPLAY SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY TERM'
-# determine if we should enable 256-colour support
-if "[[ ${TERM} =~ 256color || ${TERM} == fbterm ]]" 'set -g default-terminal screen-256color'
-
-# makes sure that if I try to attach and no sessions are alive, one is created.
-# new-session -n $HOST
-
-# 0 is too far from ` ;)
-set -g base-index 1
-
-# Automatically set window title
-set-window-option -g automatic-rename off
-set-option -g set-titles on
-
-set -g status-keys vi
-set -g history-limit 10000
-
-setw -g mode-keys vi
-setw -g mouse on
-setw -g monitor-activity on
-
-bind-key v split-window -h
-bind-key s split-window -v
-
-bind-key o display-panes
-# bind-key h select-pane -L #resize-pane -D 5
-# bind-key j select-pane -D #resize-pane -U 5
-# bind-key k select-pane -U #resize-pane -L 5
-# bind-key l select-pane -R #resize-pane -R 5
-
-bind-key M-j resize-pane -D
-bind-key M-k resize-pane -U
-bind-key M-h resize-pane -L
-bind-key M-l resize-pane -R
-
-# Vim style pane selection
-bind h select-pane -L
-bind j select-pane -D
-bind k select-pane -U
-bind l select-pane -R
-
-# Use Alt-vim keys without prefix key to switch panes
-bind -n M-h select-pane -L
-bind -n M-j select-pane -D
-bind -n M-k select-pane -U
-bind -n M-l select-pane -R
-
-
-# Use Alt-arrow keys without prefix key to switch panes
-# bind -n M-Left select-pane -L
-# bind -n M-Right select-pane -R
-# bind -n M-Up select-pane -U
-# bind -n M-Down select-pane -D
-
-# Alt-[".",","] to switch windows
-bind -n M-. next-window
-bind -n M-, previous-window
-
-# No delay for escape key press
-set -sg escape-time 0
-
-# Reload tmux config
-bind r source-file ~/.tmux.conf
-
-# set -g status-utf8 on
-set -g status-justify left
-set -g status-interval 30
-
-# window status
-setw -g window-status-format " #F#I:#W#F "
-setw -g window-status-current-format " #F#I:#W#F "
-setw -g window-status-format "#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8] #W "
-setw -g window-status-current-format "#[bg=brightmagenta]#[fg=colour8] #I #[fg=colour8]#[bg=colour14] #W "
-set -g status-left-length 30
-set -g status-left 'P#P #[fg=green][#W] in (#S)#[fg=gray] as #(whoami) '
-# set -g status-right '#[fg=yellow]#(cut -d " " -f 1-3 /proc/loadavg)#[default] #[fg=white]%H:%M#[default]'
-set -g status-right-length 60
-
-# loud or quiet?
-set-option -g visual-activity off
-set-option -g visual-bell off
-set-option -g visual-silence off
-set-window-option -g monitor-activity off
-set-option -g bell-action none
-
-unbind [
-bind [ copy-mode
-unbind p
-bind p paste-buffer
-bind-key -Tcopy-mode-vi 'C-v' send -X begin-selection \; send -X rectangle-toggle
-bind-key -Tcopy-mode-vi 'v' send -X begin-selection
-bind-key -Tcopy-mode-vi 'y' send -X copy-selection-and-cancel
-
-
-# The modes {
-setw -g clock-mode-colour colour135
-setw -g mode-style bg=colour238,fg=colour196,bold
-
-# }
-# The panes {
-
-# highlight selected pane, tab
-# set -g window-style 'fg=colour247,bg=colour236'
-# set -g window-active-style 'fg=colour250,bg=black'
-# set -g pane-border-style fg=colour238,bg=colour235
-set -g pane-border-style bg=colour236,fg=colour51
-set -g pane-active-border-style bg=colour236,fg=colour51
-
-# }
-# The statusbar {
-
-set -g status-position bottom
-set -g status-style bg=colour234,fg=colour137,dim
-set -g status-right '#[fg=colour233,bg=colour241,bold] %d/%m #[fg=colour233,bg=colour245,bold] %H:%M:%S '
-set -g status-right-length 50
-
-setw -g window-status-current-style bg=colour238,fg=colour81,bold
-setw -g window-status-current-format ' #I#[fg=colour250]:#[fg=colour255]#W#[fg=colour50]#F '
-
-setw -g window-status-style bg=colour235,fg=colour138,none
-setw -g window-status-format ' #I#[fg=colour237]:#[fg=colour250]#W#[fg=colour244]#F '
-
-setw -g window-status-bell-style bg=colour1,fg=colour255,bold
-
-# }
-# The messages {
-
-set -g message-style bg=colour166,fg=colour232,bold
-
-# }
-
-# List of plugins
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @plugin 'tmux-plugins/tmux-resurrect'
-set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'tmux-plugins/tmux-yank'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @continuum-restore 'on'
-
-# Other examples:
-# set -g @plugin 'github_username/plugin_name'
-# set -g @plugin 'git@github.com/user/plugin'
-# set -g @plugin 'git@bitbucket.com/user/plugin'
-
-# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-run -b '~/.tmux/plugins/tpm/tpm'
-bind | split-window -h
-bind - split-window -v
-bind-key P command-prompt -p 'save history to filename:' -I '~/tmux.history' 'capture-pane -S -32768 ; save-buffer %1 ; delete-buffer'
-bind-key W command-prompt -p "Switch to pane with pid:" "run-shell 'pane=\$(ps eww %% | sed \"1d; s/^.*TMUX_PANE=//;s/ .*//\"); [[ -z \$pane ]] && tmux display-message \"could not find pid\" || tmux switch-client -t \$pane'"
-EOF
 
 cat > ENVS <<EOF
 # CUDNN_VERSION=7.6.5.32
@@ -581,11 +441,8 @@ cd ${SRC_WORK_FOLDER}
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
  find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) \
  && {
-     if [x"${PHASE}" != x"dev"]; then
+     if [ x"${PHASE}" != x"dev" ]; then
          python main.py $PARAMS;
-     else
-         # just two, incase another one goes down
-         PS4='Line ${LINENO}: ' bash -x ./rvs.sh | $NC $SERVER $CHECK_PORT;
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
