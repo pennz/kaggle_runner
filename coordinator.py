@@ -247,15 +247,15 @@ git submodule update --init
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim -u ~/.vimrc_back +PlugInstall &
 ln -s .shrc_customised.macos .shrc_customised
+echo "alias gdrive='gdrive  --service-account a.json'" >> ~/.bash_aliases
+echo "unalias vim" >> ~/.bash_aliases
+source ~/.bashrc
 popd
 }
 EOF
 
-echo "alias gdrive='gdrive  --service-account a.json'" >> .bash_aliases
-echo "unalias vim" >> .bash_aliases
-source .bashrc
-
 bash install_IDE &
+source ~/.bashrc
 # CUDNN_VERSION=7.6.5.32
 # LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
 # LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
@@ -273,7 +273,7 @@ NCCL_VERSION=2.4.8
 TF_FORCE_GPU_ALLOW_GROWTH=true
 JPY_PARENT_PID=18
 NO_GCE_CHECK=True
-PWD=/content
+#PWD=/content
 # HOME=/root
 LAST_FORCED_REBUILD=20200316
 CLICOLOR=1
@@ -313,18 +313,7 @@ mkdir ~/.gdrive
 
 # auth file
 cat > ~/.gdrive/a.json << EOF
-{
-  "type": "service_account",
-  "project_id": "go-2-learn",
-  "private_key_id": "00c8bf796e900c9afe68129c9fbdef6f42084bef",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC8XTKTpSpxiiu+\nB29mfkVWVwjUZhoYBC9td8QtjZYRGaa0HNPSPYQkKY69GGGGwbzocuuhhFFW9P8g\nCFbjKIfLKTgJTBJ0PZy78LmZL+YjUo7N/x3MMRQKPzY4JSMQVVTVXhHBD2IxtFJ5\nKD6tojmuLblaNEUn2kwWvMBMZnTmtHZkNVsnRWhqNYxoJePGJOygDbWmUGyMLDmY\nihdysNdvNYGyI9pVwQCMwEWesuykA438cehj9v0p3YunghDa2EBH7GKAAk4aoie3\ndoNjmGeOV/DXb01heLBxlumhQX3qGt+cpVSv7wFQRq/z+CMsK1rkbJmE+WZg8EAE\nOJ3HxPJ1AgMBAAECggEAFfNxHBj4rpfrgQ8HbGpKqkUk7PD5GX4OCN5sKOLXGicN\nxkTrFRUWJnYGrFgAWt6OT92/QpNTkflQbJXhikIEO9NnNFjTzbgLC9vXGoL6eXil\ngQa58jxwmWvEZcaYz3kiPxCMq8hJ09ZacMQVNHwzPJkXgJZBeON3pS6vOjgLvNbC\ncQLKPl9NU4GucXECtdCdsLxhfAxkgbPrHh2DBkIX5jw+qB1DpkxfnT/icuNW6yWo\nb8snh/zU58iHNGlXwdWoTIajrRPBUEbAO/KBbkhz3H6o/GdMDEx4zg/lhDmvEDFn\nuCOtoXHZxYgkIbUEZGRMmbbrcGN80ppaGI9uLOaWAQKBgQDdigypRFzs7bqlN1eJ\nTEn45WqmLrZcNFs1veqCAMOdD6QjOM18zigA8QqDP8d8dD1fFwQEyEy8j8303uTo\ntKQjvPudKgYn0LfUqSM1gI5oIjgpauTbfxK8Vzvly6LyobnM2C/ZawUI/LZ81VvQ\nZIbYjK5Cmb+rm3brykDWlerVKwKBgQDZqhKvs8ALqQb+gUV0WQdZOcNX8cYF3ADa\nfV+Lqj8quEcxopdmtNNv6VA6O6/B74gHkAj+2s3Azf2RKmIcsNZ0ETurSh2iOHul\n6kz01R8FVbF47iPnkurJvRpb1JLQUJZCtzSSsftK2ZPPCQe9MNN+Hms3kVb2dJuV\nvN3PLwLG3wKBgC0DU7dA0LDDTN0s9XhMK+uKkbTaYOszKCUvRWrMxPIwr2UIsZfe\nO3qVf1FTsDC1XZLolkRyfkUB4xMSBujRa1hnmahBVabZXcCz7Rd923GFImwn8AA5\nPZFPGDiEu8MY4Suh8Xb3q7o7vsh2gYVCJ7PwQaf+nVc861jVa38uTtypAoGAJ5lk\naujF0JlAt36nNyKXTqlOm6pVv20mDpnujwc7FLeP5DzTVJEjQmHtAZsoP50nX1Da\nAhumgSQ4tHdEgDm/2j/kXiZOu9uQyz+UHprDWQIdFoYkrBWzd15a9Ef5KcLvg1W3\nT9TnhdeNp4XaDZZbc79u/B4J9y6Bu70vkWjZFXsCgYEAzD/vhTXZQeBDM9oMOMp2\nkukN3jHwG2cAFb5127ygJHZns2071AwoeQYnpsnpAC4z7C7sjoeYWfktno5oFbnq\nGyquWXdHrC/jELYKcgJzZgncoXjilI8EODvq7a6GVGp4Rlz1mGQW7BQnHcPM+Jri\n/hjKqXujhl6U29XgaDkDEUk=\n-----END PRIVATE KEY-----\n",
-  "client_email": "drive-322@go-2-learn.iam.gserviceaccount.com",
-  "client_id": "112374369447770992406",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/drive-322%40go-2-learn.iam.gserviceaccount.com"
-}
+CONTENT_CREDENTIAL
 EOF
 
 gdrive --service-account a.json list  # just test
@@ -377,7 +366,7 @@ apt install tig ctags htop tree pv nmap screen time tmux netcat psmisc -y
 # tmux new-session -d -s mySession -n myWindow
 # tmux send-keys -t mySession:myWindow "echo debug" Enter
 # tmux ls
-pip install pysnooper  # for debug rvs
+pip install pysnooper torchsnooper # for debug rvs
 screen -d -m bash ./rvs.sh
 
 pip install pydicom parse pytest-logger python_logging_rabbitmq &
@@ -402,7 +391,7 @@ NCCL_VERSION=2.4.8
 TF_FORCE_GPU_ALLOW_GROWTH=true
 JPY_PARENT_PID=18
 NO_GCE_CHECK=True
-PWD=/content
+#PWD=/content
 # HOME=/root
 LAST_FORCED_REBUILD=20200316
 CLICOLOR=1
@@ -437,9 +426,14 @@ EOF
 SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
 cd ${SRC_WORK_FOLDER}
-(test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
+(
+    test -d ${REPO} || {
+        git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
- find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) \
+        git submodule update --init --recursive ;
+ find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd
+    }
+) \
  && {
      if [ x"${PHASE}" != x"dev" ]; then
          python main.py $PARAMS;
@@ -587,8 +581,9 @@ while True:
 # #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
     """
         )
+
         d = dict(
-            gdrive_str=gdrive_str,
+            gdrive_str=gdrive_str.replace("CONTENT_CREDENTIAL", subprocess.check_output("pass gd", shell=True).decode('utf-8')),
             rvs_pty_config_str=rvs_pty_config_str,
             setup_pty_str=setup_pty_str,
             rvs_str=rvs_str,
