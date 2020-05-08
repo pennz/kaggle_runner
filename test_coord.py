@@ -78,7 +78,7 @@ class TestMain:
             "intercept-resnet",
         ]
         utils.logger.debug(" ".join(call_params))
-        ret = subprocess.run(call_params)
+        ret = subprocess.run(call_params)  # need to goto subfolder!!!
         assert ret.returncode == 0
 
     @pytest.mark.skip("test done")

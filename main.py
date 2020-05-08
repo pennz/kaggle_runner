@@ -29,4 +29,5 @@ if "__main__" == __name__:
     r = runner.Runner(args.network, args.AMQPURL,
                       size=args.size, seed=args.seed)
     assert r.AMQPURL is not None
-    r._attach_data_collector(None)
+    # TODO should push the runner and get message back
+    r.attach_data_collector(None)
