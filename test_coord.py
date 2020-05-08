@@ -45,8 +45,8 @@ class TestCoordinator:
         path = self.coordinator.create_runner(runner_configs[1], 19999, False)
         # ret = self.coordinator.run_local(path)
         # assert ret.returncode == 0
-        ret = self.coordinator.push(path)  # just push first
         if os.getenv("CI") != "true":
+            ret = self.coordinator.push(path)  # just push first
             assert ret.returncode == 0
 
     @pytest.mark.timeout(10)
