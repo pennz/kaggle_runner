@@ -30,4 +30,4 @@ if "__main__" == __name__:
                       size=args.size, seed=args.seed)
     assert r.AMQPURL is not None
     # TODO should push the runner and get message back
-    r.attach_data_collector(None)
+    r._attach_data_collector(None)
