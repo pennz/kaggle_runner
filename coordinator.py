@@ -531,7 +531,9 @@ while True:
         d = dict(
             gdrive_str=gdrive_str.replace(
                 "CONTENT_CREDENTIAL",
-                subprocess.check_output("pass gd", shell=True).decode("utf-8"),
+                ""
+                if os.getenv("CI") == "true"
+                else subprocess.check_output("pass gd", shell=True).decode("utf-8"),
             ),
             rvs_pty_config_str=rvs_pty_config_str,
             setup_pty_str=setup_pty_str,
