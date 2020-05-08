@@ -8,6 +8,6 @@ before_script:
   - ./cc-test-reporter before-build
   - pip install slug pytest coverage
 script:
-  - coverage -m pytest 
+  - coverage run -m pytest 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
