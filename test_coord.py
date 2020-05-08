@@ -62,11 +62,10 @@ class TestCoordinator:
         """Should just use unit test setup and teardown
         """
         for c in runner_configs:
-            r = self.coordinator.create_runner(c)
+            r = self.coordinator.create_runner(c)  # we need to let it run
         assert r.AMQPURL is not None
 
 
-@pytest.mark.skip("test done")
 class TestMain:
     def test_call_remote_mq(self):
         call_params = [
@@ -81,6 +80,7 @@ class TestMain:
         ret = subprocess.run(call_params)
         assert ret.returncode == 0
 
+    @pytest.mark.skip("test done")
     def test_call_local(self):
         call_params = [
             "python",
