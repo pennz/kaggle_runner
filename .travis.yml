@@ -9,5 +9,6 @@ before_script:
   - pip install slug pytest coverage parse pysnooper python_logging_rabbitmq jupytext
 script:
   - coverage run -m pytest -s -v
+  - coverage xml
 after_script:
   - ./cc-test-reporter after-build -t coverage.py --exit-code $TRAVIS_TEST_RESULT .coverage
