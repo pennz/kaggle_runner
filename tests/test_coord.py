@@ -4,8 +4,10 @@ import subprocess
 
 import pytest
 
-import coordinator
-import utils
+# import coordinator
+from kaggle_runner import coordinator, utils
+
+# import kaggle_runner.utils as utils
 
 
 @pytest.fixture(scope="module")
@@ -71,7 +73,7 @@ class TestMain:
     def test_call_remote_mq(self):
         call_params = [
             "python",
-            "main.py",
+            "kaggle_runner/main.py",
             "amqp://drdsfaew:QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI@termite.rmq.cloudamqp.com/drdsfaew",
             "384",  # size 256+128
             "123",
@@ -85,7 +87,7 @@ class TestMain:
     def test_call_local(self):
         call_params = [
             "python",
-            "main.py",
+            "kaggle_runner/main.py",
             "amqp://guest:guest@127.0.0.1/",
             "384",  # size 256+128
             "123",

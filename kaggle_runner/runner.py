@@ -7,7 +7,7 @@ import pysnooper
 from python_logging_rabbitmq import RabbitMQHandler
 from python_logging_rabbitmq.compat import text_type
 
-import utils
+from kaggle_runner import utils
 
 
 def format(self, record):
@@ -72,7 +72,7 @@ class Runner:  # blade runner
 
         """
 
-        logger = utils.get_logger()
+        logger = utils.get_logger(self.kernel_name + "_runner")
         rabbit = RabbitMQHandler(
             host=self.AMQPURL.host,
             port=5672,
