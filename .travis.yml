@@ -6,7 +6,7 @@ before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-  - pip install slug pytest coverage parse pysnooper python_logging_rabbitmq jupytext
+  - pip install pytest coverage
   - pip install -e .
 script:
   - coverage run -m pytest -s -v

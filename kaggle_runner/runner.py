@@ -3,7 +3,6 @@ import types
 from socket import gethostname
 
 import parse
-import pysnooper
 from python_logging_rabbitmq import RabbitMQHandler
 from python_logging_rabbitmq.compat import text_type
 
