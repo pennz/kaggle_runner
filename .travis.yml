@@ -7,6 +7,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
   - pip install slug pytest coverage parse pysnooper python_logging_rabbitmq jupytext
+  - pip install -e .
 script:
   - coverage run -m pytest -s -v
   - coverage xml

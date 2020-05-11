@@ -7,7 +7,7 @@ from string import Template
 
 import slug
 
-from kaggle_runner import utils
+from .utils import logger
 
 setup_pty_str = r"""import argparse
 import os
@@ -406,8 +406,7 @@ class Coordinator:
     @staticmethod
     def push(runner):
         "Push the code to server/kagger docker"
-        utils.logger.debug(
-            " ".join(["kaggle", "kernels", "push", "-p", runner]))
+        logger.debug(" ".join(["kaggle", "kernels", "push", "-p", runner]))
         return subprocess.run(["kaggle", "kernels", "push", "-p", runner])
 
     def push_listen(self):
