@@ -11,7 +11,7 @@ Check main.py or test/test_coord.py for usage. It uses kaggle API to upload your
 AMQP is used for logging. Its license needs mention.
 
 ## Example
-Use this [kaggle competition](https://www.kaggle.com/c/siim-acr-pneumothorax-segmentation) about PneumothoraxSegmentation about Pneumothorax Segmentation as an example. To run the example, you will need a kaggle account and set the kaggle command line tool up. And you issues this command to let it run:
+Use this [kaggle competition](https://www.kaggle.com/c/siim-acr-pneumothorax-segmentation) about Pneumothorax Segmentation as an example. To run the example, you will need a kaggle account and set the kaggle command line tool up. And you issues this command to let it run:
 
 ```sh
 # install kaggle_runner, which will pull kaggle command line tool as the dependency
