@@ -31,12 +31,10 @@ class AMQPURL:
         return f"amqp://{self.username}:{self.passwd}@{self.host}/{Vhost}"
 
 
-def get_logger():
+def get_logger(name="utils", level=logging.DEBUG):
+    "get_logger just return basic logger, no AMQP included"
     FORMAT = "[%(levelname)s]%(asctime)s:%(name)s:%(message)s"
     logging.basicConfig(format=FORMAT)
-    logger = logging.getLogger("main")
-    logger.setLevel(logging.DEBUG)
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
     return logger
-
-
-logger = get_logger()

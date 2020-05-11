@@ -7,7 +7,7 @@ from string import Template
 
 import slug
 
-import utils
+from kaggle_runner import utils
 
 setup_pty_str = r"""import argparse
 import os
@@ -391,7 +391,7 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
 
 
 class Coordinator:
-    template_path = "runner_template/"
+    template_path = "kaggle_runner/runner_template/"  # TODO just put it in the code
     """run in controller side, the runners run in dockers with GPUs"""
 
     def __init__(self, tmp_path, title_prefix):
