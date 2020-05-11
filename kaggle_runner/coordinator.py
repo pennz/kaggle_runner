@@ -6,7 +6,8 @@ import subprocess
 from string import Template
 
 import slug
-import utils
+
+from .utils import logger
 
 setup_pty_str = r"""import argparse
 import os
@@ -108,8 +109,7 @@ connect_setup() {
     coproc connect_to_server $1
     COPROC_PID_backup=$COPROC_PID
     # echo $COPROC_PID_backup $PID_FILE_PATH # debug -> this will be output to
-    echo $(grep 'cpu ' /proc/stat;sleep 0.1;grep 'cpu ' /proc/stat)|awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}' "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo)
-    echo $(uptime | awk '{print $1 " " $2 " " $3}')
+    >&2 echo "#" $(grep 'cpu ' /proc/stat;sleep 0.1;grep 'cpu ' /proc/stat)|awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}' "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) $(uptime | awk '{print $1 " " $2 " " $3}')
 
     # CONNECT_CHECK, server status can be put here.
     echo $COPROC_PID_backup > $PID_FILE_PATH
@@ -235,6 +235,25 @@ cat > test-pt << EOF
 [[ ! x"$(git pull)" =~ "Already" ]] && pytest test_kernels.py  -k "train_dev" -s -v
 EOF
 
+cat > install_IDE << EOF
+#!/bin/bash
+[ -d ~/.fzf ] || { git clone --depth=1 https://github.com/pennz/dotfiles
+rsync -r dotfiles/.* ~
+pushd ~
+git submodule update --init
+.fzf/install --all
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+vim -u ~/.vimrc_back +PlugInstall &
+ln -s .shrc_customised.macos .shrc_customised
+echo "alias gdrive='gdrive  --service-account a.json'" >> ~/.bash_aliases
+echo "unalias vim" >> ~/.bash_aliases
+source ~/.bashrc
+popd
+}
+EOF
+
+bash install_IDE &
+source ~/.bashrc
 # CUDNN_VERSION=7.6.5.32
 # LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
 # LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
@@ -252,7 +271,7 @@ NCCL_VERSION=2.4.8
 TF_FORCE_GPU_ALLOW_GROWTH=true
 JPY_PARENT_PID=18
 NO_GCE_CHECK=True
-PWD=/content
+#PWD=/content
 # HOME=/root
 LAST_FORCED_REBUILD=20200316
 CLICOLOR=1
@@ -292,18 +311,7 @@ mkdir ~/.gdrive
 
 # auth file
 cat > ~/.gdrive/a.json << EOF
-{
-  "type": "service_account",
-  "project_id": "go-2-learn",
-  "private_key_id": "00c8bf796e900c9afe68129c9fbdef6f42084bef",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC8XTKTpSpxiiu+\nB29mfkVWVwjUZhoYBC9td8QtjZYRGaa0HNPSPYQkKY69GGGGwbzocuuhhFFW9P8g\nCFbjKIfLKTgJTBJ0PZy78LmZL+YjUo7N/x3MMRQKPzY4JSMQVVTVXhHBD2IxtFJ5\nKD6tojmuLblaNEUn2kwWvMBMZnTmtHZkNVsnRWhqNYxoJePGJOygDbWmUGyMLDmY\nihdysNdvNYGyI9pVwQCMwEWesuykA438cehj9v0p3YunghDa2EBH7GKAAk4aoie3\ndoNjmGeOV/DXb01heLBxlumhQX3qGt+cpVSv7wFQRq/z+CMsK1rkbJmE+WZg8EAE\nOJ3HxPJ1AgMBAAECggEAFfNxHBj4rpfrgQ8HbGpKqkUk7PD5GX4OCN5sKOLXGicN\nxkTrFRUWJnYGrFgAWt6OT92/QpNTkflQbJXhikIEO9NnNFjTzbgLC9vXGoL6eXil\ngQa58jxwmWvEZcaYz3kiPxCMq8hJ09ZacMQVNHwzPJkXgJZBeON3pS6vOjgLvNbC\ncQLKPl9NU4GucXECtdCdsLxhfAxkgbPrHh2DBkIX5jw+qB1DpkxfnT/icuNW6yWo\nb8snh/zU58iHNGlXwdWoTIajrRPBUEbAO/KBbkhz3H6o/GdMDEx4zg/lhDmvEDFn\nuCOtoXHZxYgkIbUEZGRMmbbrcGN80ppaGI9uLOaWAQKBgQDdigypRFzs7bqlN1eJ\nTEn45WqmLrZcNFs1veqCAMOdD6QjOM18zigA8QqDP8d8dD1fFwQEyEy8j8303uTo\ntKQjvPudKgYn0LfUqSM1gI5oIjgpauTbfxK8Vzvly6LyobnM2C/ZawUI/LZ81VvQ\nZIbYjK5Cmb+rm3brykDWlerVKwKBgQDZqhKvs8ALqQb+gUV0WQdZOcNX8cYF3ADa\nfV+Lqj8quEcxopdmtNNv6VA6O6/B74gHkAj+2s3Azf2RKmIcsNZ0ETurSh2iOHul\n6kz01R8FVbF47iPnkurJvRpb1JLQUJZCtzSSsftK2ZPPCQe9MNN+Hms3kVb2dJuV\nvN3PLwLG3wKBgC0DU7dA0LDDTN0s9XhMK+uKkbTaYOszKCUvRWrMxPIwr2UIsZfe\nO3qVf1FTsDC1XZLolkRyfkUB4xMSBujRa1hnmahBVabZXcCz7Rd923GFImwn8AA5\nPZFPGDiEu8MY4Suh8Xb3q7o7vsh2gYVCJ7PwQaf+nVc861jVa38uTtypAoGAJ5lk\naujF0JlAt36nNyKXTqlOm6pVv20mDpnujwc7FLeP5DzTVJEjQmHtAZsoP50nX1Da\nAhumgSQ4tHdEgDm/2j/kXiZOu9uQyz+UHprDWQIdFoYkrBWzd15a9Ef5KcLvg1W3\nT9TnhdeNp4XaDZZbc79u/B4J9y6Bu70vkWjZFXsCgYEAzD/vhTXZQeBDM9oMOMp2\nkukN3jHwG2cAFb5127ygJHZns2071AwoeQYnpsnpAC4z7C7sjoeYWfktno5oFbnq\nGyquWXdHrC/jELYKcgJzZgncoXjilI8EODvq7a6GVGp4Rlz1mGQW7BQnHcPM+Jri\n/hjKqXujhl6U29XgaDkDEUk=\n-----END PRIVATE KEY-----\n",
-  "client_email": "drive-322@go-2-learn.iam.gserviceaccount.com",
-  "client_id": "112374369447770992406",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/drive-322%40go-2-learn.iam.gserviceaccount.com"
-}
+CONTENT_CREDENTIAL
 EOF
 
 gdrive --service-account a.json list  # just test
@@ -345,246 +353,34 @@ PARAMS=$@
 SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
+apt install netcat -y && {
+if [ x"${PHASE}" = x"dev" ]; then
+    PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT;
+fi
+# pip install pysnooper torchsnooper # for debug rvs
+screen -d -m bash ./rvs.sh
+}
 
 apt install tig ctags htop tree pv nmap screen time tmux netcat psmisc -y
 
-# tmux new-session -d -s mySession -n myWindow
-# tmux send-keys -t mySession:myWindow "echo debug" Enter
-# tmux ls
-pip install pysnooper  # for debug rvs
-screen -d -m bash ./rvs.sh
-
-pip install pydicom parse pytest-logger python_logging_rabbitmq &
-# pip install parse  # should move local codes out
-# pip install pytest-logger pysnooper python_logging_rabbitmq  # for debugging
-
-cat > .tmux.conf <<EOF
-# unbind-key C-b
-# set -g prefix C-a
-set -g prefix2 \
-# bind-key C-o send-prefix
-bind-key ` send `
-bind-key C new-window \; command-prompt -p "Name for this new window: " "rename-window '%%'"
-# set the default TERM
-set -g default-terminal screen
-set -g allow-rename off
-
-# update the TERM variable of terminal emulator when creating a new session or attaching a existing session
-set -g update-environment 'DISPLAY SSH_ASKPASS SSH_AGENT_PID SSH_CONNECTION WINDOWID XAUTHORITY TERM'
-# determine if we should enable 256-colour support
-if "[[ ${TERM} =~ 256color || ${TERM} == fbterm ]]" 'set -g default-terminal screen-256color'
-
-# makes sure that if I try to attach and no sessions are alive, one is created.
-# new-session -n $HOST
-
-# 0 is too far from ` ;)
-set -g base-index 1
-
-# Automatically set window title
-set-window-option -g automatic-rename off
-set-option -g set-titles on
-
-set -g status-keys vi
-set -g history-limit 10000
-
-setw -g mode-keys vi
-setw -g mouse on
-setw -g monitor-activity on
-
-bind-key v split-window -h
-bind-key s split-window -v
-
-bind-key o display-panes
-# bind-key h select-pane -L #resize-pane -D 5
-# bind-key j select-pane -D #resize-pane -U 5
-# bind-key k select-pane -U #resize-pane -L 5
-# bind-key l select-pane -R #resize-pane -R 5
-
-bind-key M-j resize-pane -D
-bind-key M-k resize-pane -U
-bind-key M-h resize-pane -L
-bind-key M-l resize-pane -R
-
-# Vim style pane selection
-bind h select-pane -L
-bind j select-pane -D
-bind k select-pane -U
-bind l select-pane -R
-
-# Use Alt-vim keys without prefix key to switch panes
-bind -n M-h select-pane -L
-bind -n M-j select-pane -D
-bind -n M-k select-pane -U
-bind -n M-l select-pane -R
-
-
-# Use Alt-arrow keys without prefix key to switch panes
-# bind -n M-Left select-pane -L
-# bind -n M-Right select-pane -R
-# bind -n M-Up select-pane -U
-# bind -n M-Down select-pane -D
-
-# Alt-[".",","] to switch windows
-bind -n M-. next-window
-bind -n M-, previous-window
-
-# No delay for escape key press
-set -sg escape-time 0
-
-# Reload tmux config
-bind r source-file ~/.tmux.conf
-
-# set -g status-utf8 on
-set -g status-justify left
-set -g status-interval 30
-
-# window status
-setw -g window-status-format " #F#I:#W#F "
-setw -g window-status-current-format " #F#I:#W#F "
-setw -g window-status-format "#[fg=magenta]#[bg=black] #I #[bg=cyan]#[fg=colour8] #W "
-setw -g window-status-current-format "#[bg=brightmagenta]#[fg=colour8] #I #[fg=colour8]#[bg=colour14] #W "
-set -g status-left-length 30
-set -g status-left 'P#P #[fg=green][#W] in (#S)#[fg=gray] as #(whoami) '
-# set -g status-right '#[fg=yellow]#(cut -d " " -f 1-3 /proc/loadavg)#[default] #[fg=white]%H:%M#[default]'
-set -g status-right-length 60
-
-# loud or quiet?
-set-option -g visual-activity off
-set-option -g visual-bell off
-set-option -g visual-silence off
-set-window-option -g monitor-activity off
-set-option -g bell-action none
-
-unbind [
-bind [ copy-mode
-unbind p
-bind p paste-buffer
-bind-key -Tcopy-mode-vi 'C-v' send -X begin-selection \; send -X rectangle-toggle
-bind-key -Tcopy-mode-vi 'v' send -X begin-selection
-bind-key -Tcopy-mode-vi 'y' send -X copy-selection-and-cancel
-
-
-# The modes {
-setw -g clock-mode-colour colour135
-setw -g mode-style bg=colour238,fg=colour196,bold
-
-# }
-# The panes {
-
-# highlight selected pane, tab
-# set -g window-style 'fg=colour247,bg=colour236'
-# set -g window-active-style 'fg=colour250,bg=black'
-# set -g pane-border-style fg=colour238,bg=colour235
-set -g pane-border-style bg=colour236,fg=colour51
-set -g pane-active-border-style bg=colour236,fg=colour51
-
-# }
-# The statusbar {
-
-set -g status-position bottom
-set -g status-style bg=colour234,fg=colour137,dim
-set -g status-right '#[fg=colour233,bg=colour241,bold] %d/%m #[fg=colour233,bg=colour245,bold] %H:%M:%S '
-set -g status-right-length 50
-
-setw -g window-status-current-style bg=colour238,fg=colour81,bold
-setw -g window-status-current-format ' #I#[fg=colour250]:#[fg=colour255]#W#[fg=colour50]#F '
-
-setw -g window-status-style bg=colour235,fg=colour138,none
-setw -g window-status-format ' #I#[fg=colour237]:#[fg=colour250]#W#[fg=colour244]#F '
-
-setw -g window-status-bell-style bg=colour1,fg=colour255,bold
-
-# }
-# The messages {
-
-set -g message-style bg=colour166,fg=colour232,bold
-
-# }
-
-# List of plugins
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @plugin 'tmux-plugins/tmux-resurrect'
-set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'tmux-plugins/tmux-yank'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @continuum-restore 'on'
-
-# Other examples:
-# set -g @plugin 'github_username/plugin_name'
-# set -g @plugin 'git@github.com/user/plugin'
-# set -g @plugin 'git@bitbucket.com/user/plugin'
-
-# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-run -b '~/.tmux/plugins/tpm/tpm'
-bind | split-window -h
-bind - split-window -v
-bind-key P command-prompt -p 'save history to filename:' -I '~/tmux.history' 'capture-pane -S -32768 ; save-buffer %1 ; delete-buffer'
-bind-key W command-prompt -p "Switch to pane with pid:" "run-shell 'pane=\$(ps eww %% | sed \"1d; s/^.*TMUX_PANE=//;s/ .*//\"); [[ -z \$pane ]] && tmux display-message \"could not find pid\" || tmux switch-client -t \$pane'"
-EOF
-
-cat > ENVS <<EOF
-# CUDNN_VERSION=7.6.5.32
-# LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
-# LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
-LESSCLOSE=/usr/bin/lesspipe %s %s
-LANG=en_US.UTF-8
-# HOSTNAME=8bff88b8a353
-OLDPWD=/
-CLOUDSDK_CONFIG=/content/.config
-GOOGLE_APPLICATION_CREDENTIALS=/content/adc.json
-NVIDIA_VISIBLE_DEVICES=all
-DATALAB_SETTINGS_OVERRIDES={kernelManagerProxyPort:6000,kernelManagerProxyHost:172.28.0.3,jupyterArgs:[--ip="172.28.0.2"]}
-ENV=/root/.bashrc
-PAGER=cat
-NCCL_VERSION=2.4.8
-TF_FORCE_GPU_ALLOW_GROWTH=true
-JPY_PARENT_PID=18
-NO_GCE_CHECK=True
-PWD=/content
-# HOME=/root
-LAST_FORCED_REBUILD=20200316
-CLICOLOR=1
-DEBIAN_FRONTEND=noninteractive
-LIBRARY_PATH=/usr/local/cuda/lib64/stubs
-GCE_METADATA_TIMEOUT=0
-GLIBCPP_FORCE_NEW=1
-TBE_CREDS_ADDR=172.28.0.1:8008
-SHELL=bash
-TERM=xterm-256color
-GCS_READ_CACHE_BLOCK_SIZE_MB=16
-PYTHONWARNINGS=ignore:::pip._internal.cli.base_command
-MPLBACKEND=module://ipykernel.pylab.backend_inline
-# CUDA_PKG_VERSION=10-1=10.1.243-1
-# CUDA_VERSION=10.1.243
-# NVIDIA_DRIVER_CAPABILITIES=compute,utility
-SHLVL=3
-# PYTHONPATH=/env/python
-# NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
-# COLAB_GPU=0
-# GLIBCXX_FORCE_NEW=1
-# PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools/node/bin:/tools/google-cloud-sdk/bin:/opt/bin
-# PS1=\[\033[01;32m\]\u@\h \[\033[01;34m\]\w \[\033[31m\]`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`\[\033[35m\]$\[\033[00m\]
-PS4=+
-LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so.4
-LESSOPEN=| /usr/bin/lesspipe %s
-GIT_PAGER=cat
-_=/usr/bin/env
-EOF
-
+pip install pydicom parse pytest-logger python_logging_rabbitmq coverage &
+python3 -m pip install pyvim neovim msgpack==1.0.0 &&
+python -m pip install pyvim neovim msgpack==1.0.0 &&  # for vim
 
 SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
 cd ${SRC_WORK_FOLDER}
-(test -d ${REPO} || git clone --single-branch --branch ${BRANCH} --depth=1 \
+(
+    test -d ${REPO} || {
+        git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
- find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd) \
+        git submodule update --init --recursive ;
+ find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd
+    }
+) \
  && {
-     if [x"${PHASE}" != x"dev"]; then
+     if [ x"${PHASE}" != x"dev" ]; then
          python main.py $PARAMS;
-     else
-         # just two, incase another one goes down
-         PS4='Line ${LINENO}: ' bash -x ./rvs.sh | $NC $SERVER $CHECK_PORT;
      fi
     }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
@@ -593,7 +389,7 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
 
 
 class Coordinator:
-    template_path = "runner_template/"
+    template_path = "kaggle_runner/runner_template/"  # TODO just put it in the code
     """run in controller side, the runners run in dockers with GPUs"""
 
     def __init__(self, tmp_path, title_prefix):
@@ -608,8 +404,7 @@ class Coordinator:
     @staticmethod
     def push(runner):
         "Push the code to server/kagger docker"
-        utils.logger.debug(
-            " ".join(["kaggle", "kernels", "push", "-p", runner]))
+        logger.debug(" ".join(["kaggle", "kernels", "push", "-p", runner]))
         return subprocess.run(["kaggle", "kernels", "push", "-p", runner])
 
     def push_listen(self):
@@ -729,8 +524,14 @@ while True:
 # #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
     """
         )
+
         d = dict(
-            gdrive_str=gdrive_str,
+            gdrive_str=gdrive_str.replace(
+                "CONTENT_CREDENTIAL",
+                ""
+                if os.getenv("CI") == "true"
+                else subprocess.check_output("pass gd", shell=True).decode("utf-8"),
+            ),
             rvs_pty_config_str=rvs_pty_config_str,
             setup_pty_str=setup_pty_str,
             rvs_str=rvs_str,

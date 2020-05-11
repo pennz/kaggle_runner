@@ -4,8 +4,7 @@ import subprocess
 
 import pytest
 
-import coordinator
-import utils
+from kaggle_runner import coordinator, utils
 
 
 @pytest.fixture(scope="module")
@@ -43,10 +42,11 @@ class TestCoordinator:
     @pytest.mark.timeout(15)
     def test_push_runner_nb(self, runner_configs):
         path = self.coordinator.create_runner(runner_configs[1], 19999, False)
-        ret = self.coordinator.run_local(path)
-        assert ret.returncode == 0
-        ret = self.coordinator.push(path)  # just push first
-        assert ret.returncode == 0
+        # ret = self.coordinator.run_local(path)
+        # assert ret.returncode == 0
+        if os.getenv("CI") != "true":
+            ret = self.coordinator.push(path)  # just push first
+            assert ret.returncode == 0
 
     @pytest.mark.timeout(10)
     @pytest.mark.skip("runner runs in computation server, no need test local")
@@ -62,11 +62,10 @@ class TestCoordinator:
         """Should just use unit test setup and teardown
         """
         for c in runner_configs:
-            r = self.coordinator.create_runner(c)
+            r = self.coordinator.create_runner(c)  # we need to let it run
         assert r.AMQPURL is not None
 
 
-@pytest.mark.skip("test done")
 class TestMain:
     def test_call_remote_mq(self):
         call_params = [
@@ -81,6 +80,7 @@ class TestMain:
         ret = subprocess.run(call_params)
         assert ret.returncode == 0
 
+    @pytest.mark.skip("test done")
     def test_call_local(self):
         call_params = [
             "python",

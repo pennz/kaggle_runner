@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 
-import runner
+from kaggle_runner.runner import Runner
 
 if "__main__" == __name__:
     parser = argparse.ArgumentParser(
@@ -26,7 +26,8 @@ if "__main__" == __name__:
     )
 
     args = parser.parse_args()
-    r = runner.Runner(args.network, args.AMQPURL,
-                      size=args.size, seed=args.seed)
+    r = Runner(args.network, args.AMQPURL, size=args.size, seed=args.seed)
     assert r.AMQPURL is not None
+    # TODO should push the runner and get message back
     r._attach_data_collector(None)
+    r.logger.debug("Runner created")
