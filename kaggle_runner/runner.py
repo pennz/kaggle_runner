@@ -7,7 +7,7 @@ import pysnooper
 from python_logging_rabbitmq import RabbitMQHandler
 from python_logging_rabbitmq.compat import text_type
 
-from kaggle_runner import utils
+from .utils import utils
 
 
 def format(self, record):
