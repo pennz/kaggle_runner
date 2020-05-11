@@ -4,13 +4,12 @@ PY3=/home/v/miniconda3/envs/pyt/bin/python3
 SRC=$(wildcard *.py)
 
 all: push $(SRC)
-	git push
 	cc-test-reporter before-build
 	-coverage run -m pytest .
 	coverage xml
 	cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 push: $(SRC)
-	git push
+	git push # push first as kernel will download the codes, so put new code to github first
 	cd ../kaggle_runner; $(PY3) -m pytest -k "TestCo" # && cd .runners/intercept-resnet-384/ && $(PY3) main.py
 clean:
 	-rm -rf __pycache__ mylogs
