@@ -421,11 +421,12 @@ class Coordinator:
     def _change_kernel_meta_info(folder, name, script, gpu=False):
         with open(os.path.join(folder, "kernel-metadata.json"), "r+") as jf:
             data = json.load(jf)
-            if not script:
-                name = name + " nb"
-            slug_name = slug.slug(name)
-            data["id"] = re.sub(r"/.*", "/" + slug_name, data["id"])
-            data["title"] = slug_name
+            if name is not None:
+                if not script:
+                    name = name + " nb"
+                slug_name = slug.slug(name)
+                data["id"] = re.sub(r"/.*", "/" + slug_name, data["id"])
+                data["title"] = slug_name
             data["enable_gpu"] = "true" if gpu else "false"
             if not script:
                 data["kernel_type"] = "notebook"
@@ -554,7 +555,7 @@ while True:
     def run_local(self, path):
         return subprocess.run("python " + os.path.join(path, "main.py"), shell=True)
 
-    def create_runner(self, config, seed="2020", script=True):
+    def create_runner(self, config, seed="2020", script=True, from_template=True):
         """
         config will be size and model right now
         """
@@ -565,9 +566,13 @@ while True:
 
         path = os.path.join(self.tmp_path, name)
         shutil.copytree(self.template_path, path)
-        self._change_kernel_meta_info(
-            path, self.title_prefix + " " + name, script)
-        self._change_main_py(path, size, net, AMQPURL, seed)
+        if from_template:
+            self._change_kernel_meta_info(path, None, script)
+            self._change_main_py(path, size, net, AMQPURL, seed)
+        else:
+            self._change_kernel_meta_info(
+                path, self.title_prefix + " " + name, script)
+            self._change_main_py(path, size, net, AMQPURL, seed)
         if not script:
             subprocess.run(
                 ("jupytext --to notebook " + os.path.join(path, "main.py")).split()
