@@ -3,7 +3,6 @@ import logging
 from kaggle_runner.kernels.KernelRunningState import KernelRunningState
 from kaggle_runner.utils import kernel_utils
 
-
 # Plot inline
 # %matplotlib inline
 
@@ -36,12 +35,12 @@ class KaggleKernel:
         self.dependency = []
 
     def _add_dependency(self, dep):
-        """add_dependency just install pip dependency now
+        """_add_dependency just install pip dependency now
         """
         self.dependency.append(dep)
 
     def install_dependency(self, dep):
-        self.add_dependency(dep)
+        self._add_dependency(dep)
 
     def _add_logger_handler(self, handler):
         self.logger.addHandler(handler)
@@ -109,7 +108,8 @@ class KaggleKernel:
         if exec_flag:
             self.logger.debug("dumping state to file for %s" % self._stage)
             # dump_obj(self, 'run_state.pkl', force=True)  # too large
-            kernel_utils.dump_obj(self, "run_state_%s.pkl" % self._stage, force=True)
+            kernel_utils.dump_obj(self, "run_state_%s.pkl" %
+                                  self._stage, force=True)
 
     def run(
         self,
@@ -187,97 +187,53 @@ class KaggleKernel:
             if self._stage.value >= end_stage.value:
                 return
 
+    @classmethod
+    def _load_state(cls, stage=None, file_name="run_state.pkl", logger=None):
+        """
 
-"""
-size = 512
-mean = (0.485, 0.456, 0.406)
-std = (0.229, 0.224, 0.225)
-num_workers = 8
-batch_size = 16
-best_threshold = 0.5
-min_size = 3500
-device = torch.device("cuda:0")
-df = pd.read_csv(sample_submission_path)
-testset = DataLoader(
-    TestDataset(test_data_folder, df, size, mean, std),
-    batch_size=batch_size,
-    shuffle=False,
-    num_workers=num_workers,
-    pin_memory=True,
-)
-model = model_trainer.net # get the model from model_trainer object
-model.eval()
-state = torch.load('./model.pth', map_location=lambda storage, loc: storage)
-model.load_state_dict(state["state_dict"])
-encoded_pixels = []
-for i, batch in enumerate(tqdm(testset)):
-    preds = torch.sigmoid(model(batch.to(device)))
-    # (batch_size, 1, size, size) -> (batch_size, size, size)
-    preds = preds.detach().cpu().numpy()[:, 0, :, :]
-    for probability in preds:
-        if probability.shape != (1024, 1024):
-            probability = cv2.resize(probability, dsize=(
-                1024, 1024), interpolation=cv2.INTER_LINEAR)
-        predict, num_predict = post_process(
-            probability, best_threshold, min_size)
-        if num_predict == 0:
-            encoded_pixels.append('-1')
-        else:
-            r = run_length_encode(predict)
-            encoded_pixels.append(r)
-df['EncodedPixels'] = encoded_pixels
-df.to_csv('submission.csv', columns=['ImageId', 'EncodedPixels'], index=False)
+        :param file_name:
+        :return: the kernel object, need to continue
+        """
+        if stage is not None:
+            file_name = f"run_state_{stage}.pkl"
+        if logger is not None:
+            logger.debug(f"restore from {file_name}")
+        self = kernel_utils.get_obj_or_dump(filename=file_name)
+        assert self is not None
+        self.logger = logger
+        return self
 
-df.head()
-"""
+    def load_state_data_only(self, file_name="run_state.pkl"):
+        pass
 
-       @classmethod
-       def _load_state(cls, stage=None, file_name="run_state.pkl", logger=None):
-            """
+    @classmethod
+    def load_state_continue_run(cls, file_name="run_state.pkl", logger=None):
+        """
 
-            :param file_name:
-            :return: the kernel object, need to continue
-            """
-            if stage is not None:
-                file_name = f"run_state_{stage}.pkl"
-            if logger is not None:
-                logger.debug(f"restore from {file_name}")
-            self = kernel_utils.get_obj_or_dump(filename=file_name)
-            assert self is not None
-            self.logger = logger
-            return self
+        :param file_name:
+        :return: the kernel object, need to continue
+        """
+        self = cls._load_state(file_name=file_name, logger=logger)
+        self.continue_run()
 
-       def load_state_data_only(self, file_name="run_state.pkl"):
-           pass
+    def pre_train(self):
+        pass
 
-       @classmethod
-       def load_state_continue_run(cls, file_name="run_state.pkl", logger=None):
-           """
+    def after_train(self):
+        pass
 
-           :param file_name:
-           :return: the kernel object, need to continue
-           """
-           self = cls._load_state(file_name=file_name, logger=logger)
-           self.continue_run()
+    def pre_submit(self):
+        pass
 
-       def pre_train(self):
-           pass
+    def submit(self):
+        pass
 
-       def after_train(self):
-           pass
+    def after_submit(self):
+        "after_submit should report to our logger, for next step analyze"
+        pass
 
-       def pre_submit(self):
-           pass
+    def pre_test(self):
+        pass
 
-       def submit(self):
-           pass
-
-       def after_submit(self):
-           "after_submit should report to our logger, for next step analyze"
-           pass
-
-       def pre_test(self):
-           pass
-
-       def after_test(self):
-           pass
+    def after_test(self):
+        pass
