@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 
 def metric(probability, truth, threshold=0.5, reduction="none"):

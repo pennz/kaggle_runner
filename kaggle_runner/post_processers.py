@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 
 
 def post_process(probability, threshold, min_size):

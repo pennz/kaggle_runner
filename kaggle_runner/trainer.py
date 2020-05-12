@@ -1,10 +1,19 @@
 import time
+import torch
+
+from kaggle_runner.data_providers import provider
+from kaggle_runner.logs import epoch_log
+from kaggle_runner.losses import MixedLoss
+from kaggle_runner.metrics.meters import Meter
+from kaggle_runner.optimizers import RAdam
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+import torch.backends.cudnn as cudnn
 
 
 class Trainer(object):
     """This class takes care of training and validation of our model"""
 
-    def __init__(self, model):
+    def __init__(self, model, data_folder, df_path):
         self.fold = 1
         self.total_folds = 5
         self.num_workers = 4
@@ -31,7 +40,7 @@ class Trainer(object):
                 fold=1,
                 total_folds=5,
                 data_folder=data_folder,
-                df_path=train_rle_path,
+                df_path=df_path,
                 phase=phase,
                 size=512,
                 mean=(0.485, 0.456, 0.406),
