@@ -1,7 +1,6 @@
 {
   "id": "k1gaggle/unet-with-se-resnext50-32x4d-encoder-for-stage-2",
-  "id_no": 9349529,
-  "title": "UNet with se_resnext50_32x4d encoder  for stage-2",
+  "title": "UNet with se_resnext50_32x4d encoder for stage-2",
   "code_file": "main.py",
   "language": "python",
   "kernel_type": "notebook",
