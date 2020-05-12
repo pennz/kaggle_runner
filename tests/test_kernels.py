@@ -5,17 +5,17 @@ import unittest
 
 import numpy as np
 import pytest
-import torch
-from torch.autograd import Variable
 
-from kaggle_runner.kernels import kernel, PSKernel, pytorchKernel
+import torch
 
 # import modelTester
-import runner
+from kaggle_runner import runner
+from kaggle_runner.kernels import PSKernel, kernel, pytorchKernel
+from kaggle_runner.kernels.KernelRunningState import KernelRunningState
 
 # from kernel import Kernel
 from kaggle_runner.utils import kernel_utils
-from kaggle_runner.kernels.KernelRunningState import KernelRunningState
+from torch.autograd import Variable
 
 log_args = {
     "size": 384,
