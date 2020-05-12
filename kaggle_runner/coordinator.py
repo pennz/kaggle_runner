@@ -362,7 +362,7 @@ apt update && apt install netcat screen -y && {
   screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
 }
 
-apt install tig ctags htop tree pv nmap screen time tmux netcat psmisc -y
+apt install tig ctags htop tree pv nmap time tmux psmisc -y
 
 pip install pydicom parse pytest-logger python_logging_rabbitmq coverage &
 python3 -m pip install pyvim neovim msgpack==1.0.0 &&
