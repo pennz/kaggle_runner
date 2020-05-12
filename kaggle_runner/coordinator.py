@@ -371,13 +371,21 @@ python -m pip install pyvim neovim msgpack==1.0.0 &&  # for vim
 
 SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
+
+mvdir () {
+    mkdir "$2"/"$1"
+    mv "$1"/* "$2"/"$1"
+}
+export -f mvdir
 cd ${SRC_WORK_FOLDER}
 (
     test -d ${REPO} || {
         git clone --single-branch --branch ${BRANCH} --depth=1 \
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
         git submodule update --init --recursive ;
- find . -maxdepth 1 -name ".??*" -o -name "??*" | xargs -I{} mv {} $OLDPWD && popd
+ find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
+ find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} mvdir $OLDPWD
+        popd
     }
 ) \
  && {
