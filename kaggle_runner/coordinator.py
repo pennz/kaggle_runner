@@ -525,12 +525,16 @@ while True:
     """
         )
 
+        try:
+            gdpass = subprocess.check_output("pass gd", shell=True).decode("utf-8")
+        except Exception as e:
+            gdpass = ""
         d = dict(
             gdrive_str=gdrive_str.replace(
                 "CONTENT_CREDENTIAL",
                 ""
                 if os.getenv("CI") == "true"
-                else subprocess.check_output("pass gd", shell=True).decode("utf-8"),
+                else gdpass
             ),
             rvs_pty_config_str=rvs_pty_config_str,
             setup_pty_str=setup_pty_str,
