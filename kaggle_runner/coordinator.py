@@ -131,12 +131,13 @@ connect_setup() {
     tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
     rm $PID_FILE_PATH
 
-  pgrep $RSPID && kill $RSPID
+  pkill $RSPID
   ${connect_again_flag}=0
   # just recursively, sleep in case...
   sleep 5 && [ ! $RSRET -eq 120 ] && ${connect_again_flag}=1
   done
-  # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss thing
+  # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss
+  # thing
   echo $RSRET > $EXIT_FILE_PATH && return $RSRET
 }
 
