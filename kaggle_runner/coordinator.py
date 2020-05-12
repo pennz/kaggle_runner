@@ -384,7 +384,7 @@ cd ${SRC_WORK_FOLDER}
 https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
         git submodule update --init --recursive ;
  find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
- find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} mvdir $OLDPWD
+ find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} mvdir {} $OLDPWD
         popd
     }
 ) \
