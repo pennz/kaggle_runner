@@ -45,13 +45,17 @@
 # 3. in version 4 i will try fpn instead of unet
 # 4. version 7 - FPN with inceptionresnetv2
 
-# !pip install -U git+https://github.com/albu/albumentations
-
 import glob
 # + _uuid="8f2839f25d086af736a60e9eeb907d3b93b6e0e5" _cell_guid="b1076dfc-b9ad-4769-8c92-a6c4dae69d19"
 import os
 import random
 import warnings
+
+import subprocess
+# !pip install -U git+https://github.com/albu/albumentations
+# !pip install git+https://github.com/qubvel/segmentation_models.pytorch > /dev/null 2>&1 # Install segmentations_models.pytorch, with no bash output.
+subprocess.run("pip install -U git+https://github.com/albu/albumentations", shell=True)
+subprocess.run("pip install git+https://github.com/qubvel/segmentation_models.pytorch", shell=True)
 
 import albumentations as A
 import cv2
@@ -78,8 +82,6 @@ warnings.filterwarnings("ignore")
 # -
 
 A.MultiplicativeNoise()
-
-# !pip install git+https://github.com/qubvel/segmentation_models.pytorch > /dev/null 2>&1 # Install segmentations_models.pytorch, with no bash output.
 
 # ## Utility functions
 
