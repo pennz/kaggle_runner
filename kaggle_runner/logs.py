@@ -5,7 +5,7 @@ from collections import defaultdict, deque
 import numpy as np
 import torch
 
-import tf
+import tensorflow as tf
 from kaggle_runner.utils.kernel_utils import is_dist_avail_and_initialized
 
 
