@@ -353,15 +353,16 @@ PARAMS=$@
 SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
-apt install netcat -y && {
+apt update &&
+apt install netcat screen -y && {
 if [ x"${PHASE}" = x"dev" ]; then
     PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT;
 fi
-# pip install pysnooper torchsnooper # for debug rvs
-screen -d -m bash ./rvs.sh
+    # pip install pysnooper torchsnooper # for debug rvs
+    screen -d -m bash ./rvs.sh
 }
 
-apt install tig ctags htop tree pv nmap screen time tmux netcat psmisc -y
+apt install tig ctags htop tree pv nmap time tmux psmisc -y
 
 pip install pydicom parse pytest-logger python_logging_rabbitmq coverage &
 python3 -m pip install pyvim neovim msgpack==1.0.0 &&
