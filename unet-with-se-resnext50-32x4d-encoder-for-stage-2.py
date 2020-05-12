@@ -48,63 +48,31 @@
 # !pip install -U git+https://github.com/albu/albumentations
 
 import glob
-
-# +
-import math
-
 # + _uuid="8f2839f25d086af736a60e9eeb907d3b93b6e0e5" _cell_guid="b1076dfc-b9ad-4769-8c92-a6c4dae69d19"
 import os
-import pdb
 import random
-import time
 import warnings
-
-import numpy as np
-import pandas as pd
-import torch
-import torch.backends.cudnn as cudnn
-import torch.nn as nn
-import torch.optim as optim
-from matplotlib import pyplot as plt
-from sklearn.model_selection import StratifiedKFold
-from torch.nn import functional as F
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.optim.optimizer import Optimizer, required
-from torch.utils.data import DataLoader, Dataset, sampler
-from tqdm import tqdm_notebook as tqdm
 
 import albumentations as A
 import cv2
+import numpy as np
+import pandas as pd
 import segmentation_models_pytorch as smp
-from albumentations import (
-    Blur,
-    Compose,
-    ElasticTransform,
-    GaussNoise,
-    GridDistortion,
-    HorizontalFlip,
-    IAAEmboss,
-    MultiplicativeNoise,
-    Normalize,
-    OneOf,
-    OpticalDistortion,
-    RandomBrightnessContrast,
-    RandomGamma,
-    RandomRotate90,
-    Resize,
-    ShiftScaleRotate,
-    Transpose,
-    VerticalFlip,
-)
-from albumentations.pytorch import ToTensor
+import torch
+from matplotlib import pyplot as plt
+from torch.utils.data import DataLoader  # TODO optimize this
+from tqdm import tqdm_notebook as tqdm
 
-from kaggle_runner.coders import run_length_encode
 from kaggle_runner.data_providers import provider
+from kaggle_runner.datasets.coders import run_length_encode
+# from kaggle_runner.datasets.siim_dataset import SIIMDataset
+from kaggle_runner.datasets.test_dataset import TestDataset
 from kaggle_runner.plots import plot
 from kaggle_runner.post_processers import post_process
-from kaggle_runner.datasets.siim_dataset import SIIMDataset
-from kaggle_runner.datasets.test_dataset import TestDataset
 from kaggle_runner.trainer import Trainer
+
+# +
+# from albumentations.pytorch import ToTensor
 
 warnings.filterwarnings("ignore")
 # -
