@@ -100,7 +100,7 @@ len(ab)
 a = pd.read_csv(train_rle_path)
 len(a)
 
-# ### Dataloader sanity check
+# ### Dataloader sanity check, not used in trainer
 
 dataloader = provider(
     fold=0,
@@ -150,7 +150,9 @@ model  # a *deeper* look
 
 # ## Model Training and validation
 
-model_trainer = Trainer(model)
+model_trainer = Trainer(model
+                data_folder=data_folder,
+	    	df_path=train_rle_path)
 model_trainer.start()
 
 # +
