@@ -1,6 +1,6 @@
 export PATH := /home/v/miniconda3/envs/pyt/bin:$(PATH)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43
-PY3=/home/v/miniconda3/envs/pyt/bin/python3
+PY3=python3
 SRC=$(wildcard *.py)
 
 all: push $(SRC)
