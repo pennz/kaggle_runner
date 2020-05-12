@@ -1,3 +1,6 @@
+import time
+
+
 class Trainer(object):
     """This class takes care of training and validation of our model"""
 
