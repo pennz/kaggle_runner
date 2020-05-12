@@ -1,6 +1,6 @@
 export PATH := /home/v/miniconda3/envs/pyt/bin:$(PATH)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43
-PY3=python3
+PY3=python
 SRC=$(wildcard *.py)
 
 all: push $(SRC)
@@ -10,7 +10,8 @@ all: push $(SRC)
 	cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 push: $(SRC)
 	git push # push first as kernel will download the codes, so put new code to github first
-	$(PY3) -m pytest -k "TestCo" # && cd .runners/intercept-resnet-384/ && $(PY3) main.py
+	eval 'echo $$(which $(PY3)) is our python executable'
+	$(PY3) -m pytest -k "TestCo" tests/test_coord.py # && cd .runners/intercept-resnet-384/ && $(PY3) main.py
 clean:
 	-rm -rf __pycache__ mylogs dist/* build/*
 submit:
