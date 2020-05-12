@@ -98,43 +98,43 @@ connect_to_server() {
 connect_setup() {
   connect_again_flag=1
   while [ ${connect_again_flag} -eq 1 ]; do
-  check_exit_status && return 0
+    check_exit_status && return 0
 
-  # The standard output of COMMAND is connected via a pipe to a file
-  # descriptor in the executing shell, and that file descriptor is assigned
-  # to 'NAME'[0].  The standard input of COMMAND is connected via a pipe to
-  # a file descriptor in the executing shell, and that file descriptor is
-  # assigned to 'NAME'[1].  This pipe is established before any redirections
-  # specified by the command (*note Redirections::).
+    # The standard output of COMMAND is connected via a pipe to a file
+    # descriptor in the executing shell, and that file descriptor is assigned
+    # to 'NAME'[0].  The standard input of COMMAND is connected via a pipe to
+    # a file descriptor in the executing shell, and that file descriptor is
+    # assigned to 'NAME'[1].  This pipe is established before any redirections
+    # specified by the command (*note Redirections::).
 
-  PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
-  (
-    coproc connect_to_server $1
-    # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
-    # COPROC[0] is the output of nc
-    exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
-    COPROC_PID_backup=$COPROC_PID
+    PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
+    (
+      coproc connect_to_server $1
+      # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
+      # COPROC[0] is the output of nc
+      exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
+      COPROC_PID_backup=$COPROC_PID
 
-    # CONNECT_CHECK, server status can be put here.
-    echo $COPROC_PID_backup > $PID_FILE_PATH
-  )
-  RSPID=$!
-  wait $RSPID # what about connection loss? need to check heatbeat
-  RSRET=$?
-  if [ x"$RSRET" = x"0" ] && [ x"$RSPID" != x ]; then  # TODO fix, named pipe, return always 120?
-    echo $RSRET > $EXIT_FILE_PATH
-    return $RSRET
-  fi
-  # else part below
+       # CONNECT_CHECK, server status can be put here.
+      echo $COPROC_PID_backup > $PID_FILE_PATH
+    )
+    RSPID=$!
+    wait $RSPID # what about connection loss? need to check heatbeat
+    RSRET=$?
+    if [ x"$RSRET" = x"0" ] && [ x"$RSPID" != x ]; then  # TODO fix, named pipe, return always 120?
+      echo $RSRET > $EXIT_FILE_PATH
+      return $RSRET
+    fi
+    # else part below
 
     sleep 15 # wait PID FILE PATH created, 15s should be fine
     tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
     rm $PID_FILE_PATH
 
-  pkill $RSPID
-  ${connect_again_flag}=0
-  # just recursively, sleep in case...
-  sleep 5 && [ ! $RSRET -eq 120 ] && ${connect_again_flag}=1
+    pkill $RSPID
+    connect_again_flag=0
+    # just recursively, sleep in case...
+    sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
   done
   # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss
   # thing
