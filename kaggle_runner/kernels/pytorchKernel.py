@@ -1,30 +1,21 @@
 from __future__ import print_function
 
 import collections
-import errno
 import functools
-import gc
 import os
-import pdb
 import random
 import types  # for bound new forward function for RoIHeads
 
 import numpy as np
 import pandas as pd
-import pydicom
-import pysnooper
 import torch
-import torch.distributed as dist
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data
 import torchvision
 import torchvision.models.detection.roi_heads as roi_heads
 import torchvision.transforms.functional as TF
-from matplotlib import pyplot as plt
 from PIL import Image, ImageFile
-from sklearn.model_selection import KFold
-from torch.autograd import Variable
 from torchvision import transforms
 from torchvision.models.detection import _utils as det_utils
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
@@ -40,10 +31,12 @@ from torchvision.ops import boxes as box_ops
 from torchvision.ops import roi_align
 from tqdm import tqdm
 
-import kernel
-import utils
-from kernel import KaggleKernel
-from utils import my_trace
+import kaggle_runner.kernels.KernelRunningState
+import kaggle_runner.logs
+import kaggle_runner.optimizers
+from kaggle_runner.kernels import kernel
+from kaggle_runner.utils import kernel_utils
+from kaggle_runner.kernels.kernel import KaggleKernel
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -75,15 +68,15 @@ class PS_torch(KaggleKernel):
         self.submit_run = False
 
         # for debugging thing
-        self.metric_logger = utils.MetricLogger(delimiter="  ")
+        self.metric_logger = kaggle_runner.logs.MetricLogger(delimiter="  ")
         self.metric_logger.add_meter(
-            "lr", utils.SmoothedValue(window_size=1, fmt="{value:.6f}")
+            "lr", kaggle_runner.logs.SmoothedValue(window_size=1, fmt="{value:.6f}")
         )
         self.metric_logger.add_meter(
-            "loss", utils.SmoothedValue(window_size=160, fmt="{avg:.6f}")
+            "loss", kaggle_runner.logs.SmoothedValue(window_size=160, fmt="{avg:.6f}")
         )
         self.metric_logger.add_meter(
-            "loss_mask", utils.SmoothedValue(window_size=160, fmt="{avg:.6f}")
+            "loss_mask", kaggle_runner.logs.SmoothedValue(window_size=160, fmt="{avg:.6f}")
         )
         self.DATA_PATH_BASE = "../input/siimacr-pneumothorax-segmentation-data-128"
 
@@ -93,9 +86,9 @@ class PS_torch(KaggleKernel):
     def dump_state(
         self, exec_flag=False, force=True
     ):  # only dataloader ... others cannot dumped
-        utils.logger.debug(f"state {self._stage}")
+        kernel_utils.logger.debug(f"state {self._stage}")
         if exec_flag:
-            utils.logger.debug(f"dumping state {self._stage}")
+            kernel_utils.logger.debug(f"dumping state {self._stage}")
             self_data = vars(self)
 
             if self.model_ft is not None:
@@ -111,7 +104,7 @@ class PS_torch(KaggleKernel):
                 k: v for k, v in self_data.items() if k not in names_to_exclude
             }
 
-            utils.dump_obj(
+            kernel_utils.dump_obj(
                 data_to_save, f"run_state_{self._stage}.pkl", force=force)
 
             # print(self_data)
@@ -121,8 +114,8 @@ class PS_torch(KaggleKernel):
     def load_state_data_only(self, stage, file_name="run_state.pkl"):
         if stage is not None:
             file_name = f"run_state_{stage}.pkl"
-        utils.logger.debug(f"restore from {file_name}")
-        self_data = utils.get_obj_or_dump(filename=file_name)
+        kernel_utils.logger.debug(f"restore from {file_name}")
+        self_data = kernel_utils.get_obj_or_dump(filename=file_name)
 
         self._stage = self_data["_stage"]
 
@@ -167,7 +160,7 @@ class PS_torch(KaggleKernel):
                 loss_dict.pop("loss_box_reg")
 
                 # reduce losses over all GPUs for logging purposes
-                loss_dict_reduced = utils.reduce_dict(loss_dict)
+                loss_dict_reduced = kernel_utils.reduce_dict(loss_dict)
                 losses_reduced = sum(
                     loss for loss in loss_dict_reduced.values())
                 losses_summed += losses_reduced.detach().cpu().numpy()
@@ -201,7 +194,7 @@ class PS_torch(KaggleKernel):
                 losses = sum(loss for loss in loss_dict.values())
 
                 # reduce losses over all GPUs for logging purposes
-                loss_dict_reduced = utils.reduce_dict(loss_dict)
+                loss_dict_reduced = kernel_utils.reduce_dict(loss_dict)
                 losses_reduced = sum(
                     loss for loss in loss_dict_reduced.values())
 
@@ -237,7 +230,7 @@ class PS_torch(KaggleKernel):
             warmup_factor = 1.0 / 1000
             warmup_iters = min(1000, len(data_loader) - 1)
 
-            warm_up_lr_scheduler = utils.warmup_lr_scheduler(
+            warm_up_lr_scheduler = kernel_utils.warmup_lr_scheduler(
                 optimizer, warmup_iters, warmup_factor
             )
 
@@ -255,7 +248,7 @@ class PS_torch(KaggleKernel):
             losses = sum(loss for loss in loss_dict.values())
 
             # reduce losses over all GPUs for logging purposes
-            loss_dict_reduced = utils.reduce_dict(loss_dict)
+            loss_dict_reduced = kernel_utils.reduce_dict(loss_dict)
             losses_reduced = sum(loss for loss in loss_dict_reduced.values())
 
             optimizer.zero_grad()
@@ -324,7 +317,7 @@ class PS_torch(KaggleKernel):
         # print(dataset_train[2019][1]['area'])  # only for debug
         # print(dataset_dev[19][1]['area'])
 
-        utils.logger.debug("torch train dataloader initializing")
+        kernel_utils.logger.debug("torch train dataloader initializing")
         self.data_loader = torch.utils.data.DataLoader(
             dataset_train,
             batch_size=4,
@@ -344,7 +337,7 @@ class PS_torch(KaggleKernel):
             num_workers=4,
             collate_fn=self._collate_fn_for_data_loader,
         )
-        self.img_mean, self.img_std = utils.online_mean_and_sd(
+        self.img_mean, self.img_std = kernel_utils.online_mean_and_sd(
             stat_data_loader, data_map=lambda x: x[0]
         )
         self.metric_logger.print_and_log_to_file(
@@ -428,7 +421,7 @@ class PS_torch(KaggleKernel):
         patience = 3
         if self.submit_run:
             patience = 0
-        es = utils.EarlyStopping(
+        es = kaggle_runner.optimizers.EarlyStopping(
             patience=patience
         )  # the first time it become worse, if patience set to 1
 
@@ -480,7 +473,7 @@ class PS_torch(KaggleKernel):
         patience = 3
         if self.submit_run:
             patience = 0
-        es = utils.EarlyStopping(
+        es = kaggle_runner.optimizers.EarlyStopping(
             patience=patience
         )  # the first time it become worse, if patience set to 1
         for epoch in range(8, 13):
@@ -570,7 +563,7 @@ class PS_torch(KaggleKernel):
                                        resample=Image.BILINEAR)
                         )
                         res = (res[:, :] * 255.0 > 127).astype(np.uint8).T
-                        rle = utils.mask_to_rle(res, width, height)
+                        rle = kernel_utils.mask_to_rle(res, width, height)
                         sublist.append([image_id, rle])
                 if mask_added == 0:
                     rle = " -1"
@@ -636,7 +629,7 @@ class PS_torch(KaggleKernel):
                                        resample=Image.BILINEAR)
                         )
                         res = (res[:, :] * 255.0 > 127).astype(np.uint8).T
-                        rle = utils.mask_to_rle(res, width, height)
+                        rle = kernel_utils.mask_to_rle(res, width, height)
                         sublist.append([image_id, rle])
                 if mask_added == 0:
                     rle = " -1"
@@ -693,7 +686,7 @@ class PS_torch(KaggleKernel):
                                            resample=Image.BILINEAR)
                             )
                             res = (res[:, :] * 255.0 > 127).astype(np.uint8).T
-                            rle = utils.mask_to_rle(res, width, height)
+                            rle = kernel_utils.mask_to_rle(res, width, height)
                             sublist.append([image_id, rle])
                     if mask_added == 0:
                         rle = " -1"
@@ -710,7 +703,7 @@ class PS_torch(KaggleKernel):
         print(counter)
 
     def _build_show_model_detail(self):
-        self.run(end_stage=kernel.KernelRunningState.PREPARE_DATA_DONE)
+        self.run(end_stage=kaggle_runner.kernels.KernelRunningState.KernelRunningState.PREPARE_DATA_DONE)
         self.build_and_set_model()
         # self.pre_test()
         # summary(self.model_ft, (1,1024,1024))
@@ -718,7 +711,7 @@ class PS_torch(KaggleKernel):
     def check_predict_details(self):
         # Thanks https://discuss.pytorch.org/t/how-can-l-load-my-best-model-as-a-feature-extractor-evaluator/17254/6
         assert self.model_ft is not None
-        activations = utils.get_obj_or_dump("dev_output_results.pkl")
+        activations = kernel_utils.get_obj_or_dump("dev_output_results.pkl")
         self.analyzer = TorchModelAnalyzer(self)
         analyzer = self.analyzer
 
@@ -742,7 +735,7 @@ class PS_torch(KaggleKernel):
                 self.metric_logger,
                 print_freq=150,
             )
-            utils.dump_obj(analyzer.activation,
+            kernel_utils.dump_obj(analyzer.activation,
                            "dev_output_results.pkl", force=True)
 
         roi_acts = []
@@ -790,7 +783,7 @@ class SIIMDataset(torch.utils.data.Dataset):
         img = img.resize((self.width, self.height), resample=Image.BILINEAR)
         info = self.image_info[idx]
 
-        mask = utils.rle2mask(info["annotations"], width, height)
+        mask = kernel_utils.rle2mask(info["annotations"], width, height)
 
         if mask is None:
             raise ValueError("mask is None!!!!!!!!")
@@ -1244,9 +1237,9 @@ class TorchModelAnalyzer:
             # my_trace()
             # print(self.metric_cal(preds))
 
-        utils.dump_obj(stat_for_threshold,
+        kernel_utils.dump_obj(stat_for_threshold,
                        "stat_for_threshold.pkl", force=True)
-        utils.dump_obj(pred_for_threshold,
+        kernel_utils.dump_obj(pred_for_threshold,
                        "pred_for_threshold.pkl", force=True)
 
     def metric_cal(self, preds):

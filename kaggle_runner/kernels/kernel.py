@@ -1,34 +1,11 @@
 import logging
-from enum import Enum
 
-from IPython.core.debugger import set_trace
+from kaggle_runner.kernels.KernelRunningState import KernelRunningState
+from kaggle_runner.utils import kernel_utils
 
-import utils
 
 # Plot inline
 # %matplotlib inline
-
-
-class KernelRunningState(Enum):
-    INIT_DONE = 1
-    PREPARE_DATA_DONE = 2
-    TRAINING_DONE = 3
-    EVL_DEV_DONE = 4
-    SAVE_SUBMISSION_DONE = 5
-
-    @staticmethod
-    def string(state_int_value):
-        names = [
-            "INIT_DONE",
-            "PREPARE_DATA_DONE",
-            "TRAINING_DONE",
-            "EVL_DEV_DONE",
-            "SAVE_SUBMISSION_DONE",
-        ]
-        if state_int_value is not None:
-            return names[state_int_value]
-        else:
-            return ""
 
 
 class KernelGroup:
@@ -132,7 +109,7 @@ class KaggleKernel:
         if exec_flag:
             self.logger.debug("dumping state to file for %s" % self._stage)
             # dump_obj(self, 'run_state.pkl', force=True)  # too large
-            utils.dump_obj(self, "run_state_%s.pkl" % self._stage, force=True)
+            kernel_utils.dump_obj(self, "run_state_%s.pkl" % self._stage, force=True)
 
     def run(
         self,
@@ -254,53 +231,53 @@ df.to_csv('submission.csv', columns=['ImageId', 'EncodedPixels'], index=False)
 df.head()
 """
 
-  @classmethod
-   def _load_state(cls, stage=None, file_name="run_state.pkl", logger=None):
-        """
+       @classmethod
+       def _load_state(cls, stage=None, file_name="run_state.pkl", logger=None):
+            """
 
-        :param file_name:
-        :return: the kernel object, need to continue
-        """
-        if stage is not None:
-            file_name = f"run_state_{stage}.pkl"
-        if logger is not None:
-            logger.debug(f"restore from {file_name}")
-        self = utils.get_obj_or_dump(filename=file_name)
-        assert self is not None
-        self.logger = logger
-        return self
+            :param file_name:
+            :return: the kernel object, need to continue
+            """
+            if stage is not None:
+                file_name = f"run_state_{stage}.pkl"
+            if logger is not None:
+                logger.debug(f"restore from {file_name}")
+            self = kernel_utils.get_obj_or_dump(filename=file_name)
+            assert self is not None
+            self.logger = logger
+            return self
 
-    def load_state_data_only(self, file_name="run_state.pkl"):
-        pass
+       def load_state_data_only(self, file_name="run_state.pkl"):
+           pass
 
-    @classmethod
-    def load_state_continue_run(cls, file_name="run_state.pkl", logger=None):
-        """
+       @classmethod
+       def load_state_continue_run(cls, file_name="run_state.pkl", logger=None):
+           """
 
-        :param file_name:
-        :return: the kernel object, need to continue
-        """
-        self = cls._load_state(file_name=file_name, logger=logger)
-        self.continue_run()
+           :param file_name:
+           :return: the kernel object, need to continue
+           """
+           self = cls._load_state(file_name=file_name, logger=logger)
+           self.continue_run()
 
-    def pre_train(self):
-        pass
+       def pre_train(self):
+           pass
 
-    def after_train(self):
-        pass
+       def after_train(self):
+           pass
 
-    def pre_submit(self):
-        pass
+       def pre_submit(self):
+           pass
 
-    def submit(self):
-        pass
+       def submit(self):
+           pass
 
-    def after_submit(self):
-        "after_submit should report to our logger, for next step analyze"
-        pass
+       def after_submit(self):
+           "after_submit should report to our logger, for next step analyze"
+           pass
 
-    def pre_test(self):
-        pass
+       def pre_test(self):
+           pass
 
-    def after_test(self):
-        pass
+       def after_test(self):
+           pass

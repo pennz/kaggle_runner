@@ -1,25 +1,21 @@
 import gc
 import importlib
-import logging
 import os
 import unittest
 
 import numpy as np
 import pytest
 import torch
-from IPython.core.debugger import set_trace
 from torch.autograd import Variable
 
-import kernel
-import PSKernel
+from kaggle_runner.kernels import kernel, PSKernel, pytorchKernel
 
 # import modelTester
-import pytorchKernel
 import runner
 
 # from kernel import Kernel
-import utils
-from kernel import KernelRunningState
+from kaggle_runner.utils import kernel_utils
+from kaggle_runner.kernels.KernelRunningState import KernelRunningState
 
 log_args = {
     "size": 384,
@@ -143,7 +139,7 @@ class TestPSKernel:
     @classmethod
     def setup_class(cls):
         gc.enable()
-        importlib.reload(utils)
+        importlib.reload(kernel_utils)
         importlib.reload(kernel)
         importlib.reload(PSKernel)
         importlib.reload(pytorchKernel)
@@ -241,7 +237,7 @@ class TestPytorchKernel:
     @classmethod
     def setup_class(cls):
         gc.enable()
-        importlib.reload(utils)
+        importlib.reload(kernel_utils)
         importlib.reload(kernel)
         importlib.reload(PSKernel)
         importlib.reload(pytorchKernel)

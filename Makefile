@@ -19,8 +19,9 @@ run_submit:
 	python DAF3D/Train.py
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit  -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 twine:
-	python3 -m twine -h >/dev/null || python3 -m pip install --user --upgrade twine
+	python3 -m twine -h >/dev/null || ( echo "twine not found, will install it." ; python3 -m pip install --user --upgrade twine )
 publish: twine
+	if [ x$(TAG) = x ]; then echo "Please pass TAG flag when you call make"; false; else git tag -s $(TAG); fi
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
 

@@ -1,14 +1,10 @@
-import gc
 import math
 import os
-import pdb
 from glob import glob
 
 import numpy as np
 import pandas as pd
 import pydicom
-import pysnooper
-import tensorflow
 from matplotlib import pyplot as plt
 from sklearn.model_selection import KFold
 from tensorflow.keras.layers import (
@@ -23,8 +19,9 @@ from tensorflow.keras.models import Model
 from tensorflow.python.ops import math_ops
 from tqdm import tqdm
 
-import utils
-from kernel import KaggleKernel
+import kaggle_runner.datasets.data_handlers
+from kaggle_runner.utils import kernel_utils
+from kaggle_runner.kernels.kernel import KaggleKernel
 
 
 class PS(KaggleKernel):
@@ -71,7 +68,7 @@ class PS(KaggleKernel):
                 else:
                     if type(mask_data) == str:
                         Y_train[n] = np.expand_dims(
-                            utils.rle2mask(
+                            kernel_utils.rle2mask(
                                 df.loc[_id_keystr, TARGET_COLUMN], 1024, 1024
                             ).T,
                             axis=2,
@@ -80,7 +77,7 @@ class PS(KaggleKernel):
                         Y_train[n] = np.zeros((1024, 1024, 1))
                         for x in mask_data:
                             Y_train[n] = Y_train[n] + np.expand_dims(
-                                utils.rle2mask(x, 1024, 1024).T, axis=2
+                                kernel_utils.rle2mask(x, 1024, 1024).T, axis=2
                             )
             except KeyError:
                 print(
@@ -119,7 +116,7 @@ class PS(KaggleKernel):
 
     @staticmethod
     def _PS_data_preprocess_tf(fns, df, TARGET_COLUMN, im_height, im_width, im_chan):
-        tf_data_handler = utils.PS_TF_DataHandler()
+        tf_data_handler = kaggle_runner.datasets.data_handlers.PS_TF_DataHandler()
         return tf_data_handler.to_tf_from_disk(
             fns, df, TARGET_COLUMN, im_height, im_width, im_chan
         )
@@ -227,7 +224,7 @@ class PS(KaggleKernel):
         all_X = np.concatenate((self.train_X, self.dev_X), axis=0)
         all_Y = np.concatenate((self.train_Y, self.dev_Y), axis=0)
 
-        ds = utils.PS_TF_DataHandler.get_train_dataset(all_X, all_Y)
+        ds = kaggle_runner.datasets.data_handlers.PS_TF_DataHandler.get_train_dataset(all_X, all_Y)
 
         # def train_input_fn_bt(features, labels, batch_size, cv, split_id=None, n_splits=None, ds=None):
         assert len(all_X) == len(all_Y)
@@ -244,7 +241,7 @@ class PS(KaggleKernel):
 
         self.logger.debug(f"dev set counts: {self.dev_ds_len} / {len(all_X)}")
 
-        utils.PS_TF_DataHandler.to_tfrecord(self.ds, file_name=file_name)
+        kaggle_runner.datasets.data_handlers.PS_TF_DataHandler.to_tfrecord(self.ds, file_name=file_name)
 
     def after_prepare_data_hook(self):
         self.analyze_data()
@@ -416,7 +413,7 @@ class PS(KaggleKernel):
         model.compile(
             loss="binary_crossentropy",
             optimizer="adam",
-            metrics=["accuracy", utils.dice_coef],
+            metrics=["accuracy", kernel_utils.dice_coef],
         )
 
         self.model = model
@@ -441,10 +438,10 @@ class PS(KaggleKernel):
             break
 
     def _recover_from_tf(self):
-        self.ds = utils.PS_TF_DataHandler.from_tfrecord()
+        self.ds = kaggle_runner.datasets.data_handlers.PS_TF_DataHandler.from_tfrecord()
         PS._check_image_data(self.ds)
 
 
 class PS_result_analyzer:  # todo maybe add other good analyze functions
     def dev_set_performance(self, y_true, y_pred):
-        return utils.dice_coef(y_true, y_pred)
+        return kernel_utils.dice_coef(y_true, y_pred)
