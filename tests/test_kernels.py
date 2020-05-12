@@ -1,6 +1,7 @@
 import gc
 import importlib
 import os
+import random
 import unittest
 
 import numpy as np
@@ -78,6 +79,8 @@ class TestModelBasic:
     def test_dataloaders(self):
         """test_dataloaders uses codes from unet-with-se-resnet ..., it uses
         provider to generate dataloader"""
+        train_rle_path = "../input/mysiim/train-rle.csv"
+        data_folder = "../input/siimpng/siimpng/train_png"
         dataloader = provider(
             fold=0,
             total_folds=5,
@@ -96,9 +99,9 @@ class TestModelBasic:
 
         # plot some random images in the `batch`
         idx = random.choice(range(16))
-        plt.imshow(images[idx][0], cmap="bone")
-        plt.imshow(masks[idx][0], alpha=0.2, cmap="Reds")
-        plt.show()
+        # plt.imshow(images[idx][0], cmap="bone")
+        # plt.imshow(masks[idx][0], alpha=0.2, cmap="Reds")
+        # plt.show()
         if len(np.unique(masks[idx][0])) == 1:  # only zeros
             print("Chosen image has no ground truth mask, rerun the cell")
 
