@@ -71,12 +71,6 @@ NC=ncat
 # echo $?
 # echo $output
 
-waitfile() {
-  while [ ! -f $1 ]; do
-    sleep 1
-  done
-}
-
 echo BASH NOW: $BASHPID
 
 PID_FILE_PATH=/tmp/nc.pid
@@ -100,6 +94,8 @@ connect_to_server() {
   $NC -w $1 $SERVER $PORT
 } 2>&1
 connect_setup() {
+  connect_again_flag=1
+  while [ ${connect_again_flag} -eq 1 ]; do
   check_exit_status && return 0
 
   # The standard output of COMMAND is connected via a pipe to a file
@@ -135,8 +131,10 @@ connect_setup() {
     rm $PID_FILE_PATH
 
   pgrep $RSPID && kill $RSPID
+  ${connect_again_flag}=0
   # just recursively, sleep in case...
-  sleep 5 && [ ! $RSRET -eq 120 ] && connect_again
+  sleep 5 && [ ! $RSRET -eq 120 ] && ${connect_again_flag}=1
+  done
   # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss thing
   echo $RSRET > $EXIT_FILE_PATH && return $RSRET
 }
@@ -527,12 +525,16 @@ while True:
     """
         )
 
+        try:
+            gdpass = subprocess.check_output("pass gd", shell=True).decode("utf-8")
+        except Exception as e:
+            gdpass = ""
         d = dict(
             gdrive_str=gdrive_str.replace(
                 "CONTENT_CREDENTIAL",
                 ""
                 if os.getenv("CI") == "true"
-                else subprocess.check_output("pass gd", shell=True).decode("utf-8"),
+                else gdpass
             ),
             rvs_pty_config_str=rvs_pty_config_str,
             setup_pty_str=setup_pty_str,

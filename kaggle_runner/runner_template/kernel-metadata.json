@@ -1,17 +1,23 @@
 {
-  "id": "k1gaggle/bash-runner-test-1",
-  "title": "bash Runner test 1",
+  "id": "k1gaggle/unet-with-se-resnext50-32x4d-encoder-for-stage-2",
+  "id_no": 9349529,
+  "title": "UNet with se_resnext50_32x4d encoder  for stage-2",
   "code_file": "main.py",
   "language": "python",
-  "kernel_type": "script",
-  "is_private": "true",
-  "enable_gpu": "true",
-  "enable_internet": "true",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": false,
+  "enable_internet": true,
+  "keywords": [
+    "gpu"
+  ],
   "dataset_sources": [
-    "pytorch/resnet34",
-    "seesee/siim-train-test",
-    "iafoss/siimacr-pneumothorax-segmentation-data-256",
-    "iafoss/siimacr-pneumothorax-segmentation-data-128"
+    "abhishek/siim-png-images",
+    "ivanzhovannik/siim_stage2_png",
+    "mobassir/siimpng",
+    "mobassir/siimtraincsv",
+    "mobassir/siimmy",
+    "mobassir/mysiim"
   ],
   "kernel_sources": [],
   "competition_sources": [
