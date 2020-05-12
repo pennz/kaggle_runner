@@ -89,10 +89,12 @@ check_exit_status() {
   return 1 # not ok
 }
 connect_to_server() {
-  cat rpt
+  cat rpt &
   echo "#" $(date) started connection
+  echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat| awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime"$(uptime | awk '{print $1 " " $2 " " $3}')
+
   $NC -w $1 $SERVER $PORT
-} 2>&1
+}
 connect_setup() {
   connect_again_flag=1
   while [ ${connect_again_flag} -eq 1 ]; do
@@ -104,23 +106,22 @@ connect_setup() {
   # a file descriptor in the executing shell, and that file descriptor is
   # assigned to 'NAME'[1].  This pipe is established before any redirections
   # specified by the command (*note Redirections::).
+
   PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
   (
     coproc connect_to_server $1
-    COPROC_PID_backup=$COPROC_PID
-    # echo $COPROC_PID_backup $PID_FILE_PATH # debug -> this will be output to
-    >&2 echo "#" $(grep 'cpu ' /proc/stat;sleep 0.1;grep 'cpu ' /proc/stat)|awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}' "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) $(uptime | awk '{print $1 " " $2 " " $3}')
-
-    # CONNECT_CHECK, server status can be put here.
-    echo $COPROC_PID_backup > $PID_FILE_PATH
     # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
     # COPROC[0] is the output of nc
     exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
+    COPROC_PID_backup=$COPROC_PID
+
+    # CONNECT_CHECK, server status can be put here.
+    echo $COPROC_PID_backup > $PID_FILE_PATH
   )
   RSPID=$!
   wait $RSPID # what about connection loss? need to check heatbeat
   RSRET=$?
-  if [ x"$RSRET" = x"0" ]; then  # TODO fix, named pipe, return always 120?
+  if [ x"$RSRET" = x"0" ] && [ x"$RSPID" != x ]; then  # TODO fix, named pipe, return always 120?
     echo $RSRET > $EXIT_FILE_PATH
     return $RSRET
   fi
@@ -353,12 +354,12 @@ PARAMS=$@
 SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
-apt install netcat -y && {
-if [ x"${PHASE}" = x"dev" ]; then
-    PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT;
-fi
-# pip install pysnooper torchsnooper # for debug rvs
-screen -d -m bash ./rvs.sh
+apt update && apt install netcat screen -y && {
+  if [ x"${PHASE}" = x"dev" ]; then
+      PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT;
+  fi
+  # pip install pysnooper torchsnooper # for debug rvs
+  screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
 }
 
 apt install tig ctags htop tree pv nmap screen time tmux netcat psmisc -y
