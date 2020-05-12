@@ -14,6 +14,7 @@ from kaggle_runner import runner
 from kaggle_runner.data_providers import provider
 from kaggle_runner.kernels import PSKernel, kernel, pytorchKernel
 from kaggle_runner.kernels.KernelRunningState import KernelRunningState
+from kaggle_runner.data_providers import provider
 
 # from kernel import Kernel
 from kaggle_runner.utils import kernel_utils
