@@ -2,13 +2,12 @@ import time
 
 import torch
 import torch.backends.cudnn as cudnn
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-
 from kaggle_runner.data_providers import provider
 from kaggle_runner.logs import epoch_log
 from kaggle_runner.losses import MixedLoss
 from kaggle_runner.metrics.meters import Meter
 from kaggle_runner.optimizers import RAdam
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 
 class Trainer(object):
@@ -24,8 +23,9 @@ class Trainer(object):
         self.num_epochs = 32
         self.best_loss = float("inf")
         self.phases = ["train", "val"]
-        self.device = torch.device("cuda:0")
-        torch.set_default_tensor_type("torch.cuda.FloatTensor")
+        self.device = torch.device("cpu")
+        # self.device = torch.device("cuda:0")
+        # torch.set_default_tensor_type("torch.cuda.FloatTensor")
         self.net = model
         self.criterion = MixedLoss(10.0, 2.0)
         # self.optimizer = optim.Adam(self.net.parameters(), lr=self.lr)

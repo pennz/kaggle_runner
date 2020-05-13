@@ -33,6 +33,7 @@ class KaggleKernel:
         self._stage = KernelRunningState.INIT_DONE
         self.logger = logger
         self.dependency = []
+        self.device = None
 
     def _add_dependency(self, dep):
         """_add_dependency just install pip dependency now
