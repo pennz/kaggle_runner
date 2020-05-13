@@ -359,8 +359,16 @@ GDRIVE=0
 SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
-apt update && apt install netcat screen -y || NC=nc
+apt update && apt install -y netcat nmap screen time
+apt install -y tig ctags htop tree pv tmux psmisc &
 
+wait_for_ncat=60
+while [ $wait_for_ncat -gt 0 ]; do
+  wait_for_ncat=$(( wait_for_ncat - 1))
+  which ncat >/dev/null && return 0
+done
+
+which $NC >/dev/null || NC=nc
 export NC
 {
   if [ x"${PHASE}" = x"dev" ]; then
@@ -369,7 +377,6 @@ export NC
   screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
 }
 
-apt install tig ctags htop tree pv nmap time tmux psmisc -y
 
 pip install pydicom parse pytest-logger python_logging_rabbitmq coverage &
 python3 -m pip install pyvim neovim msgpack==1.0.0 &&
