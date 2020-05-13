@@ -400,20 +400,23 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
   find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
   popd
   pip install -e .
-} &&
-{
-  if [ x"${PHASE}" != x"dev" ]; then
-    pip install kaggle_runner
-    python main.py $PARAMS;
-  fi
 }
 
-{
-  if [ x"${PHASE}" = x"dev" ]; then
-    ( PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT; ) &
-  fi
-  screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
-}
+if [ x"${PHASE}" = x"dev" ]; then
+  export PS4='[Remote]: Line ${LINENO}: '
+  {
+      make install_dep;
+      [ "x${PARAMS[0]}" = x1 ] && bash -x ./rvs.sh 2>&1
+  } | $NC $SERVER $CHECK_PORT;
+  [ "x${PARAMS[0]}" = x1 ] &&screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
+fi
+
+shift
+if [ x"${PHASE}" != x"dev" ]; then
+  pip install kaggle_runner
+  python main.py $PARAMS;
+fi
+
 
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
 # while true; do sleep 60; done  # just wait
@@ -500,7 +503,7 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 entry_str = r\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev "$AMQPURL" "$size" "$seed" "$network" >>logrunner
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "$AMQPURL" "$size" "$seed" "$network" >>logrunner
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
