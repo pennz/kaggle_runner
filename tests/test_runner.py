@@ -1,10 +1,13 @@
 from unittest import TestCase
 
+from kaggle_runner.logs import NBatchProgBarLogger
+
 
 class TestLogs(TestCase):
     @classmethod
     def setup_class(cls):
         "prepare a dummy model for logger to show"
+        # TODO set up a dummy model / or just use imagenette
         self.model = None
 
     @classmethod
@@ -22,4 +25,3 @@ class TestLogs(TestCase):
             verbose=0,
             callbacks=[NBatchProgBarLogger()],
         )
-        self.fail()
