@@ -24,6 +24,7 @@ from albumentations import (
     VerticalFlip,
 )
 
+
 class TestDataset(Dataset):
     def __init__(self, root, df, size, mean, std, tta=4):
         self.root = root
@@ -31,8 +32,7 @@ class TestDataset(Dataset):
         self.fnames = list(df["ImageId"])
         self.num_samples = len(self.fnames)
         self.transform = Compose(
-            [Normalize(mean=mean, std=std, p=1),
-             Resize(size, size), ToTensor(), ]
+            [Normalize(mean=mean, std=std, p=1), Resize(size, size), ToTensor(),]
         )
 
     def __getitem__(self, idx):

@@ -148,8 +148,7 @@ class MetricLogger(object):
         if attr in self.__dict__:
             return self.__dict__[attr]
         raise AttributeError(
-            "'{}' object has no attribute '{}'".format(
-                type(self).__name__, attr)
+            "'{}' object has no attribute '{}'".format(type(self).__name__, attr)
         )
 
     def __str__(self):
@@ -230,8 +229,7 @@ class CSVLoggerBufferCustomized(csv_logger.CSVLogger):
         append: bool = False,
         buffer_type: int = 1,
     ):
-        super(CSVLoggerBufferCustomized, self).__init__(
-            learn, filename, append)
+        super(CSVLoggerBufferCustomized, self).__init__(learn, filename, append)
         self.buffer_type = buffer_type  # flush the file to get quick result
 
     def on_train_begin(self, **kwargs) -> None:
@@ -243,8 +241,7 @@ class CSVLoggerBufferCustomized(csv_logger.CSVLogger):
             else self.path.open("w", buffering=self.buffer_type)
         )
         self.file.write(
-            ",".join(self.learn.recorder.names[: (
-                None if self.add_time else -1)])
+            ",".join(self.learn.recorder.names[: (None if self.add_time else -1)])
             + "\n"
         )
 
@@ -278,8 +275,7 @@ class SmoothedValue(object):
         """
         if not is_dist_avail_and_initialized():
             return
-        t = torch.tensor([self.count, self.total],
-                         dtype=torch.float64, device="cuda")
+        t = torch.tensor([self.count, self.total], dtype=torch.float64, device="cuda")
         dist.barrier()
         dist.all_reduce(t)
         t = t.tolist()

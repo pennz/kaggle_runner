@@ -18,8 +18,7 @@ class Meter:
 
     def update(self, targets, outputs):
         probs = torch.sigmoid(outputs)
-        dice, dice_neg, dice_pos, _, _ = metric(
-            probs, targets, self.base_threshold)
+        dice, dice_neg, dice_pos, _, _ = metric(probs, targets, self.base_threshold)
         self.base_dice_scores.append(dice)
         self.dice_pos_scores.append(dice_pos)
         self.dice_neg_scores.append(dice_neg)

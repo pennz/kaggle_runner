@@ -6,6 +6,7 @@ from kaggle_runner.utils import kernel_utils
 # Plot inline
 # %matplotlib inline
 
+
 class KernelGroup:
     "Kernel Group to try different combination of kernels hyperparameter"
 
@@ -107,8 +108,7 @@ class KaggleKernel:
         if exec_flag:
             self.logger.debug("dumping state to file for %s" % self._stage)
             # dump_obj(self, 'run_state.pkl', force=True)  # too large
-            kernel_utils.dump_obj(self, "run_state_%s.pkl" %
-                                  self._stage, force=True)
+            kernel_utils.dump_obj(self, "run_state_%s.pkl" % self._stage, force=True)
 
     def run(
         self,

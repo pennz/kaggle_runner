@@ -22,6 +22,7 @@ from albumentations import (
 )
 from albumentations.pytorch import ToTensor
 
+
 def get_transforms(phase, size, mean, std):
     list_transforms = []
     if phase == "train":
@@ -40,7 +41,7 @@ def get_transforms(phase, size, mean, std):
             ]
         )
     list_transforms.extend(
-        [Resize(size, size), Normalize(mean=mean, std=std, p=1), ToTensor(), ]
+        [Resize(size, size), Normalize(mean=mean, std=std, p=1), ToTensor(),]
     )
 
     list_trfms = Compose(list_transforms)

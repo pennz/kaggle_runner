@@ -51,8 +51,7 @@ class PS(KaggleKernel):
 
     @staticmethod
     def _PS_data_preprocess_np(fns, df, TARGET_COLUMN, im_height, im_width, im_chan):
-        X_train = np.zeros(
-            (len(fns), im_height, im_width, im_chan), dtype=np.uint8)
+        X_train = np.zeros((len(fns), im_height, im_width, im_chan), dtype=np.uint8)
         Y_train = np.zeros((len(fns), im_height, im_width, 1), dtype=np.uint8)
         print("Getting train images and masks ... ")
         # sys.stdout.flush()
@@ -167,15 +166,14 @@ class PS(KaggleKernel):
         idx = 0
         LEN = 1024
         for idx in range(len(train_fns) // LEN + 1):
-            train_fns_splits.append(train_fns[idx * LEN: idx * LEN + LEN])
+            train_fns_splits.append(train_fns[idx * LEN : idx * LEN + LEN])
 
         for i, fns in enumerate(train_fns_splits):
             images, mask_e = PS._PS_data_preprocess(fns, df_full)
 
             # just use sklearn split to get id and it is fine. For text thing,
             splits = list(
-                KFold(n_splits=5, random_state=2019,
-                      shuffle=True).split(images)
+                KFold(n_splits=5, random_state=2019, shuffle=True).split(images)
             )
             # just do 1 fold, later we can add them all back
             tr_ind, val_ind = splits[0]
@@ -224,7 +222,9 @@ class PS(KaggleKernel):
         all_X = np.concatenate((self.train_X, self.dev_X), axis=0)
         all_Y = np.concatenate((self.train_Y, self.dev_Y), axis=0)
 
-        ds = kaggle_runner.datasets.data_handlers.PS_TF_DataHandler.get_train_dataset(all_X, all_Y)
+        ds = kaggle_runner.datasets.data_handlers.PS_TF_DataHandler.get_train_dataset(
+            all_X, all_Y
+        )
 
         # def train_input_fn_bt(features, labels, batch_size, cv, split_id=None, n_splits=None, ds=None):
         assert len(all_X) == len(all_Y)
@@ -241,7 +241,9 @@ class PS(KaggleKernel):
 
         self.logger.debug(f"dev set counts: {self.dev_ds_len} / {len(all_X)}")
 
-        kaggle_runner.datasets.data_handlers.PS_TF_DataHandler.to_tfrecord(self.ds, file_name=file_name)
+        kaggle_runner.datasets.data_handlers.PS_TF_DataHandler.to_tfrecord(
+            self.ds, file_name=file_name
+        )
 
     def after_prepare_data_hook(self):
         self.analyze_data()
@@ -272,8 +274,7 @@ class PS(KaggleKernel):
             ds = self.ds
             ds = ds.map(mask_to_binary)
             ds, ds_dev = split_train_dev(ds, 5, 0)
-            ds = ds.shuffle(buffer_size=1024).repeat().batch(
-                self.BS).prefetch(10)
+            ds = ds.shuffle(buffer_size=1024).repeat().batch(self.BS).prefetch(10)
             ds_dev = ds_dev.batch(self.BS).prefetch(10)
             self.ds = ds
             self.dev_ds = ds_dev
@@ -399,8 +400,7 @@ class PS(KaggleKernel):
         )
 
         # uconv1 = Dropout(0.5)(uconv1)
-        output_layer = Conv2D(1, (1, 1), padding="same",
-                              activation="sigmoid")(uconv1)
+        output_layer = Conv2D(1, (1, 1), padding="same", activation="sigmoid")(uconv1)
 
         return output_layer
 

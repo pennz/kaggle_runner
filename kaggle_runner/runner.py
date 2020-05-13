@@ -39,9 +39,10 @@ def log_format(self, record):
 class TrainerConfig:
     pass
 
+
 class TrainerWithStatus(Trainer):
     def __init__(self, model, data_folder, df_path, config=None):
-        assert isinstance(model, kernels.KaggleKernel )
+        assert isinstance(model, kernels.KaggleKernel)
         super(Trainer, self).__init__(model, data_folder, df_path)
         self._handle_config(config)
 

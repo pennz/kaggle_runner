@@ -89,8 +89,7 @@ class AttentionRaffel(Layer):
 
         eij = K.reshape(
             K.dot(
-                K.reshape(x, (-1, features_dim)
-                          ), K.reshape(self.W, (features_dim, 1))
+                K.reshape(x, (-1, features_dim)), K.reshape(self.W, (features_dim, 1))
             ),
             (-1, step_dim),
         )
@@ -121,7 +120,6 @@ class AttentionRaffel(Layer):
     def compute_output_shape(self, input_shape):
         # return input_shape[0], input_shape[-1]
         return input_shape[0], self.features_dim
-
 
     def set_metrics(self):
         """

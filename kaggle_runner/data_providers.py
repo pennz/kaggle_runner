@@ -38,8 +38,7 @@ def provider(
 
     fnames = df["ImageId"].values
 
-    image_dataset = SIIMDataset(
-        df_all, fnames, data_folder, size, mean, std, phase)
+    image_dataset = SIIMDataset(df_all, fnames, data_folder, size, mean, std, phase)
 
     dataloader = DataLoader(
         image_dataset,

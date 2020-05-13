@@ -1,8 +1,10 @@
 import logging
 
+import parse
+
 
 class AMQPURL:
-    class AMQPURL_DEV:
+    class __AMQPURL_DEV:
         host = "termite.rmq.cloudamqp.com"  # (Load balanced)
         passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"  # oh~ just give my password out~
         username = "drdsfaew"
@@ -14,10 +16,10 @@ class AMQPURL:
 
     def __init__(
         self,
-        host=AMQPURL_DEV.host,
-        passwd=AMQPURL_DEV.passwd,
-        Vhost=AMQPURL_DEV.Vhost,
-        username=AMQPURL_DEV.username,
+        host=__AMQPURL_DEV.host,
+        passwd=__AMQPURL_DEV.passwd,
+        Vhost=__AMQPURL_DEV.Vhost,
+        username=__AMQPURL_DEV.username,
     ):
         self.host = host
         self.passwd = passwd
@@ -54,6 +56,6 @@ def parse_AMQP(url_str):
         username, passwd, host, Vhost = res
 
     try:
-        return utils.AMQPURL(host, passwd, Vhost, username)
+        return AMQPURL(host, passwd, Vhost, username)
     except TypeError as e:
-        utils.logger.debug(e)
+        logger.debug(e)

@@ -62,8 +62,7 @@ class PS_TF_DataHandler:
             X_train = np.zeros(
                 (self.im_height, self.im_width, self.im_chan), dtype=np.uint8
             )
-            Y_train = np.zeros(
-                (self.im_height, self.im_width, 1), dtype=np.uint8)
+            Y_train = np.zeros((self.im_height, self.im_width, 1), dtype=np.uint8)
             print("Getting train images and masks ... ")
             _id = path
             # sys.stdout.flush()
@@ -81,8 +80,7 @@ class PS_TF_DataHandler:
                     if type(mask_data) == str:
                         Y_train = np.expand_dims(
                             rle2mask(
-                                self.df.loc[_id_keystr,
-                                            self.TARGET_COLUMN], 1024, 1024
+                                self.df.loc[_id_keystr, self.TARGET_COLUMN], 1024, 1024
                             ),
                             axis=2,
                         )
@@ -110,8 +108,7 @@ class PS_TF_DataHandler:
         # By default the file at the url origin is downloaded to the cache_dir
         # ~/.keras, placed in the cache_subdir datasets, and given the filename
         # fname
-        train_path = tf.keras.utils.get_file(
-            TRAIN_URL.split("/")[-1], TRAIN_URL)
+        train_path = tf.keras.utils.get_file(TRAIN_URL.split("/")[-1], TRAIN_URL)
         test_path = tf.keras.utils.get_file(TEST_URL.split("/")[-1], TEST_URL)
 
         return train_path, test_path
@@ -140,8 +137,7 @@ class PS_TF_DataHandler:
         labels = labels["breed"].values.tolist()  # for all training data
         global SPECIES
         SPECIES = sorted(list(set(labels)))
-        _label_id_map = dict((name, index)
-                             for index, name in enumerate(SPECIES))
+        _label_id_map = dict((name, index) for index, name in enumerate(SPECIES))
         train_y = [_label_id_map[label] for label in labels]
 
         return (train_X, train_y), to_predict_X
@@ -306,8 +302,7 @@ class PS_TF_DataHandler:
                 s = s.concatenate(t)
 
             # just memory is not enough ...
-            ds = s.shuffle(buffer_size=int(
-                len(labels) * (n_splits - 1) / n_splits))
+            ds = s.shuffle(buffer_size=int(len(labels) * (n_splits - 1) / n_splits))
         else:
             ds = ds.shuffle(buffer_size=len(labels))
         # after shuffle, we do cross validtation split
@@ -363,8 +358,7 @@ class PS_TF_DataHandler:
         writer = tf.data.experimental.TFRecordWriter(file_name)
         writer.write(ds.map(lambda a, b: a))
 
-        target_writer = tf.data.experimental.TFRecordWriter(
-            f"target_{file_name}")
+        target_writer = tf.data.experimental.TFRecordWriter(f"target_{file_name}")
         target_writer.write(ds.map(lambda a, b: b))
 
         return
@@ -409,8 +403,7 @@ class PS_TF_DataHandler:
         # Create a Features message using tf.train.Example.
         logger.debug("in transforming to tf example proto")
 
-        example_proto = tf.train.Example(
-            features=tf.train.Features(feature=feature))
+        example_proto = tf.train.Example(features=tf.train.Features(feature=feature))
         logger.debug("after transforming one feature to tf example proto")
         return example_proto.SerializeToString()
 

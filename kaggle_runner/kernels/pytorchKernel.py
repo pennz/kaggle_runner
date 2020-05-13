@@ -76,7 +76,8 @@ class PS_torch(KaggleKernel):
             "loss", kaggle_runner.logs.SmoothedValue(window_size=160, fmt="{avg:.6f}")
         )
         self.metric_logger.add_meter(
-            "loss_mask", kaggle_runner.logs.SmoothedValue(window_size=160, fmt="{avg:.6f}")
+            "loss_mask",
+            kaggle_runner.logs.SmoothedValue(window_size=160, fmt="{avg:.6f}"),
         )
         self.DATA_PATH_BASE = "../input/siimacr-pneumothorax-segmentation-data-128"
 
@@ -105,7 +106,8 @@ class PS_torch(KaggleKernel):
             }
 
             kernel_utils.dump_obj(
-                data_to_save, f"run_state_{self._stage}.pkl", force=force)
+                data_to_save, f"run_state_{self._stage}.pkl", force=force
+            )
 
             # print(self_data)
             # for k, v in self_data.items():
@@ -148,8 +150,7 @@ class PS_torch(KaggleKernel):
                 data_loader, print_freq, header
             ):
                 images = list(image.to(device) for image in images)
-                targets = [{k: v.to(device) for k, v in t.items()}
-                           for t in targets]
+                targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
                 if mode != "train":
                     predictions, _ = model(images, targets)
@@ -161,8 +162,7 @@ class PS_torch(KaggleKernel):
 
                 # reduce losses over all GPUs for logging purposes
                 loss_dict_reduced = kernel_utils.reduce_dict(loss_dict)
-                losses_reduced = sum(
-                    loss for loss in loss_dict_reduced.values())
+                losses_reduced = sum(loss for loss in loss_dict_reduced.values())
                 losses_summed += losses_reduced.detach().cpu().numpy()
                 cnt += 1
 
@@ -186,8 +186,7 @@ class PS_torch(KaggleKernel):
                 data_loader, print_freq, header
             ):
                 images = list(image.to(device) for image in images)
-                targets = [{k: v.to(device) for k, v in t.items()}
-                           for t in targets]
+                targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
                 loss_dict = model(images, targets)
 
@@ -195,8 +194,7 @@ class PS_torch(KaggleKernel):
 
                 # reduce losses over all GPUs for logging purposes
                 loss_dict_reduced = kernel_utils.reduce_dict(loss_dict)
-                losses_reduced = sum(
-                    loss for loss in loss_dict_reduced.values())
+                losses_reduced = sum(loss for loss in loss_dict_reduced.values())
 
                 metric_logger.update(loss=losses_reduced, **loss_dict_reduced)
 
@@ -236,8 +234,7 @@ class PS_torch(KaggleKernel):
 
         for images, targets in metric_logger.log_every(data_loader, print_freq, header):
             images = list(image.to(device) for image in images)
-            targets = [{k: v.to(device) for k, v in t.items()}
-                       for t in targets]
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
             loss_dict = model(images, targets)
             # it just pop.. and we do not train rpn anyway!!!!
@@ -262,8 +259,7 @@ class PS_torch(KaggleKernel):
                 warm_up_lr_scheduler.step()
 
             if mq_logger is not None:  # issue is it runs off... So NAN
-                mq_logger.debug(
-                    f"losses summed is {losses_summed}, cnt is {cnt}")
+                mq_logger.debug(f"losses summed is {losses_summed}, cnt is {cnt}")
                 print(
                     f"losses summed is {losses_summed}, cnt is {cnt}, loss_dict_reduced is {loss_dict_reduced}"
                 )
@@ -296,8 +292,7 @@ class PS_torch(KaggleKernel):
         else:
             train_mask = np.zeros((len(df),), dtype=np.bool)
             np.random.seed(2019)
-            chosen = np.random.choice(
-                len(df), int(0.8 * len(df)), replace=False)
+            chosen = np.random.choice(len(df), int(0.8 * len(df)), replace=False)
             train_mask[chosen] = True
             val_mask = np.invert(train_mask)
 
@@ -559,8 +554,7 @@ class PS_torch(KaggleKernel):
                             result["masks"][ppx].transpose((1, 2, 0))
                         )
                         res = np.asarray(
-                            res.resize((width, height),
-                                       resample=Image.BILINEAR)
+                            res.resize((width, height), resample=Image.BILINEAR)
                         )
                         res = (res[:, :] * 255.0 > 127).astype(np.uint8).T
                         rle = kernel_utils.mask_to_rle(res, width, height)
@@ -610,8 +604,7 @@ class PS_torch(KaggleKernel):
             image_id = targets["image_id"]
 
             images = list(image.to(device) for image in images)
-            targets = [{k: v.to(device) for k, v in t.items()}
-                       for t in targets]
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
             result = model(images, targets)[0]
 
@@ -625,8 +618,7 @@ class PS_torch(KaggleKernel):
                             result["masks"][ppx].permute(1, 2, 0).cpu().numpy()
                         )
                         res = np.asarray(
-                            res.resize((width, height),
-                                       resample=Image.BILINEAR)
+                            res.resize((width, height), resample=Image.BILINEAR)
                         )
                         res = (res[:, :] * 255.0 > 127).astype(np.uint8).T
                         rle = kernel_utils.mask_to_rle(res, width, height)
@@ -646,8 +638,7 @@ class PS_torch(KaggleKernel):
         )
 
         # this part was taken from @raddar's kernel: https://www.kaggle.com/raddar/better-sample-submission
-        masks_ = sample_df.groupby(
-            "ImageId")["ImageId"].count().reset_index(name="N")
+        masks_ = sample_df.groupby("ImageId")["ImageId"].count().reset_index(name="N")
         masks_ = masks_.loc[masks_.N > 1].ImageId.values
         ###
         sample_df = sample_df.drop_duplicates("ImageId", keep="last").reset_index(
@@ -678,12 +669,10 @@ class PS_torch(KaggleKernel):
                         if result["scores"][ppx] >= threshold:
                             mask_added += 1
                             res = transforms.ToPILImage()(
-                                result["masks"][ppx].permute(
-                                    1, 2, 0).cpu().numpy()
+                                result["masks"][ppx].permute(1, 2, 0).cpu().numpy()
                             )
                             res = np.asarray(
-                                res.resize((width, height),
-                                           resample=Image.BILINEAR)
+                                res.resize((width, height), resample=Image.BILINEAR)
                             )
                             res = (res[:, :] * 255.0 > 127).astype(np.uint8).T
                             rle = kernel_utils.mask_to_rle(res, width, height)
@@ -703,7 +692,9 @@ class PS_torch(KaggleKernel):
         print(counter)
 
     def _build_show_model_detail(self):
-        self.run(end_stage=kaggle_runner.kernels.KernelRunningState.KernelRunningState.PREPARE_DATA_DONE)
+        self.run(
+            end_stage=kaggle_runner.kernels.KernelRunningState.KernelRunningState.PREPARE_DATA_DONE
+        )
         self.build_and_set_model()
         # self.pre_test()
         # summary(self.model_ft, (1,1024,1024))
@@ -735,8 +726,9 @@ class PS_torch(KaggleKernel):
                 self.metric_logger,
                 print_freq=150,
             )
-            kernel_utils.dump_obj(analyzer.activation,
-                           "dev_output_results.pkl", force=True)
+            kernel_utils.dump_obj(
+                analyzer.activation, "dev_output_results.pkl", force=True
+            )
 
         roi_acts = []
         for acts in analyzer.activation["roi_heads"]:
@@ -767,8 +759,7 @@ class SIIMDataset(torch.utils.data.Dataset):
             ):
                 self.image_info[counter]["image_id"] = image_id
                 self.image_info[counter]["image_path"] = image_path
-                self.image_info[counter]["annotations"] = row[" EncodedPixels"].strip(
-                )
+                self.image_info[counter]["annotations"] = row[" EncodedPixels"].strip()
                 counter += 1
 
     def _test_(self, idx):
@@ -807,8 +798,7 @@ class SIIMDataset(torch.utils.data.Dataset):
             ymin = np.min(pos[0])
             ymax = np.max(pos[0])
 
-        boxes = torch.as_tensor(
-            [[xmin, ymin, xmax, ymax]], dtype=torch.float32)
+        boxes = torch.as_tensor([[xmin, ymin, xmax, ymax]], dtype=torch.float32)
         labels = torch.ones((1,), dtype=torch.int64)
         masks = torch.as_tensor(mask, dtype=torch.uint8)
 
@@ -935,8 +925,7 @@ class FocalLoss(nn.Module):
             -1 * self.alpha * not_y_hat ** self.gamma * y * torch.log(y_hat)
         )  # cross entropy
         loss += (
-            -1 * (1 - self.alpha) * y_hat ** self.gamma *
-            not_y * torch.log(not_y_hat)
+            -1 * (1 - self.alpha) * y_hat ** self.gamma * not_y * torch.log(not_y_hat)
         )
         loss *= self.magnifier
 
@@ -1067,16 +1056,14 @@ class RoIHeads_loss_customized(roi_heads.RoIHeads):
             loss_classifier, loss_box_reg = fastrcnn_loss_func(
                 class_logits, box_regression, labels, regression_targets
             )
-            losses = dict(loss_classifier=loss_classifier,
-                          loss_box_reg=loss_box_reg)
+            losses = dict(loss_classifier=loss_classifier, loss_box_reg=loss_box_reg)
         if eval_when_train:
             boxes, scores, labels = self.postprocess_detections(
                 class_logits, box_regression, proposals, image_shapes
             )
             num_images = len(boxes)
             for i in range(num_images):
-                result.append(
-                    dict(boxes=boxes[i], labels=labels[i], scores=scores[i],))
+                result.append(dict(boxes=boxes[i], labels=labels[i], scores=scores[i],))
 
         if self.has_mask:
             mask_proposals = [p["boxes"] for p in result]
@@ -1090,8 +1077,7 @@ class RoIHeads_loss_customized(roi_heads.RoIHeads):
                     mask_proposals.append(proposals[img_id][pos])
                     pos_matched_idxs.append(matched_idxs[img_id][pos])
 
-            mask_features = self.mask_roi_pool(
-                features, mask_proposals, image_shapes)
+            mask_features = self.mask_roi_pool(features, mask_proposals, image_shapes)
             mask_features = self.mask_head(mask_features)
             mask_logits = self.mask_predictor(mask_features)
 
@@ -1196,8 +1182,7 @@ def maskrcnn_loss_focal(
         loss_func = focal_loss_func
 
     mask_loss = loss_func(
-        mask_logits[torch.arange(
-            labels.shape[0], device=labels.device), labels],
+        mask_logits[torch.arange(labels.shape[0], device=labels.device), labels],
         mask_targets,
     )
     return mask_loss
@@ -1213,16 +1198,14 @@ class TorchModelAnalyzer:
 
         def rpn_output_hook(model, input, output):
             if name == "roi_heads":
-                self.activation[name].append(
-                    self.roi_heads_output_detach(output))
+                self.activation[name].append(self.roi_heads_output_detach(output))
 
         return rpn_output_hook
 
     # def put_one_predict(self, name, detached_output):
 
     def print_output(self, name):
-        print(self.activation.get(
-            name, f"output information for {name} not found"))
+        print(self.activation.get(name, f"output information for {name} not found"))
 
     def test_out_threshold(self, activations):
         stat_for_threshold = {}
@@ -1237,10 +1220,8 @@ class TorchModelAnalyzer:
             # my_trace()
             # print(self.metric_cal(preds))
 
-        kernel_utils.dump_obj(stat_for_threshold,
-                       "stat_for_threshold.pkl", force=True)
-        kernel_utils.dump_obj(pred_for_threshold,
-                       "pred_for_threshold.pkl", force=True)
+        kernel_utils.dump_obj(stat_for_threshold, "stat_for_threshold.pkl", force=True)
+        kernel_utils.dump_obj(pred_for_threshold, "pred_for_threshold.pkl", force=True)
 
     def metric_cal(self, preds):
         pass
