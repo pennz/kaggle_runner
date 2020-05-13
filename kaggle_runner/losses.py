@@ -3,15 +3,6 @@ import torch.nn as nn
 from torch.nn import functional as F
 
 
-def dice_loss(input, target):
-    input = torch.sigmoid(input)
-    smooth = 1.0
-    iflat = input.view(-1)
-    tflat = target.view(-1)
-    intersection = (iflat * tflat).sum()
-    return (2.0 * intersection + smooth) / (iflat.sum() + tflat.sum() + smooth)
-
-
 class FocalLoss(nn.Module):
     def __init__(self, gamma):
         super().__init__()
@@ -43,6 +34,14 @@ class MixedLoss(nn.Module):
         self.focal = FocalLoss(gamma)
 
     def forward(self, input, target):
+        def dice_loss(input, target):
+            input = torch.sigmoid(input)
+            smooth = 1.0
+            iflat = input.view(-1)
+            tflat = target.view(-1)
+            intersection = (iflat * tflat).sum()
+            return (2.0 * intersection + smooth) / (iflat.sum() + tflat.sum() + smooth)
+
         loss = self.alpha * self.focal(input, target) - torch.log(
             dice_loss(input, target)
         )

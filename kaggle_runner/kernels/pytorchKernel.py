@@ -32,7 +32,6 @@ from tqdm import tqdm
 import kaggle_runner.kernels.KernelRunningState
 import kaggle_runner.logs
 import kaggle_runner.optimizers
-from kaggle_runner.kernels import kernel
 from kaggle_runner.kernels.kernel import KaggleKernel
 from kaggle_runner.utils import kernel_utils
 
@@ -46,14 +45,9 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 class PS_torch(KaggleKernel):
     def __init__(self, *args, **kargs):
         super(PS_torch, self).__init__(*args, **kargs)
-        self.developing = True
 
         self.model_ft = None
-        self.num_epochs = 8
-        self.optimizer = None
-        self.data_loader = None
         self.data_loader_dev = None
-        self.device = None
         self.lr_scheduler = None
 
         # data
@@ -62,8 +56,6 @@ class PS_torch(KaggleKernel):
         self.img_std = [0.24535184, 0.24535184, 0.24535184]
         # default value: mean:[0.46877811 0.46877811 0.46877811],
         # std:[0.24535184 0.24535184 0.24535184]
-
-        self.submit_run = False
 
         # for debugging thing
         self.metric_logger = kaggle_runner.logs.MetricLogger(delimiter="  ")
@@ -78,9 +70,6 @@ class PS_torch(KaggleKernel):
             kaggle_runner.logs.SmoothedValue(window_size=160, fmt="{avg:.6f}"),
         )
         self.DATA_PATH_BASE = "../input/siimacr-pneumothorax-segmentation-data-128"
-
-    def analyze_data(self):
-        pass
 
     def dump_state(
         self, exec_flag=False, force=True

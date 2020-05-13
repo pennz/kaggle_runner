@@ -95,7 +95,10 @@ class RAdam(Optimizer):
 class EarlyStopping(object):
     """EarlyStop for pytorch
     refer to
-    https://gist.github.com/stefanonardo/693d96ceb2f531fa05db530f3e21517d"""
+    https://gist.github.com/stefanonardo/693d96ceb2f531fa05db530f3e21517d
+
+    TODO check if fastai has buildin support for this
+    """
 
     def __init__(self, mode="min", min_delta=0, patience=10, percentage=False):
         self.mode = mode

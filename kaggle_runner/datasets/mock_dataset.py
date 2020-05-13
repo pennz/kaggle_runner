@@ -12,7 +12,7 @@ from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
 from albumentations.pytorch import ToTensor
 
 
-class TestDataset(Dataset):
+class MockDataset(Dataset):
     def __init__(self, root, df, size, mean, std, tta=4):
         self.root = root
         self.size = size

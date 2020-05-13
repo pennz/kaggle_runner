@@ -1,4 +1,5 @@
 import logging
+from abc import ABCMeta, abstractmethod
 
 from kaggle_runner.kernels.KernelRunningState import KernelRunningState
 from kaggle_runner.utils import kernel_utils
@@ -14,8 +15,14 @@ class KernelGroup:
         self.kernels = kernels
 
 
-class KaggleKernel:
+class KaggleKernel(metaclass=ABCMeta):
     def __init__(self, logger=None):
+        self.submit_run = False
+        self.num_epochs = 8
+        self.device = None
+        self.optimizer = None
+        self.data_loader = None
+        self.developing = True
         self.model = None
         self.model_metrics = []
         self.model_loss = None
@@ -33,7 +40,6 @@ class KaggleKernel:
         self._stage = KernelRunningState.INIT_DONE
         self.logger = logger
         self.dependency = []
-        self.device = None
 
     def _add_dependency(self, dep):
         """_add_dependency just install pip dependency now
@@ -246,4 +252,11 @@ class KaggleKernel:
         pass
 
     def plot_test_result(self):
+        pass
+
+    def analyze_data(self):
+        pass
+
+    @abstractmethod
+    def check_predict_details(self):
         pass

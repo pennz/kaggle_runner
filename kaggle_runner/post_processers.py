@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+from kaggle_runner.utils import kernel_utils
+
 
 def post_process(probability, threshold, min_size):
     mask = cv2.threshold(probability, threshold, 1, cv2.THRESH_BINARY)[1]
@@ -13,3 +15,8 @@ def post_process(probability, threshold, min_size):
             predictions[p] = 1
             num += 1
     return predictions, num
+
+
+class PS_result_analyzer:  # todo maybe add other good analyze functions
+    def dev_set_performance(self, y_true, y_pred):
+        return kernel_utils.dice_coef(y_true, y_pred)

@@ -15,6 +15,7 @@ from tqdm import tqdm
 
 import kaggle_runner.datasets.data_handlers
 from kaggle_runner.kernels.kernel import KaggleKernel
+from kaggle_runner.post_processers import PS_result_analyzer
 from kaggle_runner.utils import kernel_utils
 
 
@@ -264,6 +265,7 @@ class PS(KaggleKernel):
             b = math_ops.cast(b > threshold, b.dtype)
             return a, b
 
+        # TODO ref put ds prepare to right partition
         def ds_prepare():
             ds = self.ds
             ds = ds.map(mask_to_binary)
@@ -436,6 +438,3 @@ class PS(KaggleKernel):
         PS._check_image_data(self.ds)
 
 
-class PS_result_analyzer:  # todo maybe add other good analyze functions
-    def dev_set_performance(self, y_true, y_pred):
-        return kernel_utils.dice_coef(y_true, y_pred)

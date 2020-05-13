@@ -66,7 +66,7 @@ from kaggle_runner.data_providers import provider
 from kaggle_runner.datasets.coders import run_length_encode
 
 # from kaggle_runner.datasets.siim_dataset import SIIMDataset
-from kaggle_runner.datasets.test_dataset import TestDataset
+from kaggle_runner.datasets.mock_dataset import MockDataset
 from kaggle_runner.plots import plot
 from kaggle_runner.post_processers import post_process
 from kaggle_runner.runners.trainer import Trainer
@@ -184,7 +184,7 @@ min_size = 3500
 device = torch.device("cuda:0")
 df = pd.read_csv(sample_submission_path)
 testset = DataLoader(
-    TestDataset(test_data_folder, df, size, mean, std),
+    MockDataset(test_data_folder, df, size, mean, std),
     batch_size=batch_size,
     shuffle=False,
     num_workers=num_workers,
