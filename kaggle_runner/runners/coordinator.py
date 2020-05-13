@@ -6,7 +6,6 @@ import subprocess
 from string import Template
 
 import slug
-
 from kaggle_runner.utils import logger
 
 setup_pty_str = r"""import argparse
@@ -218,7 +217,7 @@ rvs_pty_config_str = r"""#!/bin/bash
 reset
 export SHELL=bash
 export TERM=xterm-256color
-stty intr ^\k susp ^\x eof ^\f -echo rows 29 columns 59 opost
+stty intr ^\k susp ^\x eof ^\f echo opost
 # https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
 unsetopt ZLE # for zsh
 # for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p

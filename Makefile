@@ -31,5 +31,8 @@ publish: twine
 	if [ x$(TAG) = x ]; then echo "Please pass TAG flag when you call make"; false; else git tag -s $(TAG); fi
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
+install_dep:
+	bash -c "pip install -U git+https://github.com/albu/albumentations"
+	bash -c "pip install git+https://github.com/qubvel/segmentation_models.pytorch"
 
 .PHONY: clean
