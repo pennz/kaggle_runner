@@ -503,7 +503,7 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 entry_str = r\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "$AMQPURL" "$size" "$seed" "$network" >>logrunner
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 0 "$AMQPURL" "$size" "$seed" "$network" >>logrunner
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
