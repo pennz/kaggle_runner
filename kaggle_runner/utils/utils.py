@@ -38,3 +38,22 @@ def get_logger(name="utils", level=logging.DEBUG):
     logger = logging.getLogger(name)
     logger.setLevel(level)
     return logger
+
+
+def parse_AMQP(url_str):
+    Vhost = None
+    res = parse.parse("amqp://{}:{}@{}/{}", url_str)
+    if res is None:
+        res = parse.parse("amqp://{}:{}@{}/", url_str)
+        if res is None:
+            raise RuntimeError("AMQP URL error")
+        else:
+            Vhost = "/"
+            username, passwd, host = res
+    else:
+        username, passwd, host, Vhost = res
+
+    try:
+        return utils.AMQPURL(host, passwd, Vhost, username)
+    except TypeError as e:
+        utils.logger.debug(e)

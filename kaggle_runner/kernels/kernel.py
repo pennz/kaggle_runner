@@ -6,7 +6,6 @@ from kaggle_runner.utils import kernel_utils
 # Plot inline
 # %matplotlib inline
 
-
 class KernelGroup:
     "Kernel Group to try different combination of kernels hyperparameter"
 
