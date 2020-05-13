@@ -3,7 +3,8 @@ export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e
 PY3=python
 SRC=$(wildcard *.py)
 
-all: push $(SRC)
+all: $(SRC)
+	-git push
 	[ -f ./cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
 	chmod +x ./cc-test-reporter
 	./cc-test-reporter before-build
