@@ -10,7 +10,7 @@ import torch
 from torch.autograd import Variable
 
 # import modelTester
-from kaggle_runner import runner
+from kaggle_runner.runners import runner
 from kaggle_runner.data_providers import provider
 from kaggle_runner.kernels import PSKernel, kernel, pytorchKernel
 from kaggle_runner.kernels.KernelRunningState import KernelRunningState

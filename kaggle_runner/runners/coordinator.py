@@ -7,7 +7,7 @@ from string import Template
 
 import slug
 
-from .utils import logger
+from kaggle_runner.utils import logger
 
 setup_pty_str = r"""import argparse
 import os

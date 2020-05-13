@@ -4,7 +4,8 @@ import subprocess
 
 import pytest
 
-from kaggle_runner import coordinator, utils
+from kaggle_runner.runners import coordinator
+from kaggle_runner import utils
 
 
 @pytest.fixture(scope="module")

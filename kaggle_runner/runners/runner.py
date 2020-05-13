@@ -9,7 +9,7 @@ from kaggle_runner import kernels
 from kaggle_runner.trainer import Trainer
 from kaggle_runner.utils.utils import parse_AMQP
 
-from .utils import utils
+from kaggle_runner.utils import utils
 
 
 def log_format(self, record):

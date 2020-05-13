@@ -4,8 +4,8 @@ import subprocess
 from unittest import TestCase
 
 import pytest
-
-from kaggle_runner import trainer, utils
+from kaggle_runner.runners import trainer
+from kaggle_runner import utils
 
 
 @pytest.fixture(scope="module")
