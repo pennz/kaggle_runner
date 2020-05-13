@@ -373,13 +373,6 @@ wait_ncat 60
 
 which $NC >/dev/null || NC=nc
 export NC
-{
-  if [ x"${PHASE}" = x"dev" ]; then
-      PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT;
-  fi
-  screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
-}
-
 
 pip install pydicom parse pytest-logger python_logging_rabbitmq coverage &
 python3 -m pip install pyvim neovim msgpack==1.0.0 &&
@@ -415,6 +408,14 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
     python main.py $PARAMS;
   fi
 }
+
+{
+  if [ x"${PHASE}" = x"dev" ]; then
+    ( PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT; ) &
+  fi
+  screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
+}
+
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
 # while true; do sleep 60; done  # just wait
 """
