@@ -408,7 +408,7 @@ if [ x"${PHASE}" = x"dev" ]; then
       make install_dep;
       [ "x${PARAMS[0]}" = x1 ] && bash -x ./rvs.sh 2>&1
   } | $NC $SERVER $CHECK_PORT;
-  [ "x${PARAMS[0]}" = x1 ] &&screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
+  [ "x${PARAMS[0]}" = x1 ] && screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
 fi
 
 shift
