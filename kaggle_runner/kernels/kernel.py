@@ -97,7 +97,10 @@ class KaggleKernel:
     def prepare_train_dev_data(self):
         pass
 
-    def prepare_test_data(self):
+    def prepare_test_data(self, data_config=None):
+        pass
+
+    def peek_data(self):
         pass
 
     def predict_on_test(self):
