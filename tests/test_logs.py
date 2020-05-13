@@ -8,7 +8,7 @@ class TestLogs(TestCase):
     def setup_class(cls):
         "prepare a dummy model for logger to show"
         # TODO set up a dummy model / or just use imagenette
-        self.model = None
+        cls.model = None
 
     @classmethod
     def teardown_class(cls):
