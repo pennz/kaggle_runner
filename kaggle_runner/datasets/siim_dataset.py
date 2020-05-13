@@ -1,9 +1,9 @@
 import os
 
-import numpy as np
-
 import cv2
+import numpy as np
 from torch.utils.data import DataLoader, Dataset, sampler
+
 from kaggle_runner.datasets.coders import run_length_decode
 from kaggle_runner.datasets.transfomers import get_transforms
 

@@ -6,19 +6,16 @@ import unittest
 
 import numpy as np
 import pytest
-
 import torch
+from torch.autograd import Variable
 
 # import modelTester
 from kaggle_runner import runner
 from kaggle_runner.data_providers import provider
 from kaggle_runner.kernels import PSKernel, kernel, pytorchKernel
 from kaggle_runner.kernels.KernelRunningState import KernelRunningState
-from kaggle_runner.data_providers import provider
-
 # from kernel import Kernel
 from kaggle_runner.utils import kernel_utils
-from torch.autograd import Variable
 
 log_args = {
     "size": 384,

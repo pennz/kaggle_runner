@@ -1,28 +1,15 @@
 import os
 
-from torch.utils.data import DataLoader, Dataset, sampler
 import cv2
+from torch.utils.data import DataLoader, Dataset, sampler
+
+from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
+                            GridDistortion, HorizontalFlip, IAAEmboss,
+                            MultiplicativeNoise, Normalize, OneOf,
+                            OpticalDistortion, RandomBrightnessContrast,
+                            RandomGamma, RandomRotate90, Resize,
+                            ShiftScaleRotate, Transpose, VerticalFlip)
 from albumentations.pytorch import ToTensor
-from albumentations import (
-    Blur,
-    Compose,
-    ElasticTransform,
-    GaussNoise,
-    GridDistortion,
-    HorizontalFlip,
-    IAAEmboss,
-    MultiplicativeNoise,
-    Normalize,
-    OneOf,
-    OpticalDistortion,
-    RandomBrightnessContrast,
-    RandomGamma,
-    RandomRotate90,
-    Resize,
-    ShiftScaleRotate,
-    Transpose,
-    VerticalFlip,
-)
 
 
 class TestDataset(Dataset):

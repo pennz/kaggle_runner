@@ -1,4 +1,4 @@
-from kaggle_runner.utils.kernel_utils import logger, dump_obj, get_obj_or_dump
+from kaggle_runner.utils.kernel_utils import dump_obj, get_obj_or_dump, logger
 
 
 class AttentionRaffel(Layer):

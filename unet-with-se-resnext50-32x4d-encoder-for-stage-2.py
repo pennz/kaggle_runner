@@ -49,15 +49,9 @@ import glob
 # + _uuid="8f2839f25d086af736a60e9eeb907d3b93b6e0e5" _cell_guid="b1076dfc-b9ad-4769-8c92-a6c4dae69d19"
 import os
 import random
+import subprocess
 import warnings
 
-import subprocess
-# !pip install -U git+https://github.com/albu/albumentations
-# !pip install git+https://github.com/qubvel/segmentation_models.pytorch > /dev/null 2>&1 # Install segmentations_models.pytorch, with no bash output.
-subprocess.run("pip install -U git+https://github.com/albu/albumentations", shell=True)
-subprocess.run("pip install git+https://github.com/qubvel/segmentation_models.pytorch", shell=True)
-
-import albumentations as A
 import cv2
 import numpy as np
 import pandas as pd
@@ -67,6 +61,7 @@ from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader  # TODO optimize this
 from tqdm import tqdm_notebook as tqdm
 
+import albumentations as A
 from kaggle_runner.data_providers import provider
 from kaggle_runner.datasets.coders import run_length_encode
 # from kaggle_runner.datasets.siim_dataset import SIIMDataset
@@ -74,6 +69,13 @@ from kaggle_runner.datasets.test_dataset import TestDataset
 from kaggle_runner.plots import plot
 from kaggle_runner.post_processers import post_process
 from kaggle_runner.trainer import Trainer
+
+# !pip install -U git+https://github.com/albu/albumentations
+# !pip install git+https://github.com/qubvel/segmentation_models.pytorch > /dev/null 2>&1 # Install segmentations_models.pytorch, with no bash output.
+subprocess.run("pip install -U git+https://github.com/albu/albumentations", shell=True)
+subprocess.run("pip install git+https://github.com/qubvel/segmentation_models.pytorch", shell=True)
+
+
 
 # +
 # from albumentations.pytorch import ToTensor

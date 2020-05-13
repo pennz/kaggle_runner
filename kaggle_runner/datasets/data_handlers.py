@@ -5,7 +5,7 @@ from glob import glob
 import numpy as np
 import pandas as pd
 
-from kaggle_runner.utils.kernel_utils import rle2mask, logger
+from kaggle_runner.utils.kernel_utils import logger, rle2mask
 
 # The following functions can be used to convert a value to a type compatible
 # with tf.Example.

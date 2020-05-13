@@ -1,25 +1,12 @@
 import cv2
+
 import albumentations as A
-from albumentations import (
-    Blur,
-    Compose,
-    ElasticTransform,
-    GaussNoise,
-    GridDistortion,
-    HorizontalFlip,
-    IAAEmboss,
-    MultiplicativeNoise,
-    Normalize,
-    OneOf,
-    OpticalDistortion,
-    RandomBrightnessContrast,
-    RandomGamma,
-    RandomRotate90,
-    Resize,
-    ShiftScaleRotate,
-    Transpose,
-    VerticalFlip,
-)
+from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
+                            GridDistortion, HorizontalFlip, IAAEmboss,
+                            MultiplicativeNoise, Normalize, OneOf,
+                            OpticalDistortion, RandomBrightnessContrast,
+                            RandomGamma, RandomRotate90, Resize,
+                            ShiftScaleRotate, Transpose, VerticalFlip)
 from albumentations.pytorch import ToTensor
 
 

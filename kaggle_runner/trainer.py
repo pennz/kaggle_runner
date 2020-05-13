@@ -1,13 +1,14 @@
 import time
+
 import torch
+import torch.backends.cudnn as cudnn
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from kaggle_runner.data_providers import provider
 from kaggle_runner.logs import epoch_log
 from kaggle_runner.losses import MixedLoss
 from kaggle_runner.metrics.meters import Meter
 from kaggle_runner.optimizers import RAdam
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-import torch.backends.cudnn as cudnn
 
 
 class Trainer(object):

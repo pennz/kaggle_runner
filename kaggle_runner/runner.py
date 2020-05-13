@@ -8,6 +8,7 @@ from python_logging_rabbitmq.compat import text_type
 from kaggle_runner import kernels
 from kaggle_runner.trainer import Trainer
 from kaggle_runner.utils.utils import parse_AMQP
+
 from .utils import utils
 
 

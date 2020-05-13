@@ -2,13 +2,13 @@ import datetime
 import time
 from collections import defaultdict, deque
 
+import fastai
 import numpy as np
 import tensorflow as tf
-
-import fastai
 import torch
 import torch.distributed as dist
 from fastai.callbacks import csv_logger
+
 from kaggle_runner.utils.kernel_utils import is_dist_avail_and_initialized
 
 

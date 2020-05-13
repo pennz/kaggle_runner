@@ -7,21 +7,15 @@ import pandas as pd
 import pydicom
 from matplotlib import pyplot as plt
 from sklearn.model_selection import KFold
-from tensorflow.keras.layers import (
-    Conv2D,
-    Conv2DTranspose,
-    Dropout,
-    Input,
-    MaxPooling2D,
-    concatenate,
-)
+from tensorflow.keras.layers import (Conv2D, Conv2DTranspose, Dropout, Input,
+                                     MaxPooling2D, concatenate)
 from tensorflow.keras.models import Model
 from tensorflow.python.ops import math_ops
 from tqdm import tqdm
 
 import kaggle_runner.datasets.data_handlers
-from kaggle_runner.utils import kernel_utils
 from kaggle_runner.kernels.kernel import KaggleKernel
+from kaggle_runner.utils import kernel_utils
 
 
 class PS(KaggleKernel):

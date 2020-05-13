@@ -20,13 +20,11 @@ from torchvision import transforms
 from torchvision.models.detection import _utils as det_utils
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
-from torchvision.models.detection.roi_heads import (
-    fastrcnn_loss,
-    keypointrcnn_inference,
-    keypointrcnn_loss,
-    maskrcnn_inference,
-    maskrcnn_loss,
-)
+from torchvision.models.detection.roi_heads import (fastrcnn_loss,
+                                                    keypointrcnn_inference,
+                                                    keypointrcnn_loss,
+                                                    maskrcnn_inference,
+                                                    maskrcnn_loss)
 from torchvision.ops import boxes as box_ops
 from torchvision.ops import roi_align
 from tqdm import tqdm
@@ -35,8 +33,8 @@ import kaggle_runner.kernels.KernelRunningState
 import kaggle_runner.logs
 import kaggle_runner.optimizers
 from kaggle_runner.kernels import kernel
-from kaggle_runner.utils import kernel_utils
 from kaggle_runner.kernels.kernel import KaggleKernel
+from kaggle_runner.utils import kernel_utils
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
