@@ -193,6 +193,7 @@ while true; do
     port_connect_status=0
   fi
   sleep $((wait_time - nc_time)) # check every XX seconds
+  echo $hostname $HOSTNAME
 done
 
 # https://medium.com/@6c2e6e2e/spawning-interactive-reverse-shells-with-tty-a7e50c44940e
