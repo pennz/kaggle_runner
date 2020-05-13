@@ -91,9 +91,10 @@ check_exit_status() {
 connect_to_server() {
   cat rpt &
   echo "#" $(date) started connection
-  echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat| awk -v RS="" '{print "CPU "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem"$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime"$(uptime | awk '{print $1 " " $2 " " $3}')
+  echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
+  echo "#" $hostname $HOSTNAME
 
-  $NC -w $1 $SERVER $PORT
+  $NC -w ${1}s $SERVER $PORT
 }
 connect_setup() {
   connect_again_flag=1
@@ -274,7 +275,7 @@ NCCL_VERSION=2.4.8
 TF_FORCE_GPU_ALLOW_GROWTH=true
 JPY_PARENT_PID=18
 NO_GCE_CHECK=True
-#PWD=/content
+# PWD=/content
 # HOME=/root
 LAST_FORCED_REBUILD=20200316
 CLICOLOR=1
@@ -298,7 +299,7 @@ SHLVL=3
 # GLIBCXX_FORCE_NEW=1
 # PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools/node/bin:/tools/google-cloud-sdk/bin:/opt/bin
 # PS1=\[\033[01;32m\]\u@\h \[\033[01;34m\]\w \[\033[31m\]`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`\[\033[35m\]$\[\033[00m\]
-PS4=+
+PS4='L\#${LINENO}: '
 LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so.4
 LESSOPEN=| /usr/bin/lesspipe %s
 GIT_PAGER=cat
@@ -353,6 +354,8 @@ PHASE=$1
 shift
 PARAMS=$@
 
+GDRIVE=0
+
 SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
@@ -374,28 +377,32 @@ SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
 
 cd ${SRC_WORK_FOLDER}
-(
-mvdir () {
-    mkdir "$2"/"$1"
-    mv "$1"/* "$2"/"$1"
+
+if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
+{
+  mvdir () {
+      [[ "$2"/"$1" -ef "${PWD}" ]] || { rm -rf "$2"/"$1" &&
+          mkdir "$2"/"$1"
+      }
+
+      bash -c "mv ""$1""/*"" $2""/""$1"
+  }
+  export -f mvdir
+
+  git clone --single-branch --branch ${BRANCH} --depth=1 \
+    https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
+  git submodule update --init --recursive
+  find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
+  find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
+  popd
+  pip install -e .
+} &&
+{
+  if [ x"${PHASE}" != x"dev" ]; then
+    pip install kaggle_runner
+    python main.py $PARAMS;
+  fi
 }
-export -f mvdir
-    test -d ${REPO} || {
-        git clone --single-branch --branch ${BRANCH} --depth=1 \
-https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
-        git submodule update --init --recursive ;
- find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
- find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} mvdir {} $OLDPWD
-        popd
-        pip install -e .
-    }
-) \
- && {
-     if [ x"${PHASE}" != x"dev" ]; then
-           pip install kaggle_runner
-         python main.py $PARAMS;
-     fi
-    }
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
 # while true; do sleep 60; done  # just wait
 """
@@ -451,7 +458,7 @@ class Coordinator:
             jf.truncate()
 
     @staticmethod
-    def _change_main_py(path, size, net, AMQPURL, seed):
+    def _change_main_py(path, size, net, AMQPURL, seed, gdrive_enable=False):
         s = Template(
             """#!/usr/bin/env python3
 import selectors
@@ -480,12 +487,15 @@ with open("gdrive_setup", "w") as f:
     f.write(
 r\"\"\"${gdrive_str}\"\"\"
     )
-with open("entry.sh", "w") as f:
-    f.write(
-r\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &
+entry_str = r\"\"\"#!/bin/bash
 PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev "$AMQPURL" "$size" "$seed" "$network" >>logrunner
 \"\"\"
+if ${gdrive_enable}:
+    entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
+
+with open("entry.sh", "w") as f:
+    f.write(
+        entry_str
     )
 
 
@@ -557,6 +567,7 @@ while True:
             size=size,
             network=net,
             seed=seed,
+            gdrive_enable=gdrive_enable,
         )
         ss = s.safe_substitute(d)
         print(ss)
