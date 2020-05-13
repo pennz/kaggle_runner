@@ -362,11 +362,14 @@ CHECK_PORT=$(( PORT + 1 ))
 apt update && apt install -y netcat nmap screen time
 apt install -y tig ctags htop tree pv tmux psmisc &
 
-wait_for_ncat=60
-while [ $wait_for_ncat -gt 0 ]; do
-  wait_for_ncat=$(( wait_for_ncat - 1))
-  which ncat >/dev/null && return 0
-done
+wait_ncat() {
+  wait_for_ncat=$1
+  while [ $wait_for_ncat -gt 0 ]; do
+    wait_for_ncat=$(( wait_for_ncat - 1))
+    which ncat >/dev/null && return 0
+  done
+}
+wait_ncat 60
 
 which $NC >/dev/null || NC=nc
 export NC
