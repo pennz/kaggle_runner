@@ -69,7 +69,7 @@ from kaggle_runner.datasets.coders import run_length_encode
 from kaggle_runner.datasets.test_dataset import TestDataset
 from kaggle_runner.plots import plot
 from kaggle_runner.post_processers import post_process
-from kaggle_runner.trainer import Trainer
+from kaggle_runner.runners.trainer import Trainer
 from torch.utils.data import DataLoader  # TODO optimize this
 
 # !pip install -U git+https://github.com/albu/albumentations

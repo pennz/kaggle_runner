@@ -2,14 +2,12 @@ import json
 import types
 from socket import gethostname
 
+from kaggle_runner import kernels
+from kaggle_runner.runners.trainer import Trainer
+from kaggle_runner.utils import utils
+from kaggle_runner.utils.utils import parse_AMQP
 from python_logging_rabbitmq import RabbitMQHandler
 from python_logging_rabbitmq.compat import text_type
-
-from kaggle_runner import kernels
-from kaggle_runner.trainer import Trainer
-from kaggle_runner.utils.utils import parse_AMQP
-
-from kaggle_runner.utils import utils
 
 
 def log_format(self, record):
@@ -81,7 +79,8 @@ class Runner:  # blade runner
         )
         # rabbit.connection_params["virtual_host"] = self.AMQPURL.Vhost create
         # kernel and run
-        rabbit.formatter.format = types.MethodType(log_format, rabbit.formatter)
+        rabbit.formatter.format = types.MethodType(
+            log_format, rabbit.formatter)
         logger.addHandler(rabbit)
         self.logger = logger
         # kernel.set_logger(self.kernel_name, handler=rabbit)
