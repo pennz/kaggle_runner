@@ -33,6 +33,7 @@ class KaggleKernel:
         self._stage = KernelRunningState.INIT_DONE
         self.logger = logger
         self.dependency = []
+        self.device = None
 
     def _add_dependency(self, dep):
         """_add_dependency just install pip dependency now
@@ -111,7 +112,8 @@ class KaggleKernel:
         if exec_flag:
             self.logger.debug("dumping state to file for %s" % self._stage)
             # dump_obj(self, 'run_state.pkl', force=True)  # too large
-            kernel_utils.dump_obj(self, "run_state_%s.pkl" % self._stage, force=True)
+            kernel_utils.dump_obj(self, "run_state_%s.pkl" %
+                                  self._stage, force=True)
 
     def run(
         self,
@@ -238,4 +240,10 @@ class KaggleKernel:
         pass
 
     def after_test(self):
+        pass
+
+    def plot_train_result(self):
+        pass
+
+    def plot_test_result(self):
         pass

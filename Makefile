@@ -3,11 +3,14 @@ export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e
 PY3=python
 SRC=$(wildcard *.py)
 
-all: push $(SRC)
-	cc-test-reporter before-build
+all: $(SRC)
+	-git push
+	[ -f ./cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+	chmod +x ./cc-test-reporter
+	./cc-test-reporter before-build
 	-coverage run -m pytest .
 	coverage xml
-	cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
+	./cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 push: $(SRC)
 	git push # push first as kernel will download the codes, so put new code to github first
 	eval 'echo $$(which $(PY3)) is our python executable'
