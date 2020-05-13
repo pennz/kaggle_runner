@@ -1,9 +1,15 @@
 import tensorflow as tf
+
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from lstm import FOCAL_LOSS_BETA_NEG_POS, FOCAL_LOSS_GAMMA_NEG_POS, ALPHA, FOCAL_LOSS_GAMMA
+from .defaults import (
+    ALPHA,
+    FOCAL_LOSS_BETA_NEG_POS,
+    FOCAL_LOSS_GAMMA,
+    FOCAL_LOSS_GAMMA_NEG_POS,
+)
 
 
 class FocalLoss(nn.Module):
@@ -114,7 +120,8 @@ def binary_crossentropy_with_focal(
             1.0 - y_pred, math_ops.multiply(y_true, math_ops.log(y_pred + eps))
         )
         bce += (1 - alpha) * math_ops.multiply(
-            y_pred, math_ops.multiply((1.0 - y_true), math_ops.log(1.0 - y_pred + eps))
+            y_pred, math_ops.multiply(
+                (1.0 - y_true), math_ops.log(1.0 - y_pred + eps))
         )
     elif 0.0 - eps <= gamma <= 0.0 + eps:
         bce = alpha * math_ops.multiply(y_true, math_ops.log(y_pred + eps))
@@ -122,14 +129,16 @@ def binary_crossentropy_with_focal(
             (1.0 - y_true), math_ops.log(1.0 - y_pred + eps)
         )
     else:
-        gamma_tensor = tf.broadcast_to(tf.constant(gamma), tf.shape(input=y_pred))
+        gamma_tensor = tf.broadcast_to(
+            tf.constant(gamma), tf.shape(input=y_pred))
         bce = alpha * math_ops.multiply(
             math_ops.pow(1.0 - y_pred, gamma_tensor),
             math_ops.multiply(y_true, math_ops.log(y_pred + eps)),
         )
         bce += (1 - alpha) * math_ops.multiply(
             math_ops.pow(y_pred, gamma_tensor),
-            math_ops.multiply((1.0 - y_true), math_ops.log(1.0 - y_pred + eps)),
+            math_ops.multiply(
+                (1.0 - y_true), math_ops.log(1.0 - y_pred + eps)),
         )
 
     if custom_weights_in_y_true:
