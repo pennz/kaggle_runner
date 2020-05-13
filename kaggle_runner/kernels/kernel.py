@@ -108,7 +108,8 @@ class KaggleKernel:
         if exec_flag:
             self.logger.debug("dumping state to file for %s" % self._stage)
             # dump_obj(self, 'run_state.pkl', force=True)  # too large
-            kernel_utils.dump_obj(self, "run_state_%s.pkl" % self._stage, force=True)
+            kernel_utils.dump_obj(self, "run_state_%s.pkl" %
+                                  self._stage, force=True)
 
     def run(
         self,
@@ -235,4 +236,10 @@ class KaggleKernel:
         pass
 
     def after_test(self):
+        pass
+
+    def plot_train_result(self):
+        pass
+
+    def plot_test_result(self):
         pass
