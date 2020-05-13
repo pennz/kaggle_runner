@@ -386,10 +386,12 @@ https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
  find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
  find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} mvdir {} $OLDPWD
         popd
+        pip install -e .
     }
 ) \
  && {
      if [ x"${PHASE}" != x"dev" ]; then
+           pip install kaggle_runner
          python main.py $PARAMS;
      fi
     }
@@ -481,7 +483,7 @@ with open("entry.sh", "w") as f:
     f.write(
 r\"\"\"#!/bin/bash
 PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master test "$AMQPURL" "$size" "$seed" "$network" >>logrunner
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev "$AMQPURL" "$size" "$seed" "$network" >>logrunner
 \"\"\"
     )
 
