@@ -359,11 +359,13 @@ GDRIVE=0
 SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
-apt update && apt install netcat screen -y && {
+apt update && apt install netcat screen -y || NC=nc
+
+export NC
+{
   if [ x"${PHASE}" = x"dev" ]; then
       PS4='[Remote]: Line ${LINENO}: ' bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT;
   fi
-  # pip install pysnooper torchsnooper # for debug rvs
   screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT"
 }
 
