@@ -248,6 +248,9 @@ class KaggleKernel(metaclass=ABCMeta):
     def after_test(self):
         pass
 
+    def save_result(self):
+        pass
+
     def plot_train_result(self):
         pass
 

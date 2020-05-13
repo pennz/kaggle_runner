@@ -195,6 +195,8 @@ model.eval()
 state = torch.load("./model.pth", map_location=lambda storage, loc: storage)
 model.load_state_dict(state["state_dict"])
 encoded_pixels = []
+
+# TODO put to kaggleKernel class, the predict part
 for i, batch in enumerate(tqdm(testset)):
     preds = torch.sigmoid(model(batch.to(device)))
     preds = (

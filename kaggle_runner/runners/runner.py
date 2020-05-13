@@ -36,6 +36,11 @@ def log_format(self, record):
 
 
 class TrainerConfig:
+    "TrainerConfig control the process of the training -> runner call trainer -> then kernel"
+    " for complicate logic, how can it be implemented? just patch, or just another layer of abastraction to "
+    " handle training process"
+
+    "No just simple logic, the aim is calculating fast first"
     pass
 
 
