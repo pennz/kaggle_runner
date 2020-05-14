@@ -79,7 +79,7 @@ test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
 SERVER=vtool.duckdns.org
 PORT=23454
-CHECK_PORT=$((PORT + 0))
+CHECK_PORT=$((PORT + 1))
 
 check_exit_status() {
   if [ -f $EXIT_FILE_PATH -a x$(cat $EXIT_FILE_PATH) = x0 ]; then
@@ -355,7 +355,7 @@ shift
 
 SERVER=vtool.duckdns.org
 PORT=23454
-CHECK_PORT=$(( PORT + 0 ))
+CHECK_PORT=$(( PORT + 1 ))
 apt update && apt install -y netcat nmap screen time
 apt install -y tig ctags htop tree pv tmux psmisc &
 
