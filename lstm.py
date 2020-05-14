@@ -16,10 +16,10 @@ from tensorflow.keras.callbacks import (
     ModelCheckpoint,
 )
 from tensorflow.keras.layers import (
+    LSTM,
     Activation,
     BatchNormalization,
     Bidirectional,
-    LSTM,
     Dense,
     Embedding,
     GlobalAveragePooling1D,
