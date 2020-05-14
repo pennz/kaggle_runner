@@ -240,7 +240,7 @@ EOF
 
 cat > install_IDE << EOF
 #!/bin/bash
-apt install fish &
+apt install fish -y &
 [ -d ~/.fzf ] || { git clone --depth=1 https://github.com/pennz/dotfiles
 rsync -r dotfiles/.* ~
 pushd ~
