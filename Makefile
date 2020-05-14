@@ -14,7 +14,7 @@ all: $(SRC)
 push: $(SRC)
 	git push # push first as kernel will download the codes, so put new code to github first
 	eval 'echo $$(which $(PY3)) is our python executable'
-	$(PY3) -m pytest -k "TestCo" tests/test_coord.py # && cd .runners/intercept-resnet-384/ && $(PY3) main.py
+	$(PY3) -m pytest -s -k "TestCo" tests/test_coord.py # && cd .runners/intercept-resnet-384/ && $(PY3) main.py
 test: $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
 	$(PY3) -m pytest -k "TestCo" tests/test_coord.py && cd .runners/intercept-resnet-384/ && $(PY3) main.py
