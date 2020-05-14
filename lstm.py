@@ -10,7 +10,6 @@ import tensorflow as tf
 import tensorflow.keras.backend as K
 from IPython.core.debugger import set_trace
 from sklearn.model_selection import KFold
-from tensorflow import Graph, Session
 from tensorflow.keras.callbacks import (
     EarlyStopping,
     LearningRateScheduler,
@@ -1198,140 +1197,6 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         val_mask = np.invert(kernel.train_mask)  # this is whole train_mask
 
         if fortify_subgroup is not None:
-            # only use the subgroup data
-            train_mask = train_mask & (
-                self.train_df[fortify_subgroup + "_in_train"] >= 0.5
-            )
-
-        train_X = kernel.train_X_all[train_mask]
-        val_X = kernel.train_X_all[val_mask]
-
-        if not custom_weights:
-            if with_aux:
-                return (
-                    train_X,
-                    val_X,
-                    train_y_all[train_mask],
-                    train_y_aux[train_mask],
-                    train_y_all[val_mask],
-                    train_y_aux[val_mask],
-                )
-            else:
-                return train_X, val_X, train_y_all[train_mask], train_y_all[val_mask]
-        else:
-            # credit to https://www.kaggle.com/tanreinama/simple-lstm-using-identity-parameters-solution
-            if sample_weights is None:
-                raise RuntimeError(
-                    "sample weights cannot be None if use custom_weights"
-                )
-            assert len(train_y_all) == len(sample_weights)
-            if with_aux:
-                return (
-                    train_X,
-                    val_X,
-                    np.vstack([train_y_all, sample_weights]).T[train_mask],
-                    train_y_aux[train_mask],
-                    train_y_all[val_mask],
-                    train_y_aux[val_mask],
-                )
-            else:
-                return (
-                    train_X,
-                    val_X,
-                    np.vstack([train_y_all, sample_weights]).T[train_mask],
-                    train_y_all[val_mask],
-                )
-
-    def res_subgroup(self, subgroup, y_pred):
-        # first prepare the data
-        # 1. the subgroup
-        # 2. only the mis classified ones (will overfit to this?)  # it just like a res net... so just add a res net...
-        # idx_train, idx_val must be complementary for subgroup
-        idx_train, idx_val = self.prepare_second_stage_data_index(
-            y_pred, subgroup)
-        # prepare the network (load from the existed model, only change the last perception layer(as data not enough), then just train with the error related data)
-        # 1. load the model
-        X, y, _ = self.locate_data_in_np_train(idx_train)
-        graph1 = Graph()
-        with graph1.as_default():
-            session1 = Session()
-            with session1.as_default():
-                h5_file = "/proc/driver/nvidia/white_G2.0_attention_lstm_NOAUX_0.hdf5"
-                if RESTART_TRAIN_RES or not os.path.isfile(h5_file):
-                    self.res_model = self.build_res_model(
-                        subgroup,
-                        loss=binary_crossentropy_with_focal,
-                        metrics=[binary_crossentropy, mean_absolute_error, ],
-                    )
-                    self.res_model.summary()
-
-                    self.run_model(
-                        self.res_model,
-                        "train",
-                        X,
-                        y,
-                        params={
-                            "prefix": "/proc/driver/nvidia/" + subgroup + "_",
-                            "starter_lr": STARTER_LEARNING_RATE / 8,
-                            "epochs": 70,
-                            "patience": 5,
-                            "lr_decay": 0.8,
-                            "validation_split": 0.05,
-                            "no_check_point": True,
-                        },
-                    )
-                else:  # file exit and restart_train==false
-                    logger.debug(f"load res model from {h5_file}")
-                    self.res_model = load_model(
-                        h5_file,
-                        custom_objects={
-                            "binary_crossentropy_with_focal": binary_crossentropy_with_focal,
-                            "AttentionRaffel": AttentionRaffel,
-                        },
-                    )
-                    self.res_model.summary()
-
-                # y_res_pred = self.run_model(self.res_model, 'predict', X[idx_val])  # X all data with identity
-                subgroup_idx = self.locate_subgroup_index_in_np_train(subgroup)
-                mapped_subgroup_idx = self.to_identity_index(subgroup_idx)
-
-                X_all, y_all = self.train_X_identity, self.train_y_identity
-
-                logger.info("Start predict for all identities")
-                y_res_pred_all_group = self.run_model(
-                    self.res_model, "predict", X_all)
-                logger.info("Done predict for all identities")
-
-                y_res_pred_all_train_val = y_res_pred_all_group[mapped_subgroup_idx]
-
-                y_res_pred = y_res_pred_all_group[
-                    self.to_identity_index(idx_val)
-                ]  # find the index
-
-        # 2. modify, change to not training
-        #       after add_1, add another dense layer, (so totally not change exited structure(might affect other subgroup?)
-        #       then add this with add_2, finally go to sigmoid function (loss function no change ....) (should use small learning rate)
-        # 3. train only the error ones
-        # 4. predict (the whole out)
-
-        # finally, predict, merge the data
-        # logger.debug(f'Predict for val {subgroup} comments, {len(y_res_pred)} items')  # change too small, so ignore
-        # self.res_combine_pred_print_result(subgroup, y_pred, y_res_pred, idx_train, idx_val)  # remove idx_train, add idx_val, then calculate auc
-
-        # should use cross validation
-        logger.debug(
-            f"Predict for this {subgroup} comments, {len(y_res_pred_all_train_val)} items"
-        )
-        self.res_combine_pred_print_result(
-            subgroup, y_pred, y_res_pred_all_train_val, [], subgroup_idx, detail=False
-        )  # remove idx_train, add idx_val, then calculate auc
-
-        # should use cross validation
-        logger.debug(
-            f"Predict for all {subgroup} comments, {len(y_res_pred)} items")
-        self.calculate_metrics_and_print(
-            y_res_pred_all_group, detail=False
-        )  # only the ones with identity
 
     # remove idx_train, add idx_val, then calculate auc
     def res_combine_pred_print_result(
@@ -1696,7 +1561,6 @@ def main(argv):
         preds = pickle.load(open("predicts", "rb"))
         kernel.calculate_metrics_and_print(preds)
         # improve the model with another data input,
-        kernel.res_subgroup("white", preds)
 
     elif TARGET_RUN == "lstm":
         predict_only = PRD_ONLY
