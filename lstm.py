@@ -1176,9 +1176,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
     ):
         val_mask = np.invert(kernel.train_mask)  # this is whole train_mask
 
-        if fortify_subgroup is not None:
 
-            # remove idx_train, add idx_val, then calculate auc
     def res_combine_pred_print_result(
         self, subgroup, y_pred, y_res_pred, idx_train, idx_val, detail=False
     ):
