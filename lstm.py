@@ -10,13 +10,28 @@ import tensorflow as tf
 import tensorflow.keras.backend as K
 from IPython.core.debugger import set_trace
 from sklearn.model_selection import KFold
-from tensorflow.keras.callbacks import (EarlyStopping, LearningRateScheduler,
-                                        ModelCheckpoint)
-from tensorflow.keras.layers import (Activation, BatchNormalization,
-                                     Bidirectional, CuDNNLSTM, Dense,
-                                     Embedding, GlobalAveragePooling1D,
-                                     GlobalMaxPooling1D, Input, Lambda, Layer,
-                                     PReLU, SpatialDropout1D, add, concatenate)
+from tensorflow.keras.callbacks import (
+    EarlyStopping,
+    LearningRateScheduler,
+    ModelCheckpoint,
+)
+from tensorflow.keras.layers import (
+    Activation,
+    BatchNormalization,
+    Bidirectional,
+    CuDNNLSTM,
+    Dense,
+    Embedding,
+    GlobalAveragePooling1D,
+    GlobalMaxPooling1D,
+    Input,
+    Lambda,
+    Layer,
+    PReLU,
+    SpatialDropout1D,
+    add,
+    concatenate,
+)
 from tensorflow.keras.metrics import binary_crossentropy, mean_absolute_error
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.optimizers import Adam
@@ -24,12 +39,17 @@ from tensorflow.python.ops import math_ops
 
 import data_prepare as d
 import utils
+
 # from gradient_reversal_keras_tf.flipGradientTF import GradientReversal
-from kaggle_runner.losses import (binary_crossentropy_with_focal,
-                                  binary_crossentropy_with_focal_seasoned)
-from kaggle_runner.metrics.metrics import (binary_sensitivity,
-                                           binary_sensitivity_np,
-                                           binary_specificity)
+from kaggle_runner.losses import (
+    binary_crossentropy_with_focal,
+    binary_crossentropy_with_focal_seasoned,
+)
+from kaggle_runner.metrics.metrics import (
+    binary_sensitivity,
+    binary_sensitivity_np,
+    binary_specificity,
+)
 from kaggle_runner.modules import reinitLayers
 from kaggle_runner.modules.attention import AttentionRaffel
 
@@ -1175,7 +1195,6 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         fortify_subgroup=None,
     ):
         val_mask = np.invert(kernel.train_mask)  # this is whole train_mask
-
 
     def res_combine_pred_print_result(
         self, subgroup, y_pred, y_res_pred, idx_train, idx_val, detail=False
