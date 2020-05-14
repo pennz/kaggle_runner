@@ -407,7 +407,7 @@ if [ x"${PHASE}" = x"dev" ]; then
   #     make install_dep;
   #     [ "x${ENABLE_RVS}" = x1 ] && bash -x ./rvs.sh 2>&1
   # } | { [ "x${ENABLE_RVS}" = x1 ] && $NC $SERVER $CHECK_PORT; };
-  make install_dep | if [ "x${ENABLE_RVS}" = x1 ]; then $NC $SERVER $CHECK_PORT; else cat - ; fi
+  make install_dep | $NC $SERVER $CHECK_PORT
   if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT" ; fi
 fi
 
