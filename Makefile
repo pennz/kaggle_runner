@@ -34,9 +34,9 @@ publish: twine
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
 install_dep:
-	mkdir -p /root/.cache/torch/checkpoints; wget  $(URL) && cp inceptionresnetv2-520b38e4.pth /root/.cache/torch/checkpoints/inceptionresnetv2-520b38e4.pth
-	bash -c "[ -z $(python3 -m albumentations | grep direct) ] && pip install -U git+https://github.com/albu/albumentations"
-	bash -c "[ -z $(python3 -m segmentation_models_pytorch | grep direct) ] && pip install git+https://github.com/qubvel/segmentation_models.pytorch"
+	#mkdir -p /root/.cache/torch/checkpoints; wget  $(URL) && cp inceptionresnetv2-520b38e4.pth /root/.cache/torch/checkpoints/inceptionresnetv2-520b38e4.pth
+	test -z "$(python3 -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations
+	test -z "$(python3 -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch
 
 
 .PHONY: clean

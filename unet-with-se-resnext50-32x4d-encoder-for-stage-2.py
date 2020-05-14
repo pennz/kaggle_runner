@@ -72,15 +72,6 @@ from kaggle_runner.post_processers import post_process
 from kaggle_runner.runners.trainer import Trainer
 from torch.utils.data import DataLoader  # TODO optimize this
 
-# !pip install -U git+https://github.com/albu/albumentations
-# !pip install git+https://github.com/qubvel/segmentation_models.pytorch > /dev/null 2>&1 # Install segmentations_models.pytorch, with no bash output.
-subprocess.run(
-    "pip install -U git+https://github.com/albu/albumentations", shell=True)
-subprocess.run(
-    "pip install git+https://github.com/qubvel/segmentation_models.pytorch", shell=True
-)
-
-
 # +
 # from albumentations.pytorch import ToTensor
 
