@@ -351,9 +351,8 @@ BRANCH=$1
 shift
 PHASE=$1
 shift
-PARAMS=$@
-
-GDRIVE=0
+ENABLE_RVS=$1
+shift
 
 SERVER=vtool.duckdns.org
 PORT=23454
@@ -404,22 +403,20 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
 
 if [ x"${PHASE}" = x"dev" ]; then
   export PS4='[Remote]: Line ${LINENO}: '
-  {
-      make install_dep;
-      [ "x${PARAMS[0]}" = x1 ] && bash -x ./rvs.sh 2>&1
-  } | { [ "x${PARAMS[0]}" = x1 ] && $NC $SERVER $CHECK_PORT; }
-  [ "x${PARAMS[0]}" = x1 ] && { screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT" }
+  # {
+  #     make install_dep;
+  #     [ "x${ENABLE_RVS}" = x1 ] && bash -x ./rvs.sh 2>&1
+  # } | { [ "x${ENABLE_RVS}" = x1 ] && $NC $SERVER $CHECK_PORT; };
+  make install_dep | if [ "x${ENABLE_RVS}" = x1 ]; then $NC $SERVER $CHECK_PORT; else cat - ; fi
+  if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT" ; fi
 fi
 
-shift
 if [ x"${PHASE}" != x"dev" ]; then
   pip install kaggle_runner
-  python main.py $PARAMS;
+  python main.py "$@";
 fi
 
-
 # GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
-# while true; do sleep 60; done  # just wait
 """
 
 
