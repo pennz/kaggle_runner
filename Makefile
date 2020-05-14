@@ -32,7 +32,7 @@ publish: twine
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
 install_dep:
-	mkdir -p /root/.cache/torch/checkpoints; wget "https://raw.githubusercontent.com/DynamicDevices/meta-example/master/recipes-example/bbexample/bbexample_1.0.bb" -O inceptionresnetv2-520b38e4.pth && cp inceptionresnetv2-520b38e4.pth /root/.cache/torch/checkpoints/inceptionresnetv2-520b38e4.pth
+	mkdir -p /root/.cache/torch/checkpoints; wget "http://data.lip6.fr/cadene/pretrainedmodels/inceptionresnetv2-520b38e4.pth" && cp inceptionresnetv2-520b38e4.pth /root/.cache/torch/checkpoints/inceptionresnetv2-520b38e4.pth
 	bash -c "[ -z $(python3 -m albumentations | grep direct) ] && pip install -U git+https://github.com/albu/albumentations"
 	bash -c "[ -z $(python3 -m segmentation_models_pytorch | grep direct) ] && pip install git+https://github.com/qubvel/segmentation_models.pytorch"
 
