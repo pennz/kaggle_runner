@@ -3,7 +3,6 @@ from tensorflow.keras.layers import (
     Activation,
     BatchNormalization,
     Bidirectional,
-    CuDNNLSTM,
     Dense,
     Embedding,
     GlobalAveragePooling1D,
