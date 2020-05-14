@@ -1,3 +1,22 @@
+from tensorflow.keras import constraints, initializers, regularizers
+from tensorflow.keras.layers import (
+    Activation,
+    BatchNormalization,
+    Bidirectional,
+    CuDNNLSTM,
+    Dense,
+    Embedding,
+    GlobalAveragePooling1D,
+    GlobalMaxPooling1D,
+    Input,
+    Lambda,
+    Layer,
+    PReLU,
+    SpatialDropout1D,
+    add,
+    concatenate,
+)
+
 from kaggle_runner.utils.kernel_utils import dump_obj, get_obj_or_dump, logger
 
 
@@ -89,7 +108,8 @@ class AttentionRaffel(Layer):
 
         eij = K.reshape(
             K.dot(
-                K.reshape(x, (-1, features_dim)), K.reshape(self.W, (features_dim, 1))
+                K.reshape(x, (-1, features_dim)
+                          ), K.reshape(self.W, (features_dim, 1))
             ),
             (-1, step_dim),
         )
