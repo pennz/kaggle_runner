@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # trap ctrl-c and call ctrl_c()
 PS4=+
 
