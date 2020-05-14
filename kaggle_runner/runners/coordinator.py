@@ -79,7 +79,7 @@ test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
 SERVER=vtool.duckdns.org
 PORT=23454
-CHECK_PORT=$((PORT + 1))
+CHECK_PORT=$((PORT + 0))
 
 check_exit_status() {
   if [ -f $EXIT_FILE_PATH -a x$(cat $EXIT_FILE_PATH) = x0 ]; then
@@ -110,12 +110,9 @@ connect_setup() {
     PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
     (
       coproc connect_to_server $1
-      # exec -l bash <&${COPROC[0]} >&${COPROC[1]} 2>&1;
-      # COPROC[0] is the output of nc
       exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
-      COPROC_PID_backup=$COPROC_PID
 
-       # CONNECT_CHECK, server status can be put here.
+      COPROC_PID_backup=$COPROC_PID
       echo $COPROC_PID_backup > $PID_FILE_PATH
     )
     RSPID=$!
@@ -147,7 +144,7 @@ connect_again() {
   connect_setup $1 & # just put connection to background
 }
 
-WAIT_LIMIT=1024
+WAIT_LIMIT=2048
 INIT_WAIT=8
 port_connect_status=0
 wait_time=$INIT_WAIT
@@ -358,7 +355,7 @@ shift
 
 SERVER=vtool.duckdns.org
 PORT=23454
-CHECK_PORT=$(( PORT + 1 ))
+CHECK_PORT=$(( PORT + 0 ))
 apt update && apt install -y netcat nmap screen time
 apt install -y tig ctags htop tree pv tmux psmisc &
 
