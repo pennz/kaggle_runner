@@ -50,8 +50,8 @@ from kaggle_runner.metrics.metrics import (
     binary_sensitivity_np,
     binary_specificity,
 )
-from kaggle_runner.modules import reinitLayers
 from kaggle_runner.modules.attention import AttentionRaffel
+from kaggle_runner.utils.kernel_utils import reinitLayers
 
 NUM_MODELS = 2  # might be helpful but...
 
