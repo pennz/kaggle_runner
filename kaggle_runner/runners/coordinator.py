@@ -240,16 +240,18 @@ EOF
 
 cat > install_IDE << EOF
 #!/bin/bash
+apt install fish &
 [ -d ~/.fzf ] || { git clone --depth=1 https://github.com/pennz/dotfiles
 rsync -r dotfiles/.* ~
 pushd ~
 git submodule update --init
 .fzf/install --all
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-vim -u ~/.vimrc_back +PlugInstall &
+vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall &
 ln -s .shrc_customised.macos .shrc_customised
 echo "alias gdrive='gdrive  --service-account a.json'" >> ~/.bash_aliases
 echo "unalias vim" >> ~/.bash_aliases
+echo "alias vim='vim -u ~/.vimrc_back'" >> ~/.bash_aliases
 source ~/.bashrc
 popd
 }
