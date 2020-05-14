@@ -37,8 +37,8 @@ from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.python.ops import math_ops
 
-import data_prepare as d
-import utils
+import kaggle_runner.datasets.data_prepare as d
+import kaggle_runner.utils.kernel_utils as utils
 
 # from gradient_reversal_keras_tf.flipGradientTF import GradientReversal
 from kaggle_runner.losses import (

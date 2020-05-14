@@ -6,12 +6,13 @@ import pickle
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras.backend as K
-import torch
-import torch.distributed as dist
-import torch.utils.data
 from IPython.core.debugger import set_trace
 from PIL import ImageFile
 from tensorflow.python.ops import math_ops
+
+import torch
+import torch.distributed as dist
+import torch.utils.data
 
 trace_flag = True
 
@@ -55,7 +56,8 @@ class AMQPURL:
 
 
 BIN_FOLDER = (
-    "/content/gdrivedata/My Drive/" if os.path.isdir("/content/gdrivedata") else "./"
+    "/content/gdrivedata/My Drive/" if os.path.isdir(
+        "/content/gdrivedata") else "./"
 )
 
 
@@ -173,7 +175,8 @@ def binary_crossentropy_with_focal(
             1.0 - y_pred, math_ops.multiply(y_true, math_ops.log(y_pred + eps))
         )
         bce += (1 - alpha) * math_ops.multiply(
-            y_pred, math_ops.multiply((1.0 - y_true), math_ops.log(1.0 - y_pred + eps))
+            y_pred, math_ops.multiply(
+                (1.0 - y_true), math_ops.log(1.0 - y_pred + eps))
         )
     elif 0.0 - eps <= gamma <= 0.0 + eps:
         bce = alpha * math_ops.multiply(y_true, math_ops.log(y_pred + eps))
@@ -181,14 +184,16 @@ def binary_crossentropy_with_focal(
             (1.0 - y_true), math_ops.log(1.0 - y_pred + eps)
         )
     else:
-        gamma_tensor = tf.broadcast_to(tf.constant(gamma), tf.shape(input=y_pred))
+        gamma_tensor = tf.broadcast_to(
+            tf.constant(gamma), tf.shape(input=y_pred))
         bce = alpha * math_ops.multiply(
             math_ops.pow(1.0 - y_pred, gamma_tensor),
             math_ops.multiply(y_true, math_ops.log(y_pred + eps)),
         )
         bce += (1 - alpha) * math_ops.multiply(
             math_ops.pow(y_pred, gamma_tensor),
-            math_ops.multiply((1.0 - y_true), math_ops.log(1.0 - y_pred + eps)),
+            math_ops.multiply(
+                (1.0 - y_true), math_ops.log(1.0 - y_pred + eps)),
         )
 
     if custom_weights_in_Y_true:
@@ -268,7 +273,7 @@ def rle2mask(rle, width, height):
     current_position = 0
     for index, start in enumerate(starts):
         current_position += start
-        mask[current_position : current_position + lengths[index]] = 1
+        mask[current_position: current_position + lengths[index]] = 1
         current_position += lengths[index]
 
     return mask.reshape(width, height)
@@ -303,7 +308,8 @@ def all_gather(data):
     # gathering tensors of different shapes
     tensor_list = []
     for _ in size_list:
-        tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
+        tensor_list.append(torch.empty(
+            (max_size,), dtype=torch.uint8, device="cuda"))
     if local_size != max_size:
         padding = torch.empty(
             size=(max_size - local_size,), dtype=torch.uint8, device="cuda"
