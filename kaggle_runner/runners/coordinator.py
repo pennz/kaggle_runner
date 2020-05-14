@@ -406,8 +406,8 @@ if [ x"${PHASE}" = x"dev" ]; then
   #     make install_dep;
   #     [ "x${ENABLE_RVS}" = x1 ] && bash -x ./rvs.sh 2>&1
   # } | { [ "x${ENABLE_RVS}" = x1 ] && $NC $SERVER $CHECK_PORT; };
-  make install_dep | $NC $SERVER $CHECK_PORT
-  if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "bash -x ./rvs.sh 2>&1 | $NC $SERVER $CHECK_PORT" ; fi
+  make install_dep
+  if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh 2>&1; } | $NC --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT" ; fi
 fi
 
 if [ x"${PHASE}" != x"dev" ]; then
