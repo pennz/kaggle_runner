@@ -19,7 +19,7 @@ from tensorflow.keras.layers import (
     Activation,
     BatchNormalization,
     Bidirectional,
-    CuDNNLSTM,
+    LSTM,
     Dense,
     Embedding,
     GlobalAveragePooling1D,
@@ -278,8 +278,8 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             )(words)
 
         x = SpatialDropout1D(0.2)(x)
-        x = Bidirectional(CuDNNLSTM(LSTM_UNITS, return_sequences=True))(x)
-        x = Bidirectional(CuDNNLSTM(LSTM_UNITS, return_sequences=True))(x)
+        x = Bidirectional(LSTM(LSTM_UNITS, return_sequences=True))(x)
+        x = Bidirectional(LSTM(LSTM_UNITS, return_sequences=True))(x)
 
         hidden = concatenate(
             [
@@ -347,8 +347,8 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         )
 
         x = SpatialDropout1D(0.2)(x)
-        x = Bidirectional(CuDNNLSTM(LSTM_UNITS, return_sequences=True))(x)
-        x = Bidirectional(CuDNNLSTM(LSTM_UNITS, return_sequences=True))(x)
+        x = Bidirectional(LSTM(LSTM_UNITS, return_sequences=True))(x)
+        x = Bidirectional(LSTM(LSTM_UNITS, return_sequences=True))(x)
 
         hidden = concatenate(
             [GlobalMaxPooling1D()(x), GlobalAveragePooling1D()(x), ])
