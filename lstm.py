@@ -39,6 +39,7 @@ from tensorflow.python.ops import math_ops
 
 import kaggle_runner.datasets.data_prepare as d
 import kaggle_runner.utils.kernel_utils as utils
+from kaggle_runner.defaults import *
 
 # from gradient_reversal_keras_tf.flipGradientTF import GradientReversal
 from kaggle_runner.losses import (
