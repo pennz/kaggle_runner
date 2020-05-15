@@ -2422,7 +2422,7 @@ class EmbeddingHandler:
                 np.array(self.y_aux_train),
             )
             utils.logger.debug("restored data from files for training")
-            self.BIN_FOLDER = "/proc/driver/nvidia/"
+            self.BIN_FOLDER = defults.Data_Folder
 
             return self.x_train, self.y_train, self.y_aux_train, test_data, emb
         except FileNotFoundError:
@@ -2452,7 +2452,7 @@ class EmbeddingHandler:
                         self.BIN_FOLDER = "./"
 
                         if not utils.file_exist(self.E_M_FILE, fullpath=True):
-                            self.BIN_FOLDER = "/proc/driver/nvidia/"
+                            self.BIN_FOLDER = defaults.Data_Folder
                     self.embedding_matrix = pickle.load(
                         open(self.E_M_FILE, "rb"))
             utils.BIN_FOLDER = self.BIN_FOLDER  # save file to the right place
