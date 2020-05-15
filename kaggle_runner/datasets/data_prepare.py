@@ -57,6 +57,7 @@ def maybe_download(url):
     # By default the file at the url origin is downloaded to the cache_dir ~/.keras,
     # placed in the cache_subdir datasets, and given the filename fname
     path = tf.keras.utils.get_file(url.split("/")[-1], url)
+
     return path
 
 
@@ -72,6 +73,7 @@ def train_input_fn_general(
 ):
     # for boost tree, need to prepare feature columns
     # 2048? columns, all float
+
     if cv:
         return _input_fn_general(
             features,
@@ -154,10 +156,12 @@ def _input_fn_general(
         # first to pandas data frame
         df = pd.DataFrame(f, columns=[str(i)
                                       for i in range(features.shape[-1])])
+
         return dict(df)
 
     if to_dict:
         features = _to_dict(features)
+
     if handle_large:
         # features_placeholder = tf.placeholder(features.dtype, features.shape)
         # labels_placeholder = tf.placeholder(labels.dtype, labels.shape)
@@ -166,6 +170,7 @@ def _input_fn_general(
         )
         labels = tf.keras.backend.placeholder(
             dtype=labels.dtype, shape=labels.shape)
+
     if with_y:
         ds = tf.data.Dataset.from_tensor_slices((features, labels))
     else:
@@ -173,6 +178,7 @@ def _input_fn_general(
 
     if cv:
         assert split_id >= 0 and n_splits > 1 and split_id < n_splits
+
         if cv_train:
             ds = [ds.shard(n_splits, i) for i in range(n_splits)]
 
@@ -181,6 +187,7 @@ def _input_fn_general(
             ]
 
             ds = shards_cross[0]
+
             for t in shards_cross[1:]:
                 ds = ds.concatenate(t)
 
@@ -207,11 +214,13 @@ def _input_fn_general(
     # taken from Dan, https://stackoverflow.com/questions/39748660/how-to-perform-k-fold-cross-validation-with-tensorflow
     # will need to append id, then remove the id?
     # -> no need, we just split to 5 shards, then rearrange these shards
+
     if repeat:
         ds = ds.repeat()
     # Batch the examples
     assert batch_size is not None, "batch_size must not be None"
     # Return the dataset.
+
     return ds.batch(batch_size).prefetch(1)
 
 
@@ -231,6 +240,7 @@ def _load_embeddings_only_for_fasttext_crawl_avg(path):
                 2 if line.strip().split(" ")[-1] == "\n" else 1
             )  # for crawl, the '\n' is there to
             # print(hidden_dim)
+
             break
 
     vec_sum_place = np.zeros(hidden_dim, dtype=np.float32)
@@ -241,6 +251,7 @@ def _load_embeddings_only_for_fasttext_crawl_avg(path):
                 continue
             # try:
             nums = line.split(" ")[1:]
+
             if nums[-1] == "\n":
                 nums = nums[:-1]
             vec_sum_place = vec_sum_place + np.array(
@@ -252,6 +263,7 @@ def _load_embeddings_only_for_fasttext_crawl_avg(path):
             #    print(e)
             #    raise e
     avg_vec = vec_sum_place / i  # i = 0 is the header line
+
     return avg_vec
 
 
@@ -284,6 +296,7 @@ class TargetDistAnalyzer:
         y_t = self.discretizer.transform(target_data.values.reshape(-1, 1))
         uniq_elements, element_counts = np.unique(y_t, return_counts=True)
         all_counts = len(y_t)
+
         for i, e in enumerate(uniq_elements):
             dst.append(
                 (
@@ -320,6 +333,7 @@ class TargetDistAnalyzer:
                 val_subgroup.loc[d[3], VAL_ERR_COLUMN].mean() for d in dst
             ]
             dstr[g] = (dst, err_mean_in_split)
+
         return dstr
 
     def get_distribution_overall(self):
@@ -333,6 +347,7 @@ class TargetDistAnalyzer:
                 self.df[self.df[g +
                                 "_in_train"].fillna(0.0) >= 0.5][TARGET_COLUMN]
             )  # could use continuous data, might be helpful so calculate belongs (fuzzy logic)
+
         return dstr
 
 
@@ -403,6 +418,7 @@ class BiasBenchmark:
             df[subgroup]
         ]  # innter df[subgroup] will get out boolean list, which is used to select this
         # subgroup examples
+
         if label == TARGET_COLUMN:
             return BiasBenchmark.compute_predict_estimator(
                 subgroup_examples[label],
@@ -428,6 +444,7 @@ class BiasBenchmark:
             df[subgroup]
         ]  # innter df[subgroup] will get out boolean list, which is used to select this
         # subgroup examples
+
         return BiasBenchmark.compute_auc(
             subgroup_examples[label], subgroup_examples[model_name]
         )
@@ -443,6 +460,7 @@ class BiasBenchmark:
             non_subgroup_positive_examples)
 
         # this example is background True positive, with subgroup True negative, and see our model's prediction's performance
+
         return BiasBenchmark.compute_predict_estimator(
             examples[label], examples[model_name]
         )
@@ -454,6 +472,7 @@ class BiasBenchmark:
         non_subgroup_positive_examples = df[~df[subgroup] & df[label]]
         examples = subgroup_negative_examples.append(
             non_subgroup_positive_examples)
+
         return BiasBenchmark.compute_auc(examples[label], examples[model_name])
 
     @staticmethod
@@ -463,6 +482,7 @@ class BiasBenchmark:
         non_subgroup_negative_examples = df[~df[subgroup] & ~df[label]]
         examples = subgroup_positive_examples.append(
             non_subgroup_negative_examples)
+
         return BiasBenchmark.compute_predict_estimator(
             examples[label], examples[model_name]
         )
@@ -474,6 +494,7 @@ class BiasBenchmark:
         non_subgroup_negative_examples = df[~df[subgroup] & ~df[label]]
         examples = subgroup_positive_examples.append(
             non_subgroup_negative_examples)
+
         return BiasBenchmark.compute_auc(examples[label], examples[model_name])
 
     @staticmethod
@@ -492,6 +513,7 @@ class BiasBenchmark:
         """
         records = []
         subgroup_distribution = []
+
         for subgroup in subgroups:
             record = {
                 "subgroup": subgroup,
@@ -523,6 +545,7 @@ class BiasBenchmark:
 
             records.append(record)
             subgroup_distribution.append(record_pn)
+
         return (
             pd.DataFrame(records).sort_values("subgroup_auc", ascending=True),
             subgroup_distribution,
@@ -537,6 +560,7 @@ class BiasBenchmark:
             return metrics.roc_auc_score(true_labels, predicted_labels)
         except ValueError:
             utils.logger("might be wrong")
+
             return 0.5  # bad
 
     @staticmethod
@@ -550,11 +574,13 @@ class BiasBenchmark:
             df[model_name],
             y_pred_continuous=df[TARGET_COLUMN + "_orig"],
         )
+
         return info
 
     @staticmethod
     def power_mean(series, p):
         total = sum(np.power(series, p))
+
         return np.power(total / len(series), 1 / p)
 
     @staticmethod
@@ -565,6 +591,7 @@ class BiasBenchmark:
             BiasBenchmark.power_mean(bias_df[BNSP_AUC], POWER),
         ]
         bias_score = np.average(bias_metrics_on_subgroups)
+
         return (
             (OVERALL_MODEL_WEIGHT * overall_auc)
             + ((1 - OVERALL_MODEL_WEIGHT) * bias_score),
@@ -580,11 +607,13 @@ class BiasBenchmark:
     @staticmethod
     def copy_convert_dataframe_to_bool(df, threshold):
         bool_df = df.copy()
+
         for col in IDENTITY_COLUMNS:
             BiasBenchmark.convert_to_bool(bool_df, col)
         BiasBenchmark.convert_to_bool(
             bool_df, TARGET_COLUMN, threshold, keep_original=True
         )
+
         return bool_df
 
     def calculate_benchmark(self, pred=None, validate_df=None, model_name=MODEL_NAME):
@@ -594,6 +623,7 @@ class BiasBenchmark:
         :param model_name:
         :return: final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc
         """
+
         if validate_df is None:
             print(
                 "In caculating benchmark, the validate_df passed in None, use default validate_df, with given pred"
@@ -1901,18 +1931,22 @@ class EmbeddingHandler:
                 self.train_df = pd.read_csv(self.INPUT_DATA_DIR + "train.csv")
             except FileNotFoundError:
                 INPUT_DATA_DIR = "/home/pengyu/works/input/jigsaw-unintended-bias-in-toxicity-classification/"
+
                 if os.path.isfile(INPUT_DATA_DIR + "train.csv"):
                     self.INPUT_DATA_DIR = INPUT_DATA_DIR
 
                 INPUT_DATA_DIR = self.BIN_FOLDER
+
                 if os.path.isfile(INPUT_DATA_DIR + "train.csv"):
                     self.INPUT_DATA_DIR = INPUT_DATA_DIR
 
                 INPUT_DATA_DIR = "/content/gdrivedata/My Drive/"
+
                 if os.path.isfile(INPUT_DATA_DIR + "train.csv"):
                     self.INPUT_DATA_DIR = INPUT_DATA_DIR
 
                 self.train_df = pd.read_csv(self.INPUT_DATA_DIR + "train.csv")
+
         if not train_only:
             self.test_df = pd.read_csv(self.INPUT_DATA_DIR + "test.csv")
             self.test_df_id = (
@@ -1927,6 +1961,7 @@ class EmbeddingHandler:
             return  # no need to rebuild
         sentences = texts.apply(lambda x: x.split()).values  # for pandas data
         vocab = {}
+
         for sentence in sentences:
             for word in sentence:
                 try:
@@ -1943,6 +1978,7 @@ class EmbeddingHandler:
 
     def add_lower_to_embedding(self, embedding, vocab):
         count = 0
+
         for word in vocab:
             if word in embedding and word.lower() not in embedding:
                 embedding[word.lower()] = embedding[word]
@@ -1952,11 +1988,13 @@ class EmbeddingHandler:
     def contraction_normalize(self):
         def clean_contractions(text, mapping):
             specials = ["’", "‘", "´", "`"]
+
             for s in specials:
                 text = text.replace(s, "'")
             text = " ".join(
                 [mapping[t] if t in mapping else t for t in text.split(" ")]
             )
+
             return text
 
         if not self._contraction_handled:
@@ -1975,6 +2013,7 @@ class EmbeddingHandler:
         def clean_special_chars(text, punct, mapping):
             for p in mapping:
                 text = text.replace(p, mapping[p])
+
             for p in punct:
                 text = text.replace(p, f" {p} ")
             specials = {
@@ -1984,8 +2023,10 @@ class EmbeddingHandler:
                 "करना": "",
                 "है": "",
             }  # Other special characters that I have to deal with in last
+
             for s in specials:
                 text = text.replace(s, specials[s])
+
             return text
 
         if not self._special_chars_handled:
@@ -2002,6 +2043,7 @@ class EmbeddingHandler:
         def correct_spelling(x, dic):
             for word in dic.keys():
                 x = x.replace(word, dic[word])
+
             return x
 
         if not self._special_chars_handled:
@@ -2022,6 +2064,7 @@ class EmbeddingHandler:
         unknown_words = {}
         nb_known_words = 0
         nb_unknown_words = 0
+
         for word in vocab.keys():
             try:
                 known_words[word] = embeddings_index[word]
@@ -2061,10 +2104,12 @@ class EmbeddingHandler:
             .fillna(0)
             .astype(np.float32)
         )
+
         return train_y_identity_df
 
     def get_identity_train_data_df_idx(self):
         train_y_identity_df = self.get_identity_df()
+
         return (
             self.x_train[train_y_identity_df.index],
             train_y_identity_df.values,
@@ -2079,6 +2124,7 @@ class EmbeddingHandler:
 
     def prepare_data(self, target_binarize=False):
         utils.logger.debug("Text preprocessing")
+
         if self._text_preprocessed:
             return
 
@@ -2132,13 +2178,16 @@ class EmbeddingHandler:
         :param path: path to load pre-trained embedding
         :return: embedding matrix
         """
+
         if emb_matrix_existed:
             utils.logger.debug(
                 "Start cooking embedding matrix and train/test data: only train/test data, emb_matrix existed"
             )
             self.prepare_data()
+
             if convert_additional:
                 self._prepare_additional_data()
+
                 return  # only need process text
 
         utils.logger.debug(
@@ -2147,10 +2196,12 @@ class EmbeddingHandler:
 
         if path.find("840B.300d") > 0:
             emb_save_filename = "matrix_840b"
+
         if path.find("300d-2M") > 0:
             emb_save_filename = "matrix_crawl"
 
         emb_from_file = utils.get_obj_or_dump(emb_save_filename)
+
         if emb_from_file is not None:
             return emb_from_file
 
@@ -2187,6 +2238,7 @@ class EmbeddingHandler:
                 )  # word to integer value index
             except FileNotFoundError:
                 vocab = self.vocab
+
                 if vocab is None:
                     raise RuntimeError(
                         "vocab shoule be None, process embedding_index need it"
@@ -2206,6 +2258,7 @@ class EmbeddingHandler:
 
         if path.find("840B.300d") > 0:
             avg_vector = EmbeddingHandler.avg_glove_vector_840b300d
+
         if path.find("300d-2M") > 0:
             avg_vector = EmbeddingHandler.avg_fasttext_2m300d
 
@@ -2227,6 +2280,7 @@ class EmbeddingHandler:
     @staticmethod
     def get_coefs(word, *arr):
         # word embedding related
+
         return word, np.asarray(arr, dtype="float32")
 
     @staticmethod
@@ -2238,13 +2292,13 @@ class EmbeddingHandler:
 
     def prepare_tfrecord_data(
         self, dump=True, train_test_data=True, embedding=True, action=None
-    ):  # 和上一级有耦合，先这样吧
-        set_trace()
+    ):
         if (
             action is not None and action == defaults.CONVERT_DATA_Y_NOT_BINARY
         ):  # unpicker, change y
             # only convert data y not binary
             self.read_train_test_df(train_only=True)
+
             if not os.path.isfile(DATA_FILE_FLAG):
                 raise FileNotFoundError("Pickle files should be present")
 
@@ -2261,6 +2315,7 @@ class EmbeddingHandler:
                 # file flag
                 with open(DATA_FILE_FLAG, "wb") as f:
                     f.write(bytes("", "utf-8"))
+
             return (
                 self.x_train,
                 self.y_train,
@@ -2285,11 +2340,13 @@ class EmbeddingHandler:
             self.embedding_matrix = np.concatenate(
                 [
                     self.build_matrix_prepare_data(f, emb_matrix_existed=False)
+
                     for f in EMBEDDING_FILES
                 ],
                 axis=-1,
             )
             del self.tokenizer
+
             if dump:
                 if embedding:
                     pickle.dump(self.embedding_matrix,
@@ -2300,6 +2357,7 @@ class EmbeddingHandler:
             train_test_data
         ):  # no need to rebuild emb matrix, only need train test data
             f = EMBEDDING_FILES[0]
+
             if (
                 action is not None
                 and action == defaults.CONVERT_ADDITIONAL_NONTOXIC_DATA
@@ -2307,6 +2365,7 @@ class EmbeddingHandler:
                 self.build_matrix_prepare_data(
                     f, emb_matrix_existed=True, convert_additional=True
                 )
+
                 return
             self.build_matrix_prepare_data(f, emb_matrix_existed=True)
 
@@ -2327,6 +2386,7 @@ class EmbeddingHandler:
             # file flag
             with open(DATA_FILE_FLAG, "wb") as f:
                 f.write(bytes("", "utf-8"))
+
         return (
             self.x_train,
             self.y_train,
@@ -2342,12 +2402,14 @@ class EmbeddingHandler:
         emb = utils.get_obj_or_dump(emb_path, fullpath=True)
         data = utils.get_obj_or_dump(data_path, fullpath=True)
         test_data = utils.get_obj_or_dump(test_data_path, fullpath=True)
+
         return emb, data, test_data
 
     def data_prepare(self, action=None):
         """Returns the iris dataset as (train_x, train_y), (test_x, test_y).
         we load this from the tfrecord, maybe save the ones just after embedding, so it can be faster
         """
+
         if action is not None:
             utils.logger.debug("{} in data preparation".format(action))
 
@@ -2361,6 +2423,7 @@ class EmbeddingHandler:
             )
             utils.logger.debug("restored data from files for training")
             self.BIN_FOLDER = "/proc/driver/nvidia/"
+
             return self.x_train, self.y_train, self.y_aux_train, test_data, emb
         except FileNotFoundError:
             utils.logger.debug(
@@ -2372,8 +2435,10 @@ class EmbeddingHandler:
             )
 
         # if os.path.isfile(DATA_FILE_FLAG) and not self.do_emb_matrix_preparation:  # in final stage, no need to check this...
+
         if not self.do_emb_matrix_preparation:
             # global embedding_matrix
+
             if action is not None and action == defaults.DATA_ACTION_NO_NEED_LOAD_EMB_M:
                 self.embedding_matrix = None
             else:
@@ -2382,8 +2447,10 @@ class EmbeddingHandler:
                         open(self.E_M_FILE, "rb"))
                 except FileNotFoundError:
                     self.BIN_FOLDER = "/content/gdrivedata/My Drive/"
+
                     if not os.path.isdir(self.BIN_FOLDER):
                         self.BIN_FOLDER = "./"
+
                         if not utils.file_exist(self.E_M_FILE, fullpath=True):
                             self.BIN_FOLDER = "/proc/driver/nvidia/"
                     self.embedding_matrix = pickle.load(
@@ -2393,6 +2460,7 @@ class EmbeddingHandler:
 
             if action is not None:  # exist data, need to convert data
                 utils.logger.debug(action)
+
                 if (
                     action == defaults.CONVERT_TRAIN_DATA
                     or action == defaults.CONVERT_ADDITIONAL_NONTOXIC_DATA
@@ -2407,6 +2475,7 @@ class EmbeddingHandler:
                 )  # (None, 2048)
             except FileNotFoundError:
                 self.BIN_FOLDER = "/content/gdrivedata/My Drive/"
+
                 if not os.path.isdir(self.BIN_FOLDER):
                     self.BIN_FOLDER = "./"
 
@@ -2436,8 +2505,10 @@ class EmbeddingHandler:
                 ).id  # only id series is needed for generating submission csv file
             except FileNotFoundError:
                 self.INPUT_DATA_DIR = "../input/"
+
                 if not os.path.isdir(self.INPUT_DATA_DIR):
                     self.INPUT_DATA_DIR = "/home/pengyu/works/input/jigsaw-unintended-bias-in-toxicity-classification/"
+
                 if not os.path.isdir(self.INPUT_DATA_DIR):
                     self.INPUT_DATA_DIR = (
                         self.BIN_FOLDER
@@ -2464,6 +2535,7 @@ class EmbeddingHandler:
         else:
             utils.logger.debug(self.DATA_TRAIN_FILE)
             # (x_train, y_train, y_aux_train), x_test = prepare_tfrecord_data()
+
             if action is not None and (
                 action == defaults.CONVERT_TRAIN_DATA
                 or action == defaults.CONVERT_ADDITIONAL_NONTOXIC_DATA
@@ -2472,6 +2544,7 @@ class EmbeddingHandler:
                 utils.logger.debug(
                     "Only build train test data, embedding loaded from pickle"
                 )
+
                 return self.prepare_tfrecord_data(embedding=False, action=action)
             else:
                 return self.prepare_tfrecord_data(embedding=True)
