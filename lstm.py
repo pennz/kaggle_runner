@@ -1092,6 +1092,51 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
     ):
         val_mask = np.invert(kernel.train_mask)  # this is whole train_mask
 
+        if fortify_subgroup is not None:
+            # only use the subgroup data
+            train_mask = train_mask & (
+                self.train_df[fortify_subgroup + "_in_train"] >= 0.5
+            )
+
+        train_X = kernel.train_X_all[train_mask]
+        val_X = kernel.train_X_all[val_mask]
+
+        if not custom_weights:
+            if with_aux:
+                return (
+                    train_X,
+                    val_X,
+                    train_y_all[train_mask],
+                    train_y_aux[train_mask],
+                    train_y_all[val_mask],
+                    train_y_aux[val_mask],
+                )
+            else:
+                return train_X, val_X, train_y_all[train_mask], train_y_all[val_mask]
+        else:
+            # credit to https://www.kaggle.com/tanreinama/simple-lstm-using-identity-parameters-solution
+            if sample_weights is None:
+                raise RuntimeError(
+                    "sample weights cannot be None if use custom_weights"
+                )
+            assert len(train_y_all) == len(sample_weights)
+            if with_aux:
+                return (
+                    train_X,
+                    val_X,
+                    np.vstack([train_y_all, sample_weights]).T[train_mask],
+                    train_y_aux[train_mask],
+                    train_y_all[val_mask],
+                    train_y_aux[val_mask],
+                )
+            else:
+                return (
+                    train_X,
+                    val_X,
+                    np.vstack([train_y_all, sample_weights]).T[train_mask],
+                    train_y_all[val_mask],
+                )
+
     def res_combine_pred_print_result(
         self, subgroup, y_pred, y_res_pred, idx_train, idx_val, detail=False
     ):
@@ -1361,7 +1406,7 @@ NEG_RATIO = 1 - 0.05897253769515213
 
 
 def main(argv):
-    #args = parser.parse_args(argv[1:])
+    # args = parser.parse_args(argv[1:])
 
     global kernel
     logger.info("Will start load data")
