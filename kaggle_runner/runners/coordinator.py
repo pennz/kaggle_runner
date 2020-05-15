@@ -133,7 +133,7 @@ connect_setup() {
     # # just recursively, sleep in case...
     # sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
 
-    $NC -w ${1}s -i 600s $SERVER $PORT -c "python setup_pty log_master log_log"
+    $NC -w ${1}s -i 1800s $SERVER $PORT -c "python setup_pty log_master log_log"
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
     >&2 echo "$NC return with code $RSRET"
