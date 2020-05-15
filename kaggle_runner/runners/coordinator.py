@@ -135,10 +135,10 @@ connect_setup() {
 
     $NC -w ${1}s -i 600s $SERVER $PORT -c "bash --rcfile rpt"
     RSRET=$?
+    echo $RSRET > $EXIT_FILE_PATH
+    >&2 echo "$NC return with code $RSRET"
 
     if [ x"$RSRET" = x"0" ]; then
-      echo $RSRET > $EXIT_FILE_PATH
-
       return $RSRET
     fi
     connect_again_flag=0
@@ -424,9 +424,9 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
 
 if [ x"${PHASE}" = x"dev" ]; then
   export PS4='[Remote]: Line ${LINENO}: '
-  make install_dep
 
   if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash ./rvs.sh 2>&1 >/dev/null; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT" ; fi
+  make install_dep
   make lstm 2>&1 | $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT
 fi
 
