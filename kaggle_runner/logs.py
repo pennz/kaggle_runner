@@ -44,7 +44,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         self.seen = 0
         self.verbose = verbose
 
-        # better way is subclass EearlyStopping callback.
+        # better way is subclass EarlyStopping callback.
         self.early_stop = early_stop
         self.patience_displays = patience_displays
         self.losses = np.empty(patience_displays, dtype=np.float32)
@@ -91,7 +91,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                 avg_loss_per_display = (
                     self.losses_sum_display / self.display_per_batches
                 )
-                self.losses_sum_display = 0  # clear mannually...
+                self.losses_sum_display = 0  # clear mannually
                 self.losses[
                     self.display_idx % self.patience_displays
                 ] = avg_loss_per_display
@@ -99,7 +99,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                 # display_per_batches
                 display_info_start_step = self.step_idx - self.display_per_batches + 1
                 print(
-                    f"\nmean: {avg_loss_per_display}, Step {display_info_start_step }({display_info_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display step"
+                    f"\nmean(display): {avg_loss_per_display}, Step {display_info_start_step }({display_info_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display step"
                 )
 
                 self.display_idx += 1  # used in index, so +1 later
@@ -114,7 +114,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                         + 1
                     )
                     print(
-                        f"mean: {np.mean(self.losses)}, std:{std} for Step {std_start_step}({std_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display steps"
+                        f"mean(over displays): {np.mean(self.losses)}, std:{std} for Display {self.display_idx-self.patience_displays+1} - {self.display_idx}/Step {std_start_step}({std_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display steps"
                     )
 
                     if std < self.epsilon:
