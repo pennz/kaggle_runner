@@ -34,6 +34,7 @@ class FocalLoss(nn.Module):
         )
         invprobs = F.logsigmoid(-input * (target * 2.0 - 1.0))
         loss = (invprobs * self.gamma).exp() * loss
+
         return loss.mean()
 
 
@@ -50,11 +51,13 @@ class MixedLoss(nn.Module):
             iflat = input.view(-1)
             tflat = target.view(-1)
             intersection = (iflat * tflat).sum()
+
             return (2.0 * intersection + smooth) / (iflat.sum() + tflat.sum() + smooth)
 
         loss = self.alpha * self.focal(input, target) - torch.log(
             dice_loss(input, target)
         )
+
         return loss.mean()
 
 
@@ -75,6 +78,7 @@ def binary_crossentropy_with_focal_seasoned(
     balanced = gamma * logit_pred + beta
     y_pred = math_ops.sigmoid(balanced)
     # only use gamma in this layer, easier to split out factor
+
     return binary_crossentropy_with_focal(
         y_true,
         y_pred,
