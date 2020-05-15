@@ -21,7 +21,7 @@ lint: $(SRC)
 	echo $(SRC)
 	pylint -E $(SRC)
 lstm:
-	while true; do git pull; python lstm.py 2>&1; done
+	bash -c 'while true; do test x$$(git pull | grep -c Already) = x1 || python lstm.py 2>&1; sleep 10; echo -n .; done'
 test: $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
 	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
