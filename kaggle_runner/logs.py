@@ -70,7 +70,9 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         else:
             self.batch_size += batch_size * num_steps
 
+        before_seen = self.seen
         self.seen += self.batch_size
+        after_seen = self.seen
 
         for k in self.params["metrics"]:
             if k in logs:
@@ -101,7 +103,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                 # display_per_batches
                 display_info_start_step = self.step_idx - self.display_per_batches + 1
                 print(
-                    f"\nmean(display): {avg_loss_per_display}, Step {display_info_start_step }({display_info_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display step"
+                    f"\nmean(display): {avg_loss_per_display}, Step {display_info_start_step }({before_seen}) to {self.step_idx}({after_seen}) for {self.display_idx}th display step"
                 )
 
                 self.display_idx += 1  # used in index, so +1 later
@@ -116,7 +118,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                         + 1
                     )
                     print(
-                        f"mean(over displays): {np.mean(self.losses)}, std:{std} for Display {self.display_idx-self.patience_displays} to {self.display_idx-1}/Step {std_start_step}({std_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display steps"
+                        f"mean(over displays): {np.mean(self.losses)}, std:{std} for Display {self.display_idx-self.patience_displays} to {self.display_idx-1}"
                     )
 
                     if std < self.epsilon:
