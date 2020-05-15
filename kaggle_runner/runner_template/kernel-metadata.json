@@ -5,10 +5,11 @@
   "language": "python",
   "kernel_type": "notebook",
   "is_private": false,
-  "enable_gpu": true,
+  "enable_gpu": false,
   "enable_internet": true,
   "keywords": [
-    "gpu"
+    "gpu",
+    "tpu"
   ],
   "dataset_sources": [
     "abhishek/siim-png-images",
