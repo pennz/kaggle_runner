@@ -24,7 +24,7 @@ lstm:
 	-git stash; git pull
 	-python lstm.py 2>&1
 	bash -c "while true; do test x$$(git pull | grep -c Already) = x1 || python lstm.py 2>&1; \
-	echo 'CPU: '$$(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1; grep 'cpu ' /proc/stat | awk -v RS='' '{print ($$13-$$2+$$15-$$4)*100/($$13-$$2+$$15-$$4+$$16-$$5)}')% 'Mem: '$$(awk '/MemTotal/{t=$$2}/MemAvailable/{a=$$2}END{print 100-100*a/t}' /proc/meminfo)% 'Uptime: '$$(uptime | awk '{print $$3}'); sleep 10; done"
+	echo '$$HOSTNAME CPU: '$$(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1; grep 'cpu ' /proc/stat | awk -v RS='' '{print ($$13-$$2+$$15-$$4)*100/($$13-$$2+$$15-$$4+$$16-$$5)}')% 'Mem: '$$(awk '/MemTotal/{t=$$2}/MemAvailable/{a=$$2}END{print 100-100*a/t}' /proc/meminfo)% 'Uptime: '$$(uptime | awk '{print $$3}'); sleep 10; done"
 
 test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
