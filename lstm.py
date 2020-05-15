@@ -75,7 +75,7 @@ NOT_PRD = True
 
 FOCAL_LOSS_GAMMA = 0.0
 FINAL_SUBMIT = True
-FINAL_DEBUG = False
+FINAL_DEBUG = True
 
 if FINAL_SUBMIT:
     TARGET_RUN = "lstm"
