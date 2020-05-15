@@ -40,6 +40,7 @@ from tensorflow.python.ops import math_ops
 import kaggle_runner.datasets.data_prepare as d
 import kaggle_runner.utils.kernel_utils as utils
 from kaggle_runner.defaults import *
+from kaggle_runner.logs import NBatchProgBarLogger
 
 # from gradient_reversal_keras_tf.flipGradientTF import GradientReversal
 from kaggle_runner.losses import (
@@ -95,6 +96,7 @@ NOT_PRD = True
 FOCAL_LOSS_GAMMA = 0.0
 FINAL_SUBMIT = True
 FINAL_DEBUG = False
+
 if FINAL_SUBMIT:
     TARGET_RUN = "lstm"
     EPOCHS = 6
@@ -169,6 +171,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         ) = self.emb.data_prepare(action)
         # picked ones are binarized
         self.train_y_aux_all = self.train_df[d.AUX_COLUMNS].values
+
         if Y_TRAIN_BIN:
             self.train_y_float_backup = self.train_y_all
             self.train_y_all = np.where(self.train_y_all >= 0.5, True, False)
@@ -266,13 +269,16 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         logger.debug(
             f"model detail: loss {loss}, hidden_act {hidden_act}, with_BN {with_BN}"
         )
+
         if num_aux_targets > 0 and not with_aux:
             raise RuntimeError(
                 "aux features numbers given but aux not enabled")
+
         if num_aux_targets <= 0 and with_aux:
             raise RuntimeError("aux features numbers invalid when aux enabled")
 
         words = Input(shape=(d.MAX_LEN,))  # (None, 180)
+
         if embedding_layer is not None:
             x = embedding_layer(words)
         else:
@@ -293,10 +299,12 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         )
 
         activate_type = hidden_act
+
         if activate_type == "prelu":  # found it not working
             hidden = add(
                 [hidden, PReLU()(Dense(DENSE_HIDDEN_UNITS, activation=None)(hidden))]
             )
+
             if with_BN:
                 hidden = BatchNormalization()(hidden)
             hidden = add(
@@ -307,6 +315,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                 [hidden, Dense(DENSE_HIDDEN_UNITS,
                                activation=activate_type)(hidden)]
             )
+
             if with_BN:
                 hidden = BatchNormalization()(hidden)
             hidden = add(
@@ -387,6 +396,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         # + , - infinity, we cannot use least square error, we use maximum likelihood, the line
         # can still be imagined to there. for every w guess, we have a log-likelihood for the
         # line. we need to find the ML line
+
         return model
 
     def run_lstm_model(
@@ -424,12 +434,15 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             train_X, train_y = train_data
             train_y_aux = train_y_aux_passed
             val_y_aux = val_y_aux_passed
+
         if train_y_aux is None and not NO_AUX:
             raise RuntimeError("Need aux labels to train")
+
         if val_y_aux is None and not NO_AUX:
             raise RuntimeError("Need aux labels to validate")
 
         val_data = params.get("val_data")
+
         if val_data is None:  # used to dev evaluation
             val_X = self.train_X_identity
         else:
@@ -448,6 +461,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             gc.collect()
 
         # build one time, then reset if needed
+
         if NO_AUX:
             # we could load with file name, then remove and save to new one
             h5_file = prefix + "_attention_lstm_NOAUX_" + f".hdf5"
@@ -460,6 +474,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         starter_lr = params.get("starter_lr", STARTER_LEARNING_RATE)
         # model thing
         load_from_model = False
+
         if re_train or not os.path.isfile(h5_file):
             logger.debug(
                 f"re_train is {re_train}, file {h5_file} exists? {os.path.isfile(h5_file)}"
@@ -520,8 +535,10 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         run_times = 0
         better_run_times = 0
         final_score = 0
+
         for fold in range(n_splits):
             # K.clear_session()  # so it will start over
+
             if fold > 0:
                 reinitLayers(model)
                 starter_lr = starter_lr / 8  # as lstm won't be re-initialized
@@ -581,6 +598,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                 pred, val_mask, run_times=run_times
             )
             improve_flag = False
+
             if final_score_this_run > final_score:
                 final_score = final_score_this_run
                 improve_flag = True
@@ -591,6 +609,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                 # if final_train:
                 test_result = model.predict(self.to_predict_X_all, verbose=2)
                 run_times += 1
+
                 if NO_AUX:
                     test_result_column = np.array(test_result).ravel()
                 else:
@@ -612,6 +631,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
     def check_preds_in_val(self, pred, val_mask, run_times=0):
         if DEBUG_TRACE:
             set_trace()
+
         if not NO_AUX:
             preds = np.array(pred[0]).ravel()
         else:
@@ -622,6 +642,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         # preds = 1 / (1+np.exp(-preds))
 
         self.train_df.loc[val_mask, "lstm"] = preds
+
         if True:
             self.train_df[d.VAL_ERR_COLUMN] = 0
             # self.train_df.loc[val_mask, 'lstm'] = preds
@@ -630,8 +651,10 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             )
             dstr = self.target_analyzer.get_err_distribution(
                 self.train_df, val_mask)
+
             for k, v in dstr.items():
                 logger.debug(f"error info: {k}, {v[1]}")
+
         return self.calculate_metrics_and_print(
             filename_for_print=f"metrics_log_{run_times}.txt",
             validate_df_with_preds=kernel.train_df[val_mask],
@@ -651,6 +674,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                 "prediction": predictions,
             }
         )
+
         if filename is not None:
             submission.to_csv(filename, index=False)
         else:
@@ -678,6 +702,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         )  # just use sklearn split to get id and it is fine. For text thing,
         # just do 1 fold, later we can add them all back
         tr_ind, val_ind = splits[0]
+
         return subgroup_df.iloc[tr_ind].index, subgroup_df.iloc[val_ind].index
 
     def build_res_model(
@@ -732,12 +757,14 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
 
         # first: train only the top layers (which were randomly initialized)
         # i.e. freeze all convolutional InceptionV3 layers
+
         for layer in base_model.layers:
             layer.trainable = False
         # compile the model (should be done *after* setting layers to non-trainable)
         model = Model(inputs=base_model.input, outputs=result)
 
         model.compile(optimizer="adam", loss=loss, metrics=metrics)
+
         return model
 
     # TODO put to model Trainer (subclass)
@@ -769,6 +796,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
 
         for fold in range(n_splits):  # will need to do this later
             # K.clear_session()  # so it will start over todo fix K fold
+
             if use_split:
                 tr_ind, val_ind = splits[fold]
                 logger.info(
@@ -796,6 +824,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             )
 
             # data thing
+
             if NO_AUX:
                 y_train = y[tr_ind]
                 y_val = y[val_ind]
@@ -844,10 +873,12 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
     def run_model(self, model, mode, X, y=None, params={}, n_splits=0):
         # checkpoint_predictions = []
         # weights = []
+
         if mode == "train":
             self.run_model_train(model, X, y, params, n_splits > 1, n_splits)
         elif mode == "predict":
             pred = model.predict(X, verbose=2, batch_size=BATCH_SIZE)
+
             return pred
 
         # if predict_ones_with_identity:
@@ -859,11 +890,13 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         :param index: must be for the index of range 405130
         :return:
         """
+
         return self.train_X[index], self.train_y[index], self.train_y_aux[index]
 
     def locate_subgroup_index_in_np_train(self, subgroup):
         df = self.id_validate_df
         index = df[df[subgroup]].index
+
         return index
 
     def locate_subgroup_data_in_np_train(self, subgroup):
@@ -873,6 +906,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         :return:
         """
         index = self.locate_subgroup_index_in_np_train(subgroup)
+
         return self.locate_data_in_np_train(index)
 
     def to_identity_index(self, index):
@@ -884,6 +918,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         df = self.id_validate_df
 
         # selected the items
+
         return [df.index.get_loc(label) for label in index]
 
     def _get_identities(self):
@@ -894,6 +929,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         """
         prefix = self.emb.BIN_FOLDER
         # if os.path.isfile(prefix+'train_df.pd'):
+
         if False:
             self.train_df = pickle.load(open(prefix + "train_df.pd", "rb"))
         else:
@@ -922,6 +958,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             self.train_mask[id_train_df_idx] = 1
 
             self.id_used_in_train = True
+
             for g in d.IDENTITY_COLUMNS:
                 # column to keep recored what data is used in training, used in data_prepare module...
                 self.train_df[g + "_in_train"] = 0.0
@@ -975,6 +1012,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
 
             if balance_scheme_subgroups == "target_bucket_same_for_subgroups":
                 # compare with the background one, then change the weights to the same scale
+
                 for g, v in gs.items():
                     gs_weights[g] = ones_weights.copy()  # initial, ones
                     # v is the distribution for ONE subgroup for 0~1 11 target types
@@ -982,12 +1020,14 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                         background_target_ratios, np.array(
                             [dstr[2] for dstr in v])
                     )
+
                     for target_split_idx, ratio in enumerate(gs_weights_ratio[g]):
                         # [3] is the index
                         split_idx_in_df = v[target_split_idx][3]
                         gs_weights[g][split_idx_in_df] *= ratio
 
             # or 1->0.8 slop or 0.8->1, or y=-(x-1/2)^2+1/4; just test
+
             if balance_scheme_across_subgroups == "more_for_low_score":
                 subgroup_weights = {}
                 subgroup_weights["homosexual_gay_or_lesbian"] = 4
@@ -999,8 +1039,10 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
     'male', 'female', 'homosexual_gay_or_lesbian', 'christian', 'jewish',
     'muslim', 'black', 'white', 'psychiatric_or_mental_illness'
                 """
+
                 for g in subgroup_weights.keys():
                     subgroup_dist = gs[g]
+
                     for dstr in subgroup_dist:
                         split_idx_in_df = dstr[3]
                         # the ones with identities will be added
@@ -1066,6 +1108,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             if wanted_split_ratios is not None:
                 assert len(wanted_split_ratios) == len(
                     background_target_ratios)
+
                 for target_split_idx, ratio in enumerate(background_target_ratios):
                     idx_for_split = o[target_split_idx][3]
                     # 1/len(b_t_r) is what we want
@@ -1074,6 +1117,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                     )
 
             sample_weights /= sample_weights.mean()  # normalize
+
             return sample_weights
 
         weights = add_weight(balance_scheme_subgroups)
@@ -1115,11 +1159,13 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                 return train_X, val_X, train_y_all[train_mask], train_y_all[val_mask]
         else:
             # credit to https://www.kaggle.com/tanreinama/simple-lstm-using-identity-parameters-solution
+
             if sample_weights is None:
                 raise RuntimeError(
                     "sample weights cannot be None if use custom_weights"
                 )
             assert len(train_y_all) == len(sample_weights)
+
             if with_aux:
                 return (
                     train_X,
@@ -1196,6 +1242,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
 
         self.emb.read_train_test_df(train_only=True)
         self.load_identity_data_idx()
+
         if benchmark_base is None:
             benchmark_base = self.train_df.loc[self.identity_idx]
 
@@ -1207,10 +1254,12 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         if model_name == d.MODEL_NAME:
             if preds is not None:
                 logger.debug(f"{model_name} result for {len(preds)} items:")
+
             if validate_df_with_preds is not None:
                 logger.debug(
                     f"{model_name} result for {len(validate_df_with_preds)} items:"
                 )
+
             if validate_df_with_preds is not None:
                 (
                     value,
@@ -1252,6 +1301,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
 
         # bias_metrics_df = pickle.load(open("bias_metrics", 'rb'))  # only the ones with identity is predicted
         # subgroup_distribution = pickle.load(open("subgroup_dist", 'rb'))  # only the ones with identity is predicted
+
         if not detail:
             return
 
@@ -1272,6 +1322,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
 
         def d_str(t):
             num, mean, std = t
+
             return f"{num}, {mean:.4}, {std:.4}"
 
         for d0 in subgroup_distribution:
@@ -1296,6 +1347,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             )
 
         print("### bpsn auc", file=file_for_print)
+
         for d0 in subgroup_distribution:
             g = d0["subgroup"]
             m = "bpsn_auc"
@@ -1314,6 +1366,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
             )
 
         print("### bnsp auc", file=file_for_print)
+
         for d0 in subgroup_distribution:
             g = d0["subgroup"]
             m = "bnsp_auc"
@@ -1333,6 +1386,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
 
         print("### counts", file=file_for_print)
         # length thing
+
         for d0 in subgroup_distribution:
             g = d0["subgroup"]
             m = "subgroup_auc"
@@ -1412,6 +1466,7 @@ def main(argv):
     logger.info("Will start load data")
     # kernel = KaggleKernel(action="convert_train_data")
     action = None
+
     if CONVERT_DATA:
         # action = TRAIN_DATA_EXCLUDE_IDENDITY_ONES
         # action = CONVERT_DATA_Y_NOT_BINARY
@@ -1425,6 +1480,7 @@ def main(argv):
             action = TRAIN_DATA_EXCLUDE_IDENDITY_ONES
     # if not (RESTART_TRAIN or RESTART_TRAIN_ID or RESTART_TRAIN_RES):
     #    action = DATA_ACTION_NO_NEED_LOAD_EMB_M  # loading model from h5 file, no need load emb matrix (save memory)
+
     if FINAL_SUBMIT:
         kernel = KaggleKernel(action=None)
     else:
@@ -1446,6 +1502,7 @@ def main(argv):
 
     elif TARGET_RUN == "lstm":
         predict_only = PRD_ONLY
+
         if not TARGET_RUN_READ_RESULT:
             if ANA_RESULT:
                 # preds = pickle.load(open('predicts', 'rb'))
@@ -1533,6 +1590,7 @@ def main(argv):
         # value, bias_metrics = kernel.evaluate_model(pred_target)
         # logger.info(value)
         # logger.info(f"\n{bias_metrics}")
+
     return
 
 
@@ -1549,6 +1607,7 @@ WEIGHT_TO_Y = True
 
 
 ANA_RESULT = False
+
 if os.path.isfile(".ana_result"):
     ANA_RESULT = True
     RESTART_TRAIN = False
