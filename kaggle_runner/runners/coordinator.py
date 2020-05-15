@@ -90,14 +90,8 @@ check_exit_status() {
 
   return 1 # not ok
 }
-connect_to_server() {
-  cat rpt &
-  echo "#" $(date) started connection
-  echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
-  echo "#" $hostname $HOSTNAME
 
-  $NC -w ${1}s -i 600s $SERVER $PORT
-}
+
 connect_setup() {
   connect_again_flag=1
 
@@ -111,33 +105,44 @@ connect_setup() {
     # assigned to 'NAME'[1].  This pipe is established before any redirections
     # specified by the command (*note Redirections::).
 
-    PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
-    (
-      coproc connect_to_server $1
-      exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
+    # PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
 
-      COPROC_PID_backup=$COPROC_PID
-      echo $COPROC_PID_backup > $PID_FILE_PATH
-    )
-    RSPID=$!
-    wait $RSPID # what about connection loss? need to check heatbeat
+    # coproc connect_to_server $1
+    # exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
+    # RSPID=$!
+
+    # COPROC_PID_backup=$COPROC_PID
+    # echo $COPROC_PID_backup > $PID_FILE_PATH
+
+    # wait $RSPID # what about connection loss? need to check heatbeat
+    # RSRET=$?
+
+    # if [ x"$RSRET" = x"0" ] && [ x"$RSPID" != x ]; then  # TODO fix, named pipe, return always 120?
+    #   echo $RSRET > $EXIT_FILE_PATH
+
+    #   return $RSRET
+    # fi
+    # # else part below
+
+    # sleep 15 # wait PID FILE PATH created, 15s should be fine
+    # tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
+    # rm $PID_FILE_PATH
+
+    # pkill $RSPID
+    # connect_again_flag=0
+    # # just recursively, sleep in case...
+    # sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
+
+    $NC -w ${1}s -i 600s $SERVER $PORT -c "bash --rcfile rpt"
     RSRET=$?
 
-    if [ x"$RSRET" = x"0" ] && [ x"$RSPID" != x ]; then  # TODO fix, named pipe, return always 120?
+    if [ x"$RSRET" = x"0" ]; then
       echo $RSRET > $EXIT_FILE_PATH
 
       return $RSRET
     fi
-    # else part below
-
-    sleep 15 # wait PID FILE PATH created, 15s should be fine
-    tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
-    rm $PID_FILE_PATH
-
-    pkill $RSPID
     connect_again_flag=0
-    # just recursively, sleep in case...
-    sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
+    sleep 5 && [ ! $RSRET -eq 0 ] && connect_again_flag=1
   done
   # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss
   # thing
@@ -313,6 +318,11 @@ LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so.4
 LESSOPEN=| /usr/bin/lesspipe %s
 GIT_PAGER=cat
 _=/usr/bin/env
+
+
+echo "#" $(date) started connection
+echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
+echo "#" $hostname $HOSTNAME
 """
 
 gdrive_str = r"""#!/bin/bash
