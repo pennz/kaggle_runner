@@ -389,8 +389,10 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
     ):
         # TODO condiser use train test split as
         """
-        train_df, validate_df = model_selection.train_test_split(train, test_size=0.2)
-        logger.info('%d train comments, %d validate comments' % (len(train_df), len(validate_df)))"""
+        train_df, validate_df = model_selection.train_test_split(train,
+        test_size=0.2)
+        logger.info('%d train comments, %d validate comments' % (len(train_df),
+        len(validate_df)))"""
 
         # self.oof_preds = np.zeros((self.train_X.shape[0], 1 + self.train_y_aux.shape[1]))
         test_preds = np.zeros((self.to_predict_X_all.shape[0]))
