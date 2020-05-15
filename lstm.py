@@ -90,8 +90,10 @@ FOCAL_LOSS = True
 
 PRD_ONLY = True  # will not train the model
 NOT_PRD = True
-FINAL_SUBMIT = False
-FINAL_DEBUG = True
+
+FOCAL_LOSS_GAMMA = 0.0
+FINAL_SUBMIT = True
+FINAL_DEBUG = False
 if FINAL_SUBMIT:
     TARGET_RUN = "lstm"
     EPOCHS = 6
