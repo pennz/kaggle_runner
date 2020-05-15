@@ -18,7 +18,8 @@ def epoch_log(phase, epoch, epoch_loss, meter, start):
     dice, dice_neg, dice_pos = dices
     print(
         "Loss: %0.4f | dice: %0.4f | dice_neg: %0.4f | dice_pos: %0.4f | IoU: %0.4f"
-        % (epoch_loss, dice, dice_neg, dice_pos, iou)
+        " | epoch: %d | phase: %s"
+        % (epoch_loss, dice, dice_neg, dice_pos, iou, epoch, phase)
     )
 
     return dice, iou
@@ -26,15 +27,15 @@ def epoch_log(phase, epoch, epoch_loss, meter, start):
 
 class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
     def __init__(
-        self,
-        count_mode="samples",
-        stateful_metrics=None,
-        display_per_batches=1000,
-        verbose=1,
-        early_stop=False,
-        patience_displays=0,
-        epsilon=1e-7,
-        batch_size=1024,
+            self,
+            count_mode="samples",
+            stateful_metrics=None,
+            display_per_batches=1000,
+            verbose=1,
+            early_stop=False,
+            patience_displays=0,
+            epsilon=1e-7,
+            batch_size=1024,
     ):
         super(NBatchProgBarLogger, self).__init__(count_mode, stateful_metrics)
         self.display_per_batches = 1 if display_per_batches < 1 else display_per_batches
@@ -51,6 +52,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         self.epsilon = epsilon
         self.stopped_step = 0
         self.batch_size = batch_size
+        self.epochs = 0
 
     def on_train_begin(self, logs=None):
         self.epochs = self.params["epochs"]
@@ -119,7 +121,9 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                         self.stopped_step = self.step_idx
                         self.model.stop_training = True
                         print(
-                            f"Early Stop criterion met: std is {std} at Step {self.step_idx} for {self.display_idx}th display steps"
+                            f"Early Stop criterion met: std is {std} at Step"
+                            f" {self.step_idx} for {self.display_idx}th display"
+                            "steps"
                         )
 
     def on_train_end(self, logs=None):
@@ -127,7 +131,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
             print("Step %05d: early stopping" % (self.stopped_step + 1))
 
 
-class MetricLogger(object):
+class MetricLogger:
     def __init__(self, delimiter="\t", log_file_name="metric.log"):
         self.meters = defaultdict(SmoothedValue)
         self.delimiter = delimiter
@@ -236,11 +240,11 @@ class CSVLoggerBufferCustomized(csv_logger.CSVLogger):
     "A `LearnerCallback` that saves history of metrics while training `learn` into CSV `filename`."
 
     def __init__(
-        self,
-        learn: fastai.basic_train.Learner,
-        filename: str = "history",
-        append: bool = False,
-        buffer_type: int = 1,
+            self,
+            learn: fastai.basic_train.Learner,
+            filename: str = "history",
+            append: bool = False,
+            buffer_type: int = 1,
     ):
         super(CSVLoggerBufferCustomized, self).__init__(
             learn, filename, append)
@@ -251,6 +255,7 @@ class CSVLoggerBufferCustomized(csv_logger.CSVLogger):
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.file = (
             self.path.open("a", buffering=self.buffer_type)
+
             if self.append
             else self.path.open("w", buffering=self.buffer_type)
         )
@@ -261,7 +266,7 @@ class CSVLoggerBufferCustomized(csv_logger.CSVLogger):
         )
 
 
-class SmoothedValue(object):
+class SmoothedValue:
     """Track a series of values and provide access to smoothed values over a
     window or the global series average.
     """

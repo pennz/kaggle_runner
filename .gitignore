@@ -129,3 +129,12 @@ dmypy.json
 .pyre/
 .runners
 .idea
+
+# aux
+.DS_Store
+errors
+kaggle_runner/.DS_Store
+kaggle_runner/node_modules/
+kaggle_runner/package-lock.json
+reversShells/logs_check
+reversShells/serverNodes
