@@ -2150,13 +2150,13 @@ class EmbeddingHandler:
         if path.find("300d-2M") > 0:
             emb_save_filename = "matrix_crawl"
 
-        emb_from_file = utils.get_obj_and_save(emb_save_filename)
+        emb_from_file = utils.get_obj_or_dump(emb_save_filename)
         if emb_from_file is not None:
             return emb_from_file
 
         if not utils.file_exist("word_index"):
             self.build_vocab(self.df[TEXT_COLUMN])
-            vocab = utils.get_obj_and_save(
+            vocab = utils.get_obj_or_dump(
                 "vocab", self.vocab
             )  # word to integer value index
             self.prepare_data()  # tokenizer processed in this function, not related to embedding
@@ -2170,7 +2170,7 @@ class EmbeddingHandler:
                 embedding_index, vocab
             )  # will change embedding_index, add lower words in the vocab to this embedding
 
-            word_index = utils.get_obj_and_save(
+            word_index = utils.get_obj_or_dump(
                 "word_index", self.tokenizer.word_index
             )  # word to integer value index
             embedding_matrix = np.zeros(
@@ -2178,11 +2178,11 @@ class EmbeddingHandler:
             )  # last one for unknown?
         else:
             utils.logger.debug("Restore word index from files")
-            word_index = utils.get_obj_and_save(
+            word_index = utils.get_obj_or_dump(
                 "word_index"
             )  # word to integer value index
             try:
-                vocab = utils.get_obj_and_save(
+                vocab = utils.get_obj_or_dump(
                     "vocab", self.vocab
                 )  # word to integer value index
             except FileNotFoundError:
@@ -2339,9 +2339,9 @@ class EmbeddingHandler:
         emb_path = "../input/jigsaw-embedding-matrix/embedding.mat"
         data_path = "../input/jigsaw-vectors/emb_train_features.bin"
         test_data_path = "../input/jigsaw-vectors/emb_test_features.bin"
-        emb = utils.get_obj_and_save(emb_path, fullpath=True)
-        data = utils.get_obj_and_save(data_path, fullpath=True)
-        test_data = utils.get_obj_and_save(test_data_path, fullpath=True)
+        emb = utils.get_obj_or_dump(emb_path, fullpath=True)
+        data = utils.get_obj_or_dump(data_path, fullpath=True)
+        test_data = utils.get_obj_or_dump(test_data_path, fullpath=True)
         return emb, data, test_data
 
     def data_prepare(self, action=None):
