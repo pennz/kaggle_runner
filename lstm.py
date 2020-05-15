@@ -10,28 +10,13 @@ import tensorflow as tf
 import tensorflow.keras.backend as K
 from IPython.core.debugger import set_trace
 from sklearn.model_selection import KFold
-from tensorflow.keras.callbacks import (
-    EarlyStopping,
-    LearningRateScheduler,
-    ModelCheckpoint,
-)
-from tensorflow.keras.layers import (
-    LSTM,
-    Activation,
-    BatchNormalization,
-    Bidirectional,
-    Dense,
-    Embedding,
-    GlobalAveragePooling1D,
-    GlobalMaxPooling1D,
-    Input,
-    Lambda,
-    Layer,
-    PReLU,
-    SpatialDropout1D,
-    add,
-    concatenate,
-)
+from tensorflow.keras.callbacks import (EarlyStopping, LearningRateScheduler,
+                                        ModelCheckpoint)
+from tensorflow.keras.layers import (LSTM, Activation, BatchNormalization,
+                                     Bidirectional, Dense, Embedding,
+                                     GlobalAveragePooling1D,
+                                     GlobalMaxPooling1D, Input, Lambda, Layer,
+                                     PReLU, SpatialDropout1D, add, concatenate)
 from tensorflow.keras.metrics import binary_crossentropy, mean_absolute_error
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.optimizers import Adam
@@ -41,17 +26,12 @@ import kaggle_runner.datasets.data_prepare as d
 import kaggle_runner.utils.kernel_utils as utils
 from kaggle_runner.defaults import *
 from kaggle_runner.logs import NBatchProgBarLogger
-
 # from gradient_reversal_keras_tf.flipGradientTF import GradientReversal
-from kaggle_runner.losses import (
-    binary_crossentropy_with_focal,
-    binary_crossentropy_with_focal_seasoned,
-)
-from kaggle_runner.metrics.metrics import (
-    binary_sensitivity,
-    binary_sensitivity_np,
-    binary_specificity,
-)
+from kaggle_runner.losses import (binary_crossentropy_with_focal,
+                                  binary_crossentropy_with_focal_seasoned)
+from kaggle_runner.metrics.metrics import (binary_sensitivity,
+                                           binary_sensitivity_np,
+                                           binary_specificity)
 from kaggle_runner.modules.attention import AttentionRaffel
 from kaggle_runner.utils.kernel_utils import reinitLayers
 
@@ -1520,6 +1500,7 @@ def main(argv):
                 val_X = None
                 train_y_aux = None
                 train_y = None
+                val_y_aux = None
 
                 if NO_AUX:
                     train_X, val_X, train_y, val_y = kernel.prepare_train_labels(
