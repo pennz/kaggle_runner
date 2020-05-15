@@ -21,7 +21,8 @@ lint: $(SRC)
 	echo $(SRC)
 	pylint -E $(SRC)
 lstm:
-	python lstm.py 2>&1
+	-git pull
+	-python lstm.py 2>&1
 	bash -c 'while true; do test x$$(git pull | grep -c Already) = x1 || python lstm.py 2>&1; sleep 10; echo -n .; done'
 test: $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
