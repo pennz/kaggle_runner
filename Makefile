@@ -45,7 +45,7 @@ install_dep:
 	test -z "$(python3 -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations
 	test -z "$(python3 -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch
 connect:
-	ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {}
+	stty raw -echo && ( ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
 
 
-.PHONY: clean
+.PHONY: clean connect
