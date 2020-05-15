@@ -1,3 +1,4 @@
+import tensorflow.keras.backend as K
 from tensorflow.keras import constraints, initializers, regularizers
 from tensorflow.keras.layers import (
     Activation,
@@ -16,6 +17,7 @@ from tensorflow.keras.layers import (
     concatenate,
 )
 
+from kaggle_runner.kernels.KernelRunningState import KernelRunningState
 from kaggle_runner.utils.kernel_utils import dump_obj, get_obj_or_dump, logger
 
 
