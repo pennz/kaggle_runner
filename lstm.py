@@ -1361,7 +1361,7 @@ NEG_RATIO = 1 - 0.05897253769515213
 
 
 def main(argv):
-    args = parser.parse_args(argv[1:])
+    #args = parser.parse_args(argv[1:])
 
     global kernel
     logger.info("Will start load data")
