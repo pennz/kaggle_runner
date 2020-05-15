@@ -31,12 +31,14 @@ def main():
         def read(fd):
             data = os.read(fd, 1024)
             script.write(data)
+
             return data
 
         with open(logfilename, mode) as logscript:
             def logread(fd):
                 data = os.read(fd, 1024)
                 logscript.write(data)
+
                 return data
 
             print('Script started, file is', filename)
@@ -85,6 +87,7 @@ check_exit_status() {
   if [ -f $EXIT_FILE_PATH -a x$(cat $EXIT_FILE_PATH) = x0 ]; then
     return 0
   fi
+
   return 1 # not ok
 }
 connect_to_server() {
@@ -97,6 +100,7 @@ connect_to_server() {
 }
 connect_setup() {
   connect_again_flag=1
+
   while [ ${connect_again_flag} -eq 1 ]; do
     check_exit_status && return 0
 
@@ -118,8 +122,10 @@ connect_setup() {
     RSPID=$!
     wait $RSPID # what about connection loss? need to check heatbeat
     RSRET=$?
+
     if [ x"$RSRET" = x"0" ] && [ x"$RSPID" != x ]; then  # TODO fix, named pipe, return always 120?
       echo $RSRET > $EXIT_FILE_PATH
+
       return $RSRET
     fi
     # else part below
@@ -162,9 +168,11 @@ while true; do
   nc_ret=$?
   nc_time=$(echo $nc_time | awk '{print $NF}')
   nc_time=$(floatToInt $nc_time)
+
   if [ ${nc_ret} -eq 0 ]; then
     # recover connection, need to connect_again too. For 1st time, will try to connect
     # no connection last time, have connction now
+
     if [ $port_connect_status -eq 0 ]; then
       echo "recover connection, reset wait_time and try to reconnect"
       wait_time=$INIT_WAIT
@@ -173,6 +181,7 @@ while true; do
       connect_again $wait_time
     else
       wait_time=$((wait_time + wait_time)) # double wait, network fine
+
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
     fi
     port_connect_status=1
@@ -184,6 +193,7 @@ while true; do
       connect_again $wait_time
     else # no connection all the time? we still try to connect...
       wait_time=$((wait_time + wait_time))
+
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
       connect_again $wait_time
     fi
@@ -207,6 +217,7 @@ done
 # $ export SHELL=bash
 # $ export TERM=xterm-256color
 # $ stty rows <num> columns <cols>
+
 while true; do sleep 60; done
 """
 
@@ -361,6 +372,7 @@ apt install -y tig ctags htop tree pv tmux psmisc &
 
 wait_ncat() {
   wait_for_ncat=$1
+
   while [ $wait_for_ncat -gt 0 ]; do
     wait_for_ncat=$(( wait_for_ncat - 1))
     which ncat >/dev/null && return 0
@@ -402,12 +414,9 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
 
 if [ x"${PHASE}" = x"dev" ]; then
   export PS4='[Remote]: Line ${LINENO}: '
-  # {
-  #     make install_dep;
-  #     [ "x${ENABLE_RVS}" = x1 ] && bash -x ./rvs.sh 2>&1
-  # } | { [ "x${ENABLE_RVS}" = x1 ] && $NC $SERVER $CHECK_PORT; };
   make install_dep
-  if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh 2>&1; } | $NC --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT" ; fi
+
+  if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT" ; fi
 fi
 
 if [ x"${PHASE}" != x"dev" ]; then
@@ -436,6 +445,7 @@ class Coordinator:
     def push(runner):
         "Push the code to server/kagger docker"
         logger.debug(" ".join(["kaggle", "kernels", "push", "-p", runner]))
+
         return subprocess.run(["kaggle", "kernels", "push", "-p", runner])
 
     def push_listen(self):
@@ -451,6 +461,7 @@ class Coordinator:
     def _change_kernel_meta_info(folder, name, script, gpu=False):
         with open(os.path.join(folder, "kernel-metadata.json"), "r+") as jf:
             data = json.load(jf)
+
             if name is not None:
                 if not script:
                     name = name + " nb"
@@ -458,6 +469,7 @@ class Coordinator:
                 data["id"] = re.sub(r"/.*", "/" + slug_name, data["id"])
                 data["title"] = slug_name
             data["enable_gpu"] = "true" if gpu else "false"
+
             if not script:
                 data["kernel_type"] = "notebook"
                 data["code_file"] = "main.ipynb"
@@ -600,6 +612,7 @@ while True:
 
         path = os.path.join(self.tmp_path, name)
         shutil.copytree(self.template_path, path)
+
         if from_template:
             self._change_kernel_meta_info(path, None, script)
             self._change_main_py(path, size, net, AMQPURL, seed)
@@ -607,6 +620,7 @@ while True:
             self._change_kernel_meta_info(
                 path, self.title_prefix + " " + name, script)
             self._change_main_py(path, size, net, AMQPURL, seed)
+
         if not script:
             subprocess.run(
                 ("jupytext --to notebook " + os.path.join(path, "main.py")).split()
