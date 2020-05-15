@@ -416,7 +416,7 @@ if [ x"${PHASE}" = x"dev" ]; then
   export PS4='[Remote]: Line ${LINENO}: '
   make install_dep
 
-  if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT" ; fi
+  if [ "x${ENABLE_RVS}" = x1 ]; then screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash ./rvs.sh 2>&1 >/dev/null; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT" ; fi
   make lstm 2>&1 | $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT
 fi
 
