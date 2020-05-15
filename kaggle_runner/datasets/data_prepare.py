@@ -62,14 +62,14 @@ def maybe_download(url):
 
 
 def train_input_fn_general(
-    features,
-    labels,
-    batch_size,
-    cv,
-    split_id=None,
-    n_splits=None,
-    handle_large=False,
-    shuffle_size=None,
+        features,
+        labels,
+        batch_size,
+        cv,
+        split_id=None,
+        n_splits=None,
+        handle_large=False,
+        shuffle_size=None,
 ):
     # for boost tree, need to prepare feature columns
     # 2048? columns, all float
@@ -122,19 +122,19 @@ def pred_input_fn_general(features, batch_size):
 
 
 def _input_fn_general(
-    features,
-    labels,
-    batch_size,
-    with_y=True,
-    repeat=True,
-    shuffle=True,
-    split_id=-1,
-    n_splits=10,
-    cv=True,
-    cv_train=True,
-    to_dict=False,
-    handle_large=False,
-    shuffle_size=None,
+        features,
+        labels,
+        batch_size,
+        with_y=True,
+        repeat=True,
+        shuffle=True,
+        split_id=-1,
+        n_splits=10,
+        cv=True,
+        cv_train=True,
+        to_dict=False,
+        handle_large=False,
+        shuffle_size=None,
 ):
     # for these, we will need to extract all the points before:
     """_input_fn_general is used for (boot tree)?
@@ -2089,9 +2089,8 @@ class EmbeddingHandler:
         return unknown_words
 
     def get_identity_df(self):
-        if (
-            not self._text_preprocessed
-        ):  # then we might be restore from numpy pickle file, so still need to read csv
+        if (not self._text_preprocessed):
+            # then we might be restore from numpy pickle file, so still need to read csv
             self.read_train_test_df()
             # for column in IDENTITY_COLUMNS :
             #    # it seems the .values will make a copy out, so it won't infect above sef.y_train
@@ -2422,7 +2421,7 @@ class EmbeddingHandler:
                 np.array(self.y_aux_train),
             )
             utils.logger.debug("restored data from files for training")
-            self.BIN_FOLDER = defults.Data_Folder
+            self.BIN_FOLDER = defaults.Data_Folder
 
             return self.x_train, self.y_train, self.y_aux_train, test_data, emb
         except FileNotFoundError:
