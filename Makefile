@@ -19,7 +19,7 @@ push: $(SRC)
 	$(PY3) -m pytest -s -k "TestCo" tests/test_coord.py # && cd .runners/intercept-resnet-384/ && $(PY3) main.py
 test: $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
-	$(PY3) -m pytest -k "TestCo" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
+	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
 clean:
 	-rm -rf __pycache__ mylogs dist/* build/*
 submit:

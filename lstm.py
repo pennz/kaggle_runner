@@ -153,7 +153,7 @@ class KaggleKernel:
         if PRD_ONLY or TARGET_RUN_READ_RESULT or ANA_RESULT:
             pass
         else:  # keep record training parameters
-            self.emb.dump_obj(
+            utils.dump_obj(
                 f"Start run with FL_{FOCAL_LOSS}_{FOCAL_LOSS_GAMMA}_{ALPHA} lr {STARTER_LEARNING_RATE}, decay {LEARNING_RATE_DECAY_PER_EPOCH}, \
 BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_TRAIN_BIN {Y_TRAIN_BIN}",
                 "run_info.txt",
