@@ -16,10 +16,13 @@
     "mobassir/siimpng",
     "mobassir/siimtraincsv",
     "mobassir/siimmy",
-    "mobassir/mysiim"
+    "mobassir/mysiim",
+    "k1gaggle/jigsaw-vectors",
+    "k1gaggle/jigsaw-embedding-matrix"
   ],
   "kernel_sources": [],
   "competition_sources": [
-    "siim-acr-pneumothorax-segmentation"
+    "siim-acr-pneumothorax-segmentation",
+    "jigsaw-unintended-bias-in-toxicity-classification"
   ]
 }
