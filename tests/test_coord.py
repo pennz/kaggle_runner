@@ -4,8 +4,8 @@ import subprocess
 
 import pytest
 
-from kaggle_runner.runners import coordinator
 from kaggle_runner import utils
+from kaggle_runner.runners import coordinator
 
 
 @pytest.fixture(scope="module")
@@ -39,6 +39,11 @@ class TestCoordinator:
     def teardown_method(self, method):
         # shutil.rmtree(self.tmp_path)  # for debug
         print("teardown_method called for every method")
+
+    def test_generate_runner(self, runner_configs):
+        self.coordinator.create_runner(runner_configs[1], 19999, False)
+        # ret = self.coordinator.run_local(path)
+        # assert ret.returncode == 0
 
     @pytest.mark.timeout(15)
     def test_push_runner_nb(self, runner_configs):
