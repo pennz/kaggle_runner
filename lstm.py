@@ -85,7 +85,7 @@ RESTART_TRAIN = False
 RESTART_TRAIN_RES = True
 RESTART_TRAIN_ID = False
 
-NO_AUX = False
+NO_AUX = True
 Y_TRAIN_BIN = False  # with True, slightly worse
 
 FOCAL_LOSS = True
