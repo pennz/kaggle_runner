@@ -84,7 +84,7 @@ PORT=23454
 CHECK_PORT=$((PORT + 1))
 
 check_exit_status() {
-  if [ -f $EXIT_FILE_PATH -a x$(cat $EXIT_FILE_PATH) = x0 ]; then
+  if [ -f $EXIT_FILE_PATH ] && [ x"$(cat $EXIT_FILE_PATH)" = x0 ]; then
     return 0
   fi
 
