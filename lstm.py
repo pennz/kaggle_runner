@@ -1551,7 +1551,7 @@ def main(argv):
                         "starter_lr": STARTER_LEARNING_RATE,
                         # 'sample_weights': sample_weights_train,
                         # train data with identities
-                        "train_data": (train_X[:10000], train_y[:,:10000]),
+                        "train_data": (train_X[:10000], train_y[:10000,:]),
                         "train_y_aux": train_y_aux,
                         "val_y_aux": val_y_aux,
                         # train data with identities
