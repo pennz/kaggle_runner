@@ -21,6 +21,7 @@ lint: $(SRC)
 	echo $(SRC)
 	pylint -E $(SRC)
 lstm:
+	python lstm.py 2>&1
 	bash -c 'while true; do test x$$(git pull | grep -c Already) = x1 || python lstm.py 2>&1; sleep 10; echo -n .; done'
 test: $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
@@ -42,6 +43,8 @@ install_dep:
 	#mkdir -p /root/.cache/torch/checkpoints; wget  $(URL) && cp inceptionresnetv2-520b38e4.pth /root/.cache/torch/checkpoints/inceptionresnetv2-520b38e4.pth
 	test -z "$(python3 -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations
 	test -z "$(python3 -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch
+connect:
+	ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {}
 
 
 .PHONY: clean
