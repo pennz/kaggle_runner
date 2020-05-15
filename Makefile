@@ -24,7 +24,7 @@ lstm:
 	-git stash; git pull
 	-python lstm.py 2>&1
 	bash -c 'while true; do test x$$(git pull | grep -c Already) = x1 || python lstm.py 2>&1; sleep 10; echo -n .; done'
-test: $(SRC)
+test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
 	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
 clean:
@@ -40,6 +40,9 @@ publish: twine
 	if [ x$(TAG) = x ]; then echo "Please pass TAG flag when you call make"; false; else git tag -s $(TAG); fi
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
+update_code:
+	-git stash; git pull
+
 install_dep:
 	#mkdir -p /root/.cache/torch/checkpoints; wget  $(URL) && cp inceptionresnetv2-520b38e4.pth /root/.cache/torch/checkpoints/inceptionresnetv2-520b38e4.pth
 	test -z "$(python3 -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations
