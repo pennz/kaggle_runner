@@ -550,8 +550,9 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                 sample_weights = None
 
                 if train_y.shape[1] > 1:
-                    train_y = train_y[:,0]
+                    _train_y = train_y[:,0]
                     sample_weights = train_y[:,1]
+                    train_y = _train_y
 
                 train_labels = train_y if NO_AUX else [train_y, train_y_aux]
                 val_labels = val_y if NO_AUX else [val_y, val_y_aux]
