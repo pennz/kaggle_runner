@@ -547,6 +547,12 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                     # we also need to filter out the subgroup data (in outer layer now)
                     val_y = val_y >= 0.5
 
+                sample_weights = None
+
+                if train_y.shape[1] > 1:
+                    train_y = train_y[:,0]
+                    sample_weights = train_y[:,1]
+
                 train_labels = train_y if NO_AUX else [train_y, train_y_aux]
                 val_labels = val_y if NO_AUX else [val_y, val_y_aux]
 
@@ -556,7 +562,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
                     # validation_split=val_split,
                     batch_size=BATCH_SIZE,
                     epochs=EPOCHS,
-                    # sample_weight=sample_weights,
+                    sample_weight=sample_weights,
                     # steps_per_epoch=int(len(self.train_X)*False95/BATCH_SIZE),
                     verbose=0,  # prog_bar_logger will handle log, so set to 0 here
                     # validation_data=(self.train_X[val_ind], self.train_y[val_ind]>0.5),
@@ -1107,14 +1113,14 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         return weights
 
     def prepare_train_labels(
-        self,
-        train_y_all,
-        train_mask,
-        custom_weights=False,
-        with_aux=False,
-        train_y_aux=None,
-        sample_weights=None,
-        fortify_subgroup=None,
+            self,
+            train_y_all,
+            train_mask,
+            custom_weights=False,
+            with_aux=False,
+            train_y_aux=None,
+            sample_weights=None,
+            fortify_subgroup=None,
     ):
         val_mask = np.invert(kernel.train_mask)  # this is whole train_mask
 
