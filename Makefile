@@ -22,6 +22,7 @@ lint: $(SRC)
 	echo $(SRC)
 	pylint -E $(SRC)
 lstm:
+	pkill -f "make lstm"
 	-git stash; git pull
 	-python lstm.py 2>&1
 	while true; do test x$$(git pull | grep -c Already) = x1 || python lstm.py 2>&1; \
