@@ -451,12 +451,14 @@ class Coordinator:
 
     def push_listen(self):
         self.push_all()
-        self._get_result()
+        self._get_result(timeout=60)
 
     def _get_result(self, timeout):
         """use the message queue, just use this right after push, listen for
-        result, debug local first"""
-        "use RE change source code to add the log collector"
+        result, debug local first
+
+        use jq change source code to add the log collector"
+        """
 
     @staticmethod
     def _change_kernel_meta_info(folder, name, script, gpu=False):
@@ -576,7 +578,7 @@ while True:
         try:
             gdpass = subprocess.check_output(
                 "pass gd", shell=True).decode("utf-8")
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             gdpass = ""
         d = dict(
             gdrive_str=gdrive_str.replace(

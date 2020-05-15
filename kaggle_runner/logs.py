@@ -12,7 +12,7 @@ from fastai.callbacks import csv_logger
 from kaggle_runner.utils.kernel_utils import is_dist_avail_and_initialized
 
 
-def epoch_log(phase, epoch, epoch_loss, meter, start):
+def metric_get_log(phase, epoch, epoch_loss, meter, start):
     """logging the metrics at the end of an epoch"""
     dices, iou = meter.get_metrics()
     dice, dice_neg, dice_pos = dices
