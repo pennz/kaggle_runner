@@ -68,7 +68,7 @@ RESTART_TRAIN_ID = False
 NO_AUX = True
 Y_TRAIN_BIN = False  # with True, slightly worse
 
-FOCAL_LOSS = True
+FOCAL_LOSS = False
 
 PRD_ONLY = True  # will not train the model
 NOT_PRD = True
