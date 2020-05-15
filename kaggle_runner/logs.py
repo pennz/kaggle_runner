@@ -20,6 +20,7 @@ def epoch_log(phase, epoch, epoch_loss, meter, start):
         "Loss: %0.4f | dice: %0.4f | dice_neg: %0.4f | dice_pos: %0.4f | IoU: %0.4f"
         % (epoch_loss, dice, dice_neg, dice_pos, iou)
     )
+
     return dice, iou
 
 
@@ -39,6 +40,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         self.display_per_batches = 1 if display_per_batches < 1 else display_per_batches
         self.step_idx = 0  # across epochs
         self.display_idx = 0  # across epochs
+        self.seen = 0
         self.verbose = verbose
 
         # better way is subclass EearlyStopping callback.
@@ -60,6 +62,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         # steps at the same time, we should account for that in the `seen`
         # calculation.
         num_steps = logs.get("num_steps", 1)
+
         if self.use_steps:
             self.seen += num_steps
         else:
@@ -72,6 +75,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         self.step_idx += 1
         # Skip progbar update for the last batch;
         # will be handled by on_epoch_end.
+
         if self.early_stop:
             # only record for this batch, not the display. Should work
             loss = logs.get("loss")
@@ -97,6 +101,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                 )
 
                 self.display_idx += 1  # used in index, so +1 later
+
                 if self.display_idx >= self.patience_displays:
                     std = np.std(
                         self.losses
@@ -109,6 +114,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                     print(
                         f"mean: {np.mean(self.losses)}, std:{std} for Step {std_start_step}({std_start_step*self.batch_size}) to {self.step_idx}({self.step_idx*self.batch_size}) for {self.display_idx}th display steps"
                     )
+
                     if std < self.epsilon:
                         self.stopped_step = self.step_idx
                         self.model.stop_training = True
@@ -145,6 +151,7 @@ class MetricLogger(object):
     def __getattr__(self, attr):
         if attr in self.meters:
             return self.meters[attr]
+
         if attr in self.__dict__:
             return self.__dict__[attr]
         raise AttributeError(
@@ -154,8 +161,10 @@ class MetricLogger(object):
 
     def __str__(self):
         loss_str = []
+
         for name, meter in self.meters.items():
             loss_str.append("{}: {}".format(name, str(meter)))
+
         return self.delimiter.join(loss_str)
 
     def synchronize_between_processes(self):
@@ -167,6 +176,7 @@ class MetricLogger(object):
 
     def log_every(self, iterable, print_freq, header=None):
         i = 1
+
         if not header:
             header = ""
         start_time = time.time()
@@ -186,11 +196,13 @@ class MetricLogger(object):
             ]
         )
         MB = 1024.0 * 1024.0
+
         for obj in iterable:
             data_time.update(time.time() - end)
             yield obj
             iter_time.update(time.time() - end)
             # print the first to let you know it is running....
+
             if i % (print_freq) == 0 or i == len(iterable):
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
@@ -276,6 +288,7 @@ class SmoothedValue(object):
         """
         Warning: does not synchronize the deque!
         """
+
         if not is_dist_avail_and_initialized():
             return
         t = torch.tensor([self.count, self.total],
@@ -289,11 +302,13 @@ class SmoothedValue(object):
     @property
     def median(self):
         d = torch.tensor(list(self.deque))
+
         return d.median().item()
 
     @property
     def avg(self):
         d = torch.tensor(list(self.deque), dtype=torch.float32)
+
         return d.mean().item()
 
     @property
@@ -311,6 +326,7 @@ class SmoothedValue(object):
     def __str__(self):
         if len(self.deque) == 0:
             return "_NULL_"
+
         return self.fmt.format(
             median=self.median,
             avg=self.avg,
