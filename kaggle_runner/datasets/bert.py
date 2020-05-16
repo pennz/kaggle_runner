@@ -26,6 +26,7 @@ TRAIN_PATH = DATA_PATH + "jigsaw-toxic-comment-train.csv"
 val_data = pd.read_csv(VAL_PATH)
 test_data = pd.read_csv(TEST_PATH)
 train_data = pd.read_csv(TRAIN_PATH)
+TRAIN_LEN = len(train_data)
 # -
 
 tokenizer = transformers.DistilBertTokenizer.from_pretrained('distilbert-base-multilingual-cased')
