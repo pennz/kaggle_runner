@@ -238,6 +238,7 @@ rsync -r dotfiles/.* ~
 pushd ~
 git submodule update --init
 .fzf/install --all
+curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall &
 ln -s .shrc_customised.macos .shrc_customised
@@ -375,7 +376,7 @@ SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 apt update && apt install -y netcat nmap screen time
-apt install -y tig ctags htop tree pv tmux psmisc &
+apt install -y tig ctags htop tree pv tmux psmisc neovim &
 
 bash rpt
 wait_ncat() {
