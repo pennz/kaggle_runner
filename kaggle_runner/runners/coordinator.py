@@ -240,11 +240,12 @@ git submodule update --init
 .fzf/install --all
 curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall &
+vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +qa &
+( sleep 60; nvim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +checkhealth +qa )&
 ln -s .shrc_customised.macos .shrc_customised
 echo "alias gdrive='gdrive  --service-account a.json'" >> ~/.bash_aliases
 echo "unalias vim" >> ~/.bash_aliases
-echo "alias vim='vim -u ~/.vimrc_back'" >> ~/.bash_aliases
+echo "alias vim='nvim -u ~/.vimrc_back'" >> ~/.bash_aliases
 apt install fish -y &
 popd
 
