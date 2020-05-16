@@ -503,6 +503,7 @@ import selectors
 import subprocess
 import sys
 
+subprocess.run('pip install kaggle_runner', shell=True)
 from kaggle_runner.runners import runner
 
 log_args = {
