@@ -24,7 +24,8 @@ def visualize_model_preds(model,val_data, x_valid, y_valid, indices=[0, 17, 1, 2
             color = f'{Fore.RED}'
             symbol = '\u2716'
 
-        print('{}{} {}'.format(color, str(idx+1) + ". " + label, symbol))
+        print('{}{} {}'.format(color, str(idx+1) + ". " + label,
+                               symbol.encode('utf-8')))
         print(f'{Style.RESET_ALL}')
         print("ORIGINAL")
         print(comments[idx]); print("")
