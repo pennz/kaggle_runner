@@ -59,7 +59,6 @@ train = train_data
 def clean(text):
     text = text.fillna("fillna").str.lower()
     text = text.map(lambda x: re.sub('\\n',' ',str(x)))
-    text = text.map(lambda x: re.sub("\[\[User.*",'',str(x)))
     text = text.map(lambda x: re.sub("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}",'',str(x)))
     text = text.map(lambda x: re.sub("\(http://.*?\s\(http://.*\)",'',str(x)))
 
