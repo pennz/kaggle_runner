@@ -33,7 +33,7 @@ def ReduceLROnPlateauLogCBs(validation_data):
 
     RocAuc = RocAucEvaluation(validation_data=validation_data, interval=1)
     cb.append(RocAuc)
-    ckpt = ModelCheckpoint("toxic.hdf5", save_best_only=True, verbose=1)
-    cb.append(ckpt)
+    # ckpt = ModelCheckpoint("toxic.hdf5", save_best_only=True, verbose=1) bert get_config not implemented, cannot save
+    # cb.append(ckpt)
 
     return cb
