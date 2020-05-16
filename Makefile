@@ -21,11 +21,14 @@ push: $(SRC)
 lint: $(SRC)
 	echo $(SRC)
 	pylint -E $(SRC)
-lstm:
+inner_lstm:
 	-git stash; git pull
 	-python lstm.py 2>&1 | tee -a lstm_log
 	while true; do test x$$(git pull | grep -c Already) = x1 || { python lstm.py 2>&1 | tee -a lstm_log; } \
 	echo "$$(date) $$HOSTNAME CPU: "$$(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1; grep 'cpu ' /proc/stat | awk -v RS='' '{print ($$13-$$2+$$15-$$4)*100/($$13-$$2+$$15-$$4+$$16-$$5)}')% 'Mem: '$$(awk '/MemTotal/{t=$$2}/MemAvailable/{a=$$2}END{print 100-100*a/t}' /proc/meminfo)% 'Uptime: '$$(uptime | awk '{print $$3}'); sleep 10; done
+lstm:
+	-pkill -f "inner_lstm"
+	make inner_lstm
 
 test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
@@ -54,4 +57,4 @@ connect:
 	stty raw -echo && ( ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
 
 
-.PHONY: clean connect
+.PHONY: clean connect inner_lstm
