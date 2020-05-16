@@ -18,13 +18,11 @@ def visualize_model_preds(model,val_data, x_valid, y_valid, indices=[0, 17, 1, 2
         if y_valid[i] == 0:
             label = "Non-toxic"
             color = f'{Fore.GREEN}'
-            symbol = '\u2714'
         else:
             label = "Toxic"
             color = f'{Fore.RED}'
-            symbol = '\u2716'
 
-        print('{}{} {}'.format(color, str(idx+1) + ". " + label, symbol))
+        print('{}{}'.format(color, str(idx+1) + ". " + label))
         print(f'{Style.RESET_ALL}')
         print("ORIGINAL")
         print(comments[idx].encode('utf-8')); print("")
