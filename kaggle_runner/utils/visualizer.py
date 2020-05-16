@@ -24,10 +24,15 @@ def visualize_model_preds(model,val_data, x_valid, y_valid, indices=[0, 17, 1, 2
 
         print('{}{}'.format(color, str(idx+1) + ". " + label))
         print(f'{Style.RESET_ALL}')
-        print("ORIGINAL")
-        print(comments[idx].encode('utf-8')); print("")
-        print("TRANSLATED")
-        print(translator.translate(comments[idx].encode('utf-8')).text)
+
+        try:
+            print("ORIGINAL")
+            print(comments[idx].encode('utf-8')); print("")
+            print("TRANSLATED")
+            print(translator.translate(comments[idx].encode('utf-8')).text)
+        except Exception:
+            print("encode error")
+
         # fig = go.Figure()
 
         # if list.index(sorted(preds[:, 0]), preds[idx][0]) > 1:
