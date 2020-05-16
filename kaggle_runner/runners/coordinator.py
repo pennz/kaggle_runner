@@ -549,7 +549,7 @@ sel.register(p.stderr, selectors.EVENT_READ)
 
 while True:
    for key, _ in sel.select():
-       data = key.fileobj.read1(-1).decode()
+       data = key.fileobj.read1(80).decode()
        if not data:
            exit()
        if key.fileobj is p.stdout:
