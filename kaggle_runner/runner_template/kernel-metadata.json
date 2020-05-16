@@ -1,29 +1,19 @@
 {
-  "id": "k1gaggle/unet-with-se-resnext50-32x4d-encoder-for-stage-2",
-  "title": "UNet with se_resnext50_32x4d encoder for stage-2",
-  "code_file": "main.py",
+  "id": "k1gaggle/jigsaw-multilingual-toxicity-eda-models",
+  "id_no": 9350196,
+  "title": "Jigsaw Multilingual Toxicity : EDA + Models \ud83e\udd2c",
+  "code_file": "jigsaw-multilingual-toxicity-eda-models.ipynb",
   "language": "python",
   "kernel_type": "notebook",
-  "is_private": false,
+  "is_private": true,
   "enable_gpu": false,
   "enable_internet": true,
   "keywords": [
-    "gpu",
     "tpu"
   ],
-  "dataset_sources": [
-    "abhishek/siim-png-images",
-    "ivanzhovannik/siim_stage2_png",
-    "mobassir/siimpng",
-    "mobassir/siimtraincsv",
-    "mobassir/siimmy",
-    "mobassir/mysiim",
-    "k1gaggle/jigsaw-vectors",
-    "k1gaggle/jigsaw-embedding-matrix"
-  ],
+  "dataset_sources": [],
   "kernel_sources": [],
   "competition_sources": [
-    "siim-acr-pneumothorax-segmentation",
-    "jigsaw-unintended-bias-in-toxicity-classification"
+    "jigsaw-multilingual-toxic-comment-classification"
   ]
 }
