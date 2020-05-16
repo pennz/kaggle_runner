@@ -29,6 +29,8 @@ inner_lstm:
 lstm:
 	-pkill -f "inner_lstm"
 	make inner_lstm
+toxic:
+	pytest -sv tests/test_build_distilbert_model.py
 
 test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
