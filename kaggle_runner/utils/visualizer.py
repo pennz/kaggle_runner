@@ -31,16 +31,16 @@ def visualize_model_preds(model,val_data, x_valid, y_valid, indices=[0, 17, 1, 2
         print(comments[idx]); print("")
         print("TRANSLATED")
         print(translator.translate(comments[idx]).text)
-        fig = go.Figure()
+        # fig = go.Figure()
 
-        if list.index(sorted(preds[:, 0]), preds[idx][0]) > 1:
-            yl = [preds[idx][0], 1 - preds[idx][0]]
-        else:
-            yl = [1 - preds[idx][0], preds[idx][0]]
-        fig.add_trace(go.Bar(x=['Non-Toxic', 'Toxic'], y=yl,
-            marker=dict(color=["seagreen", "indianred"])))
-        fig.update_traces(name=comments[idx])
-        fig.update_layout(xaxis_title="Labels", yaxis_title="Probability",
-            template="plotly_white", title_text=("Predictions for validation "
-            "comment #{}").format(idx+1))
-        fig.show()
+        # if list.index(sorted(preds[:, 0]), preds[idx][0]) > 1:
+        #     yl = [preds[idx][0], 1 - preds[idx][0]]
+        # else:
+        #     yl = [1 - preds[idx][0], preds[idx][0]]
+        # fig.add_trace(go.Bar(x=['Non-Toxic', 'Toxic'], y=yl,
+        #     marker=dict(color=["seagreen", "indianred"])))
+        # fig.update_traces(name=comments[idx])
+        # fig.update_layout(xaxis_title="Labels", yaxis_title="Probability",
+        #     template="plotly_white", title_text=("Predictions for validation "
+        #     "comment #{}").format(idx+1))
+        # fig.show()
