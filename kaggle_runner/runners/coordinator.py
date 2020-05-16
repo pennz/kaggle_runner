@@ -393,7 +393,7 @@ wait_ncat 60
 which $NC >/dev/null || NC=nc
 export NC
 
-pip install pydicom parse pytest-logger python_logging_rabbitmq coverage &
+pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
 python3 -m pip install pyvim neovim msgpack==1.0.0 &&
 python -m pip install pyvim neovim msgpack==1.0.0 &&  # for vim
 
