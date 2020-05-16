@@ -8,7 +8,6 @@ from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
 from kaggle_runner.datasets.bert import (train_dataset, val_data,
                                          valid_dataset, x_valid, y_valid)
 from kaggle_runner.utils.tpu import strategy
-from kaggle_runner.utils.visualizer import visualize_model_preds
 
 # ### DistilBERT
 #
@@ -18,9 +17,7 @@ from kaggle_runner.utils.visualizer import visualize_model_preds
 # to train in less time. The approach can be summarized with the flowchart below:
 #
 # <center><img src="https://i.imgur.com/6AGu9a4.png" width="315px"></center>
-N_STEPS = 100
-calls = ReduceLROnPlateauLogCBs((x_valid, y_valid))
-EPOCHS = 2
+bert_cbs = ReduceLROnPlateauLogCBs((x_valid, y_valid))
 
 # ### Define the model
 model_distilbert = None

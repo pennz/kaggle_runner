@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from kaggle_runner.datasets.bert import (train_dataset, val_data,
                                          valid_dataset, x_valid, y_valid)
-from kaggle_runner.kernels.bert import calls, model_distilbert
+from kaggle_runner.kernels.bert import bert_cbs, model_distilbert
 from kaggle_runner.utils.visualizer import visualize_model_preds
 
 
@@ -15,9 +15,9 @@ class Test_distilbert_model(TestCase):
             train_dataset,
             steps_per_epoch=24,
             validation_data=valid_dataset,
-            callbacks = calls,
+            callbacks = bert_cbs,
             epochs=1
-        )
+bert_cbs   )
 # ### Visualize model architecture
 
 # SVG(tf.keras.utils.model_to_dot(model_distilbert, drpi=70).create(prog='dot', format='svg'))
