@@ -71,7 +71,6 @@ train["comment_text"] = clean(train["comment_text"])
 
 # -
 
-
 x_train = fast_encode(train.comment_text.astype(str),
                       fast_tokenizer, maxlen=512)
 x_valid = fast_encode(val_data.comment_text.astype(str).values,
@@ -79,6 +78,7 @@ x_valid = fast_encode(val_data.comment_text.astype(str).values,
 x_test = fast_encode(test_data.content.astype(str).values,
                      fast_tokenizer, maxlen=512)
 
+# TODO just save it to disk or dataset for faster startup
 y_valid = val.toxic.values
 y_train = train.toxic.values
 ### Define training, validation, and testing datasets
