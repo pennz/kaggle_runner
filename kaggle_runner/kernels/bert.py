@@ -49,4 +49,3 @@ with strategy.scope():
     transformer_layer = transformers.TFDistilBertModel.\
     from_pretrained('distilbert-base-multilingual-cased')
     model_distilbert = build_distilbert_model(transformer_layer, max_len=512)
-
