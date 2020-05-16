@@ -380,12 +380,12 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
         return model
 
     def run_lstm_model(
-        self,
-        final_train=False,
-        n_splits=NUM_MODELS,
-        predict_ones_with_identity=True,
-        params=None,
-        val_mask=None,
+            self,
+            final_train=False,
+            n_splits=NUM_MODELS,
+            predict_ones_with_identity=True,
+            params=None,
+            val_mask=None,
     ):
         # TODO condiser use train test split as
         """
@@ -536,7 +536,7 @@ BS {BATCH_SIZE}, NO_ID_IN_TRAIN {EXCLUDE_IDENTITY_IN_TRAIN}, EPOCHS {EPOCHS}, Y_
 
             if not predict_only:
                 prog_bar_logger = NBatchProgBarLogger(
-                    display_per_batches=int(1600000 / 20 / BATCH_SIZE),
+                    display_per_batches=int(len(train_X) / 10 / BATCH_SIZE),
                     early_stop=True,
                     patience_displays=3,
                 )
