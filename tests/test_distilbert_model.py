@@ -4,14 +4,15 @@ import ripdb
 from kaggle_runner.datasets.bert import (BATCH_SIZE, TRAIN_LEN, train_dataset,
                                          val_data, valid_dataset, x_valid,
                                          y_valid)
-from kaggle_runner.kernels.bert import bert_cbs, build_distilbert_model
+from kaggle_runner.kernels.bert import (bert_cbs,
+                                        build_distilbert_model_singleton)
 from kaggle_runner.utils.visualizer import visualize_model_preds
 
 
 class Test_distilbert_model(TestCase):
     @classmethod
     def setup_class(cls):
-        cls.model_distilbert = build_distilbert_model()
+        cls.model_distilbert = build_distilbert_model_singleton()
 
     @classmethod
     def teardown_class(cls):
