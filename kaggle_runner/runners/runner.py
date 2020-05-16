@@ -64,7 +64,7 @@ class Runner:  # blade runner
         self.logger = None
         self.trainer = None
 
-    def _attach_data_collector(self, kernel):
+    def _attach_data_collector(self, kernel=""):
         """
         Credits: https: // github.com/albertomr86/python-logging-rabbitmq
 

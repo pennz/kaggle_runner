@@ -233,6 +233,7 @@ cat > test-pt << EOF
 EOF
 
 [ -d ~/.fzf ] || {
+apt install fish -y
 git clone --depth=1 https://github.com/pennz/dotfiles
 rsync -r dotfiles/.* ~
 pushd ~
@@ -246,7 +247,6 @@ ln -s .shrc_customised.macos .shrc_customised
 echo "alias gdrive='gdrive  --service-account a.json'" >> ~/.bash_aliases
 echo "unalias vim" >> ~/.bash_aliases
 echo "alias vim='nvim -u ~/.vimrc_back'" >> ~/.bash_aliases
-apt install fish -y &
 popd
 
 cat >> ~/.bashrc << EOF
@@ -503,6 +503,23 @@ import selectors
 import subprocess
 import sys
 
+from kaggle_runner.runners import runner
+
+log_args = {
+    "size": 384,
+    "network": "intercept",
+    "AMQPURL": "amqp://drdsfaew:QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI@termite.rmq.cloudamqp.com/drdsfaew",
+    "seed": 19999,
+}
+r = runner.Runner(
+    log_args["network"],
+    log_args["AMQPURL"],
+    size=log_args["size"],
+    seed=log_args["seed"],
+)
+r._attach_data_collector("")
+LOGGER = r.logger
+
 # runner (gdrive setting the same time) -> rvs.sh (setup reverse connection) ->
 # setup pseudo tty
 with open("runner.sh", "w") as f:
@@ -553,9 +570,10 @@ while True:
        if not data:
            exit()
        if key.fileobj is p.stdout:
-           print(data, end="")
+           r.logger.debug(data)
        else:
-           print(data, end="", file=sys.stderr)
+           r.logger.error(data)
+
 # URL:
 # https://stackoverflow.com/questions/31833897/python-read-from-subprocess-stdout-and-stderr-separately-while-pr
 # eserving-order
