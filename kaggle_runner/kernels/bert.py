@@ -5,8 +5,7 @@ from tensorflow.keras.optimizers import Adam
 
 import transformers
 from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
-from kaggle_runner.datasets.bert import (train_dataset, val_data,
-                                         valid_dataset, x_valid, y_valid)
+from kaggle_runner.datasets.bert import x_valid, y_valid
 from kaggle_runner.utils.tpu import strategy
 
 # ### DistilBERT
