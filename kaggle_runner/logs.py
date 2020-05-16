@@ -66,9 +66,9 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         num_steps = logs.get("num_steps", 1)
 
         if self.use_steps:
-            self.batch_size += num_steps
+            self.batch_size = num_steps
         else:
-            self.batch_size += batch_size * num_steps
+            self.batch_size = batch_size * num_steps
 
         before_seen = self.seen
         self.seen += self.batch_size
