@@ -1,4 +1,5 @@
 from unittest import TestCase
+import ripdb
 
 from kaggle_runner.datasets.bert import (BATCH_SIZE, TRAIN_LEN, train_dataset,
                                          val_data, valid_dataset, x_valid,
@@ -9,6 +10,7 @@ from kaggle_runner.utils.visualizer import visualize_model_preds
 
 class Test_distilbert_model(TestCase):
     def test_summary(self):
+        ripdb.set_trace()
         model_distilbert.summary()
 
     def test_fit(self):
