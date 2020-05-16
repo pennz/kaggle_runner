@@ -35,7 +35,6 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
             early_stop=False,
             patience_displays=0,
             epsilon=1e-7,
-            batch_size=1024,
     ):
         super(NBatchProgBarLogger, self).__init__(count_mode, stateful_metrics)
         self.display_per_batches = 1 if display_per_batches < 1 else display_per_batches
@@ -51,7 +50,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
         self.losses_sum_display = 0
         self.epsilon = epsilon
         self.stopped_step = 0
-        self.batch_size = batch_size
+        self.batch_size = 0
         self.epochs = 0
 
     def on_train_begin(self, logs=None):
