@@ -64,5 +64,8 @@ install_dep:
 connect:
 	stty raw -echo && ( ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
 
+ripdbc:
+	bash -c "SAVED_STTY=$$(stty -g); stty -icanon -opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 4444; stty $$SAVED_STTY"
+
 
 .PHONY: clean connect inner_lstm
