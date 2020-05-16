@@ -29,7 +29,7 @@ lstm:
 	-pkill -f "inner_lstm"
 	make inner_lstm
 toxic_debug: update_code
-	python3 -m pdb pytest -sv tests/test_distilbert_model.py
+	python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 toxic: update_code
 	python3 -m pytest -sv tests/test_distilbert_model.py | tee toxic_log
 
