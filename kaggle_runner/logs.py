@@ -30,7 +30,7 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
             self,
             count_mode="samples",
             stateful_metrics=None,
-            display_per_batches=1000,
+            display_per_batches=1,
             verbose=1,
             early_stop=False,
             patience_displays=0,
@@ -111,11 +111,6 @@ class NBatchProgBarLogger(tf.keras.callbacks.ProgbarLogger):
                     std = np.std(
                         self.losses
                     )  # as SGD, always variance, so not a good way, need to learn from early stopping
-                    std_start_step = (
-                        self.step_idx
-                        - self.display_per_batches * self.patience_displays
-                        + 1
-                    )
                     print(
                         f"mean(over displays): {np.mean(self.losses)}, std:{std} for Display {self.display_idx-self.patience_displays} to {self.display_idx-1}"
                     )
