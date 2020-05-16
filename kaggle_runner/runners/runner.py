@@ -2,8 +2,6 @@ import json
 import types
 from socket import gethostname
 
-from kaggle_runner import kernels
-from kaggle_runner.runners.trainer import Trainer
 from kaggle_runner.utils import utils
 from kaggle_runner.utils.utils import parse_AMQP
 from python_logging_rabbitmq import RabbitMQHandler
@@ -33,25 +31,6 @@ def log_format(self, record):
                 del data[f]
 
     return json.dumps(data)
-
-
-class TrainerConfig:
-    "TrainerConfig control the process of the training -> runner call trainer -> then kernel"
-    " for complicate logic, how can it be implemented? just patch, or just another layer of abastraction to "
-    " handle training process"
-
-    "No just simple logic, the aim is calculating fast first"
-    pass
-
-
-class TrainerWithStatus(Trainer):
-    def __init__(self, model, data_folder, df_path, config=None):
-        assert isinstance(model, kernels.KaggleKernel)
-        super(Trainer, self).__init__(model, data_folder, df_path)
-        self._handle_config(config)
-
-    def _handle_config(self, config):
-        pass
 
 
 class Runner:  # blade runner
