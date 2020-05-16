@@ -7,9 +7,6 @@ from kaggle_runner.utils.visualizer import visualize_model_preds
 
 
 class Test_distilbert_model(TestCase):
-    def test_build_distilbert_model(self):
-        self.fail()
-
     def test_summary(self):
         model_distilbert.summary()
 
