@@ -88,7 +88,7 @@ train_dataset = (
     tf.data.Dataset
     .from_tensor_slices((x_train, y_train))
     .repeat()
-    .shuffle(2048)
+    .shuffle(2048*8)
     .batch(BATCH_SIZE)
     .prefetch(AUTO)
 )
