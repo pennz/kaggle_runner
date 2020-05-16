@@ -19,9 +19,9 @@ from kaggle_runner.utils.tpu import strategy
 bert_cbs = ReduceLROnPlateauLogCBs((x_valid, y_valid))
 
 # ### Define the model
-model_distilbert = None
+__model_distilbert = None
 
-def build_distilbert_model(transformer, max_len=512):
+def _build_distilbert_model(transformer, max_len=512):
     input_word_ids = Input(shape=(max_len,), dtype=tf.int32, name="input_word_ids")
     sequence_output = transformer(input_word_ids)[0]
     cls_token = sequence_output[:, 0, :]
@@ -38,10 +38,13 @@ def build_distilbert_model(transformer, max_len=512):
     return model
 
 
-# ### Build the model and check summary
+def build_distilbert_model():
+    global __model_distilbert
 
-# +
-with strategy.scope():
-    transformer_layer = transformers.TFDistilBertModel.\
-    from_pretrained('distilbert-base-multilingual-cased')
-    model_distilbert = build_distilbert_model(transformer_layer, max_len=512)
+    if __model_distilbert is None:
+        with strategy.scope():
+            transformer_layer = transformers.TFDistilBertModel.\
+            from_pretrained('distilbert-base-multilingual-cased')
+            __model_distilbert = _build_distilbert_model(transformer_layer, max_len=512)
+
+    return __model_distilbert
