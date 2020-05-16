@@ -29,8 +29,9 @@ def visualize_model_preds(model,val_data, x_valid, y_valid, indices=[0, 17, 1, 2
             print("ORIGINAL")
             print(comments[idx].encode('utf-8')); print("")
             print("TRANSLATED")
-            print(translator.translate(comments[idx].encode('utf-8')).text)
-        except Exception:
+            print(translator.translate(comments[idx]).text)
+        except Exception as e:
+            print(e)
             print("encode error")
 
         # fig = go.Figure()
