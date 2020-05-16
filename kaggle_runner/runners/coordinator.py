@@ -570,6 +570,8 @@ while True:
        data = key.fileobj.read1(80).decode()
        if not data:
            exit()
+       if data == "":
+           continue
        if key.fileobj is p.stdout:
            r.logger.debug(data)
        else:

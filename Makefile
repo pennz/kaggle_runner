@@ -68,6 +68,8 @@ ripdbrv:
 	while true; do ncat 112.65.9.197 23454 --sh-exec 'ncat 127.1 4444' ; sleep 1; echo -n "." ; done;
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
+get_log:
+	./receive_logs_topic \*.\* 2>&1 |  sed -n 's/.*\[x\]//p' | jq '(.host +" "+ .levelname +": " +.msg)'
 
 
 .PHONY: clean connect inner_lstm
