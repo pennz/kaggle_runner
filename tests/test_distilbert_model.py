@@ -16,8 +16,8 @@ class Test_distilbert_model(TestCase):
             train_dataset,
             steps_per_epoch=TRAIN_LEN/BATCH_SIZE,
             validation_data=valid_dataset,
-            callbacks = bert_cbs,
-            epochs=1
+            callbacks=bert_cbs,
+            epochs=8
         )
 # ### Visualize model architecture
 
@@ -25,4 +25,5 @@ class Test_distilbert_model(TestCase):
 
     def test_visualize(self):
         # model_distilbert.summary()
-        visualize_model_preds(model_distilbert, val_data, x_valid, y_valid)
+        visualize_model_preds(model_distilbert, val_data, x_valid, y_valid,
+                              indices=[2,3, 5, 6, 7, 8, 1, 4])
