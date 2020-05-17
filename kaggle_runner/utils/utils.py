@@ -49,6 +49,29 @@ def get_logger(name="utils", level=logging.DEBUG):
 
     return logger
 
+def log_format(self, record):
+    data = record.__dict__.copy()
+
+    if record.args:
+        msg = record.msg % record.args
+    else:
+        msg = record.msg
+
+    data.update(
+        host=gethostname(), msg=msg, args=tuple(text_type(arg) for arg in record.args)
+    )
+
+    if "exc_info" in data and data["exc_info"]:
+        data["exc_info"] = self.formatException(data["exc_info"])
+
+    if self.include:
+        data = {f: data[f] for f in self.include}
+    elif self.exclude:
+        for f in self.exclude:
+            if f in data:
+                del data[f]
+
+    return json.dumps(data)
 
 def attach_data_collector(logger, AMQPURL=AMQPURL()):
     """
@@ -96,28 +119,3 @@ def parse_AMQP(url_str):
         return AMQPURL(host, passwd, Vhost, username)
     except TypeError as e:
         logger.debug(e)
-
-
-def log_format(self, record):
-    data = record.__dict__.copy()
-
-    if record.args:
-        msg = record.msg % record.args
-    else:
-        msg = record.msg
-
-    data.update(
-        host=gethostname(), msg=msg, args=tuple(text_type(arg) for arg in record.args)
-    )
-
-    if "exc_info" in data and data["exc_info"]:
-        data["exc_info"] = self.formatException(data["exc_info"])
-
-    if self.include:
-        data = {f: data[f] for f in self.include}
-    elif self.exclude:
-        for f in self.exclude:
-            if f in data:
-                del data[f]
-
-    return json.dumps(data)
