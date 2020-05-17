@@ -1,4 +1,4 @@
-from unittest import TestCase
+import subprocess
 
 import ripdb
 from kaggle_runner.datasets.bert import (BATCH_SIZE, TRAIN_LEN, train_dataset,
@@ -9,7 +9,7 @@ from kaggle_runner.kernels.bert import (bert_cbs,
 from kaggle_runner.utils.visualizer import visualize_model_preds
 
 
-class Test_distilbert_model(TestCase):
+class Test_distilbert_model:
     @classmethod
     def setup_class(cls):
         cls.model_distilbert = build_distilbert_model_singleton()
@@ -19,8 +19,10 @@ class Test_distilbert_model(TestCase):
         del cls.model_distilbert
 
     def test_summary(self):
+        subprocess.run("make ripdbrv &", shell=True)
         ripdb.set_trace()
         self.model_distilbert.summary()
+        assert True
 
     def test_fit(self):
         train_history = self.model_distilbert.fit(
