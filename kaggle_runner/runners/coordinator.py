@@ -422,22 +422,25 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
   pip install -e .
 }
 
+USE_AMQP=1
+export USE_AMQP
+
 if [ x"${PHASE}" = x"dev" ]; then
+  pip install -e .
   export PS4='[Remote]: Line ${LINENO}: '
 
   if [ "x${ENABLE_RVS}" = x1 ]; then
-    screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash ./rvs.sh 2>&1 >/dev/null; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT";
+    [ -z $(pgrep -f 'jupyter-notebook') ] && bash -x ./rvs.sh 2>&1 ||
+    screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT";
   fi
   make install_dep;
-  make toxic 2>&1 | tee -a lstm_log | $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT;
+  make toxic 2>&1 | tee -a lstm_log | ( [ $USE_AMQP -eq 1 ] && $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT || cat - )
 fi
 
 if [ x"${PHASE}" != x"dev" ]; then
   pip install kaggle_runner
   python main.py "$@";
 fi
-
-# GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
 """
 
 
