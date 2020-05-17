@@ -233,7 +233,6 @@ cat > test-pt << EOF
 EOF
 
 [ -d ~/.fzf ] || {
-apt install fish -y
 git clone --depth=1 https://github.com/pennz/dotfiles
 rsync -r dotfiles/.* ~
 pushd ~
@@ -377,7 +376,7 @@ SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 apt update && apt install -y netcat nmap screen time
-apt install -y tig ctags htop tree pv tmux psmisc neovim &
+apt install -y fish tig ctags htop tree pv tmux psmisc neovim &
 
 bash rpt
 wait_ncat() {
