@@ -12,11 +12,13 @@ def may_debug():
 
     if RIPDB:
         try:
+            logger.debug(f"try port %s for ripdb done", __port)
             ripdb.set_trace(port=__port)
         except OSError:
             __port += 1
+            logger.debug(f"try port %s for ripdb done", __port)
             ripdb.set_trace(port=__port)
         else:
             __port += 1
         finally:
-            logger.debug(f"port %s for ripdb", __port)
+            logger.debug(f"port %s for ripdb done", __port-1)
