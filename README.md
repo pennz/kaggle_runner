@@ -28,3 +28,13 @@ EOF
 # kaggle_runner will use kaggle API to push the template kernel codes to kaggle server and wait message back
 python -m kaggle_runner
 ```
+
+A demo:
+
+1. \#0 Left panel: tcpserver listen for reverse shells
+1. \#1 Upper panel: Logs from interactive session to our tcpserver which receive logs
+1. \#2 Second upper panel: amqp logs received
+1. \#3 Main panel: vim window
+1. \#4 Right bottom panel: logged in reverse shell for commit session
+
+[![asciicast](https://asciinema.org/a/vcLKH8MEkxv4WYEb9xxK8xBnU.svg)](https://asciinema.org/a/vcLKH8MEkxv4WYEb9xxK8xBnU)
