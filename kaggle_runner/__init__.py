@@ -4,7 +4,16 @@ import ripdb
 
 from .defaults import RIPDB
 
+__port = 4444
 
 def may_debug():
+    global __port
+
     if RIPDB:
-        ripdb.set_trace()
+        try:
+            ripdb.set_trace(port=__port)
+        except OSError:
+            __port += 1
+            ripdb.set_trace(port=__port)
+        else:
+            __port += 1

@@ -83,9 +83,13 @@ x_test = fast_encode(test_data.content.astype(str).values,
 
 # TODO just save it to disk or dataset for faster startup
 y_valid = val.toxic.values
-y_train = train.toxic.values  # TODO add aux data
+# y_train = train.toxic.values  # TODO add aux data
 ### Define training, validation, and testing datasets
 
+y_train=np.stack(
+[train.toxic.values, train.severe_toxic.values, train.obscene.values,
+ train.threat.values, train.insult.values, train.identity_hate.values]
+).T
 # +
 train_dataset = (
     tf.data.Dataset
