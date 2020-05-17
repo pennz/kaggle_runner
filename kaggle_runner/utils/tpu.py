@@ -10,12 +10,13 @@ try:
     tf.config.experimental_connect_to_cluster(tpu)
     tf.tpu.experimental.initialize_tpu_system(tpu)
     strategy = tf.distribute.experimental.TPUStrategy(tpu)
+    BATCH_SIZE = 32 * strategy.num_replicas_in_sync
 except ValueError as e:
     utils.logger.error(e)
     tpu = None
     strategy = None
+    BATCH_SIZE = 32 * 32
 
 GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
 
 EPOCHS = 2
-BATCH_SIZE = 32 * strategy.num_replicas_in_sync
