@@ -1,7 +1,7 @@
 #!/bin/bash
 
 while true; do
-  test x$(git pull | grep -c Already) = x0 || bash -c "$*";
+  test x$(git pull | grep -c Already) = x1 || bash -c "$*";
 
   echo "$(date) $HOSTNAME CPU: "$(grep \
     'cpu ' /proc/stat >/dev/null;sleep 0.1; grep 'cpu ' /proc/stat | awk -v RS='' \
