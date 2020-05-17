@@ -20,4 +20,4 @@ DATA_ACTION_NO_NEED_LOAD_EMB_M = "DATA_ACTION_NO_NEED_LOAD_EMB_M"
 NEG_RATIO = 1 - 0.05897253769515213
 Data_Folder = '/home/'
 
-RIPDB = True if os.environ["RIPDB"] == 'true' else False
+RIPDB = os.environ.get("RIPDB") == 'true'
