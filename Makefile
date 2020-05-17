@@ -46,8 +46,7 @@ run_submit:
 twine:
 	@python3 -m twine -h >/dev/null || ( echo "twine not found, will install it." ; python3 -m pip install --user --upgrade twine )
 publish: twine
-	@if [[ x$(TAG) =~ xv ]] || [ -z $(TAG) ]; then echo "Please pass TAG flag when you call make, and use something like 0.0.3, not v0.0.3"; false; else git tag -s v$(TAG); fi
-	sed -i "s/version=.*/version=\"$(TAG)\",/" setup.py
+	@if [[ x$(TAG) =~ xv ]] || [ -z $(TAG) ]; then >&2 echo "Please pass TAG flag when you call make, and use something like 0.0.3, not v0.0.3"; false; else sed -i "s/version=.*/version=\"$(TAG)\",/" setup.py && git add setup.py && git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push --tags; fi
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
 update_code:
