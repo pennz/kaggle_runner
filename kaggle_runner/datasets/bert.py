@@ -8,17 +8,11 @@ import tensorflow as tf
 import ripdb
 import transformers
 from kaggle_runner import may_debug
-from kaggle_runner.utils.tpu import strategy
+from kaggle_runner.utils.tpu import BATCH_SIZE
 from tokenizers import BertWordPieceTokenizer
 
 # Dataloading related
 AUTO = tf.data.experimental.AUTOTUNE
-try:
-    BATCH_SIZE = 32 * strategy.num_replicas_in_sync
-except ValueError as e:
-    print(e)
-    print("No TPU, just continue")
-    BATCH_SIZE = 32 * 16
 
 # ### Load the training, validation, and testing datasets
 
