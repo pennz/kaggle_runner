@@ -432,9 +432,9 @@ if [ x"${PHASE}" = x"dev" ]; then
   if [ "x${ENABLE_RVS}" = x1 ]; then
     [ -z $(pgrep -f 'jupyter-notebook') ] && bash -x ./rvs.sh 2>&1 ||
     screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT";
-  fi
+  fi &
   make install_dep;
-  make toxic 2>&1 | tee -a lstm_log | ( [ $USE_AMQP -eq 1 ] && $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT || cat - )
+  make toxic 2>&1 | tee -a lstm_log | ( [ $USE_AMQP -eq 0 ] && $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT || cat - )
 fi
 
 if [ x"${PHASE}" != x"dev" ]; then
