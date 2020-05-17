@@ -1,4 +1,6 @@
 #!/bin/bash
+git pull;
+bash -x -c "$*";
 
 while true; do
   test x$(git pull | grep -c Already) = x1 || bash -c "$*";
