@@ -5,7 +5,9 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
+import ripdb
 import transformers
+from kaggle_runner import may_debug
 from kaggle_runner.utils.tpu import strategy
 from tokenizers import BertWordPieceTokenizer
 
@@ -56,6 +58,7 @@ fast_tokenizer = BertWordPieceTokenizer('distilbert_base_uncased/vocab.txt',
 # +
 val = val_data
 train = train_data
+may_debug()
 
 def clean(text):
     text = text.fillna("fillna").str.lower()
@@ -81,7 +84,7 @@ x_test = fast_encode(test_data.content.astype(str).values,
 
 # TODO just save it to disk or dataset for faster startup
 y_valid = val.toxic.values
-y_train = train.toxic.values
+y_train = train.toxic.values  # TODO add aux data
 ### Define training, validation, and testing datasets
 
 # +

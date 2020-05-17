@@ -8,6 +8,14 @@ from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
 from kaggle_runner.datasets.bert import x_valid, y_valid
 from kaggle_runner.utils.tpu import strategy
 
+# ### learn from 1st place solution
+# Custom head for BERT, XLNet and GPT2 and Bucket Sequencing Collator
+# Auxiliary tasks for models -> to add
+# Custom mimic loss -> done, need test
+# SWA and checkpoint ensemble
+# Rank average ensemble of 2x XLNet, 2x BERT and GPT2 medium
+
+
 # ### DistilBERT
 #
 # DistilBERT is a lighter version of BERT (a very complex model) which uses
@@ -27,7 +35,8 @@ def _build_distilbert_model_adv(transformer, max_len=512):
     _build_distilbert_model_adv just follow the good result and try to replicate
     https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/103280
     """
-    pass
+
+    return _build_distilbert_model(transformer, max_len=512)
 
 def _build_distilbert_model(transformer, max_len=512):
     input_word_ids = Input(shape=(max_len,), dtype=tf.int32, name="input_word_ids")

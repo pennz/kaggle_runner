@@ -31,7 +31,7 @@ lstm:
 toxic_debug: update_code
 	python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 toxic: update_code
-	python3 -m pytest -sv tests/test_distilbert_model.py | tee toxic_log
+	RIPDB='true' python3 -m pytest -sv tests/test_distilbert_model.py | tee toxic_log
 
 test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
