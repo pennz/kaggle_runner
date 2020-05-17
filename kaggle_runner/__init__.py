@@ -1,6 +1,7 @@
 __all__ = ["runners.runner", "runners.coordinator", "utils"]
 
 import ripdb
+from utils import logger
 
 from .defaults import RIPDB
 
@@ -17,3 +18,5 @@ def may_debug():
             ripdb.set_trace(port=__port)
         else:
             __port += 1
+        finally:
+            logger.debug(f"{__port} for ripdb")
