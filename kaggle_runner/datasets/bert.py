@@ -57,7 +57,6 @@ fast_tokenizer = BertWordPieceTokenizer('distilbert_base_uncased/vocab.txt',
 # +
 val = val_data
 train = train_data
-may_debug()
 
 def clean(text):
     text = text.fillna("fillna").str.lower()
@@ -90,6 +89,7 @@ y_train=np.stack(
 [train.toxic.values, train.severe_toxic.values, train.obscene.values,
  train.threat.values, train.insult.values, train.identity_hate.values]
 ).T
+may_debug()
 # +
 train_dataset = (
     tf.data.Dataset
