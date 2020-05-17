@@ -13,7 +13,12 @@ from tokenizers import BertWordPieceTokenizer
 
 # Dataloading related
 AUTO = tf.data.experimental.AUTOTUNE
-BATCH_SIZE = 32 * strategy.num_replicas_in_sync
+try:
+    BATCH_SIZE = 32 * strategy.num_replicas_in_sync
+except ValueError as e:
+    print(e)
+    print("No TPU, just continue")
+    BATCH_SIZE = 32 * 16
 
 # ### Load the training, validation, and testing datasets
 
