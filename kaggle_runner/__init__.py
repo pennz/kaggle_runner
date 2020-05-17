@@ -1,9 +1,9 @@
 __all__ = ["runners.runner", "runners.coordinator", "utils"]
 
 import ripdb
-from utils import logger
 
 from .defaults import RIPDB
+from .utils import logger
 
 __port = 4444
 
@@ -19,4 +19,4 @@ def may_debug():
         else:
             __port += 1
         finally:
-            logger.debug(f"{__port} for ripdb")
+            logger.debug(f"port %s for ripdb", __port)
