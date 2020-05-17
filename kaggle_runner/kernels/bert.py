@@ -21,9 +21,18 @@ bert_cbs = ReduceLROnPlateauLogCBs((x_valid, y_valid))
 # ### Define the model
 __model_distilbert = None
 
+
+def _build_distilbert_model_adv(transformer, max_len=512):
+    """
+    _build_distilbert_model_adv just follow the good result and try to replicate
+    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/103280
+    """
+    pass
+
 def _build_distilbert_model(transformer, max_len=512):
     input_word_ids = Input(shape=(max_len,), dtype=tf.int32, name="input_word_ids")
     sequence_output = transformer(input_word_ids)[0]
+
     cls_token = sequence_output[:, 0, :]
     cls_token = Dense(500, activation="elu")(cls_token)
     cls_token = Dropout(0.1)(cls_token)
@@ -38,13 +47,17 @@ def _build_distilbert_model(transformer, max_len=512):
     return model
 
 
-def build_distilbert_model_singleton():
+def build_distilbert_model_singleton(model_type=None):
     global __model_distilbert
 
     if __model_distilbert is None:
         with strategy.scope():
             transformer_layer = transformers.TFDistilBertModel.\
             from_pretrained('distilbert-base-multilingual-cased')
+
+        if model_type is None:
             __model_distilbert = _build_distilbert_model(transformer_layer, max_len=512)
+        else:
+            __model_distilbert = _build_distilbert_model_adv(transformer_layer, max_len=512)
 
     return __model_distilbert
