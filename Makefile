@@ -48,7 +48,7 @@ twine:
 publish: twine
 	@if [[ x$(TAG) =~ xv ]] || [ -z $(TAG) ]; then echo "Please pass TAG flag when you call make, and use something like 0.0.3, not v0.0.3"; false; else git tag -s v$(TAG); fi
 	python3 setup.py sdist bdist_wheel
-	sed -i "s/version=.*/version=\"\"/" setup.py
+	sed -i "s/version=.*/version=\"$(TAG)\",/" setup.py
 	python3 -m twine upload dist/*
 update_code:
 	-git stash; git pull
