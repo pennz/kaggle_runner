@@ -12,7 +12,7 @@ try:
     strategy = tf.distribute.experimental.TPUStrategy(tpu)
     BATCH_SIZE = 32 * strategy.num_replicas_in_sync
 except ValueError as e:
-    utils.logger.error(e)
+    utils.logger.error("%s",e)
     tpu = None
     strategy = None
     BATCH_SIZE = 32 * 32
