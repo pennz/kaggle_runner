@@ -31,32 +31,20 @@ class Test_distilbert_model:
 
     def test_summary(self):
         may_debug()
-        self.model_distilbert_dev = build_distilbert_model_singleton()
+        self.model_distilbert = build_distilbert_model_singleton()
 
         self.model_distilbert.summary()
         assert True
 
     def test_fit_adv(self):
         # self.model_distilbert_dev = build_distilbert_model_singleton(model_type="1st")
-        train_history = self.model_distilbert_dev.fit(
+        train_history = self.model_distilbert.fit(
             train_dataset,
             steps_per_epoch=TRAIN_LEN/BATCH_SIZE,
             validation_data=valid_dataset,
             callbacks=bert_cbs,
-            epochs=8
-        )
-
-    def test_fit(self):
-        train_history = self.model_distilbert.fit(
-            train_dataset,
-            steps_per_epoch=TRAIN_LEN/BATCH_SIZE/10, # just try a little
-            validation_data=valid_dataset,
-            callbacks=bert_cbs,
             epochs=1
         )
-# ### Visualize model architecture
-
-# SVG(tf.keras.utils.model_to_dot(model_distilbert, drpi=70).create(prog='dot', format='svg'))
 
     def test_visualize(self):
         # model_distilbert.summary()

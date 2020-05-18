@@ -73,6 +73,8 @@ install_dep:
 	-pip install -q textstat
 	-pip install -q googletrans
 
+connect_close:
+	stty raw -echo && ( ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
 connect:
 	while true; do ./to_tvs; >&2 echo "no available ports, will try again in 10s"; sleep 10; done
 

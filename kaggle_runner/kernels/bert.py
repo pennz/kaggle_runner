@@ -56,7 +56,7 @@ def _build_distilbert_model(transformer, max_len=512):
     return model
 
 
-def build_distilbert_model_singleton(model_type=None):
+def build_distilbert_model_singleton():
     global __model_distilbert
 
     if __model_distilbert is None:

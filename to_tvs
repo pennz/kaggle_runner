@@ -1,7 +1,7 @@
 #!/bin/bash
 TMPFILE=$(mktemp)
 
-ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | sort -r | head -n 2 | tee $TMPFILE
+ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | sort -r | head -n 1 | tee $TMPFILE
 
 stty raw opost -echo && 
 while read -u 3 port; do
@@ -10,6 +10,5 @@ while read -u 3 port; do
   echo "connection to port $port closed";
   sleep 1;
 done 3<$TMPFILE
-tcpserver
 
 rm $TMPFILE
