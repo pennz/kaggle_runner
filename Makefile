@@ -95,7 +95,7 @@ get_log:
 log:
 	./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
 
-check_debug:
+check:
 	echo $$DEBUG
 	eval 'echo $$(which $(PY3)) is our python executable'
 	python -c 'import os; print(os.environ.get("DEBUG"));'

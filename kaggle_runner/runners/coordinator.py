@@ -506,7 +506,7 @@ import selectors
 import subprocess
 import sys
 
-subprocess.run('pip install -e .', shell=True)
+subprocess.run('git clone --depth=1 https://github.com/pennz/kaggle_runner; pip install -e kaggle_runner', shell=True)
 from kaggle_runner import logger
 
 
