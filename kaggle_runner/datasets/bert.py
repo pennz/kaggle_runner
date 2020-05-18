@@ -31,7 +31,6 @@ val_data = None
 test_data = None
 train_data = None
 
-may_debug()
 data_package = get_kaggle_dataset_input("jigsaw-multilingula-toxicity-token-encoded/toxic_fast_tok_512.pk")
 csv_data_package = get_kaggle_dataset_input("jigsaw-multilingula-toxicity-token-encoded/toxic_csv.pk")
 
