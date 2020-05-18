@@ -1,12 +1,15 @@
-__all__ = ["runners.runner", "runners.coordinator", "utils"]
+__all__ = ["logger", "runners.runner", "runners.coordinator", "utils"]
 
 import ipdb
 
 from .defaults import DEBUG, RIPDB
 from .utils import logger
 
+logger = logger
+
 __port = 4444
 __rip = False
+
 
 def may_debug():
     global __port
