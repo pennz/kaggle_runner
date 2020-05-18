@@ -507,22 +507,8 @@ import subprocess
 import sys
 
 subprocess.run('pip install kaggle_runner', shell=True)
-from kaggle_runner.runners import runner
+from kaggle_runner import logger
 
-log_args = {
-    "size": 384,
-    "network": "intercept",
-    "AMQPURL": "amqp://drdsfaew:QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI@termite.rmq.cloudamqp.com/drdsfaew",
-    "seed": 19999,
-}
-r = runner.Runner(
-    log_args["network"],
-    log_args["AMQPURL"],
-    size=log_args["size"],
-    seed=log_args["seed"],
-)
-r._attach_data_collector("")
-LOGGER = r.logger
 
 # runner (gdrive setting the same time) -> rvs.sh (setup reverse connection) ->
 # setup pseudo tty
@@ -576,9 +562,11 @@ while True:
        if data == "":
            continue
        if key.fileobj is p.stdout:
-           r.logger.debug(data)
+           logger.debug(data)
+           print(data, end="")
        else:
-           r.logger.error(data)
+           logger.error(data)
+           print(data, end="", file=sys.stderr)
 
 # URL:
 # https://stackoverflow.com/questions/31833897/python-read-from-subprocess-stdout-and-stderr-separately-while-pr
