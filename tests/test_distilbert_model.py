@@ -30,7 +30,6 @@ class Test_distilbert_model:
         assert train_dataset is not None
 
     def test_summary(self):
-        may_debug()
         self.model_distilbert = build_distilbert_model_singleton()
 
         self.model_distilbert.summary()
@@ -54,3 +53,5 @@ class Test_distilbert_model:
 if __name__ == "__main__":
     tt = Test_distilbert_model()
     tt.test_summary()
+    tt.test_fit_adv()
+    tt.test_visualize()
