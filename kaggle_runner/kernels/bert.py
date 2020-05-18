@@ -1,9 +1,9 @@
 import tensorflow as tf
+import transformers
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
-import transformers
 from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
 from kaggle_runner.datasets.bert import x_valid, y_valid
 from kaggle_runner.utils.tpu import strategy
@@ -44,8 +44,8 @@ def _build_distilbert_model(transformer, max_len=512):
 
     cls_token = sequence_output[:, 0, :]
     cls_token = Dense(500, activation="elu")(cls_token)
-    cls_token = Dropout(0.1)(cls_token)
-    out = Dense(1, activation='sigmoid')(cls_token)
+    cls_token = Dropout(0.2)(cls_token)
+    out = Dense(6, activation='sigmoid')(cls_token)
 
     model = Model(inputs=input_word_ids, outputs=out)
 
