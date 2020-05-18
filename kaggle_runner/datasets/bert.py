@@ -26,16 +26,27 @@ TEST_PATH = DATA_PATH + "test.csv"
 VAL_PATH = DATA_PATH + "validation.csv"
 TRAIN_PATH = DATA_PATH + "jigsaw-toxic-comment-train.csv"
 
+val_data = None
+test_data = None
+train_data = None
+
 may_debug()
 data_package = get_obj_or_dump("toxic_fast_tok_512.pk")
+csv_data_package = get_obj_or_dump("toxic_csv.pk")
 
-if data_package is None:
-# -
-
+if csv_data_package is None:
     val_data = pd.read_csv(VAL_PATH)
     test_data = pd.read_csv(TEST_PATH)
     train_data = pd.read_csv(TRAIN_PATH)
-    tokenizer = transformers.DistilBertTokenizer.from_pretrained('distilbert-base-multilingual-cased')
+    csv_data_package = get_obj_or_dump(
+        "toxic_csv.pk", default=(val_data, test_data, train_data))
+else:
+    val_data, test_data, train_data = csv_data_package
+
+
+if data_package is None:
+    tokenizer = transformers.DistilBertTokenizer.from_pretrained(
+        'distilbert-base-multilingual-cased')
 
     save_path = '/kaggle/working/distilbert_base_uncased/'
 
@@ -65,9 +76,11 @@ if data_package is None:
 
     def clean(text):
         text = text.fillna("fillna").str.lower()
-        text = text.map(lambda x: re.sub('\\n',' ',str(x)))
-        text = text.map(lambda x: re.sub("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}",'',str(x)))
-        text = text.map(lambda x: re.sub("\(http://.*?\s\(http://.*\)",'',str(x)))
+        text = text.map(lambda x: re.sub('\\n', ' ', str(x)))
+        text = text.map(lambda x: re.sub(
+            "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", '', str(x)))
+        text = text.map(lambda x: re.sub(
+            "\(http://.*?\s\(http://.*\)", '', str(x)))
 
         return text
 
@@ -91,15 +104,15 @@ if data_package is None:
 # y_train = train.toxic.values  # TODO add aux data
 ### Define training, validation, and testing datasets
 
-    y_train=np.stack( [train.toxic.values, train.severe_toxic.values,
-    train.obscene.values, train.threat.values, train.insult.values,
-                       train.identity_hate.values]).T
+    y_train = np.stack([train.toxic.values, train.severe_toxic.values,
+                        train.obscene.values, train.threat.values, train.insult.values,
+                        train.identity_hate.values]).T
 
-    data_package = get_obj_or_dump("toxic_fast_tok_512.pk" , default=(x_train,
-                                                                      y_train,
-                                                                      x_valid,
-                                                                      y_valid,
-                                                                      x_test))
+    data_package = get_obj_or_dump("toxic_fast_tok_512.pk", default=(x_train,
+                                                                     y_train,
+                                                                     x_valid,
+                                                                     y_valid,
+                                                                     x_test))
 else:
     x_train, y_train, x_valid, y_valid, x_test = data_package
 
