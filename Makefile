@@ -70,16 +70,16 @@ update_code:
 	-git stash; git pull
 
 install_dep:
-	pip install -e .
-	#mkdir -p /root/.cache/torch/checkpoints; wget  $(URL) && cp inceptionresnetv2-520b38e4.pth /root/.cache/torch/checkpoints/inceptionresnetv2-520b38e4.pth
-	test -z "$(python3 -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations
-	test -z "$(python3 -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch
-	-pip install -q ipdb
-	-pip install -q pyicu
-	-pip install -q pycld2
-	-pip install -q polyglot
-	-pip install -q textstat
-	-pip install -q googletrans
+	bash -c 'pip install -e . & \
+(test -z "$$(python3 -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations) & \
+(test -z "$$(python3 -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
+pip install -q ipdb & \
+pip install -q pyicu & \
+pip install -q pycld2 & \
+pip install -q polyglot & \
+pip install -q textstat & \
+pip install -q googletrans & \
+wait'
 
 connect_close:
 	stty raw -echo && ( ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
