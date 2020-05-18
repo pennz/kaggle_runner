@@ -1,11 +1,12 @@
 import tensorflow as tf
-import transformers
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
+import transformers
 from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
 from kaggle_runner.datasets.bert import x_valid, y_valid
+from kaggle_runner.metrics.metrics import matthews_correlation_aux_stripper
 from kaggle_runner.utils.tpu import strategy
 
 # ### learn from 1st place solution
@@ -51,7 +52,7 @@ def _build_distilbert_model(transformer, max_len=512):
 
     model.compile(Adam(lr=1.5e-5),
                   loss='binary_crossentropy',
-                  metrics=['accuracy'])
+                  metrics=[matthews_correlation_aux_stripper])
 
     return model
 

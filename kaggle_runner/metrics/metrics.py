@@ -1,5 +1,33 @@
 import numpy as np
+import tensorflow.keras.backend as K
+
 import torch
+from kaggle_runner import may_debug
+
+
+def matthews_correlation_aux_stripper(y_true, y_pred):
+    may_debug()
+    y_pred = y_pred[:,0]
+
+    return matthews_correlation(y_true, y_pred)
+
+def matthews_correlation(y_true, y_pred):
+    y_pred_pos = K.round(K.clip(y_pred, 0, 1))
+    y_pred_neg = 1 - y_pred_pos
+
+    y_pos = K.round(K.clip(y_true, 0, 1))
+    y_neg = 1 - y_pos
+
+    tp = K.sum(y_pos * y_pred_pos)
+    tn = K.sum(y_neg * y_pred_neg)
+
+    fp = K.sum(y_neg * y_pred_pos)
+    fn = K.sum(y_pos * y_pred_neg)
+
+    numerator = (tp * tn - fp * fn)
+    denominator = K.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+
+    return numerator / (denominator + K.epsilon())
 
 
 def metric(probability, truth, threshold=0.5, reduction="none"):
@@ -49,6 +77,7 @@ def binary_sensitivity_np(y_pred, y_true):
     # FP = FP.sum()
 
     sensitivity = TP / y_true.sum()
+
     return sensitivity
 
 
@@ -73,6 +102,7 @@ def binary_sensitivity(y_pred, y_true):
     FP = K.sum(K.variable(FP))
 
     sensitivity = TP / (TP + FP + K.epsilon())
+
     return sensitivity
 
 
@@ -98,6 +128,7 @@ def binary_specificity(y_pred, y_true):
     FP = K.sum(K.variable(FP))
 
     specificity = TN / (TN + FP + K.epsilon())
+
     return specificity
 
 
@@ -248,4 +279,3 @@ def bin_prd_clsf_info_pos(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1e
     #    raise NotImplementedError("Balanced accuracy metric is not implemented")
 
     return (pred_true_cnt - true_cnt) / true_cnt  # (batchsize 1024)
-
