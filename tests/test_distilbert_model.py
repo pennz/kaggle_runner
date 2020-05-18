@@ -1,6 +1,7 @@
 import subprocess
 
 import ripdb
+
 from kaggle_runner import may_debug
 from kaggle_runner.datasets.bert import (BATCH_SIZE, TRAIN_LEN, train_dataset,
                                          val_data, valid_dataset, x_valid,
@@ -28,7 +29,7 @@ class Test_distilbert_model:
         may_debug()
 
     def test_ripdb_debug(self):
-        ripdb.set_trace()
+        may_debug()
 
     def test_summary(self):
         self.model_distilbert = build_distilbert_model_singleton()

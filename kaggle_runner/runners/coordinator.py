@@ -6,6 +6,7 @@ import subprocess
 from string import Template
 
 import slug
+
 from kaggle_runner.utils import logger
 
 setup_pty_str = r"""import argparse

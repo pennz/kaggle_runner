@@ -18,11 +18,6 @@ from .utils import logger
 trace_flag = True
 
 
-def my_trace():
-    if trace_flag:
-        set_trace()
-
-
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
@@ -81,7 +76,7 @@ def dump_obj(obj, filename, fullpath=False, force=False):
 
 def get_obj_or_dump(filename, fullpath=False, default=None):
     """get_obj_or_dump will dump default obj to file if file not there, otherwise
-    obj will be unpickled from file"""
+    obj will be unpickled from file. If file not found, default value will returned."""
 
     if not fullpath:
         path = BIN_FOLDER + filename
