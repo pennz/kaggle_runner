@@ -100,7 +100,7 @@ if data_package is None:
 
 # TODO just save it to disk or dataset for faster startup, and use it as a
 # dataset
-    y_valid = val.toxic.values
+    y_valid = val.toxic.values  # no aux info for validation
 # y_train = train.toxic.values  # TODO add aux data
 ### Define training, validation, and testing datasets
 

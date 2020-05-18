@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from kaggle_datasets import KaggleDatasets
-from kaggle_runner.utils import utils
+from kaggle_runner import logger
 
 AUTO = tf.data.experimental.AUTOTUNE
 
@@ -12,7 +12,7 @@ try:
     strategy = tf.distribute.experimental.TPUStrategy(tpu)
     BATCH_SIZE = 32 * strategy.num_replicas_in_sync
 except ValueError as e:
-    utils.logger.error("%s",e)
+    logger.error("%s",e)
     tpu = None
     strategy = None
     BATCH_SIZE = 32 * 32
