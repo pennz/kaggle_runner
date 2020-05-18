@@ -507,7 +507,7 @@ import subprocess
 import sys
 
 subprocess.run('git clone --depth=1 https://github.com/pennz/kaggle_runner; pip install -e kaggle_runner', shell=True)
-from kaggle_runner import logger
+# from kaggle_runner import logger
 
 
 # runner (gdrive setting the same time) -> rvs.sh (setup reverse connection) ->
@@ -562,10 +562,10 @@ while True:
        if data == "":
            continue
        if key.fileobj is p.stdout:
-           logger.debug(data)
+           #logger.debug(data)
            print(data, end="")
        else:
-           logger.error(data)
+           #logger.error(data)
            print(data, end="", file=sys.stderr)
 
 # URL:
