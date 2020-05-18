@@ -1,7 +1,8 @@
+import plotly.graph_objects as go
 from colorama import Fore, Style
 
-import plotly.graph_objects as go
 from googletrans import Translator
+from kaggle_runner import may_debug
 
 # ### Visualize model predictions
 #
@@ -12,7 +13,8 @@ translator = Translator()
 
 def visualize_model_preds(model,val_data, x_valid, y_valid, indices=[0, 17, 1, 24]):
     comments = val_data.comment_text.loc[indices].values.tolist()
-    preds = model.predict(x_valid[indices].reshape(len(indices), -1))
+    may_debug()
+    preds = model.predict(x_valid[indices].reshape(len(indices), -1))[:,0]
 
     for idx, i in enumerate(indices):
         if y_valid[i] == 0:
@@ -26,6 +28,8 @@ def visualize_model_preds(model,val_data, x_valid, y_valid, indices=[0, 17, 1, 2
         print(f'{Style.RESET_ALL}')
 
         try:
+            print(f"Predicted {preds[idx]}")
+
             print("ORIGINAL")
             print(comments[idx].encode('utf-8')); print("")
             print("TRANSLATED")

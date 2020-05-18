@@ -21,3 +21,4 @@ NEG_RATIO = 1 - 0.05897253769515213
 Data_Folder = '/home/'
 
 RIPDB = os.environ.get("RIPDB") == 'true'
+DEBUG = os.environ.get("DEBUG") == 'true'

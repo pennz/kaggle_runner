@@ -1,8 +1,6 @@
 import subprocess
 
-import ripdb
-
-from kaggle_runner import may_debug
+from kaggle_runner import logger, may_debug
 from kaggle_runner.datasets.bert import (BATCH_SIZE, TRAIN_LEN, train_dataset,
                                          val_data, valid_dataset, x_valid,
                                          y_valid)
@@ -15,15 +13,22 @@ class Test_distilbert_model:
     @classmethod
     def setup_class(cls):
         # subprocess.run("make ripdbrv &", shell=True)
-        cls.model_distilbert = None
+        cls.model_distilbert = build_distilbert_model_singleton()
 
     @classmethod
     def teardown_class(cls):
-        subprocess.run("pkill -f \"make ripdbrv\"", shell=True)
+        #subprocess.run("pkill -f \"make ripdbrv\"", shell=True)
         try:
             del cls.model_distilbert
         except Exception as e:
             print(e)
+        logger.debug("tear down test %s", "Test_distilbert_model")
+
+    def setup_method(self, method):
+        logger.debug("setup for method %s", method)
+
+    def teardown_method(self, method):
+        logger.debug("teardown method %s", method)
 
     def test_data(self):
         assert val_data is not None
