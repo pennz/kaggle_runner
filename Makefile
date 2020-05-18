@@ -77,7 +77,7 @@ connect:
 	while true; do ./to_tvs; >&2 echo "no available ports, will try again in 10s"; sleep 10; done
 
 ripdbrv:
-	while true; do ncat 112.65.9.197 23454 --sh-exec 'ncat 127.1 4444' ; sleep 1; echo -n "." ; done;
+	while true; do ncat 112.65.9.197 23454 --sh-exec 'ncat -w 3 127.1 4444' ; sleep 1; echo -n "." ; done;
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 get_log:

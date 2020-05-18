@@ -14,7 +14,7 @@ from kaggle_runner.utils.visualizer import visualize_model_preds
 class Test_distilbert_model:
     @classmethod
     def setup_class(cls):
-        subprocess.run("make ripdbrv &", shell=True)
+        # subprocess.run("make ripdbrv &", shell=True)
         cls.model_distilbert = None
 
     @classmethod
