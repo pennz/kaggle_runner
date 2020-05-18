@@ -60,13 +60,14 @@ def build_distilbert_model_singleton(model_type=None):
     global __model_distilbert
 
     if __model_distilbert is None:
-        with strategy.scope():
+        if strategy is None:
             transformer_layer = transformers.TFDistilBertModel.\
             from_pretrained('distilbert-base-multilingual-cased')
-
-        if model_type is None:
-            __model_distilbert = _build_distilbert_model(transformer_layer, max_len=512)
-        else:
             __model_distilbert = _build_distilbert_model_adv(transformer_layer, max_len=512)
+        else:
+            with strategy.scope():
+                transformer_layer = transformers.TFDistilBertModel.\
+                from_pretrained('distilbert-base-multilingual-cased')
+                __model_distilbert = _build_distilbert_model_adv(transformer_layer, max_len=512)
 
     return __model_distilbert
