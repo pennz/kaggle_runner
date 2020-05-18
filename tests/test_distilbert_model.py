@@ -42,6 +42,7 @@ class Test_distilbert_model:
 
     def test_fit_adv(self):
         # self.model_distilbert_dev = build_distilbert_model_singleton(model_type="1st")
+        may_debug()
         train_history = self.model_distilbert.fit(
             train_dataset,
             steps_per_epoch=TRAIN_LEN/BATCH_SIZE,
