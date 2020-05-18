@@ -14,7 +14,8 @@ from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
 from kaggle_runner.utils.tpu import BATCH_SIZE
 from tokenizers import BertWordPieceTokenizer
 
-tf.executing_eagerly()
+if DEBUG:
+    tf.executing_eagerly()
 # Dataloading related
 AUTO = tf.data.experimental.AUTOTUNE
 
