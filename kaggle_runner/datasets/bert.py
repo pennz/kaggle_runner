@@ -105,8 +105,8 @@ if data_package is None:
 ### Define training, validation, and testing datasets
 
     y_train = np.stack([train.toxic.values, train.severe_toxic.values,
-                        train.obscene.values, train.threat.values, train.insult.values,
-                        train.identity_hate.values]).T
+                        train.obscene.values, train.threat.values,
+                        train.insult.values, train.identity_hate.values]).T
 
     data_package = get_obj_or_dump("toxic_fast_tok_512.pk", default=(x_train,
                                                                      y_train,

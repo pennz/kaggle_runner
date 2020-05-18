@@ -10,5 +10,6 @@ while read -u 3 port; do
   echo "connection to port $port closed";
   sleep 1;
 done 3<$TMPFILE
+tcpserver
 
 rm $TMPFILE
