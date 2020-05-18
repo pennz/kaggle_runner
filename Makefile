@@ -71,8 +71,9 @@ install_dep:
 	-pip install -q polyglot
 	-pip install -q textstat
 	-pip install -q googletrans
+
 connect:
-	stty raw -echo && ( ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
+	while true; do ./to_tvs; >&2 echo "no available ports, will try again in 10s"; sleep 10; done
 
 ripdbrv:
 	while true; do ncat 112.65.9.197 23454 --sh-exec 'ncat 127.1 4444' ; sleep 1; echo -n "." ; done;
