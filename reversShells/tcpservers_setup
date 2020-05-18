@@ -1,6 +1,6 @@
 #!/bin/bash
-tcpserver 192.168.123.8 23455 tee logs_check >/dev/null &
-tcpserver 192.168.123.8 25454 ./addNewNode.sh
+tcpserver -1 -D 192.168.123.8 23455 tee logs_check >/dev/null &
+tcpserver -1 -D 192.168.123.8 25454 ./addNewNode.sh
 
 #sleep 3
 #tail -f logs_check
