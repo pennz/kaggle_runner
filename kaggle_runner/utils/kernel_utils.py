@@ -58,7 +58,7 @@ BIN_FOLDER = (
         "/content/gdrivedata") else "./"
 )
 
-
+DATASET_BASE_FOLDER = '/kaggle/input'
 
 def dump_obj(obj, filename, fullpath=False, force=False):
     if not fullpath:
@@ -73,6 +73,10 @@ def dump_obj(obj, filename, fullpath=False, force=False):
         with open(path, "wb") as f:
             pickle.dump(obj, f)
 
+def get_kaggle_dataset_input(filename):
+    filename = os.path.join(DATASET_BASE_FOLDER, filename)
+
+    return get_obj_or_dump(filename, fullpath=True, default=None)
 
 def get_obj_or_dump(filename, fullpath=False, default=None):
     """get_obj_or_dump will dump default obj to file if file not there, otherwise

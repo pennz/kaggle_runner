@@ -10,7 +10,8 @@ import transformers
 from tokenizers import BertWordPieceTokenizer
 
 from kaggle_runner import may_debug
-from kaggle_runner.utils.kernel_utils import get_obj_or_dump
+from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
+                                              get_obj_or_dump)
 from kaggle_runner.utils.tpu import BATCH_SIZE
 
 # Dataloading related
@@ -31,8 +32,8 @@ test_data = None
 train_data = None
 
 may_debug()
-data_package = get_obj_or_dump("toxic_fast_tok_512.pk")
-csv_data_package = get_obj_or_dump("toxic_csv.pk")
+data_package = get_kaggle_dataset_input("jigsaw-multilingula-toxicity-token-encoded/toxic_fast_tok_512.pk")
+csv_data_package = get_kaggle_dataset_input("jigsaw-multilingula-toxicity-token-encoded/toxic_csv.pk")
 
 if csv_data_package is None:
     val_data = pd.read_csv(VAL_PATH)

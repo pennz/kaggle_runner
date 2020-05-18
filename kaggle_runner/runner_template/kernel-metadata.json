@@ -11,7 +11,9 @@
   "keywords": [
     "tpu"
   ],
-  "dataset_sources": [],
+  "dataset_sources": [
+    "k1gaggle/jigsaw-multilingula-toxicity-token-encoded"
+  ],
   "kernel_sources": [],
   "competition_sources": [
     "jigsaw-multilingual-toxic-comment-classification"
