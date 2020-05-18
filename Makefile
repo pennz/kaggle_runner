@@ -41,7 +41,7 @@ wt:
 	chmod +x wt
 
 toxic: wt
-	./wt 'RIPDB="true" python3 -m pytest -sv tests/test_distilbert_model.py' 2>&1 | tee -a toxic_log
+	./wt 'RIPDB="true" ipython -m pytest -sv tests/test_distilbert_model.py' 2>&1 | tee -a toxic_log
 
 test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
