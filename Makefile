@@ -70,6 +70,7 @@ update_code:
 	-git stash; git pull
 
 install_dep:
+	pip install -e .
 	#mkdir -p /root/.cache/torch/checkpoints; wget  $(URL) && cp inceptionresnetv2-520b38e4.pth /root/.cache/torch/checkpoints/inceptionresnetv2-520b38e4.pth
 	test -z "$(python3 -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations
 	test -z "$(python3 -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch
@@ -96,6 +97,8 @@ log:
 
 check_debug:
 	echo $$DEBUG
+	eval 'echo $$(which $(PY3)) is our python executable'
 	python -c 'import os; print(os.environ.get("DEBUG"));'
+	python -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));'
 
 .PHONY: clean connect inner_lstm
