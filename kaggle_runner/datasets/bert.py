@@ -3,13 +3,13 @@ import re
 
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-
 import ripdb
+import tensorflow as tf
 import transformers
+from tokenizers import BertWordPieceTokenizer
+
 from kaggle_runner import may_debug
 from kaggle_runner.utils.tpu import BATCH_SIZE
-from tokenizers import BertWordPieceTokenizer
 
 # Dataloading related
 AUTO = tf.data.experimental.AUTOTUNE
@@ -80,7 +80,8 @@ x_valid = fast_encode(val_data.comment_text.astype(str).values,
 x_test = fast_encode(test_data.content.astype(str).values,
                      fast_tokenizer, maxlen=512)
 
-# TODO just save it to disk or dataset for faster startup
+# TODO just save it to disk or dataset for faster startup, and use it as a
+# dataset
 y_valid = val.toxic.values
 # y_train = train.toxic.values  # TODO add aux data
 ### Define training, validation, and testing datasets
@@ -95,7 +96,7 @@ train_dataset = (
     tf.data.Dataset
     .from_tensor_slices((x_train, y_train))
     .repeat()
-    .shuffle(2048*8)
+    .shuffle(len(x_train))
     .batch(BATCH_SIZE)
     .prefetch(AUTO)
 )
