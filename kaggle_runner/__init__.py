@@ -1,7 +1,6 @@
 __all__ = ["runners.runner", "runners.coordinator", "utils"]
 
 import ipdb
-import ripdb
 
 from .defaults import DEBUG, RIPDB
 from .utils import logger
