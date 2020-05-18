@@ -62,3 +62,7 @@ class Test_distilbert_model:
         # model_distilbert.summary()
         visualize_model_preds(self.model_distilbert, val_data, x_valid, y_valid,
                               indices=[2,3, 5, 6, 7, 8, 1, 4])
+
+if __name__ == "__main__":
+    tt = Test_distilbert_model()
+    tt.test_summary()
