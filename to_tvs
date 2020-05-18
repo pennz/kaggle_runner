@@ -7,6 +7,9 @@ stty raw opost -echo &&
 while read -u 3 port; do
   echo "try with port $port";
   ncat -w 30s -i 3600s 127.1 $port;
+  ncat_ret=$?
+  echo "ncat exit code is $ncat_ret"
+  [ $(pgrep -f "ncat.*$port" | wc -l) -gt 1 ] || pkill -f "ncat.*$port"
   echo "connection to port $port closed";
   sleep 1;
 done 3<$TMPFILE
