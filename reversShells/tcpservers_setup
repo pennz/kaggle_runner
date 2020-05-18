@@ -1,3 +1,3 @@
 #!/bin/bash
-tcpserver 192.168.123.8 23455 tee -a logs_check >/dev/null &
-tcpserver 192.168.123.8 25454 ./addNewNode.sh
+tcpserver -D -B "# Welcome" 192.168.123.8 23455 tee -a logs_check >/dev/null &
+tcpserver -D -B "# Welcome" 192.168.123.8 25454 ./addNewNode.sh
