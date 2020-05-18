@@ -252,7 +252,7 @@ cat >> ~/.bashrc << EOF
 reset
 export SHELL=bash
 export TERM=xterm-256color
-stty intr ^\k susp ^\x eof ^\f echo opost
+stty intr ^\i susp ^\x eof ^\f echo opost
 # https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
 unsetopt ZLE # for zsh
 # for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p
