@@ -9,6 +9,7 @@ import transformers
 from tokenizers import BertWordPieceTokenizer
 
 from kaggle_runner import may_debug
+from kaggle_runner.defaults import DEBUG
 from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
                                               get_obj_or_dump)
 from kaggle_runner.utils.tpu import BATCH_SIZE
@@ -116,6 +117,11 @@ else:
     x_train, y_train, x_valid, y_valid, x_test = data_package
 
 TRAIN_LEN = len(x_train)
+
+if DEBUG:
+    x_train = x_train[:TRAIN_LEN//10]
+    y_train = y_train[:TRAIN_LEN//10]
+    TRAIN_LEN = TRAIN_LEN//10
 
 # +
 train_dataset = (
