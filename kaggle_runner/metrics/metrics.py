@@ -1,13 +1,13 @@
 import numpy as np
 import tensorflow.keras.backend as K
-
 import torch
+
 from kaggle_runner import may_debug
 
 
 def matthews_correlation_aux_stripper(y_true, y_pred):
-    may_debug()
-    y_pred = y_pred[:,0]
+    # may_debug()
+    # y_pred = y_pred[:,0]
 
     return matthews_correlation(y_true, y_pred)
 

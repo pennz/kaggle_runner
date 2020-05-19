@@ -1,4 +1,4 @@
 #!/bin/bash
 tcpserver -D -B "# Welcome\n" 192.168.123.8 23455 tee -a logs_check >/dev/null &
 # tcpserver -D -B "# Welcome, Good day.\n" 192.168.123.8 25454 ./addNewNode.sh
-stty raw -echo && ncat -vvvklp 25454
+stty raw -echo && while true; do echo "started new listening"; ncat -vlp 25454; done
