@@ -130,7 +130,7 @@ train_dataset = (
     tf.data.Dataset
     .from_tensor_slices((x_train, y_train))
     .repeat()
-    .shuffle(TRAIN_LEN)
+    .shuffle(2048)
     .batch(BATCH_SIZE)
     .prefetch(AUTO)
 )
@@ -138,7 +138,7 @@ train_dataset = (
 valid_dataset = (
     tf.data.Dataset
     .from_tensor_slices((x_valid, y_valid))
-    .shuffle(len(x_valid))
+    .shuffle(1024)
     .batch(BATCH_SIZE)
     .cache()
     .prefetch(AUTO)
