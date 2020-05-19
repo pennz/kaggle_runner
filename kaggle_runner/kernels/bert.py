@@ -60,7 +60,9 @@ def _build_distilbert_model(transformer, max_len=512):
 def build_distilbert_model_singleton(max_len):
     global __model_distilbert
 
-    if __model_distilbert is None:
+    #if __model_distilbert is None:
+
+    if True:
         if strategy is None:
             transformer_layer = transformers.TFDistilBertModel.\
             from_pretrained('distilbert-base-multilingual-cased')
