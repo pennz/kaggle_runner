@@ -1,9 +1,9 @@
 import tensorflow as tf
+import transformers
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
-import transformers
 from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
 from kaggle_runner.datasets.bert import x_valid, y_valid
 from kaggle_runner.metrics.metrics import matthews_correlation_aux_stripper
@@ -57,18 +57,18 @@ def _build_distilbert_model(transformer, max_len=512):
     return model
 
 
-def build_distilbert_model_singleton():
+def build_distilbert_model_singleton(max_len):
     global __model_distilbert
 
     if __model_distilbert is None:
         if strategy is None:
             transformer_layer = transformers.TFDistilBertModel.\
             from_pretrained('distilbert-base-multilingual-cased')
-            __model_distilbert = _build_distilbert_model_adv(transformer_layer, max_len=512)
+            __model_distilbert = _build_distilbert_model_adv(transformer_layer, max_len=max_len)
         else:
             with strategy.scope():
                 transformer_layer = transformers.TFDistilBertModel.\
                 from_pretrained('distilbert-base-multilingual-cased')
-                __model_distilbert = _build_distilbert_model_adv(transformer_layer, max_len=512)
+                __model_distilbert = _build_distilbert_model_adv(transformer_layer, max_len=max_len)
 
     return __model_distilbert

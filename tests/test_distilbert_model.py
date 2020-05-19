@@ -4,6 +4,7 @@ from kaggle_runner import logger, may_debug
 from kaggle_runner.datasets.bert import (BATCH_SIZE, TRAIN_LEN, train_dataset,
                                          val_data, valid_dataset, x_valid,
                                          y_valid)
+from kaggle_runner.defaults import DEBUG
 from kaggle_runner.kernels.bert import (bert_cbs,
                                         build_distilbert_model_singleton)
 from kaggle_runner.utils.visualizer import visualize_model_preds
@@ -13,7 +14,11 @@ class Test_distilbert_model:
     @classmethod
     def setup_class(cls):
         # subprocess.run("make ripdbrv &", shell=True)
-        cls.model_distilbert = build_distilbert_model_singleton()
+
+        if DEBUG == 'true':
+            cls.model_distilbert = build_distilbert_model_singleton(140)
+        else:
+            cls.model_distilbert = build_distilbert_model_singleton(512)
 
     @classmethod
     def teardown_class(cls):
