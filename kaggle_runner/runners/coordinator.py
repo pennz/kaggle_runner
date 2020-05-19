@@ -142,7 +142,9 @@ connect_setup() {
     >&2 echo "$NC return with code $RSRET"
 
     if [ x"$RSRET" = x"0" ]; then
-      return $RSRET
+      [ -f /tmp/rvs_exit ] && return 0
+
+      return 255 # just do not return
     fi
     connect_again_flag=0
     sleep 5 && [ ! $RSRET -eq 0 ] && connect_again_flag=1
