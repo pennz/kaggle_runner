@@ -91,7 +91,7 @@ ripdbrv:
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 get_log:
-	./receive_logs_topic \*.\* 2>&1 |  unbuffer -p sed -n "s/.*\[x\]//p" | tee -a mq_log | jq '(.host +" "+ .levelname +": " +.msg)'
+	./receive_logs_topic \*.\* 2>&1 | tee -a mq_log >(sed -n "s/\(.*\)\[x.*/\1/p") |  unbuffer -p sed -n "s/.*\[x\]//p"  | jq '(.host +" "+ .levelname +": " +.msg)'
 log:
 	./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
 
