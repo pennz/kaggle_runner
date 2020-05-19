@@ -38,7 +38,7 @@ def _build_distilbert_model_adv(transformer, max_len=512):
     https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/103280
     """
 
-    return _build_distilbert_model(transformer, max_len=512)
+    return _build_distilbert_model(transformer, max_len=max_len)
 
 def _build_distilbert_model(transformer, max_len=512):
     try:
