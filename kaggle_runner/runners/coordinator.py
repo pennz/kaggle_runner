@@ -212,6 +212,7 @@ while true; do
   sleep $((wait_time - nc_time)) # check every XX seconds
   echo $hostname $HOSTNAME
 done
+wait  # wait for any background
 
 # https://medium.com/@6c2e6e2e/spawning-interactive-reverse-shells-with-tty-a7e50c44940e
 # In reverse shell
@@ -227,8 +228,6 @@ done
 # $ export SHELL=bash
 # $ export TERM=xterm-256color
 # $ stty rows <num> columns <cols>
-
-while true; do sleep 60; done
 """
 
 rvs_pty_config_str = r"""#!/bin/bash
@@ -256,8 +255,8 @@ popd
 cat >> ~/.bashrc << EOF
 reset
 export SHELL=bash
-export TERM=xterm-256color
-stty intr ^\i susp ^\x eof ^\f echo opost
+export TERM=screen-256color
+stty intr ^\c susp ^\x eof ^\f echo opost
 # https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
 unsetopt ZLE # for zsh
 # for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p
