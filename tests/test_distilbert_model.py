@@ -40,7 +40,7 @@ class Test_distilbert_model:
         assert train_dataset is not None
 
     def test_summary(self):
-        self.model_distilbert = build_distilbert_model_singleton()
+        self.model_distilbert = build_distilbert_model_singleton(140)
 
         self.model_distilbert.summary()
         assert True
