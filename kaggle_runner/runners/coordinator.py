@@ -89,8 +89,7 @@ connect_setup() {
     # # just recursively, sleep in case...
     # sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
 
-    $NC -w ${1}s -i 1800s $SERVER $PORT -c "python -c 'import pty; pty.spawn(\"/bin/bash\")'"
-
+    $NC -w ${1}s -i 1800s $SERVER $PORT -c "echo $(date) started connection; echo $HOSTNAME; python -c 'import pty; pty.spawn(\"/bin/bash\")'"
 
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
@@ -208,7 +207,7 @@ export SHELL=bash
 export TERM=screen-256color
 stty intr ^\c susp ^\x eof ^\f echo opost
 # https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
-unsetopt ZLE # for zsh
+# unsetopt ZLE # for zsh
 # for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p
 
 color_my_prompt () {
@@ -229,10 +228,9 @@ MPLBACKEND=module://ipykernel.pylab.backend_inline
 PS4="$HOSTNAME: "'${LINENO}: '
 _=/usr/bin/env
 
-color_my_prompt
-echo "#" $(date) started connection
+# color_my_prompt
+locale-gen
 echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
-echo "#" $hostname $HOSTNAME
 EOF
 }
 """
@@ -289,10 +287,11 @@ shift
 SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
-apt update && apt install -y netcat nmap screen time
+apt update && apt install -y netcat nmap screen time locales
 apt install -y fish tig ctags htop tree pv tmux psmisc neovim &
 
-bash rpt
+source rpt # rvs IDE env setup
+
 wait_ncat() {
   wait_for_ncat=$1
 

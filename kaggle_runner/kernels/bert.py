@@ -42,6 +42,7 @@ def _build_distilbert_model_adv(transformer, max_len=512):
 
 def _build_distilbert_model(transformer, max_len=512):
     may_debug()
+    from kaggle_runner import may_debug
     input_word_ids = Input(shape=(max_len,), dtype=tf.int32, name="input_word_ids")
     sequence_output = transformer(input_word_ids)[0]
 
