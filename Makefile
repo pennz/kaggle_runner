@@ -1,5 +1,5 @@
 export PATH := /home/v/miniconda3/envs/pyt/bin:$(PATH)
-export DEBUG := true
+export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43
 
 
@@ -42,7 +42,7 @@ wt:
 	chmod +x wt
 
 toxic: wt
-	./wt 'DEBUG="true" ipython tests/test_distilbert_model.py' 2>&1 | tee -a toxic_log
+	./wt 'ipython tests/test_distilbert_model.py' 2>&1 | tee -a toxic_log
 
 test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
