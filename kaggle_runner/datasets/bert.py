@@ -121,8 +121,11 @@ else:
 TRAIN_LEN = len(x_train)
 
 if DEBUG:
-    x_train = x_train[:TRAIN_LEN//10]
-    y_train = y_train[:TRAIN_LEN//10]
+    x_train = x_train[:TRAIN_LEN//10, :140]
+    y_train = y_train[:TRAIN_LEN//10, :140]
+    x_valid = x_valid[:, :140]
+    y_valid = y_valid[:, :140]
+    x_test  = x_test[:, :140]
     TRAIN_LEN = TRAIN_LEN//10
 
 # +
