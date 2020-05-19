@@ -2,6 +2,7 @@ import tensorflow as tf
 
 from kaggle_datasets import KaggleDatasets
 from kaggle_runner import logger
+from kaggle_runner.defaults import DEBUG
 
 AUTO = tf.data.experimental.AUTOTUNE
 
@@ -15,7 +16,11 @@ except ValueError as e:
     logger.error("%s",e)
     tpu = None
     strategy = None
-    BATCH_SIZE = 32 * 32
+
+    if DEBUG:
+        BATCH_SIZE = 32 * 2
+    else:
+        BATCH_SIZE = 32 * 32
 
 GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
 
