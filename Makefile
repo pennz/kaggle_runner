@@ -71,14 +71,14 @@ update_code:
 
 install_dep:
 	bash -c 'pip install -e . & \
-(test -z "$$(python3 -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations) & \
-(test -z "$$(python3 -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
-pip install -q ipdb & \
-pip install -q pyicu & \
-pip install -q pycld2 & \
-pip install -q polyglot & \
-pip install -q textstat & \
-pip install -q googletrans & \
+(test -z "$$($(PY3) -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations) & \
+(test -z "$$($(PY3) -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
+$(PY3) -m pip install -q ipdb & \
+$(PY3) -m pip install -q pyicu & \
+$(PY3) -m pip install -q pycld2 & \
+$(PY3) -m pip install -q polyglot & \
+$(PY3) -m pip install -q textstat & \
+$(PY3) -m pip install -q googletrans & \
 wait'
 
 connect_close:
