@@ -9,51 +9,6 @@ import slug
 
 from kaggle_runner.utils import logger
 
-setup_pty_str = r"""import argparse
-import os
-import pty
-import sys
-import time
-
-parser = argparse.ArgumentParser()
-parser.add_argument('-a', dest='append', action='store_true')
-parser.add_argument('-p', dest='use_python', action='store_true')
-parser.add_argument('filename', nargs='?', default='typescript')
-parser.add_argument('logfilename', nargs='?', default='typescript')
-options = parser.parse_args()
-
-shell = sys.executable if options.use_python else os.environ.get('SHELL', 'sh')
-filename = options.filename
-logfilename = options.logfilename
-mode = 'ab' if options.append else 'wb'
-
-def main():
-    with open(filename, mode) as script:
-        def read(fd):
-            data = os.read(fd, 1024)
-            script.write(data)
-
-            return data
-
-        with open(logfilename, mode) as logscript:
-            def logread(fd):
-                data = os.read(fd, 1024)
-                logscript.write(data)
-
-                return data
-
-            print('Script started, file is', filename)
-            script.write(('Script started on %s\n' % time.asctime()).encode())
-
-            pty.spawn(shell, read, logread)
-
-            script.write(('Script done on %s\n' % time.asctime()).encode())
-            print('Script done, file is', filename)
-
-if __name__ == "__main__":
-     main()
-"""
-
 rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: ' # for debug
 NC=ncat
@@ -231,11 +186,6 @@ wait  # wait for any background
 """
 
 rvs_pty_config_str = r"""#!/bin/bash
-cat > test-pt << EOF
-#!/bin/bash
-[[ ! x"$(git pull)" =~ "Already" ]] && pytest test_kernels.py  -k "train_dev" -s -v
-EOF
-
 [ -d ~/.fzf ] || {
 git clone --depth=1 https://github.com/pennz/dotfiles
 rsync -r dotfiles/.* ~
@@ -271,55 +221,15 @@ color_my_prompt () {
     local __last_color="\[\033[00m\]"
     export PS1="$__user_and_host $__cur_location $__git_branch_color$__git_branch$__prompt_tail$__last_color "
 }
-color_my_prompt
 
-# CUDNN_VERSION=7.6.5.32
-# LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
-# LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
-LESSCLOSE=/usr/bin/lesspipe %s %s
-LANG=en_US.UTF-8
-# HOSTNAME=8bff88b8a353
-OLDPWD=/
-CLOUDSDK_CONFIG=/content/.config
-GOOGLE_APPLICATION_CREDENTIALS=/content/adc.json
-NVIDIA_VISIBLE_DEVICES=all
-DATALAB_SETTINGS_OVERRIDES={kernelManagerProxyPort:6000,kernelManagerProxyHost:172.28.0.3,jupyterArgs:[--ip="172.28.0.2"]}
 ENV=/root/.bashrc
-PAGER=cat
-NCCL_VERSION=2.4.8
-TF_FORCE_GPU_ALLOW_GROWTH=true
-JPY_PARENT_PID=18
-NO_GCE_CHECK=True
-# PWD=/content
-# HOME=/root
-LAST_FORCED_REBUILD=20200316
-CLICOLOR=1
-DEBIAN_FRONTEND=noninteractive
-LIBRARY_PATH=/usr/local/cuda/lib64/stubs
-GCE_METADATA_TIMEOUT=0
-GLIBCPP_FORCE_NEW=1
-TBE_CREDS_ADDR=172.28.0.1:8008
-SHELL=bash
-TERM=xterm-256color
-GCS_READ_CACHE_BLOCK_SIZE_MB=16
 PYTHONWARNINGS=ignore:::pip._internal.cli.base_command
 MPLBACKEND=module://ipykernel.pylab.backend_inline
-# CUDA_PKG_VERSION=10-1=10.1.243-1
-# CUDA_VERSION=10.1.243
-# NVIDIA_DRIVER_CAPABILITIES=compute,utility
-SHLVL=3
-# PYTHONPATH=/env/python
-# NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
-# COLAB_GPU=0
-# GLIBCXX_FORCE_NEW=1
-# PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools/node/bin:/tools/google-cloud-sdk/bin:/opt/bin
-# PS1=\[\033[01;32m\]\u@\h \[\033[01;34m\]\w \[\033[31m\]`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`\[\033[35m\]$\[\033[00m\]
-PS4='L\#${LINENO}: '
-LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so.4
-LESSOPEN=| /usr/bin/lesspipe %s
-GIT_PAGER=cat
+
+PS4="$HOSTNAME: "'${LINENO}: '
 _=/usr/bin/env
 
+color_my_prompt
 echo "#" $(date) started connection
 echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
 echo "#" $hostname $HOSTNAME
@@ -509,12 +419,6 @@ import selectors
 import subprocess
 import sys
 
-# subprocess.run('git clone --depth=1 https://github.com/pennz/kaggle_runner; pip install -e kaggle_runner', shell=True)
-# from kaggle_runner import logger
-
-
-# runner (gdrive setting the same time) -> rvs.sh (setup reverse connection) ->
-# setup pseudo tty
 with open("runner.sh", "w") as f:
     f.write(
 r\"\"\"${runner_src}\"\"\"
@@ -522,10 +426,6 @@ r\"\"\"${runner_src}\"\"\"
 with open("rvs.sh", "w") as f:
     f.write(
 r\"\"\"${rvs_str}\"\"\"
-    )
-with open("setup_pty", "w") as f:
-    f.write(
-r\"\"\"${setup_pty_str}\"\"\"
     )
 with open("rpt", "w") as f:
     f.write(
@@ -613,7 +513,6 @@ while True:
                     "CI") == "true" else gdpass
             ),
             rvs_pty_config_str=rvs_pty_config_str,
-            setup_pty_str=setup_pty_str,
             rvs_str=rvs_str,
             runner_src=runner_src,
             AMQPURL=AMQPURL.string(),
