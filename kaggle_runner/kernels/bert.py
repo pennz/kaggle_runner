@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Dropout, Input
+from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
@@ -7,8 +8,9 @@ import transformers
 from kaggle_runner import may_debug
 from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
 from kaggle_runner.datasets.bert import x_valid, y_valid
-from kaggle_runner.metrics.metrics import matthews_correlation_aux_stripper
+from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.utils.tpu import strategy
+from kaggle_runner.utils.wrapper import size_decorator
 
 # ### learn from 1st place solution
 # Custom head for BERT, XLNet and GPT2 and Bucket Sequencing Collator
@@ -52,9 +54,8 @@ def _build_distilbert_model(transformer, max_len=512):
     model = Model(inputs=input_word_ids, outputs=out)
 
     model.compile(Adam(lr=1.5e-5),
-                  loss=matthews_correlation_aux_stripper #'binary_crossentropy',
-                  #metrics=[matthews_correlation_aux_stripper])
-                  )
+                  loss=size_decorator(BinaryCrossentropy()), #'binary_crossentropy',
+                  metrics=[size_decorator(matthews_correlation)])
 
     return model
 
