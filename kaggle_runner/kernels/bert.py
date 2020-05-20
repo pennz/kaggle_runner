@@ -41,10 +41,6 @@ def _build_distilbert_model_adv(transformer, max_len=512):
     return _build_distilbert_model(transformer, max_len=max_len)
 
 def _build_distilbert_model(transformer, max_len=512):
-    try:
-        may_debug()
-    except Exception:
-        pass
     input_word_ids = Input(shape=(max_len,), dtype=tf.int32, name="input_word_ids")
     sequence_output = transformer(input_word_ids)[0]
 

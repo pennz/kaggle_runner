@@ -5,14 +5,14 @@ import re
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import transformers
-from tokenizers import BertWordPieceTokenizer
 
+import transformers
 from kaggle_runner import may_debug
 from kaggle_runner.defaults import DEBUG
 from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
                                               get_obj_or_dump)
 from kaggle_runner.utils.tpu import BATCH_SIZE
+from tokenizers import BertWordPieceTokenizer
 
 if DEBUG:
     tf.executing_eagerly()
@@ -122,7 +122,6 @@ TRAIN_LEN = len(x_train)
 
 if DEBUG:
     x_train = x_train[:TRAIN_LEN//10, :140]
-    may_debug()
     y_train = y_train[:TRAIN_LEN//10]  # y just all pass, they are labels
     x_valid = x_valid[:, :140]
     # y_valid = y_valid[:] # it just one dimention
