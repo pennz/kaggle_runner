@@ -15,7 +15,7 @@ class Test_distilbert_model:
     def setup_class(cls):
         # subprocess.run("make ripdbrv &", shell=True)
 
-        if DEBUG == 'true':
+        if DEBUG:
             cls.model_distilbert = build_distilbert_model_singleton(140)
         else:
             cls.model_distilbert = build_distilbert_model_singleton(512)
