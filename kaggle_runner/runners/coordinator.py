@@ -470,7 +470,7 @@ while True:
 
         try:
             gdpass = subprocess.check_output(
-                "pass gd", shell=True).decode("utf-8")
+                "echo NO_PASS", shell=True).decode("utf-8")
         except subprocess.CalledProcessError:
             gdpass = ""
         d = dict(
