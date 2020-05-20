@@ -54,7 +54,7 @@ def _build_distilbert_model(transformer, max_len=512):
     model = Model(inputs=input_word_ids, outputs=out)
 
     model.compile(Adam(lr=1.5e-5),
-                  loss=size_decorator(BinaryCrossentropy(label_smothing=0.2)), #'binary_crossentropy',
+                  loss=size_decorator(BinaryCrossentropy(label_smoothing=0.2)), #'binary_crossentropy',
                   metrics=[size_decorator(matthews_correlation)])
 
     return model
