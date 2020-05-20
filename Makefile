@@ -97,9 +97,9 @@ log:
 	./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
 
 check:
-	echo $$DEBUG
-	eval 'echo $$(which $(PY3)) is our python executable'
-	python -c 'import os; print(os.environ.get("DEBUG"));'
-	python -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));'
+	@echo $$DEBUG
+	@eval 'echo $$(which $(PY3)) is our python executable'
+	@python -c 'import os; print(os.environ.get("DEBUG"));'
+	@python -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));'
 
 .PHONY: clean connect inner_lstm
