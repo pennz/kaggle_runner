@@ -122,6 +122,7 @@ TRAIN_LEN = len(x_train)
 
 if DEBUG:
     x_train = x_train[:TRAIN_LEN//10, :140]
+    may_debug()
     y_train = y_train[:TRAIN_LEN//10]  # y just all pass, they are labels
     x_valid = x_valid[:, :140]
     # y_valid = y_valid[:] # it just one dimention
