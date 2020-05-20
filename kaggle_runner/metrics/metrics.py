@@ -1,18 +1,18 @@
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras.backend as K
-import torch
 
+import torch
 from kaggle_runner import may_debug
 
 
 def matthews_correlation_aux_stripper(y_true, y_pred):
     # may_debug()
     # y_pred = y_pred[:,0]
-    ps = y_true.shape
-    ts = y_pred.shape
+    ts = y_true.shape
+    ps = y_pred.shape
 
-    if len(ps) != len(ts) or ps[1] != ts[1]:
+    if len(ps) != len(ts) or (ps[1] > ts[1] if len(ts)>1 and ts[1] is not None else 1):
         may_debug()
         y_pred = y_pred[:,0]
 
