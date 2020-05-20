@@ -56,7 +56,7 @@ def _build_distilbert_model(transformer, max_len=512):
     model.compile(Adam(lr=1.5e-5),
                   loss=size_decorator(BinaryCrossentropy(reduction=
                                                          tf.keras.losses.Reduction.SUM
-                                                         , label_smoothina=0.2)),
+                                                         , label_smoothing=0.2)),
                   #'binary_crossentropy',
                   metrics=[size_decorator(matthews_correlation)])
 
