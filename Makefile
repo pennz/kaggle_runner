@@ -41,7 +41,7 @@ toxic_debug: update_code
 wt:
 	chmod +x wt
 
-toxic: wt
+toxic: wt check
 	./wt 'ipython tests/test_distilbert_model.py' 2>&1 | tee -a toxic_log
 
 test: update_code $(SRC)
