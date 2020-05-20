@@ -51,6 +51,8 @@ check_exit_status() {
 connect_setup() {
   connect_again_flag=1
 
+  sleep_time=5
+
   while [ ${connect_again_flag} -eq 1 ]; do
     check_exit_status && return 0
 
@@ -65,7 +67,8 @@ connect_setup() {
 
       return 255 # just do not return
     fi
-    sleep 5 && [ $RSRET -eq 0 ] && connect_again_flag=0
+    [ $RSRET -eq 0 ] && connect_again_flag=0
+    [ $RSRET -eq 1 ] && sleep ${sleep_time} && sleep_time=$((sleep_time + sleep_time))
   done
   # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss
   # thing
