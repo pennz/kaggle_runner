@@ -17,7 +17,7 @@ all: $(SRC)
 	coverage xml
 	./cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 push: $(SRC)
-	git push # push first as kernel will download the codes, so put new code to github first
+	-git push # push first as kernel will download the codes, so put new code to github first
 	eval 'echo $$(which $(PY3)) is our python executable'
 	$(PY3) -m pytest -s -k "test_push_runner_nb" tests/test_coord.py # && cd .runners/intercept-resnet-384/ && $(PY3) main.py
 lint: $(SRC)
