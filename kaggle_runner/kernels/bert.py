@@ -1,3 +1,6 @@
+import os
+
+import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.losses import BinaryCrossentropy
@@ -7,7 +10,8 @@ from tensorflow.keras.optimizers import Adam
 import transformers
 from kaggle_runner import may_debug
 from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
-from kaggle_runner.datasets.bert import x_valid, y_valid
+from kaggle_runner.datasets.bert import (DATA_PATH, test_dataset, x_valid,
+                                         y_valid)
 from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.utils.tpu import strategy
 from kaggle_runner.utils.wrapper import size_decorator
@@ -80,3 +84,8 @@ def build_distilbert_model_singleton(max_len):
                 __model_distilbert = _build_distilbert_model_adv(transformer_layer, max_len=max_len)
 
     return __model_distilbert
+
+def get_test_result(self, test_dataset=test_dataset, data_path=DATA_PATH):
+    sub = pd.read_csv(os.path.join(data_path , 'sample_submission.csv'))
+    sub['toxic'] = self.model_distilbert.predict(test_dataset, verbose=1)[:,0]
+    sub.to_csv('submission.csv', index=False)
