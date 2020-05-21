@@ -14,7 +14,6 @@ def matthews_correlation_aux_stripper(y_true, y_pred):
 
     if len(ps) > len(ts) or (
             (ps[1] > ts[1]) if ts[1] is not None else False):
-        may_debug()
         y_pred = y_pred[:,0]
 
     return matthews_correlation(y_true, y_pred)

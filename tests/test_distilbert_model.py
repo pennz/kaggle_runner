@@ -55,7 +55,6 @@ class Test_distilbert_model:
             epochs=1
         )
     def test_result(self):
-        may_debug()
         get_test_result(self)
 
     def test_visualize(self):

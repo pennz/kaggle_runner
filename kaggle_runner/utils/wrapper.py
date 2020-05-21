@@ -11,7 +11,6 @@ def size_decorator(f):
 
         if len(ps) > len(ts) or (
                 (ps[1] > ts[1]) if ts[1] is not None else False):
-            may_debug()
             y_pred = y_pred[:,0]
 
         return f(y_true, y_pred, *args, **kwargs)
