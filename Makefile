@@ -20,7 +20,7 @@ all: $(SRC)
 push: $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
 	eval 'echo $$(which $(PY3)) is our python executable'
-	$(PY3) kaggle_runner/runners/coordinator.py $(./reversShells/addNewNode.sh)
+	@bash -c 'PORT=$$(./reversShells/addNewNode.sh 2>/dev/null); echo port $$PORT is used for incomming conection; $(PY3) kaggle_runner/runners/coordinator.py $$PORT'
 
 lint: $(SRC)
 	echo $(SRC)

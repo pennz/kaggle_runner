@@ -36,7 +36,8 @@ EXIT_FILE_PATH=/tmp/rvs_exit.$BASHPID.pid
 
 test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
-SERVER=$1
+PORT=$1
+SERVER=vtool.duckdns.org
 
 ORIG_PORT=23454
 CHECK_PORT=$((ORIG_PORT + 1))
@@ -253,13 +254,10 @@ shift
 ENABLE_RVS=$1
 shift
 
-SERVER=$1
-shift
-
 PORT=$1
 shift
 
-#SERVER=vtool.duckdns.org
+SERVER=vtool.duckdns.org
 ORIG_PORT=23454
 
 CHECK_PORT=$(( ORIG_PORT + 1 ))
@@ -496,7 +494,6 @@ while True:
             port=port
         )
         ss = s.safe_substitute(d)
-        print(ss)
 
         with open(os.path.join(path, "main.py"), "w") as jf:
             jf.write(ss)
@@ -536,6 +533,7 @@ while True:
 
 if __name__ == "__main__":
     port = sys.argv[1]
+    logger.debug(f"{sys.argv}")
     tmp_path = '.r'
 
     subprocess.run(f"rm -r {tmp_path}", shell=True, check=True)

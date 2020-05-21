@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # trap ctrl-c and call ctrl_c()
 PS4='L${LINENO}: '
 
@@ -12,21 +12,22 @@ function ctrl_c() {
 getNewPort() {
     serverNodes=$1
     lastServer=$(tail -n 1 $serverNodes)
+    [ $lastServer -gt 1000 ] || lastServer=8999
     if [ $? -eq 0 -a x"$lastServer" != x ]; then
         newNode=$((lastServer + 1))
     else
         newNode=9000
     fi
     echo $newNode >>$serverNodes
-    echo $newNode
+    echo -n $newNode
 }
 
 connect() {
     local newPort=$1
 
-    pgrep -f "lp $newPort" && return 1 # port used
-    ~/bin/upnp-add-port $newPort &     # port forward, rvs will connect to this port
-    listen_pid=$!
+    pgrep -f "lp $newPort" >/dev/null && return 1 # port used
+    ~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
+    ret=$?
 
     tmux new-window -t rvsConnector "stty raw -echo && { while true; do $NC -vvklp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
     #ncat 127.1 $newPort
@@ -39,9 +40,8 @@ connect() {
     # so I need a program print the despriptor 0 content out and receive tty input
     # orignially, use ncat -lp 9000, so RVS:48852 -> :25454 (tcpserver) -> ncat 9000 [0] from the RVS, and waiting input from [1]
     sleep 3
-    wait $listen_pid
-    ret=$?
     sed -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
+
     return $ret
 }
 
