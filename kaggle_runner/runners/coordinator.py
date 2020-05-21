@@ -254,10 +254,11 @@ shift
 ENABLE_RVS=$1
 shift
 
+SERVER=$1
+shift
 PORT=$1
 shift
 
-SERVER=vtool.duckdns.org
 ORIG_PORT=23454
 
 CHECK_PORT=$(( ORIG_PORT + 1 ))
@@ -410,7 +411,7 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 entry_str = r\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "$AMQPURL" "$size" "$seed" "$network" "vtool.duckdns.org" "$port" >>logrunner
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "vtool.duckdns.org" "$port" "$AMQPURL" "$size" "$seed" "$network" >>runner_log
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
