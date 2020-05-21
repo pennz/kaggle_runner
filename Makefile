@@ -38,14 +38,14 @@ lstm:
 	-pkill -f "inner_lstm"
 	make inner_lstm
 
-toxic_debug:
+debug_toxic:
 	make toxic DEBUG=true #python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 
 wt:
 	chmod +x wt
 
 toxic: wt check update_code
-	@bash -c '[ x$$(pgrep -f "make $@" | sort | head -n 1) == x$$PPID ] || (echo "we will kill existing \"make $@\""; kill $$(pgrep -f "make $@" | sort | head -n 1))'
+	@bash -c '[ x$$(ps -ef | grep "make $@$$" | sort | head -n 1) == x$$PPID ] || (echo "we will kill existing \"make $@\""; kill $$(ps -ef | grep "make $@$$" | sort | head -n 1))'
 	unbuffer ./wt 'ipython tests/test_distilbert_model.py' 2>&1 | unbuffer -p tee -a toxic_log
 
 test: update_code $(SRC)
