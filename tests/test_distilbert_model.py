@@ -50,15 +50,17 @@ class Test_distilbert_model:
 
         if DEBUG:
             steps = 10
+            epochs = 1
         else:
             steps = TRAIN_LEN/BATCH_SIZE,
+            epochs = 8
 
         train_history = self.model_distilbert.fit(
             train_dataset,
             steps_per_epoch=steps,
             validation_data=valid_dataset,
             callbacks=bert_cbs,
-            epochs=1
+            epochs=epochs
         )
     def test_result(self):
         get_test_result(self)
