@@ -4,7 +4,7 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.losses import BinaryCrossentropy
-from tensorflow.keras.metrics import Accuracy
+from tensorflow.keras.metrics import binary_accuracy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
@@ -63,7 +63,7 @@ def _build_distilbert_model(transformer, max_len=512):
                                                          tf.keras.losses.Reduction.NONE
                                                          , label_smoothing=0.2)),
                   #'binary_crossentropy',
-                  metrics=[size_decorator(Accuracy()),size_decorator(matthews_correlation)])
+                  metrics=[size_decorator(binary_accuracy),size_decorator(matthews_correlation)])
 
     return model
 
