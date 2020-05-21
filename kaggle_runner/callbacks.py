@@ -2,7 +2,7 @@ from sklearn.metrics import accuracy_score, roc_auc_score
 from tensorflow.keras.callbacks import (Callback, CSVLogger, ModelCheckpoint,
                                         ReduceLROnPlateau)
 
-# ### Define ROC-AUC evaluation metric
+from kaggle_runner import logger
 
 
 class RocAucEvaluation(Callback):
@@ -20,6 +20,8 @@ class RocAucEvaluation(Callback):
                 y_pred = y_pred[:,0]
             score = roc_auc_score(self.y_val, y_pred)
             print(
+                "\n ROC-AUC - epoch: {:d} - score: {:.6f}".format(epoch+1, score))
+            logger.debug(
                 "\n ROC-AUC - epoch: {:d} - score: {:.6f}".format(epoch+1, score))
 
 
