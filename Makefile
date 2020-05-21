@@ -69,10 +69,15 @@ git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push \
 update_code:
 	-git stash; git pull
 
-install_dep:
+install_dep_seg:
 	bash -c 'pip install -e . & \
 (test -z "$$($(PY3) -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations) & \
 (test -z "$$($(PY3) -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
+$(PY3) -m pip install -q ipdb & \
+wait'
+
+install_dep:
+	bash -c 'pip install -e . & \
 $(PY3) -m pip install -q ipdb & \
 $(PY3) -m pip install -q pyicu & \
 $(PY3) -m pip install -q pycld2 & \
