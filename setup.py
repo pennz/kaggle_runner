@@ -27,5 +27,6 @@ setuptools.setup(
         "python_logging_rabbitmq",
         "jupytext",
         "kaggle",
+	"miniupnpc"
     ],
 )

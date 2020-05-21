@@ -1,7 +1,17 @@
-#!/bin/bash
-tcpserver -D -B "# Welcome to our logger\n" 192.168.123.8 23455 tee -a logs_check >/dev/null &
-# tcpserver -D -B "# Welcome, Good day.\n" 192.168.123.8 25454 ./addNewNode.sh
-stty raw -echo && while true; do
-    echo "started new listening"
-    ncat -vlp 25454
-done
+#!/bin/bash -x
+
+trap ctrl_c INT
+
+function ctrl_c() {
+	echo >&2 "** Trapped CTRL-C, killall tcpserver"
+	pkill tcpserver
+}
+
+tmux new -d -s rvsConnector
+
+tcpserver -D -B "# Welcome to our logger\r" 192.168.123.8 23455 tee -a logs_check
+# tcpserver -D -B "# Welcome, Good day.\r" 192.168.123.8 25454 bash -x ./addNewNode.sh
+# stty raw -echo && while true; do
+#     echo "started new listening"
+#     ncat -vlp 25454
+# done

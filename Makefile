@@ -20,7 +20,7 @@ all: $(SRC)
 push: $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
 	eval 'echo $$(which $(PY3)) is our python executable'
-	$(PY3) -m pytest -s -k "test_push_runner_nb" tests/test_coord.py # && cd .runners/intercept-resnet-384/ && $(PY3) main.py
+	$(PY3) kaggle_runner/runners/coordinator.py $(./reversShells/addNewNode.sh)
 
 lint: $(SRC)
 	echo $(SRC)

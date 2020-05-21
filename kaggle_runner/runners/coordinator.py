@@ -3,11 +3,12 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from string import Template
 
 import slug
 
-from kaggle_runner.utils import logger
+from kaggle_runner.utils import AMQPURL, logger
 
 rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: ' # for debug
@@ -35,9 +36,10 @@ EXIT_FILE_PATH=/tmp/rvs_exit.$BASHPID.pid
 
 test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
-SERVER=vtool.duckdns.org
-PORT=23454
-CHECK_PORT=$((PORT + 1))
+SERVER=$1
+
+ORIG_PORT=23454
+CHECK_PORT=$((ORIG_PORT + 1))
 
 check_exit_status() {
   if [ -f $EXIT_FILE_PATH ] && [ x"$(cat $EXIT_FILE_PATH)" = x0 ]; then
@@ -251,9 +253,16 @@ shift
 ENABLE_RVS=$1
 shift
 
-SERVER=vtool.duckdns.org
-PORT=23454
-CHECK_PORT=$(( PORT + 1 ))
+SERVER=$1
+shift
+
+PORT=$1
+shift
+
+#SERVER=vtool.duckdns.org
+ORIG_PORT=23454
+
+CHECK_PORT=$(( ORIG_PORT + 1 ))
 apt update && apt install -y netcat nmap screen time locales
 apt install -y fish tig ctags htop tree pv tmux psmisc neovim expect &
 conda install -c eumetsat expect &  # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
@@ -310,8 +319,8 @@ if [ x"${PHASE}" = x"dev" ]; then
   export PS4='[Remote]: Line ${LINENO}: '
 
   if [ "x${ENABLE_RVS}" = x1 ]; then
-    [ -z $(pgrep -f 'jupyter-notebook') ] && bash -x ./rvs.sh 2>&1 ||
-    screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT";
+    [ -z $(pgrep -f 'jupyter-notebook') ] && bash -x ./rvs.sh $SERVER 2>&1 ||
+    screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT";
   fi &
   make install_dep >/dev/null;
   unbuffer make toxic 2>&1 | unbuffer -p tee -a lstm_log | ( [ $USE_AMQP -eq 0 ] && $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT || cat - )
@@ -379,7 +388,7 @@ class Coordinator:
             jf.truncate()
 
     @staticmethod
-    def _change_main_py(path, size, net, AMQPURL, seed, gdrive_enable=False):
+    def _change_main_py(path, size, net, AMQPURL, seed, port, gdrive_enable=False):
         s = Template(
             """#!/usr/bin/env python3
 import selectors
@@ -403,20 +412,17 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 entry_str = r\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "$AMQPURL" "$size" "$seed" "$network" >>logrunner
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "$AMQPURL" "$size" "$seed" "$network" "vtool.duckdns.org" "$port" >>logrunner
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
 
 with open("entry.sh", "w") as f:
-    f.write(
-        entry_str
-    )
+    f.write(entry_str)
 
 
 p = subprocess.Popen(
 'bash -x entry.sh',
-#capture_output=True,
 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 shell=True)
 
@@ -426,7 +432,7 @@ sel.register(p.stderr, selectors.EVENT_READ)
 
 while True:
    for key, _ in sel.select():
-       data = key.fileobj.read1(80).decode()
+       data = key.fileobj.read1(100).decode()
        if not data:
            exit()
        if data == "":
@@ -487,6 +493,7 @@ while True:
             network=net,
             seed=seed,
             gdrive_enable=gdrive_enable,
+            port=port
         )
         ss = s.safe_substitute(d)
         print(ss)
@@ -505,17 +512,18 @@ while True:
         net = config["network"]
         name = net.replace("_", "-") + "-" + str(size)
         AMQPURL = config["AMQPURL"]
+        port = config["port"]
 
         path = os.path.join(self.tmp_path, name)
         shutil.copytree(self.template_path, path)
 
         if from_template:
             self._change_kernel_meta_info(path, None, script)
-            self._change_main_py(path, size, net, AMQPURL, seed)
+            self._change_main_py(path, size, net, AMQPURL, seed, port)
         else:
             self._change_kernel_meta_info(
                 path, self.title_prefix + " " + name, script)
-            self._change_main_py(path, size, net, AMQPURL, seed)
+            self._change_main_py(path, size, net, AMQPURL, seed, port)
 
         if not script:
             subprocess.run(
@@ -525,3 +533,16 @@ while True:
         self.runners.append(path)
 
         return path
+
+if __name__ == "__main__":
+    port = sys.argv[1]
+    tmp_path = '.r'
+
+    subprocess.run(f"rm -r {tmp_path}", shell=True, check=True)
+    coordinator = Coordinator(tmp_path, "Test Runner")
+    config = {"port":port, "size": 384, "network": "intercept", "AMQPURL": AMQPURL()}
+    path = coordinator.create_runner(config, 19999, False)
+
+    if os.getenv("CI") != "true":
+        ret = coordinator.push(path)  # just push first
+        assert ret.returncode == 0
