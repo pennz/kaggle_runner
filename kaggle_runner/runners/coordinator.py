@@ -255,7 +255,7 @@ SERVER=vtool.duckdns.org
 PORT=23454
 CHECK_PORT=$(( PORT + 1 ))
 apt update && apt install -y netcat nmap screen time locales
-apt install -y fish tig ctags htop tree pv tmux psmisc neovim &
+apt install -y fish tig ctags htop tree pv tmux psmisc neovim expect &
 
 source rpt # rvs IDE env setup
 
@@ -301,7 +301,7 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
   pip install -e .
 }
 
-USE_AMQP=1
+USE_AMQP=0  # just plain old good netcat
 export USE_AMQP
 
 if [ x"${PHASE}" = x"dev" ]; then
@@ -313,7 +313,7 @@ if [ x"${PHASE}" = x"dev" ]; then
     screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT";
   fi &
   make install_dep >/dev/null;
-  make toxic 2>&1 | tee -a lstm_log | ( [ $USE_AMQP -eq 0 ] && $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT || cat - )
+  unbuffer make toxic 2>&1 | unbuffer -p tee -a lstm_log | ( [ $USE_AMQP -eq 0 ] && $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT || cat - )
 fi
 
 if [ x"${PHASE}" != x"dev" ]; then

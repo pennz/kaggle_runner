@@ -42,7 +42,7 @@ wt:
 	chmod +x wt
 
 toxic: wt check
-	./wt 'ipython tests/test_distilbert_model.py' 2>&1 | tee -a toxic_log
+	unbuffer ./wt 'ipython tests/test_distilbert_model.py' 2>&1 | unbuffer -p tee -a toxic_log
 
 test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
@@ -68,12 +68,10 @@ git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push \
 	python3 -m twine upload dist/*
 update_code:
 	-git stash; git pull
-
 install_dep_seg:
 	bash -c 'pip install -e . & \
 (test -z "$$($(PY3) -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations) & \
 (test -z "$$($(PY3) -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
-$(PY3) -m pip install -q ipdb & \
 wait'
 
 install_dep:
