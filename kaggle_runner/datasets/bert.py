@@ -119,12 +119,14 @@ else:
     x_train, y_train, x_valid, y_valid, x_test = data_package
 
 TRAIN_LEN = len(x_train)
+VALID_LEN = len(x_valid)
 
 if DEBUG:
+    VALID_LEN = VALID_LEN//10
     x_train = x_train[:TRAIN_LEN//10, :140]
     y_train = y_train[:TRAIN_LEN//10]  # y just all pass, they are labels
-    x_valid = x_valid[:, :140]
-    # y_valid = y_valid[:] # it just one dimention
+    x_valid = x_valid[:VALID_LEN, :140]
+    y_valid = y_valid[:VALID_LEN] # it just one dimention
     x_test  = x_test[:, :140]
 
     TRAIN_LEN = TRAIN_LEN//10
