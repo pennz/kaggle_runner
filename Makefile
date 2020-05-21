@@ -42,6 +42,7 @@ wt:
 	chmod +x wt
 
 toxic: wt check
+	@bash -c '[ x$$(pgrep -f "make $@" | sort | head -n 1) == x$$PPID ] || (echo "we will kill existing \"make $@\""; kill $$(pgrep -f "make $@" | sort | head -n 1))'
 	unbuffer ./wt 'ipython tests/test_distilbert_model.py' 2>&1 | unbuffer -p tee -a toxic_log
 
 test: update_code $(SRC)
