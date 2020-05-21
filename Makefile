@@ -38,13 +38,13 @@ lstm:
 	-pkill -f "inner_lstm"
 	make inner_lstm
 
-toxic_debug: update_code
+toxic_debug:
 	make toxic DEBUG=true #python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 
 wt:
 	chmod +x wt
 
-toxic: wt check
+toxic: wt check update_code
 	@bash -c '[ x$$(pgrep -f "make $@" | sort | head -n 1) == x$$PPID ] || (echo "we will kill existing \"make $@\""; kill $$(pgrep -f "make $@" | sort | head -n 1))'
 	unbuffer ./wt 'ipython tests/test_distilbert_model.py' 2>&1 | unbuffer -p tee -a toxic_log
 
@@ -98,10 +98,10 @@ ripdbrv:
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 get_log:
-	./receive_logs_topic \*.\* 2>&1 | tee -a mq_log >(sed -n "s/\(.*\)\[x.*/\1/p") |  unbuffer -p sed -n "s/.*\[x\]//p"  | jq '(.host +" "+ .levelname +": " +.msg)' &
-	sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
+	unbuffer ./receive_logs_topic \*.\* 2>&1 | unbuffer -p tee -a mq_log | unbuffer -p sed -n "s/.*\[x\]//p"  | jq '(.host +" "+ .levelname +": " +.msg)' &
+	sleep 3; unbuffer tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 log:
-	./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
+	unbuffer ./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
 
 check:
 	@echo $$DEBUG

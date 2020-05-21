@@ -120,16 +120,18 @@ else:
 
 TRAIN_LEN = len(x_train)
 VALID_LEN = len(x_valid)
+TEST_LEN  = len(x_test)
 
 if DEBUG:
+    TRAIN_LEN = TRAIN_LEN//10
     VALID_LEN = VALID_LEN//10
-    x_train = x_train[:TRAIN_LEN//10, :140]
-    y_train = y_train[:TRAIN_LEN//10]  # y just all pass, they are labels
+    TEST_LEN = TEST_LEN//100
+    x_train = x_train[:TRAIN_LEN, :140]
+    y_train = y_train[:TRAIN_LEN]  # y just all pass, they are labels
     x_valid = x_valid[:VALID_LEN, :140]
     y_valid = y_valid[:VALID_LEN] # it just one dimention
-    x_test  = x_test[:, :140]
+    x_test  = x_test[:TEST_LEN, :140]
 
-    TRAIN_LEN = TRAIN_LEN//10
 
 # +
 train_dataset = (
