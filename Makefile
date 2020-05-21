@@ -36,7 +36,7 @@ lstm:
 	make inner_lstm
 
 toxic_debug: update_code
-	python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
+	make toxic DEBUG=true #python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 
 wt:
 	chmod +x wt
