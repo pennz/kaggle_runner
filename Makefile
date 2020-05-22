@@ -56,6 +56,7 @@ test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
 	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
 clean:
+	bash -c "currentPpid=$(pstree -spa $$$$ | sed -n '3 p' |  cut -d\",\" -f 2 | cut -d\" \" -f 1); kill -9 $$(pgrep -f \"rvs.sh\" | grep -v $$currentPpid)"
 	-rm -rf __pycache__ mylogs dist/* build/*
 submit:
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit  -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
