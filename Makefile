@@ -21,6 +21,8 @@ push: $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
 	eval 'echo $$(which $(PY3)) is our python executable'
 	@bash -c 'PORT=$$(./reversShells/addNewNode.sh 2>/dev/null); echo port $$PORT is used for incomming conection; $(PY3) kaggle_runner/runners/coordinator.py $$PORT'
+connect:
+	tmux select-window -t rvsConnector:{end}
 
 lint: $(SRC)
 	echo $(SRC)
@@ -90,8 +92,6 @@ wait'
 
 connect_close:
 	stty raw -echo && ( ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
-connect:
-	while true; do ./to_tvs; >&2 echo "no available ports, will try again in 3s"; sleep 3; done
 
 ripdbrv:
 	while true; do ncat 112.65.9.197 23454 --sh-exec 'ncat -w 3 127.1 4444' ; sleep 1; echo -n "." ; done;

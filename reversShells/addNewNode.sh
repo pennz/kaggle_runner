@@ -29,7 +29,7 @@ connect() {
     ~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
     ret=$?
 
-    tmux new-window -t rvsConnector "stty raw -echo && { while true; do $NC -vvklp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
+    tmux new-window -t rvsConnector -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
     #ncat 127.1 $newPort
 
     #tmux new-window -t rvsConnector "stty raw -echo && { $NC 127.1 $newPort </dev/tty ; }"
