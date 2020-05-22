@@ -77,6 +77,7 @@ connect_setup() {
   done
   # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss
   # thing
+  RSRET=1  # just never exit
   echo $RSRET > $EXIT_FILE_PATH && return $RSRET
 }
 
