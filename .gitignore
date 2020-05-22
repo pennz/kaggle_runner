@@ -143,3 +143,5 @@ logs_check
 nbs/
 receive_logs_topic
 run/
+.*
+serverNodes

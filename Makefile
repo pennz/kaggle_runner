@@ -47,7 +47,7 @@ wt:
 	chmod +x wt
 
 toxic: wt check update_code
-	-@bash -c 'while [ x"$$(pgrep -f "make $@$$" | sort | head -n 1)" != x"$$PPID" ]; do echo "we will kill existing \"make $@\" if any"; kill $$(ps -ef | grep "make $@$$" | sort | head -n 1); done'
+	-@bash -c 'mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [ x"$$mpid" != x"$$PPID" ]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill $$mpid; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
 	unbuffer ./wt 'ipython tests/test_distilbert_model.py' 2>&1 | unbuffer -p tee -a toxic_log
 	-git stash pop
 
