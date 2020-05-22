@@ -61,7 +61,7 @@ connect_setup() {
   while [ ${connect_again_flag} -eq 1 ]; do
     check_exit_status && return 0
 
-    $NC -w ${1}s -i 1800s $SERVER $PORT -c "echo $(date) started connection; echo $HOSTNAME; python -c 'import pty; pty.spawn(\"/bin/bash\")'"
+    $NC -w ${1}s -i 1800s $SERVER $PORT -c "echo $(date) started connection; echo $HOSTNAME; python -c 'import pty; pty.spawn([\"/bin/bash\", \"-li\"])'"
 
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
