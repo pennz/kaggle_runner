@@ -2,13 +2,13 @@ import os
 
 import pandas as pd
 import tensorflow as tf
+import transformers
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import binary_accuracy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
-import transformers
 from kaggle_runner import may_debug
 from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
 from kaggle_runner.datasets.bert import (DATA_PATH, test_dataset, x_valid,
@@ -88,5 +88,9 @@ def build_distilbert_model_singleton(max_len):
 
 def get_test_result(self, test_dataset=test_dataset, data_path=DATA_PATH):
     sub = pd.read_csv(os.path.join(data_path , 'sample_submission.csv'))
-    sub['toxic'] = self.model_distilbert.predict(test_dataset, verbose=1)[:,0]
+    pred = self.model_distilbert.predict(test_dataset, verbose=1)
+
+    if len(pred.shape) <= 1 or pred.shape[1] > 1:
+        pred = pred[:,0]
+    sub['toxic'][:len(pred)] = pred
     sub.to_csv('submission.csv', index=False)
