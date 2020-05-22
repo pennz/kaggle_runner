@@ -266,7 +266,7 @@ ORIG_PORT=23454
 CHECK_PORT=$(( ORIG_PORT + 1 ))
 apt update && apt install -y netcat nmap screen time locales
 apt install -y fish tig ctags htop tree pv tmux psmisc neovim expect &
-conda install -c eumetsat expect &  # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
+conda install -y -c eumetsat expect &  # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 
 source rpt # rvs IDE env setup
 
@@ -413,6 +413,16 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 entry_str = r\"\"\"#!/bin/bash
+#nc vtool.duckdns.org 9000 -c 'python -c "import pty; pty.spawn([\"/bin/bash\",\"-li\"]);"'
+
+#apt install netcat -y
+#git clone  https://github.com/pennz/kaggle_runner
+#rsync -r kaggle_runner/* .
+#        subprocess.run(f"python ./kaggle_runner/runners/coordinator.py "
+#                       f"{runner_configs[1]['port']}", shell=True, check=True)
+#	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
+#make test
+
 PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "vtool.duckdns.org" "$port" "$AMQPURL" "$size" "$seed" "$network" >>runner_log
 \"\"\"
 if ${gdrive_enable}:
