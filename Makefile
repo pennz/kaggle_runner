@@ -20,9 +20,10 @@ all: $(SRC)
 push: $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
 	eval 'echo $$(which $(PY3)) is our python executable'
-	@bash -c 'PORT=$$(./reversShells/addNewNode.sh 2>/dev/null); echo port $$PORT is used for incomming conection; $(PY3) kaggle_runner/runners/coordinator.py $$PORT'
+	bash -c 'export PORT=$$(./reversShells/addNewNode.sh 2>/dev/null); echo port $$PORT is used for incomming conection; export kversion=$$($(PY3) kaggle_runner/runners/coordinator.py $$PORT 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p"); tmux rename-window -t rvsConnector:{end} "v$$kversion:$$(git show --no-patch --oneline)"'
 connect:
 	tmux select-window -t rvsConnector:{end}
+	tmux switch -t rvsConnector:{end}
 
 lint: $(SRC)
 	echo $(SRC)
@@ -56,7 +57,7 @@ test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
 	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
 clean:
-	bash -c "currentPpid=$(pstree -spa $$$$ | sed -n '3 p' |  cut -d\",\" -f 2 | cut -d\" \" -f 1); kill -9 $$(pgrep -f \"rvs.sh\" | grep -v $$currentPpid)"
+	-bash -c 'currentPpid=$$(pstree -spa $$$$ | sed -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | sed "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
 	-rm -rf __pycache__ mylogs dist/* build/*
 submit:
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit  -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
