@@ -15,7 +15,9 @@ then echo "start connector"; \
 ncat -vuklp 50001 -c "bash -x addNewNode.sh mosh"; fi
 
 ms_connector:
-	while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455
+	( while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p tee -a ms_connect_log | unbuffer -p ncat --send-only vtool.duckdns.org 23455 ) &
+	@sleep 1
+	tail ms_connect_log
 	# mosh-server-port
 	# 60001[<->]pc-listen-port(50001)Plug>_[<->]listen-port-for-mochs-client(50002)
 	# 50001 output to client finnally and receive input back to 60001
