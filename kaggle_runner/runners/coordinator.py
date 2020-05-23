@@ -318,7 +318,6 @@ USE_AMQP=0  # just plain old good netcat
 export USE_AMQP
 
 if [ x"${PHASE}" = x"dev" ]; then
-  pip install -e .
   export PS4='[Remote]: Line ${LINENO}: '
 
   if [ "x${ENABLE_RVS}" = x1 ]; then
@@ -326,6 +325,8 @@ if [ x"${PHASE}" = x"dev" ]; then
         bash ./rvs.sh $SERVER $PORT 2>&1 &
     else
         screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT"
+
+	{ while true; do ./setup_mosh_server; done 2>&1 | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT" } &
     fi
   fi &
   conda activate base

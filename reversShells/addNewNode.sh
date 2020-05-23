@@ -2,6 +2,12 @@
 # trap ctrl-c and call ctrl_c()
 PS4='L${LINENO}: '
 
+mosh=
+
+if [ $# -gt 1 ]; then
+    mosh=true
+fi
+
 trap ctrl_c INT
 NC=ncat
 
@@ -20,6 +26,19 @@ getNewPort() {
     fi
     echo $newNode >>$serverNodes
     echo -n $newNode
+}
+
+mosh_connect() {
+    local newPort=$1
+
+    pgrep -f "ncat.*p $newPort" >/dev/null && return 1 # port used
+    ~/bin/upnp-add-port $newPort UDP >/dev/null 2>&1   # port forward, rvs will connect to this port
+    ret=$?
+
+    $NC -vulp $newPort
+
+    sed -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
+    return $ret
 }
 
 connect() {
@@ -46,15 +65,26 @@ connect() {
 }
 
 port=$(getNewPort serverNodes)
-connect $port serverNodes
+
+connects() {
+    if [ -z $mosh ]; then
+        connect $port serverNodes
+    else
+        mosh_connect $port serverNodes
+    fi
+}
+
+connects
 
 while [ ! $? -eq 0 ]; do
     echo "$port" >>serverNodes
     port=$((port + 1))
-    connect $port serverNodes
+    connects
 done
 
-echo -n "$port"
+if [ -z $mosh ]; then
+    echo -n "$port"
+fi
 
 # so reverse shell server named to RSS
 # so tcpserver instance named to TSins

