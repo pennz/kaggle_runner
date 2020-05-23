@@ -4,7 +4,7 @@ PS4='L${LINENO}: '
 
 mosh=
 
-if [ $# -gt 1 ]; then
+if [ $# -gt 0 ]; then
     mosh=true
 fi
 
