@@ -112,6 +112,7 @@ mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
 check:
+	pstree -laps $$$$
 	@echo $$DEBUG
 	@eval 'echo $$(which $(PY3)) is our python executable'
 	@python -c 'import os; print(os.environ.get("DEBUG"));'
