@@ -9,19 +9,12 @@ SRC=$(wildcard */**.py)
 SHELL=/bin/bash
 MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4  | awk  '{ print "MOSH_KEY=" $$2 " mosh-client 127.0.0.1 " $$1 }' ); sh -c "$$comm"
 
-tmp=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH \
-CONNECT" | cut -d" " -f 3,4  | awk  '{ print "MOSH_KEY=" $$2 " mosh-client \
-127.0.0.1 " $$1 }' ); export port=$$(echo $$comm | cut -d" " -f 4); \
-echo Start Connection between mosh server\:$$port and PC; \
->&2 echo [:] ncat -vvu 127.0.0.1 50001 -c \"tee /dev/tty | ncat -vvu 127.0.0.1 $$port | tee /dev/tty\"; \
-ncat -vvu 127.0.0.1 50001 -c "tee /dev/tty | ncat -vvu 127.0.0.1 $$port | tee /dev/tty" #& \
-bash -xc "echo $$comm; $$(sleep 1; echo $$comm | sed "s/$$port/50002/")"
 
 RUN_PC=if [ $$(pgrep -cf "50001.*vulp 50002") -eq 0 ]; then echo "start connector"; ncat -vuklp 50001 -c 'ncat -vulp 50002'; fi
 
 
 tmp: pc_connector
-	echo "RUN TMP"; $(tmp) # so mosh-server runs in kaggle server , the tunnel will be
+	./setup_mosh_server
 	# mosh-server-port
 	# 60001[<->]pc-listen-port(50001)Plug>_[<->]listen-port-for-mochs-client(50002)
 	# 50001 output to client finnally and receive input back to 60001
