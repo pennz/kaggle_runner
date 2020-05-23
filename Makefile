@@ -12,12 +12,16 @@ MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH 
 
 RUN_PC=if [ $$(pgrep -cf "50001.*vulp 50002") -eq 0 ]; then echo "start connector"; ncat -vuklp 50001 -c 'ncat -vulp 50002'; fi
 
-
 tmp: pc_connector
 	./setup_mosh_server
 	# mosh-server-port
 	# 60001[<->]pc-listen-port(50001)Plug>_[<->]listen-port-for-mochs-client(50002)
 	# 50001 output to client finnally and receive input back to 60001
+	
+pc_conn:
+	if [ -z "$(COM)" ]; then echo need pass COMM to make; else \
+tmux new-window -t rvsConnector -n "$$(git show --no-patch --oneline)" "$$(echo '$(COM)' | sed 's/600[0-9]\{1,\}/50002/')" ; fi
+
 pc_connector:
 	echo "RUN PC"; $(RUN_PC)
 	@echo "pc connector is fine now"

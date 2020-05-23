@@ -1,15 +1,11 @@
 #!/bin/bash -x
+PC=vtool.duckdns.org
 
 stty rows 40 columns 80
 comm=$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4 | awk '{ print "MOSH_KEY=" $2 " mosh-client 127.0.0.1 " $1 }')
 
 port=$(echo $comm | cut -d" " -f 4)
-echo Start Connection between mosh server\:$port and PC
+echo >&2 Start Connection between mosh server\:$port and PC
 
-echo >&2 [:] ncat -vvu 127.0.0.1 50001 -c \""tee /dev/tty ""|"" ncat -vvu 127.0.0.1 $port ""|"" tee /dev/tty"\"
-
-ncat -vvu 127.0.0.1 50001 -c "echo; ncat -u 127.0.0.1 $port " & # so mosh-server runs in kaggle server , the tunnel will be
-
-sleep 1
-
-tmux new-window -t rvsConnector -n "$(git show --no-patch --oneline)" "$(echo $comm | sed "s/$port/50002/")"
+echo $comm
+ncat -vvu $PC 50001 -c "echo; ncat -u 127.0.0.1 $port " & # so mosh-server runs in kaggle server , the tunnel will be
