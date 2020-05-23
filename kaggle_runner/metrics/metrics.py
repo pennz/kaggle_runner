@@ -7,8 +7,6 @@ from kaggle_runner import may_debug
 
 
 def matthews_correlation_aux_stripper(y_true, y_pred):
-    # may_debug()
-    # y_pred = y_pred[:,0]
     ts = y_true.shape
     ps = y_pred.shape
 
