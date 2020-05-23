@@ -244,7 +244,7 @@ SRC_WORK_FOLDER=/kaggle/input
 """
 
 runner_src = r"""#!/bin/bash -x
-export PS4='Line ${LINENO}: '  # for debug
+export PS4='Line ${LINENO}: ' # for debug
 NC=ncat
 
 USER=$1
@@ -265,20 +265,20 @@ shift
 
 ORIG_PORT=23454
 
-CHECK_PORT=$(( ORIG_PORT + 1 ))
+CHECK_PORT=$((ORIG_PORT + 1))
 apt update && apt install -y netcat nmap screen time locales
 apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect &
-conda install -y -c eumetsat expect &  # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
+conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 
 source rpt # rvs IDE env setup
 
 wait_ncat() {
-  wait_for_ncat=$1
+    wait_for_ncat=$1
 
-  while [ $wait_for_ncat -gt 0 ]; do
-    wait_for_ncat=$(( wait_for_ncat - 1))
-    which ncat >/dev/null && return 0
-  done
+    while [ $wait_for_ncat -gt 0 ]; do
+        wait_for_ncat=$((wait_for_ncat - 1))
+        which ncat >/dev/null && return 0
+    done
 }
 wait_ncat 60
 
@@ -287,7 +287,7 @@ export NC
 
 pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
 python3 -m pip install pyvim neovim msgpack==1.0.0 &
-python -m pip install pyvim neovim msgpack==1.0.0 &  # for vim
+python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
 
 SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
@@ -296,48 +296,55 @@ cd ${SRC_WORK_FOLDER}
 
 if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
 {
-  mvdir () {
-      [[ "$2"/"$1" -ef "${PWD}" ]] || { rm -rf "$2"/"$1" &&
-          mkdir "$2"/"$1"
-      }
+    mvdir() {
+        [[ "$2"/"$1" -ef "${PWD}" ]] || {
+            rm -rf "$2"/"$1" &&
+                mkdir "$2"/"$1"
+        }
 
-      bash -c "mv ""$1""/*"" $2""/""$1"
-  }
-  export -f mvdir
+        bash -c "mv ""$1""/*"" $2""/""$1"
+    }
+    export -f mvdir
 
-  git clone --single-branch --branch ${BRANCH} --depth=1 \
-    https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
-  git submodule update --init --recursive
-  find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
-  find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
-  popd
-  pip install -e .
+    git clone --single-branch --branch ${BRANCH} --depth=1 \
+        https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
+        git submodule update --init --recursive
+    find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
+    find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
+    popd
+    pip install -e .
 }
 
-USE_AMQP=0  # just plain old good netcat
+USE_AMQP=0 # just plain old good netcat
 export USE_AMQP
 
 if [ x"${PHASE}" = x"dev" ]; then
-  export PS4='[Remote]: Line ${LINENO}: '
+    export PS4='[Remote]: Line ${LINENO}: '
 
-  if [ "x${ENABLE_RVS}" = x1 ]; then
-    if [ -z $(pgrep -f 'jupyter-notebook') ]; then
-        bash ./rvs.sh $SERVER $PORT 2>&1 &
-    else
-        screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT"
+    (
+        echo "MOSHing"
 
-	{ while true; do ./setup_mosh_server; done 2>&1 | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT" } &
-    fi
-  fi &
-  conda activate base
-  make install_dep >/dev/null;
-  unbuffer make toxic 2>&1 | unbuffer -p tee -a toxic_log | ( [ $USE_AMQP -eq 0 ] && unbuffer -p $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT || unbuffer -p cat - )
+        while true; do ./setup_mosh_server; done 2>&1 | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT
+    ) &
+
+    if [ "x${ENABLE_RVS}" = x1 ]; then
+        if [ -z $(pgrep -f 'jupyter-notebook') ]; then
+            bash ./rvs.sh $SERVER $PORT 2>&1 &
+        else
+            screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
+        fi
+    fi &
+    conda activate base
+    make install_dep >/dev/null
+    unbuffer make toxic 2>&1 | unbuffer -p tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && unbuffer -p $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || unbuffer -p cat -)
 fi
 
 if [ x"${PHASE}" != x"dev" ]; then
-  pip install kaggle_runner
-  python main.py "$@";
+    pip install kaggle_runner
+    python main.py "$@"
 fi
+
+wait # not exit
 """
 
 
