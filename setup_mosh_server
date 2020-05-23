@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 PC=vtool.duckdns.org
 
 stty rows 40 columns 80
@@ -6,6 +6,5 @@ comm=$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4 |
 echo $comm
 
 port=$(echo $comm | cut -d" " -f 4)
-echo >&2 Start Connection between mosh server\:$port and PC
 
-ncat -vvu $PC 50001 -c "echo; ncat -u 127.0.0.1 $port " # so mosh-server runs in kaggle server , the tunnel will be
+ncat -vvu $PC 50001 -c "echo; ncat -u 127.0.0.1 $port" # so mosh-server runs in kaggle server , the tunnel will be
