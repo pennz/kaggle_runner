@@ -10,12 +10,12 @@ SHELL=/bin/bash
 MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4  | awk  '{ print "MOSH_KEY=" $$2 " mosh-client 127.0.0.1 " $$1 }' ); sh -c "$$comm"
 
 
-RUN_PC=if [ $$(pgrep -cf "50001.*addNew") -eq 0 ]; \
+RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start connector"; \
-ncat -vuklp 50001 -c 'bash -x addNewNode.sh mosh'; fi
+ncat -vuklp 50001 -c "bash -x addNewNode.sh mosh"; fi
 
 ms_connector:
-	while true; do ./setup_mosh_server; done 2>&1 | ncat --send-only vtool.duckdns.org 23455
+	while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455
 	# mosh-server-port
 	# 60001[<->]pc-listen-port(50001)Plug>_[<->]listen-port-for-mochs-client(50002)
 	# 50001 output to client finnally and receive input back to 60001
@@ -25,7 +25,7 @@ pc_conn:
 tmux new-window -t rvsConnector -n "m.$$(git show --no-patch --oneline)" "$$(echo '$(COM)' | sed 's/600[0-9]\{1,\}/50002/')" ; fi
 
 pc_connector:
-	echo "RUN PC"; $(RUN_PC)
+	bash -c '$(RUN_PC)'
 	@echo "pc connector is fine now"
 
 
