@@ -267,7 +267,7 @@ ORIG_PORT=23454
 
 CHECK_PORT=$(( ORIG_PORT + 1 ))
 apt update && apt install -y netcat nmap screen time locales
-apt install -y fish tig ctags htop tree pv tmux psmisc neovim expect &
+apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect &
 conda install -y -c eumetsat expect &  # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 
 source rpt # rvs IDE env setup
