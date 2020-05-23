@@ -50,6 +50,7 @@ connect:
 	tmux select-window -t rvsConnector:{end}
 	tmux switch -t rvsConnector:{end}
 
+
 lint: $(SRC)
 	echo $(SRC)
 	pylint -E $(SRC)
@@ -84,6 +85,8 @@ test: update_code $(SRC)
 clean:
 	-bash -c 'currentPpid=$$(pstree -spa $$$$ | sed -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | sed "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
 	-rm -rf __pycache__ mylogs dist/* build/*
+
+
 submit:
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit  -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 run_submit:

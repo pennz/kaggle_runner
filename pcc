@@ -1,6 +1,6 @@
 #!/bin/bash
 # read comm
-comm="$(tail logs_check | grep MOSH | tail -n 1)"
+comm="$(grep MOSH logs_check | tail -n 1)"
 echo $comm found from remote
 
 if [ -z "$comm" ]; then
