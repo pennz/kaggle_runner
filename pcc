@@ -1,0 +1,14 @@
+#!/bin/bash
+# read comm
+comm="$(tail logs_check | grep MOSH | tail -n 1)"
+echo $comm found from remote
+
+if [ -z "$comm" ]; then
+    echo need pass COMM to make
+else
+    lastServer=$(tail -n 1 serverNodes)
+    newNode=$((lastServer + 0))
+    pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}\r/$newNode/")"
+    echo \"$pcomm\" will be used
+    tmux new-window -t rvsConnector -n "m.$(git show --no-patch --oneline)" "bash -c \"$pcomm\""
+fi

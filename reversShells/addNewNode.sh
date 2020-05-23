@@ -35,7 +35,8 @@ mosh_connect() {
     ~/bin/upnp-add-port $newPort UDP >/dev/null 2>&1   # port forward, rvs will connect to this port
     ret=$?
 
-    $NC -vulp $newPort
+    # echo "" # blank message, to activate? will make it fail?
+    $NC -ulp $newPort
 
     sed -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
     return $ret

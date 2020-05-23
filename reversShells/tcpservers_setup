@@ -9,16 +9,7 @@ function ctrl_c() {
 
 tmux new -d -s rvsConnector
 
-logger() {
-    while true; do
-        echo . >/dev/tty
-    done &
-    unbuffer -p tee -a logs_check /dev/tty >/dev/null
-}
-
-export -f logger
-
-tcpserver -D -B "# Welcome to our logger\r" 192.168.123.8 23455 bash -c 'logger'
+tcpserver -D -B "# Welcome to our logger\r" 192.168.123.8 23455 cat
 # tcpserver -D -B "# Welcome, Good day.\r" 192.168.123.8 25454 bash -x ./addNewNode.sh
 # stty raw -echo && while true; do
 #     echo "started new listening"
