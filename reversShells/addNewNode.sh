@@ -24,7 +24,7 @@ getNewPort() {
     else
         newNode=9000
     fi
-    echo $newNode >>$serverNodes
+    unbuffer echo $newNode >>$serverNodes
     echo -n $newNode
 }
 
