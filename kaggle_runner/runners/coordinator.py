@@ -174,9 +174,9 @@ echo "unalias vim" >> ~/.bash_aliases
 echo "alias vim='nvim -u ~/.vimrc_back'" >> ~/.bash_aliases
 popd
 
-cat >> ~/.bashrc << EOF
+cat >> ~/.profile << EOF
 reset
-export SHELL=bash
+export SHELL=/bin/bash
 export TERM=screen-256color
 stty intr ^\c susp ^\x eof ^\f echo opost
 # https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
@@ -200,6 +200,9 @@ MPLBACKEND=module://ipykernel.pylab.backend_inline
 
 PS4="$HOSTNAME: "'${LINENO}: '
 _=/usr/bin/env
+PWD=/kaggle/working
+cd $PWD
+OLDPWD=/root
 
 # color_my_prompt
 locale-gen
@@ -323,8 +326,7 @@ if [ x"${PHASE}" = x"dev" ]; then
 
     (
         echo "MOSHing"
-
-        while true; do ./setup_mosh_server; done 2>&1 | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT
+        make mosh &
     ) &
 
     if [ "x${ENABLE_RVS}" = x1 ]; then
