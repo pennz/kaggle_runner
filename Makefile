@@ -14,6 +14,9 @@ RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start connector"; \
 unbuffer ncat -uklp 50001 -c "bash -x addNewNode.sh mosh"; fi
 
+log_receiver:
+	(ncat -vkl --recv-only  -p 23455 | unbuffer -p cat >> logs_check) & (sleep 1; tail -f logs_check)
+
 pc:
 	./pcc
 
@@ -24,9 +27,6 @@ ms_connector:
 	( while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p tee -a ms_connect_log | unbuffer -p ncat --send-only vtool.duckdns.org 23455 ) &
 	@sleep 1
 	tail ms_connect_log
-	# mosh-server-port
-	# 60001[<->]pc-listen-port(50001)Plug>_[<->]listen-port-for-mochs-client(50002)
-	# 50001 output to client finnally and receive input back to 60001
 	
 pc_connector:
 	bash -c '$(RUN_PC)'
@@ -74,7 +74,7 @@ wt:
 	chmod +x wt
 
 toxic: wt check update_code
-	@bash -c 'mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [ x"$$mpid" != x"$$PPID" ]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill $$mpid; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
+	@bash -c 'mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [ x"$$mpid" != x"$$PPID" ]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
 	[ -z $$DEBUG ] || python -m ipdb tests/test_distilbert_model.py 2>&1
 	[ -z $$DEBUG ] && unbuffer ./wt 'python tests/test_distilbert_model.py' 2>&1 | unbuffer -p tee -a toxic_log
 	-git stash pop
