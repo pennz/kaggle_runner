@@ -7,6 +7,7 @@ URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBM
 PY3=python
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
+MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4  | awk  '{ print "MOSH_KEY=" $$2 " mosh-client 127.0.0.1 " $$1 }' ); sh -c "$$comm"
 
 all: $(SRC)
 	-git push
@@ -106,6 +107,9 @@ get_log:
 	sleep 3; unbuffer tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 log:
 	unbuffer ./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
+
+mlocal:
+	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
 check:
 	@echo $$DEBUG
