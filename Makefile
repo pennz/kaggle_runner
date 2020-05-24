@@ -83,7 +83,7 @@ wt:
 toxic: wt check
 	echo $$(ps aux | grep "make $@$$")
 	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
-	[ -z $$DEBUG ] || ./wt 'python -m ipdb tests/test_distilbert_model.py' 2>&1
+	[ -n $$DEBUG ] && ./wt 'python -m ipdb tests/test_distilbert_model.py' 2>&1
 	[ -z $$DEBUG ] && python tests/test_distilbert_model.py 2>&1 | tee -a toxic_log /dev/tty | ncat --send-only vtool.duckdns.org 23455
 	-git stash pop
 

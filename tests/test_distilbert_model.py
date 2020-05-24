@@ -52,7 +52,8 @@ class Test_distilbert_model:
             steps = 10
             epochs = 1
         else:
-            steps = TRAIN_LEN/BATCH_SIZE,
+            steps = TRAIN_LEN//BATCH_SIZE,
+            logger.debug("Train len %s, batch size %s", TRAIN_LEN, BATCH_SIZE)
             epochs = 8
         logger.debug("Every epoch, steps is %s", steps)
 
