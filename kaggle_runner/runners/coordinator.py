@@ -450,7 +450,7 @@ entry_str = r\"\"\"#!/bin/bash
 #	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
 #make test
 
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "vtool.duckdns.org" "$port" "$AMQPURL" "$size" "$seed" "$network" >>runner_log
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master run 1 "vtool.duckdns.org" "$port" "$AMQPURL" "$size" "$seed" "$network" >>runner_log
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
