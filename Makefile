@@ -81,7 +81,7 @@ wt:
 	chmod +x wt
 
 toxic: wt check update_code
-	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ ! "$$mpid" <= "$$$$((ppid-5))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
+	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ ! "$$mpid" <= "$$((ppid-5))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
 	[ -z $$DEBUG ] || python -m ipdb tests/test_distilbert_model.py 2>&1
 	[ -z $$DEBUG ] &&  ./wt 'python tests/test_distilbert_model.py' 2>&1 |  -p tee -a toxic_log
 	-git stash pop
