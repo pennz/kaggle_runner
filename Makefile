@@ -11,7 +11,7 @@ MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH 
 
 
 RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
-then echo "start connector"; \
+then echo "start mosh connector"; \
 unbuffer ncat -uklp 50001 -c "bash -x addNewNode.sh mosh"; fi
 
 log_receiver:
@@ -28,8 +28,10 @@ ms_connector:
 	@sleep 1
 	tail ms_connect_log
 	
-pc_connector:
-	bash -c '$(RUN_PC)'
+pccnct:
+	-tmux new -d -s rvsConnector
+	./reversShells/tcpservers_setup & # for listen all the log send back from rvs server
+	bash -c '$(RUN_PC)'  # for mosh, start listen instances
 	@echo "pc connector is fine now"
 
 
@@ -45,7 +47,8 @@ all: $(SRC)
 push: $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
 	eval 'echo $$(which $(PY3)) is our python executable'
-	bash -c 'export PORT=$$(./reversShells/addNewNode.sh 2>/dev/null); echo port $$PORT is used for incomming conection; export kversion=$$($(PY3) kaggle_runner/runners/coordinator.py $$PORT 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p"); tmux rename-window -t rvsConnector:{end} "v$$kversion:$$(git show --no-patch --oneline)"'
+	bash -c 'export PORT=$$(./reversShells/addNewNode.sh 2>/dev/null); echo TCP port $$PORT is used for incomming conection; export kversion=$$($(PY3) kaggle_runner/runners/coordinator.py $$PORT 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p"); tmux rename-window -t rvsConnector:{end} "v$$kversion:$$(git show --no-patch --oneline)"'
+
 connect:
 	tmux select-window -t rvsConnector:{end}
 	tmux switch -t rvsConnector:{end}

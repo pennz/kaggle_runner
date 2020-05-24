@@ -25,6 +25,7 @@ getNewPort() {
         newNode=9000
     fi
     unbuffer echo $newNode >>$serverNodes
+    sync
     echo -n $newNode
 }
 
@@ -49,10 +50,7 @@ connect() {
     ~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
     ret=$?
 
-    tmux new-window -t rvsConnector -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
-    #ncat 127.1 $newPort
-
-    #tmux new-window -t rvsConnector "stty raw -echo && { $NC 127.1 $newPort </dev/tty ; }"
+    tmux new-window -t rvsConnector:+1 -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
 
     # tcpserver waits for connections from TCP clients. For each connection, it
     # runs prog, with descriptor 0 reading from the network and descriptor 1 writing

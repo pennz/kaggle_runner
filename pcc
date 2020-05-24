@@ -10,5 +10,5 @@ else
     newNode=$((lastServer + 0))
     pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}\r/$newNode/")"
     echo \"$pcomm\" will be used
-    tmux new-window -t rvsConnector -n "m.$(git show --no-patch --oneline)" "bash -c \"$pcomm\""
+    tmux new-window -t rvsConnector:+1 -n "m.$(git show --no-patch --oneline)" "bash -c \"$pcomm\""
 fi
