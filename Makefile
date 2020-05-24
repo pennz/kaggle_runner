@@ -12,7 +12,7 @@ MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH 
 
 RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
-unbuffer ncat -uklp 50001 -c "bash -x addNewNode.sh mosh"; fi
+unbuffer ncat -uklp 50001 -c "bash addNewNode.sh mosh"; fi
 
 log_receiver:
 	-pkill -f "23455"
@@ -45,10 +45,10 @@ all: $(SRC)
 	coverage xml
 	./cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
-push: $(SRC)
+push: check $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
-	eval 'echo $$(which $(PY3)) is our python executable'
-	bash -c 'export PORT=$$(./reversShells/addNewNode.sh 2>/dev/null); echo TCP port $$PORT is used for incomming conection; export kversion=$$($(PY3) kaggle_runner/runners/coordinator.py $$PORT 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p"); tmux rename-window -t rvsConnector:{end} "v$$kversion:$$(git show --no-patch --oneline)"'
+	@echo "$$(which $(PY3)) is our python executable"; [[ x$$(which $(PY3)) =~ conda ]]
+	bash -x ./rvs_listen
 
 connect:
 	tmux select-window -t rvsConnector:{end}
@@ -146,7 +146,7 @@ check:
 	echo $(PWD)
 	pstree -laps $$$$
 	@echo $$DEBUG
-	@eval 'echo $$(which $(PY3)) is our python executable'
+	@echo "$$(which $(PY3)) is our python executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; false; fi
 	@python -c 'import os; print(os.environ.get("DEBUG"));'
 	@python -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));'
 

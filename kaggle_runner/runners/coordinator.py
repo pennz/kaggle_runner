@@ -271,9 +271,15 @@ shift
 ORIG_PORT=23454
 
 CHECK_PORT=$((ORIG_PORT + 1))
+conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 apt update && apt install -y netcat nmap screen time locales
 apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect &
-conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
+
+cat >> ~/.profile << EOF
+conda init bash
+source ~/.bashrc
+conda activate base
+EOF
 
 source rpt # rvs IDE env setup
 
@@ -338,6 +344,8 @@ if [ x"${PHASE}" = x"dev" ]; then
             screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
         fi
     fi &
+    conda init bash
+    source ~/.bashrc
     conda activate base
     make install_dep >/dev/null
     unbuffer make toxic 2>&1 | unbuffer -p tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && unbuffer -p $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || unbuffer -p cat -)
