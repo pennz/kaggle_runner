@@ -421,13 +421,16 @@ class Coordinator:
     def _change_main_py(path, size, net, AMQPURL, seed, port, gdrive_enable=False, phase='dev'):
         s = Template(
             """#!/usr/bin/env python3
+from importlib import reload
 import selectors
 import subprocess
 import sys
 
-subprocess.run('git clone https://github.com/pennz/kaggle_runner; cd kaggle_runner; python -m pip install -e .', shell=True, check=True)
-
+subprocess.run('git clone https://github.com/pennz/kaggle_runner; rsync -r kaggle_runner/.* .; rsync -r kaggle_runner/* .; python -m pip install -e .', shell=True, check=True)
+import kaggle_runner
+reload(kaggle_runner)
 from kaggle_runner import logger
+logger.debug("Logger loaded")
 
 with open("runner.sh", "w") as f:
     f.write(
