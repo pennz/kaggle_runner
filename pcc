@@ -19,7 +19,7 @@ else
         newNode=${newNode_passed}
     fi
 
-    pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}\r/$newNode/")"
+    pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}.*\r/$newNode/")"
     echo \"$pcomm\" will be used
     hn=$(echo $comm | cut -d" " -f 5)
     #tmux select-pane -t rvsConnector -m

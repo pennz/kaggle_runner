@@ -425,6 +425,10 @@ import selectors
 import subprocess
 import sys
 
+subprocess.run('git clone https://github.com/pennz/kaggle_runner; cd kaggle_runner; python -m pip install -e .', shell=True, check=True)
+
+from kaggle_runner import logger
+
 with open("runner.sh", "w") as f:
     f.write(
 r\"\"\"${runner_src}\"\"\"
@@ -478,10 +482,10 @@ while True:
        if data == "":
            continue
        if key.fileobj is p.stdout:
-           #logger.debug(data)
+           logger.debug(data)
            print(data, end="")
        else:
-           #logger.error(data)
+           logger.error(data)
            print(data, end="", file=sys.stderr)
 
 # URL:
