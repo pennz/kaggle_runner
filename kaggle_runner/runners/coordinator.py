@@ -326,7 +326,7 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
     make install_dep >/dev/null &
 }
 
-USE_AMQP=0 # just plain old good netcat
+USE_AMQP=1 # just plain old good netcat
 export USE_AMQP
 
 conda init bash
