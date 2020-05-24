@@ -7,6 +7,9 @@ from .utils import logger
 
 logger = logger
 
-def may_debug():
-    if DEBUG:
+def may_debug(force=False):
+    if force:
         ipdb.set_trace()
+    else:
+        if DEBUG:
+            ipdb.set_trace()
