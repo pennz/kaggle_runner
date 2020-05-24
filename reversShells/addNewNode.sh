@@ -3,9 +3,18 @@
 PS4='L${LINENO}: '
 
 mosh=
+phase=
 
 if [ $# -gt 0 ]; then
-    mosh=true
+    if [ "$1" = mosh ]; then
+        mosh=true
+    else
+        phase=$1
+        if [ x$phase != xdev ]; then
+            echo 0
+            exit 0
+        fi
+    fi
 fi
 
 trap ctrl_c INT
@@ -26,7 +35,6 @@ getNewPort() {
         newNode=9000
     fi
     unbuffer echo $newNode >>$serverNodes
-    sync
     echo -n $newNode
 }
 
@@ -101,10 +109,10 @@ make_connect
 while [ ! $? -eq 0 ]; do
     port=$((port + 1))
     unbuffer echo "$port" >>serverNodes
-    sync
     make_connect
 done
 
+sync &
 if [ -z $mosh ]; then
     echo -n "$port"
 fi

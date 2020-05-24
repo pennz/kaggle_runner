@@ -1,9 +1,19 @@
 #!/bin/bash -x
 PHASE=$1
 [ -z $PHASE ] && PHASE='dev'
-PORT=$(./reversShells/addNewNode.sh 2>/dev/null) # TODO put phase to add new node, not dev no need to listen local ports
+PORT=$(./reversShells/addNewNode.sh $PHASE)
 echo Created new listen instance. TCP port $PORT is used for incomming conection.
+[ -z $PORT ] && PORT=0 # do not need port listen
+push_log=$(python kaggle_runner/runners/coordinator.py "$PORT" "$PHASE")
 
-kversion=$(python kaggle_runner/runners/coordinator.py $PORT $PHASE 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p")
+echo $push_log
+push_ret=$?
+if [ ! $push_ret -eq 0 ]; then
+    echo >&2 Push failed, please check.
+    exit $push_ret
+fi
+kversion=$(echo $push_log | sed -n "s/.*Kernel version \([0-9]\{,\}\).*/\1/p")
 echo Code pushed. TCP port $PORT - version $kversion. Please wait rvs to connect.
-tmux rename-window -t rvsConnector:{end} "v$kversion:$PORT:$(git show --no-patch --oneline)"
+if [ ! -z "$kversion" ]; then
+    tmux rename-window -t rvsConnector:{end} "v$kversion:$PORT:$(git show --no-patch --oneline)"
+fi

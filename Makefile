@@ -12,7 +12,7 @@ MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH 
 
 RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
-unbuffer ncat -uklp 50001 -c "bash -x addNewNode.sh mosh"; fi
+unbuffer ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash -x addNewNode.sh mosh"; fi
 
 log_receiver:
 	-pkill -f "23455"
@@ -83,7 +83,7 @@ wt:
 toxic: wt check update_code
 	@bash -c 'mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [ x"$$mpid" != x"$$PPID" ]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
 	[ -z $$DEBUG ] || python -m ipdb tests/test_distilbert_model.py 2>&1
-	[ -z $$DEBUG ] && unbuffer ./wt 'python tests/test_distilbert_model.py' 2>&1 | unbuffer -p tee -a toxic_log
+	[ -z $$DEBUG ] &&  ./wt 'python tests/test_distilbert_model.py' 2>&1 |  -p tee -a toxic_log
 	-git stash pop
 
 test: update_code $(SRC)
