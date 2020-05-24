@@ -1,0 +1,6 @@
+#!/bin/bash
+PORT=$(./reversShells/addNewNode.sh 2>/dev/null)
+echo TCP port $PORT is used for incomming conection
+kversion=$($(PY3) kaggle_runner/runners/coordinator.py $PORT 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p")
+
+tmux rename-window -t rvsConnector:{end} "v$kversion:$PORT:$(git show --no-patch --oneline)"
