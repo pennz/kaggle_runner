@@ -1,7 +1,7 @@
 #!/bin/bash
 # read comm
 comm="$(grep MOSH logs_check | tail -n 1)"
-echo $comm found from remote
+echo \"$comm\" found from remote
 
 if [ -z "$comm" ]; then
     echo need pass COMM to make
@@ -10,5 +10,8 @@ else
     newNode=$((lastServer + 0))
     pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}\r/$newNode/")"
     echo \"$pcomm\" will be used
+    tmux select-pane -t rvsConnector -m
+    tmux select-window -t rvsConnector:$
     tmux new-window -t rvsConnector:+1 -n "m.$(git show --no-patch --oneline)" "bash -c \"$pcomm\""
+    tmux swap-window -t rvsConnector:$
 fi

@@ -15,7 +15,8 @@ then echo "start mosh connector"; \
 unbuffer ncat -uklp 50001 -c "bash -x addNewNode.sh mosh"; fi
 
 log_receiver:
-	(ncat -vkl --recv-only  -p 23455 | unbuffer -p cat >> logs_check) & (sleep 1; tail -f logs_check)
+	-pkill -f "23455"
+	(ncat -vkl --recv-only  -p 23455 | unbuffer -p cat >> logs_check) & (sleep 1; tail -f logs_check) &
 
 pc:
 	./pcc
@@ -23,14 +24,13 @@ pc:
 mosh:
 	while ture; do (./setup_mosh_server 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455) & sleep 600; done
 
-ms_connector:
+m:
 	( while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p tee -a ms_connect_log | unbuffer -p ncat --send-only vtool.duckdns.org 23455 ) &
 	@sleep 1
 	tail ms_connect_log
 	
-pccnct:
+pccnct: log_receiver
 	-tmux new -d -s rvsConnector
-	./reversShells/tcpservers_setup & # for listen all the log send back from rvs server
 	bash -c '$(RUN_PC)'  # for mosh, start listen instances
 	@echo "pc connector is fine now"
 
