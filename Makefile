@@ -23,7 +23,7 @@ pc:
 	make connect
 
 mosh:
-	while ture; do (./setup_mosh_server 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455) & sleep 600; done
+	while true; do (./setup_mosh_server 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455) & sleep 600; done
 
 m:
 	( while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p tee -a ms_connect_log | unbuffer -p ncat --send-only vtool.duckdns.org 23455 ) &
