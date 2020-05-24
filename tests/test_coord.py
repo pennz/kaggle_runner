@@ -58,7 +58,7 @@ class TestCoordinator:
 
     def test_push_runner_cmd(self, runner_configs):
         subprocess.run(f"python ./kaggle_runner/runners/coordinator.py "
-                       f"{runner_configs[1]['port']}", shell=True, check=True)
+                       f"{runner_configs[1]['port']} dev", shell=True, check=True)
 
     @pytest.mark.timeout(10)
     @pytest.mark.skip("runner runs in computation server, no need test local")

@@ -275,10 +275,9 @@ conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/
 apt update && apt install -y netcat nmap screen time locales
 apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect &
 
-cat >> ~/.profile << EOF
 conda init bash
-source ~/.bashrc
-conda activate base
+cat >> ~/.bashrc << EOF
+conda activate base # as my dotfiles will fiddle with conda
 EOF
 
 source rpt # rvs IDE env setup
@@ -576,12 +575,13 @@ while True:
 if __name__ == "__main__":
     port = sys.argv[1]
     assert int(port) > 1000
+    phase = sys.argv[2]
     logger.debug(f"{sys.argv}")
     tmp_path = '.r'
 
     subprocess.run(f"rm -r {tmp_path}", shell=True, check=True)
     coordinator = Coordinator(tmp_path, "Test Runner")
-    config = {"port":port, "size": 384, "network": "intercept", "AMQPURL": AMQPURL()}
+    config = {"phase": phase, "port":port, "size": 384, "network": "intercept", "AMQPURL": AMQPURL()}
     path = coordinator.create_runner(config, 19999, False)
 
     if os.getenv("CI") != "true":

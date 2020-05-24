@@ -51,7 +51,7 @@ all: $(SRC)
 push: check $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
 	@echo "$$(which $(PY3)) is our python executable"; [[ x$$(which $(PY3)) =~ conda ]]
-	./rvs_listen
+	./run_coordinator $(PHASE)
 
 connect:
 	tmux select-window -t rvsConnector:{end}
