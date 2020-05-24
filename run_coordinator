@@ -4,6 +4,13 @@ PHASE=$1
 PORT=$(./reversShells/addNewNode.sh $PHASE)
 echo Created new listen instance. TCP port $PORT is used for incomming conection.
 [ -z $PORT ] && PORT=0 # do not need port listen
+echo "$(which python) is our python executable"
+if [[ x$(which python) =~ conda ]]; then echo conda env fine; else
+    echo >&2 conda env not set correctly, please check.
+    false
+    source ~/.bashrc
+    conda activate pyt
+fi
 push_log=$(python kaggle_runner/runners/coordinator.py "$PORT" "$PHASE")
 
 echo $push_log

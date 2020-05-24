@@ -51,7 +51,7 @@ all: $(SRC)
 push: check $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
 	@echo "$$(which $(PY3)) is our python executable"; [[ x$$(which $(PY3)) =~ conda ]]
-	./run_coordinator $(PHASE)
+	source ./run_coordinator $(PHASE)
 
 connect:
 	tmux select-window -t rvsConnector:{end}
@@ -154,6 +154,7 @@ check:
 	pstree -laps $$$$
 	@echo "$$(which $(PY3)) is our python executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; false; source ~/.bashrc; conda activate pyt; fi
 	python -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
+	python -c 'import kaggle_runner' || ( pip install -e . && python -c 'import kaggle_runner')
 	python -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 .PHONY: clean connect inner_lstm

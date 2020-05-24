@@ -589,7 +589,7 @@ if __name__ == "__main__":
     logger.debug(f"{sys.argv}")
     tmp_path = '.r'
 
-    subprocess.run(f"rm -r {tmp_path}", shell=True, check=True)
+    subprocess.run(f"rm -rf {tmp_path}", shell=True, check=True)
     coordinator = Coordinator(tmp_path, "Test Runner")
     config = {"phase": phase, "port":port, "size": 384, "network": "intercept", "AMQPURL": AMQPURL()}
     path = coordinator.create_runner(config, 19999, False)
