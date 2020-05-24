@@ -355,7 +355,7 @@ wait
 
 if [ x"${PHASE}" != x"dev" ]; then
     #pip install kaggle_runner
-    make toxic 2>&1 |  -p tee -a toxic_log | ([ $USE_AMQP -eq 0 ] &&  -p $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT ||  -p cat -)
+    make toxic 2>&1 | tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || cat -)
     # python main.py "$@"
 fi
 
