@@ -1,7 +1,9 @@
 #!/bin/bash -x
+PHASE=$1
+[ -z $PHASE ] && PHASE='dev'
 PORT=$(./reversShells/addNewNode.sh 2>/dev/null)
 echo Created new listen instance. TCP port $PORT is used for incomming conection.
 
-kversion=$(python kaggle_runner/runners/coordinator.py $PORT 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p")
+kversion=$(python kaggle_runner/runners/coordinator.py $PORT $PHASE 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p")
 echo Code pushed. TCP port $PORT - version $kversion. Please wait rvs to connect.
 tmux rename-window -t rvsConnector:{end} "v$kversion:$PORT:$(git show --no-patch --oneline)"

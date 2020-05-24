@@ -416,7 +416,7 @@ class Coordinator:
             jf.truncate()
 
     @staticmethod
-    def _change_main_py(path, size, net, AMQPURL, seed, port, gdrive_enable=False):
+    def _change_main_py(path, size, net, AMQPURL, seed, port, gdrive_enable=False, phase='dev'):
         s = Template(
             """#!/usr/bin/env python3
 import selectors
@@ -450,7 +450,7 @@ entry_str = r\"\"\"#!/bin/bash
 #	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
 #make test
 
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master run 1 "vtool.duckdns.org" "$port" "$AMQPURL" "$size" "$seed" "$network" >>runner_log
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 "vtool.duckdns.org" "$port" "$AMQPURL" "$size" "$seed" "$network" >>runner_log
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
@@ -531,7 +531,8 @@ while True:
             network=net,
             seed=seed,
             gdrive_enable=gdrive_enable,
-            port=port
+            port=port,
+            phase=phase
         )
         ss = s.safe_substitute(d)
 
@@ -550,17 +551,18 @@ while True:
         name = net.replace("_", "-") + "-" + str(size)
         AMQPURL = config["AMQPURL"]
         port = config["port"]
+        phase = config.get("phase","dev")
 
         path = os.path.join(self.tmp_path, name)
         shutil.copytree(self.template_path, path)
 
         if from_template:
             self._change_kernel_meta_info(path, None, script)
-            self._change_main_py(path, size, net, AMQPURL, seed, port)
+            self._change_main_py(path, size, net, AMQPURL, seed, port, phase=phase)
         else:
             self._change_kernel_meta_info(
                 path, self.title_prefix + " " + name, script)
-            self._change_main_py(path, size, net, AMQPURL, seed, port)
+            self._change_main_py(path, size, net, AMQPURL, seed, port, phase=phase)
 
         if not script:
             subprocess.run(
