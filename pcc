@@ -20,8 +20,8 @@ else
 
     pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}\r/$newNode/")"
     echo \"$pcomm\" will be used
-    tmux select-pane -t rvsConnector -m
-    tmux select-window -t rvsConnector:$
-    tmux new-window -d -t rvsConnector:+1 -n "m.$(git show --no-patch --oneline)" "bash -c \"$pcomm\""
+    #tmux select-pane -t rvsConnector -m
+    #tmux select-window -t rvsConnector:$
+    tmux new-window -d -t rvsConnector -n "m.$(git show --no-patch --oneline)" "bash -c \"$pcomm\""
     #tmux last-window -t rvsConnector
 fi

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # trap ctrl-c and call ctrl_c()
 PS4='L${LINENO}: '
 
@@ -72,8 +72,8 @@ connect() {
         exit 1 #
     fi
 
-    tmux select-window -t rvsConnector:{end}
-    tmux new-window -Pt rvsConnector:+1 -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
+    tmux >/dev/null select-window -t rvsConnector:{end}
+    tmux >/dev/null new-window -t rvsConnector:+1 -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
 
     # tcpserver waits for connections from TCP clients. For each connection, it
     # runs prog, with descriptor 0 reading from the network and descriptor 1 writing
