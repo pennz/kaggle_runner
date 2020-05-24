@@ -112,10 +112,11 @@ while [ ! $? -eq 0 ]; do
     make_connect
 done
 
-sync &
 if [ -z $mosh ]; then
     echo -n "$port"
 fi
+
+# sync &
 
 # so reverse shell server named to RSS
 # so tcpserver instance named to TSins
