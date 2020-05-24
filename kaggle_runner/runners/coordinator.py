@@ -168,8 +168,8 @@ git submodule update --init
 .fzf/install --all
 curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +qa &
-( sleep 60; nvim -Vnvim_log -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +checkhealth +qa )&
+# vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +qa &
+# ( sleep 60; nvim -Vnvim_log -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +checkhealth +qa )&
 ln -s .shrc_customised.macos .shrc_customised
 echo "alias gdrive='gdrive  --service-account a.json'" >> ~/.bash_aliases
 echo "unalias vim" >> ~/.bash_aliases
@@ -296,8 +296,8 @@ which $NC >/dev/null || NC=nc
 export NC
 
 pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
-python3 -m pip install pyvim neovim msgpack==1.0.0 &
-python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
+# python3 -m pip install pyvim neovim msgpack==1.0.0 &
+# python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
 
 SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
@@ -305,6 +305,8 @@ SRC_WORK_FOLDER=/kaggle/working
 cd ${SRC_WORK_FOLDER}
 
 if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
+
+# get code
 {
     mvdir() {
         [[ "$2"/"$1" -ef "${PWD}" ]] || {
@@ -323,10 +325,10 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
     find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
     popd
     pip install -e . &
-    make install_dep >/dev/null &
+    make install_dep >/dev/null
 }
 
-USE_AMQP=1 # just plain old good netcat
+USE_AMQP=1
 export USE_AMQP
 
 conda init bash
@@ -351,11 +353,9 @@ if [ x"${PHASE}" = x"dev" ]; then
     fi &
 fi
 
-wait
-
 if [ x"${PHASE}" != x"dev" ]; then
     #pip install kaggle_runner
-    make toxic 2>&1 | tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || cat -)
+    make toxic | tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || cat -)
     # python main.py "$@"
 fi
 
@@ -449,17 +449,7 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 entry_str = r\"\"\"#!/bin/bash
-#nc vtool.duckdns.org 9000 -c 'python -c "import pty; pty.spawn([\"/bin/bash\",\"-li\"]);"'
-
-#apt install netcat -y
-#git clone  https://github.com/pennz/kaggle_runner
-#rsync -r kaggle_runner/* .
-#        subprocess.run(f"python ./kaggle_runner/runners/coordinator.py "
-#                       f"{runner_configs[1]['port']}", shell=True, check=True)
-#	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
-#make test
-
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 "vtool.duckdns.org" "$port" "$AMQPURL" "$size" "$seed" "$network" >>runner_log
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 "vtool.duckdns.org" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
