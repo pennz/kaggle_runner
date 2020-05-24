@@ -352,7 +352,7 @@ fi
 
 if [ x"${PHASE}" != x"dev" ]; then
     #pip install kaggle_runner
-    unbuffer make toxic 2>&1 | unbuffer -p tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && unbuffer -p $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || unbuffer -p cat -)
+    make toxic 2>&1 |  -p tee -a toxic_log | ([ $USE_AMQP -eq 0 ] &&  -p $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT ||  -p cat -)
     # python main.py "$@"
 fi
 
@@ -574,7 +574,7 @@ while True:
 
 if __name__ == "__main__":
     port = sys.argv[1]
-    assert int(port) > 1000
+    assert int(port) >= 0
     phase = sys.argv[2]
     logger.debug(f"{sys.argv}")
     tmp_path = '.r'
