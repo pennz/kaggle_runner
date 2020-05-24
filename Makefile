@@ -31,6 +31,7 @@ m:
 	
 pccnct: log_receiver
 	-tmux new -d -s rvsConnector
+	-tmux set-option -t rvsConnector renumber-windows on
 	bash -c '$(RUN_PC)'  # for mosh, start listen instances
 	@echo "pc connector is fine now"
 

@@ -36,6 +36,11 @@ mosh_connect() {
     ~/bin/upnp-add-port $newPort UDP >/dev/null 2>&1   # port forward, rvs will connect to this port
     ret=$?
 
+    (
+        sleep 1
+        bash pcc $newPort >/dev/null 2>&1
+    ) &
+
     # echo "" # blank message, to activate? will make it fail?
     $NC -ulp $newPort
 
@@ -65,7 +70,7 @@ connect() {
 
 port=$(getNewPort serverNodes)
 
-connects() {
+make_connect() {
     if [ -z $mosh ]; then
         connect $port serverNodes
     else
@@ -73,12 +78,13 @@ connects() {
     fi
 }
 
-connects
+make_connect
 
 while [ ! $? -eq 0 ]; do
-    echo "$port" >>serverNodes
     port=$((port + 1))
-    connects
+    unbuffer echo "$port" >>serverNodes
+    sync
+    make_connect
 done
 
 if [ -z $mosh ]; then
