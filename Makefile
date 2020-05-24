@@ -153,8 +153,8 @@ check:
 	echo $(PWD)
 	pstree -laps $$$$
 	@echo $$DEBUG
-	@echo "$$(which $(PY3)) is our python executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; false; fi
-	@python -c 'import os; print(os.environ.get("DEBUG"));'
-	@python -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));'
+	@echo "$$(which $(PY3)) is our python executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; false; source ~/.bashrc; conda activate pyt; fi
+	python -c 'import os; print(os.environ.get("DEBUG"));'
+	python -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));'
 
 .PHONY: clean connect inner_lstm
