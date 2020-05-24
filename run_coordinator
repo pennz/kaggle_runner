@@ -1,7 +1,7 @@
 #!/bin/bash -x
 PHASE=$1
 [ -z $PHASE ] && PHASE='dev'
-PORT=$(./reversShells/addNewNode.sh 2>/dev/null)
+PORT=$(./reversShells/addNewNode.sh 2>/dev/null) # TODO put phase to add new node, not dev no need to listen local ports
 echo Created new listen instance. TCP port $PORT is used for incomming conection.
 
 kversion=$(python kaggle_runner/runners/coordinator.py $PORT $PHASE 2>&1 | sed -n "s/Kernel version \([0-9]\{,\}\).*/\1/p")
