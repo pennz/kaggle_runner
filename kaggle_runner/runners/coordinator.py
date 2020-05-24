@@ -329,12 +329,16 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
 USE_AMQP=0 # just plain old good netcat
 export USE_AMQP
 
+conda init bash
+source ~/.bashrc
+conda activate base
+
 if [ x"${PHASE}" = x"dev" ]; then
     export PS4='[Remote]: Line ${LINENO}: '
 
     (
         echo "MOSHing"
-        make mosh &
+        make mosh
     ) &
 
     if [ "x${ENABLE_RVS}" = x1 ]; then
@@ -344,16 +348,13 @@ if [ x"${PHASE}" = x"dev" ]; then
             screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
         fi
     fi &
-    conda init bash
-    source ~/.bashrc
-    conda activate base
     make install_dep >/dev/null
-    unbuffer make toxic 2>&1 | unbuffer -p tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && unbuffer -p $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || unbuffer -p cat -)
 fi
 
 if [ x"${PHASE}" != x"dev" ]; then
-    pip install kaggle_runner
-    python main.py "$@"
+    #pip install kaggle_runner
+    unbuffer make toxic 2>&1 | unbuffer -p tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && unbuffer -p $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || unbuffer -p cat -)
+    # python main.py "$@"
 fi
 
 wait # not exit
