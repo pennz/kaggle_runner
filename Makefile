@@ -27,8 +27,8 @@ mosh:
 
 m:
 	( while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p tee -a ms_connect_log | unbuffer -p ncat --send-only vtool.duckdns.org 23455 ) &
-	@sleep 1
-	tail ms_connect_log
+	#@sleep 1
+	#tail ms_connect_log
 
 rvs_session:
 	-tmux new -d -s rvsConnector
