@@ -322,7 +322,8 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
     find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
     find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
     popd
-    pip install -e .
+    pip install -e . &
+    make install_dep >/dev/null &
 }
 
 USE_AMQP=0 # just plain old good netcat
@@ -331,6 +332,7 @@ export USE_AMQP
 conda init bash
 source ~/.bashrc
 conda activate base
+
 
 if [ x"${PHASE}" = x"dev" ]; then
     export PS4='[Remote]: Line ${LINENO}: '
@@ -347,8 +349,9 @@ if [ x"${PHASE}" = x"dev" ]; then
             screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
         fi
     fi &
-    make install_dep >/dev/null
 fi
+
+wait
 
 if [ x"${PHASE}" != x"dev" ]; then
     #pip install kaggle_runner
