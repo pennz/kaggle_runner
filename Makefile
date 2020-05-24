@@ -1,4 +1,4 @@
-export PATH := $(PWD)/reversShells:/home/v/miniconda3/envs/pyt/bin:$(PATH)
+export PATH := $(PWD)/reversShells:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43
 
@@ -20,6 +20,7 @@ log_receiver:
 
 pc:
 	./pcc
+	make connect
 
 mosh:
 	while ture; do (./setup_mosh_server 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455) & sleep 600; done
@@ -28,10 +29,12 @@ m:
 	( while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p tee -a ms_connect_log | unbuffer -p ncat --send-only vtool.duckdns.org 23455 ) &
 	@sleep 1
 	tail ms_connect_log
-	
-pccnct: log_receiver
+
+rvs_session:
 	-tmux new -d -s rvsConnector
 	-tmux set-option -t rvsConnector renumber-windows on
+	
+pccnct: rvs_session log_receiver
 	bash -c '$(RUN_PC)'  # for mosh, start listen instances
 	@echo "pc connector is fine now"
 

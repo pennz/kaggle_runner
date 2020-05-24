@@ -10,6 +10,7 @@ fi
 
 trap ctrl_c INT
 NC=ncat
+trial_cnt=0
 
 function ctrl_c() {
     echo >&2 "** Trapped CTRL-C"
@@ -31,10 +32,16 @@ getNewPort() {
 
 mosh_connect() {
     local newPort=$1
+    trial_cnt=$((trial_cnt + 1))
 
     pgrep -f "ncat.*p $newPort" >/dev/null && return 1 # port used
     ~/bin/upnp-add-port $newPort UDP >/dev/null 2>&1   # port forward, rvs will connect to this port
     ret=$?
+
+    if [ $trial_cnt -gt 4 ]; then
+        echo >&2 connection error thing
+        exit 1 #
+    fi
 
     (
         sleep 1
@@ -50,12 +57,23 @@ mosh_connect() {
 
 connect() {
     local newPort=$1
+    trial_cnt=$((trial_cnt + 1))
 
     pgrep -f "lp $newPort" >/dev/null && return 1 # port used
     ~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
     ret=$?
 
-    tmux new-window -t rvsConnector:+1 -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
+    if [ ! $ret -eq 0 ]; then
+        exit $ret
+    fi
+
+    if [ $trial_cnt -gt 4 ]; then
+        echo >&2 connection error thing
+        exit 1 #
+    fi
+
+    tmux select-window -t rvsConnector:{end}
+    tmux new-window -Pt rvsConnector:+1 -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
 
     # tcpserver waits for connections from TCP clients. For each connection, it
     # runs prog, with descriptor 0 reading from the network and descriptor 1 writing
