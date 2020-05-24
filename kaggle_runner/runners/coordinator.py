@@ -572,6 +572,7 @@ while True:
 
 if __name__ == "__main__":
     port = sys.argv[1]
+    assert int(port) > 1000
     logger.debug(f"{sys.argv}")
     tmp_path = '.r'
 

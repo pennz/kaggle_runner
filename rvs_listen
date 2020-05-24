@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 PORT=$(./reversShells/addNewNode.sh 2>/dev/null)
 echo Created new listen instance. TCP port $PORT is used for incomming conection.
 
