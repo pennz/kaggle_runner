@@ -272,8 +272,8 @@ ORIG_PORT=23454
 
 CHECK_PORT=$((ORIG_PORT + 1))
 conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
-apt update && apt install -y netcat nmap screen time locales
-apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect &
+apt update && apt install -y netcat nmap screen time locales >/dev/null 2>&1
+apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect >/dev/null 2>&1 &
 
 conda init bash
 cat >> ~/.bashrc << EOF
