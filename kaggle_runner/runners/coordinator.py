@@ -328,17 +328,15 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
     make install_dep >/dev/null
 }
 
-USE_AMQP=1
+USE_AMQP=true
 export USE_AMQP
 
 conda init bash
 source ~/.bashrc
 conda activate base
 
-
 if [ x"${PHASE}" = x"dev" ]; then
     export PS4='[Remote]: Line ${LINENO}: '
-
     (
         echo "MOSHing"
         make mosh
@@ -351,15 +349,14 @@ if [ x"${PHASE}" = x"dev" ]; then
             screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
         fi
     fi &
+    wait # not exit, when dev
 fi
 
 if [ x"${PHASE}" != x"dev" ]; then
     #pip install kaggle_runner
-    make toxic | tee -a toxic_log | ([ $USE_AMQP -eq 0 ] && $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT || cat -)
+    make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
     # python main.py "$@"
 fi
-
-wait # not exit
 """
 
 
