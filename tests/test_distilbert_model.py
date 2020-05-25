@@ -54,7 +54,7 @@ class Test_distilbert_model:
         else:
             steps = TRAIN_LEN//BATCH_SIZE
             logger.debug("Train len %s, batch size %s", TRAIN_LEN, BATCH_SIZE)
-            epochs = 8
+            epochs = 1
         logger.debug("Every epoch, steps is %s", steps)
 
         train_history = self.model_distilbert.fit(
