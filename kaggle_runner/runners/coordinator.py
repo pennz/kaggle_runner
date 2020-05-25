@@ -472,7 +472,7 @@ while True:
        data = key.fileobj.read1(1024).decode()
        if not data:
            exit()
-        data = data.strip()
+       data = data.strip()
        if data == "":
            continue
        if key.fileobj is p.stdout:
