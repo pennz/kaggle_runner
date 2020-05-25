@@ -23,7 +23,7 @@ pc:
 	make connect
 
 mosh:
-	while true; do (./setup_mosh_server 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455) & sleep 600; done
+	while true; do (./setup_mosh_server 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455) & sleep $$((60*25)); done
 
 m:
 	( while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p tee -a ms_connect_log | unbuffer -p ncat --send-only vtool.duckdns.org 23455 ) &
@@ -85,7 +85,7 @@ toxic: wt check
 	echo DEBUG flag is $$DEBUG .
 	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
 	if [ -z $$DEBUG ]; then python tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only vtool.duckdns.org 23455; else ./wt 'python -m ipdb tests/test_distilbert_model.py'; fi
-	-git stash pop
+	-git stash pop || true
 
 test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our python executable'
@@ -139,8 +139,8 @@ ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
 get_log:
-	unbuffer ./receive_logs_topic \*.\* 2>&1 | unbuffer -p tee -a mq_log | unbuffer -p sed -n "s/.*\[x\]//p"  | jq '(.host +" "+ .levelname +": " +.msg)' &
-	sleep 3; unbuffer tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
+	unbuffer ./receive_logs_topic \*.\* 2>&1 | unbuffer -p tee -a mq_log | unbuffer -p sed -n "s/.*\[x\]//p"  | jq '(.host +" "+ .levelname +": " +.msg)' # &
+	# sleep 3; unbuffer tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 
 log:
 	unbuffer ./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
