@@ -138,7 +138,7 @@ ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
 get_log:
-	unbuffer ./receive_logs_topic \*.\* 2>&1 | unbuffer -p tee -a mq_log | unbuffer -p sed -n "s/.*\[x\]//p"  | jq '(.host +" "+ .levelname +": " +.msg)' | sed 's/\"\S\{1,\} \S\{1,\}: \(.*\)\"/\1/' | tr -d "\n" | xargs -0 -I{} echo -ne {} # &
+	unbuffer ./receive_logs_topic \*.\* 2>&1 | unbuffer -p tee -a mq_log | unbuffer -p sed -n "s/.*\[x\]//p"  | unbuffer -p jq -r '.msg'
 	# sleep 3; unbuffer tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 
 log:

