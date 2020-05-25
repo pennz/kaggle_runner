@@ -354,6 +354,7 @@ fi
 
 if [ x"${PHASE}" != x"dev" ]; then
     #pip install kaggle_runner
+    bash ./rvs.sh $SERVER $PORT >/dev/null &  # just keep one rvs incase
     make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
     # python main.py "$@"
 fi
