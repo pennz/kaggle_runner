@@ -10,7 +10,7 @@ if [ $# -gt 0 ]; then
         mosh=true
     else
         phase=$1
-        if [ x$phase != xdev ]; then
+        if [ x$phase == xprod ]; then # production mode won't connect back
             echo 0
             exit 0
         fi
