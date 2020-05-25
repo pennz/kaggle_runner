@@ -209,6 +209,7 @@ OLDPWD=/root
 # color_my_prompt
 locale-gen
 echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
+echo "#" $TPU_NAME
 conda activate base
 EOF
 }
@@ -354,7 +355,7 @@ fi
 
 if [ x"${PHASE}" != x"dev" ]; then
     #pip install kaggle_runner
-    bash ./rvs.sh $SERVER $PORT >/dev/null &  # just keep one rvs incase
+    bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
     make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
     sleep 600 && pkill -f "rvs.sh"  # finish and go away
     # python main.py "$@"
