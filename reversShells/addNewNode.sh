@@ -44,7 +44,8 @@ mosh_connect() {
 
     pgrep -f "ncat.*p $newPort" >/dev/null && return 1 # port used
     #~/bin/upnp-add-port $newPort UDP >/dev/null 2>&1   # port forward, rvs will connect to this port
-    type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/udp && sudo firewall-cmd --reload >/dev/null 2>&1;
+    # type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/udp --permanent && sudo firewall-cmd --reload >/dev/null 2>&1;
+    type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/udp >/dev/null 2>&1;
         ret=$?
     } || ret=0
 
@@ -71,7 +72,8 @@ connect() {
 
     pgrep -f "ncat.*p $newPort" >/dev/null && return 1 # port used
     #~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
-    type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/tcp && sudo firewall-cmd --reload >/dev/null 2>&1;
+    # type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/tcp --permanent && sudo firewall-cmd --reload >/dev/null 2>&1;
+    type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/tcp >/dev/null 2>&1;
         ret=$?
     } || ret=0
     #ret=0 # just pass it
