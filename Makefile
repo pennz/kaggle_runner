@@ -49,7 +49,7 @@ all: $(SRC)
 
 push: check $(SRC)
 	-#git push # push first as kernel will download the codes, so put new code to github first
-	@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
+	-@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
 	source ./run_coordinator $(PHASE)
 
 connect:

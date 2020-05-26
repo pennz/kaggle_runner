@@ -14,9 +14,9 @@ class AMQPURL:
         #passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"  # oh~ just give my password out~
         #username = "drdsfaew"
         #Vhost = "drdsfaew"
-        host = "127.0.0.1"
-        passwd = "guest"
-        username = "guest"
+        host = "pengyuzhou.com"
+        passwd = "9b83ca70cf4cda89524d2283a4d675f6"
+        username = "kaggle"
         Vhost = "/"
 
     def __init__(
