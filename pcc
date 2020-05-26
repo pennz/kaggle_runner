@@ -8,7 +8,7 @@ fi
 comm="$(tail -n 100 logs_check | grep MOSH | tail -n 1)"
 echo \"$comm\" found from remote
 
-if [ -z $comm ]; then
+if [ -z "$comm" ]; then
     echo need pass COMM to make
     exit 1
 else
@@ -19,7 +19,7 @@ else
         newNode=${newNode_passed}
     fi
 
-    pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}.*\r/$newNode/")"
+    pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}.*/$newNode/")"
     echo \"$pcomm\" will be used
     hn=$(echo $comm | cut -d" " -f 5)
     #tmux select-pane -t rvsConnector -m
