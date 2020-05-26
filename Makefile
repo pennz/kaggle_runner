@@ -15,7 +15,7 @@ ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash -x addNewNode.s
 
 log_receiver:
 	-pkill -f "23455"
-	(ncat -vkl --recv-only  -p 23455 | cat >> logs_check) & #(sleep 1; tail -f logs_check) &
+	ncat -vkl --recv-only  -p 23455 | cat >> logs_check &  # it will be called as dep, so put it in background
 
 pc:
 	./pcc
@@ -83,7 +83,7 @@ toxic: wt check
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
-	if [ -z $$DEBUG ]; DEBUG=true $(PY3) tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only pengyuzhou.com 23455; else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
+	if [ -z $$DEBUG ]; then DEBUG=true $(PY3) tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only pengyuzhou.com 23455; else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
 test: update_code $(SRC)
