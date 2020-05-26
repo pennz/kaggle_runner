@@ -10,14 +10,14 @@ from python_logging_rabbitmq.compat import text_type
 
 class AMQPURL:
     class __AMQPURL_DEV:
-        host = "termite.rmq.cloudamqp.com"  # (Load balanced)
-        passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"  # oh~ just give my password out~
-        username = "drdsfaew"
-        Vhost = "drdsfaew"
-        # host = "127.0.0.1"  # (Load balanced)
-        # passwd = "guest"
-        # username = "guest"
-        # Vhost = "/"
+        #host = "termite.rmq.cloudamqp.com"  # (Load balanced)
+        #passwd = "QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI"  # oh~ just give my password out~
+        #username = "drdsfaew"
+        #Vhost = "drdsfaew"
+        host = "127.0.0.1"
+        passwd = "guest"
+        username = "guest"
+        Vhost = "/"
 
     def __init__(
         self,
