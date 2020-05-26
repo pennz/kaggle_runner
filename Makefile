@@ -13,6 +13,9 @@ RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
 ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash -x addNewNode.sh mosh"; fi
 
+_: mbd
+	kill 7 8 # magic pids
+
 log_receiver:
 	-pkill -f "23455"
 	ncat -vkl --recv-only  -p 23455 | cat >> logs_check &  # it will be called as dep, so put it in background
@@ -159,5 +162,8 @@ check:
 	$(PY3) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
 	$(PY3) -c 'import kaggle_runner' || ( pip install -e . && $(PY3) -c 'import kaggle_runner')
 	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
+
+mbd:
+	bash -x multilang_bert_data.sh
 
 .PHONY: clean connect inner_lstm

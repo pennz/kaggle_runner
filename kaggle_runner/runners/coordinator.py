@@ -355,11 +355,16 @@ if [ x"${PHASE}" = x"dev" ]; then
     wait # not exit, when dev
 fi
 
-if [ x"${PHASE}" != x"dev" ]; then
+if [ x"${PHASE}" != x"data" ]; then
+    make
+fi
+
+if [ x"${PHASE}" == x"run" ]; then
     #pip install kaggle_runner
     bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
     make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
-    pkill make & pkill -f "mosh" & pkill sleep & pkill ncat & pkill -f "rvs.sh" &
+    # basically the reverse of the calling path
+    pkill make & pkill -f "mosh" & pkill sleep & pkill -f "rvs.sh" & pkill ncat &
     # python main.py "$@"
 fi
 """
