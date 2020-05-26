@@ -356,6 +356,7 @@ if [ x"${PHASE}" = x"dev" ]; then
 fi
 
 if [ x"${PHASE}" = x"data" ]; then
+    bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
     make
 fi
 
