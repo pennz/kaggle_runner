@@ -5,13 +5,13 @@ curl -O https://storage.googleapis.com/bert_models/2018_11_23/multi_cased_L-12_H
 
 extrace_to_folder () {
   zip_name=$1
-  zn=$(echo $zip_name | sed 's/\(.*\)\.zip/\1/')
+  zn=${zip_name//.*zip/}
   #mkdir "$zn" && pushd "$zn" && unzip $OLDPWD/"$zip_name" && popd
   unzip -d "$zn" "$zip_name"
 }
 export -f extrace_to_folder
 
-ls *.zip | xargs -I{} bash -c 'extrace_to_folder {}'
+find . -name "*.zip" -print0 | xargs -0 -I{} bash -c 'extrace_to_folder {}'
 
 DEV_TEST=XNLI-1.0
 MT_TRAIN=XNLI-MT-1.0
@@ -29,10 +29,10 @@ cd bert && python run_classifier.py \
   --task_name=XNLI \
   --do_train=true \
   --do_eval=true \
-  --data_dir=$XNLI_DIR \
-  --vocab_file=$BERT_BASE_DIR/vocab.txt \
-  --bert_config_file=$BERT_BASE_DIR/bert_config.json \
-  --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt \
+  --data_dir="$XNLI_DIR" \
+  --vocab_file="$BERT_BASE_DIR/vocab.txt" \
+  --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
+  --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
   --max_seq_length=128 \
   --train_batch_size=32 \
   --learning_rate=5e-5 \
