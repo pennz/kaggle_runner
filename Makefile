@@ -22,10 +22,10 @@ pc:
 	make connect
 
 mosh:
-	while true; do (./setup_mosh_server 2>&1 | ncat --send-only vtool.duckdns.org 23455) & sleep $$((60*25)); done
+	while true; do (./setup_mosh_server 2>&1 | ncat --send-only pengyuzhou.com 23455) & sleep $$((60*25)); done
 
 m:
-	( while true; do ./setup_mosh_server; done 2>&1 | tee -a ms_connect_log | ncat --send-only vtool.duckdns.org 23455 ) &
+	( while true; do ./setup_mosh_server; done 2>&1 | tee -a ms_connect_log | ncat --send-only pengyuzhou.com 23455 ) &
 	#@sleep 1
 	#tail ms_connect_log
 
@@ -83,7 +83,7 @@ toxic: wt check
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
-	if [ -z $$DEBUG ]; DEBUG=true $(PY3) tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only vtool.duckdns.org 23455; else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
+	if [ -z $$DEBUG ]; DEBUG=true $(PY3) tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only pengyuzhou.com 23455; else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
 test: update_code $(SRC)

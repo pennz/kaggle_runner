@@ -1,5 +1,5 @@
 #!/bin/bash
-PC=vtool.duckdns.org
+PC=pengyuzhou.com
 
 stty rows 40 columns 80
 comm=$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4 | awk '{ print "MOSH_KEY=" $2 " mosh-client 127.0.0.1 " $1 }')
