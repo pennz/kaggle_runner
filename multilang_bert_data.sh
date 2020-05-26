@@ -5,20 +5,20 @@ curl -O https://storage.googleapis.com/bert_models/2018_11_23/multi_cased_L-12_H
 
 extrace_to_folder () {
   zip_name=$1
-  zn=${zip_name//.*zip/}
+  zn=${zip_name//.zip/}
   #mkdir "$zn" && pushd "$zn" && unzip $OLDPWD/"$zip_name" && popd
   unzip -d "$zn" "$zip_name"
 }
 export -f extrace_to_folder
 
-find . -name "*.zip" -print0 | xargs -0 -I{} bash -c 'extrace_to_folder {}'
+find . -name "*.zip" -print0 | xargs -0 -I{} bash -xc 'extrace_to_folder {}'
 
 DEV_TEST=XNLI-1.0
 MT_TRAIN=XNLI-MT-1.0
 
 mkdir XNLI && mv $DEV_TEST/* XNLI && mv $MT_TRAIN/* XNLI
-rmdir DEV_TEST
-rmdir MT_TRAIN
+rmdir "$DEV_TEST"
+rmdir "$MT_TRAIN"
 
 # test our datasets
 export BERT_BASE_DIR=$PWD/multi_cased_L-12_H-768_A-12 # or multilingual_L-12_H-768_A-12
