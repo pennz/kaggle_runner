@@ -69,7 +69,8 @@ connect() {
 
     pgrep -f "lp $newPort" >/dev/null && return 1 # port used
     ~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
-    ret=$?
+    #ret=$?
+    ret=0 # just pass it
 
     if [ ! $ret -eq 0 ]; then
         exit $ret
