@@ -3,7 +3,7 @@ export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
 URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth"
-PY3=python
+PY3=python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
 MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4  | awk  '{ print "MOSH_KEY=" $$2 " mosh-client 127.0.0.1 " $$1 }' ); sh -c "$$comm"
@@ -49,7 +49,7 @@ all: $(SRC)
 
 push: check $(SRC)
 	-git push # push first as kernel will download the codes, so put new code to github first
-	@echo "$$(which $(PY3)) is our python executable"; [[ x$$(which $(PY3)) =~ conda ]]
+	@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
 	source ./run_coordinator $(PHASE)
 
 connect:
@@ -62,7 +62,7 @@ lint: $(SRC)
 	pylint -E $(SRC)
 
 inner_lstm:
-	while true; do test x$$(git pull | grep -c Already) = x1 || { python \
+	while true; do test x$$(git pull | grep -c Already) = x1 || { $(PY3) \
 lstm.py 2>&1 | tee -a lstm_log; };  echo "$$(date) $$HOSTNAME CPU: "$$(grep \
 'cpu ' /proc/stat >/dev/null;sleep 0.1; grep 'cpu ' /proc/stat | awk -v RS='' \
 '{print ($$13-$$2+$$15-$$4)*100/($$13-$$2+$$15-$$4+$$16-$$5)}')% 'Mem: '$$(awk \
@@ -83,11 +83,11 @@ toxic: wt check
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
-	if [ -z $$DEBUG ]; DEBUG=true python tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only vtool.duckdns.org 23455; else ./wt 'python -m ipdb tests/test_distilbert_model.py'; fi
+	if [ -z $$DEBUG ]; DEBUG=true $(PY3) tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only vtool.duckdns.org 23455; else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
 test: update_code $(SRC)
-	eval 'echo $$(which $(PY3)) is our python executable'
+	eval 'echo $$(which $(PY3)) is our $(PY3) executable'
 	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
 clean:
 	-bash -c 'currentPpid=$$(pstree -spa $$$$ | sed -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | sed "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
@@ -97,7 +97,7 @@ clean:
 submit:
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit  -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 run_submit:
-	python DAF3D/Train.py
+	$(PY3) DAF3D/Train.py
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit  -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 twine:
 	@python3 -m twine -h >/dev/null || ( echo "twine not found, will install it." ; python3 -m pip install --user --upgrade twine )
@@ -150,9 +150,9 @@ mlocal:
 check:
 	echo $(PWD)
 	pstree -laps $$$$
-	@echo "$$(which $(PY3)) is our python executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; false; source ~/.bashrc; conda activate pyt; fi
-	python -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
-	python -c 'import kaggle_runner' || ( pip install -e . && python -c 'import kaggle_runner')
-	python -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
+	# @echo "$$(which $(PY3)) is our $(PY3) executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; false; source ~/.bashrc; conda activate pyt; fi
+	$(PY3) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
+	$(PY3) -c 'import kaggle_runner' || ( pip install -e . && $(PY3) -c 'import kaggle_runner')
+	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 .PHONY: clean connect inner_lstm

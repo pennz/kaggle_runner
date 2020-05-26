@@ -28,6 +28,5 @@ setuptools.setup(
         "jupytext",
         "kaggle",
         "ipdb",
-        "miniupnpc"
     ],
 )
