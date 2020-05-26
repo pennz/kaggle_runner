@@ -34,7 +34,7 @@ getNewPort() {
     else
         newNode=9000
     fi
-    unbuffer echo $newNode >>$serverNodes
+    echo $newNode >>$serverNodes
     echo -n $newNode
 }
 
@@ -115,7 +115,7 @@ make_connect
 
 while [ ! $? -eq 0 ]; do
     port=$((port + 1))
-    unbuffer echo "$port" >>serverNodes
+    echo "$port" >>serverNodes
     make_connect
 done
 
