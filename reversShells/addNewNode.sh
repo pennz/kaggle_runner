@@ -43,8 +43,10 @@ mosh_connect() {
     trial_cnt=$((trial_cnt + 1))
 
     pgrep -f "ncat.*p $newPort" >/dev/null && return 1 # port used
-    ~/bin/upnp-add-port $newPort UDP >/dev/null 2>&1   # port forward, rvs will connect to this port
-    ret=$?
+    #~/bin/upnp-add-port $newPort UDP >/dev/null 2>&1   # port forward, rvs will connect to this port
+    type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/udp && sudo firewall-cmd --reload >/dev/null 2>&1;
+        ret=$?
+    } || ret=0
 
     if [ $trial_cnt -gt 4 ]; then
         echo >&2 connection error thing
@@ -67,10 +69,12 @@ connect() {
     local newPort=$1
     trial_cnt=$((trial_cnt + 1))
 
-    pgrep -f "lp $newPort" >/dev/null && return 1 # port used
-    ~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
-    #ret=$?
-    ret=0 # just pass it
+    pgrep -f "ncat.*p $newPort" >/dev/null && return 1 # port used
+    #~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
+    type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/tcp && sudo firewall-cmd --reload >/dev/null 2>&1;
+        ret=$?
+    } || ret=0
+    #ret=0 # just pass it
 
     if [ ! $ret -eq 0 ]; then
         exit $ret

@@ -1,17 +1,20 @@
 #!/bin/bash -x
 PHASE=$1
 [ -z $PHASE ] && PHASE='dev'
-PORT=$(./reversShells/addNewNode.sh $PHASE)
+PORT=$(./reversShells/addNewNode.sh $PHASE | tail -n 1)
+ret=$?
+[ -z $PORT ] && exit $ret
+
 echo Created new listen instance. TCP port $PORT is used for incomming conection.
 [ -z $PORT ] && PORT=0 # do not need port listen
-echo "$(which python) is our python executable"
-if [[ x$(which python) =~ conda ]]; then echo conda env fine; else
+echo "$(which python3) is our python executable"
+if [[ x$(which python3) =~ conda ]]; then echo conda env fine; else
     echo >&2 conda env not set correctly, please check.
     false
     source ~/.bashrc
     conda activate pyt
 fi
-push_log=$(python kaggle_runner/runners/coordinator.py "$PORT" "$PHASE")
+push_log=$(python3 kaggle_runner/runners/coordinator.py "$PORT" "$PHASE")
 
 echo $push_log
 push_ret=$?

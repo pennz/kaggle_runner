@@ -379,9 +379,10 @@ class Coordinator:
     @staticmethod
     def push(runner):
         "Push the code to server/kagger docker"
-        logger.debug(" ".join(["kaggle", "kernels", "push", "-p", runner]))
+        comm = f"PATH=~/.local/bin:$PATH kaggle kernels push -p {runner}"
+        logger.debug(comm)
 
-        return subprocess.run(["kaggle", "kernels", "push", "-p", runner])
+        return subprocess.run(comm, shell=True)
 
     def push_listen(self):
         self.push_all()

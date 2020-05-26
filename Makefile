@@ -48,7 +48,7 @@ all: $(SRC)
 	./cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
 push: check $(SRC)
-	-git push # push first as kernel will download the codes, so put new code to github first
+	-#git push # push first as kernel will download the codes, so put new code to github first
 	@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
 	source ./run_coordinator $(PHASE)
 
@@ -118,6 +118,9 @@ install_dep_seg:
 (test -z "$$($(PY3) -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations) & \
 (test -z "$$($(PY3) -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
 wait'
+
+install_dev_dep:
+	$(PY3) -m pip install kaggle
 
 install_dep:
 	bash -c 'pip install -e . & \
