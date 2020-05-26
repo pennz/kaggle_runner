@@ -33,7 +33,7 @@ m:
 	#tail ms_connect_log
 
 rvs_session:
-	-tmux new -d -s rvsConnector
+	-tmux new-session -d -n "good-day" -s rvsConnector "cat"
 	-tmux set-option -t rvsConnector renumber-windows on
 	
 pccnct: check rvs_session log_receiver
@@ -50,7 +50,7 @@ all: $(SRC)
 	coverage xml
 	./cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
-push: check $(SRC)
+push: check rvs_session $(SRC)
 	-#git push # push first as kernel will download the codes, so put new code to github first
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
 	source ./run_coordinator $(PHASE)
