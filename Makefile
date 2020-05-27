@@ -3,6 +3,11 @@ export PATH := $(PWD)/reversShells:$(PATH)/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
+UNBUFFER := $(shell command -v unbuffer)
+ifneq ($(UNBUFFER),)
+	UNBUFFERP := $(UNBUFFER) -p
+endif
+
 URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth"
 PY3=python3
 SRC=$(wildcard */**.py)
@@ -10,7 +15,7 @@ SHELL=/bin/bash
 
 RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
-unbuffer ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash -x addNewNode.sh mosh"; fi
+$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash -x addNewNode.sh mosh"; fi
 
 _: mbd
 	kill 7 8 # magic pids
@@ -19,17 +24,17 @@ log_receiver:
 	-pkill -f "23455"
 	-sudo firewall-cmd --add-port 23455/tcp
 	-sudo firewall-cmd --add-port 23455/tcp --permanent
-	(ncat -vkl --recv-only  -p 23455 | unbuffer -p cat >> logs_check) & #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
+	(ncat -vkl --recv-only  -p 23455 | $(UNBUFFERP) cat >> logs_check) & #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
 
 pc:
 	./pcc
 	make connect
 
 mosh:
-	while true; do (./setup_mosh_server 2>&1 | unbuffer -p ncat --send-only vtool.duckdns.org 23455) & sleep $$((60*25)); done
+	while true; do (./setup_mosh_server 2>&1 | $(UNBUFFERP) ncat --send-only vtool.duckdns.org 23455) & sleep $$((60*25)); done
 
 m:
-	( while true; do ./setup_mosh_server; done 2>&1 | unbuffer -p tee -a ms_connect_log | unbuffer -p ncat --send-only vtool.duckdns.org 23455 ) &
+	( while true; do ./setup_mosh_server; done 2>&1 | $(UNBUFFERP) tee -a ms_connect_log | $(UNBUFFERP) ncat --send-only vtool.duckdns.org 23455 ) &
 	#@sleep 1
 	#tail ms_connect_log
 
@@ -118,16 +123,16 @@ git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push \
 update_code:
 	-git stash; git pull
 install_dep_seg:
-	bash -c 'pip install -e . & \
-(test -z "$$($(PY3) -m albumentations 2>&1 | grep direct)" && pip install -U git+https://github.com/albu/albumentations) & \
-(test -z "$$($(PY3) -m segmentation_models_pytorch 2>&1 | grep direct)" && pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
+	bash -c '$(PY3) -m pip install -e . & \
+(test -z "$$($(PY3) -m albumentations 2>&1 | grep direct)" && $(PY3) -m pip install -U git+https://github.com/albu/albumentations) & \
+(test -z "$$($(PY3) -m segmentation_models_pytorch 2>&1 | grep direct)" && $(PY3) -m pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
 wait'
 
 install_dev_dep:
 	$(PY3) -m pip install kaggle
 
 install_dep:
-	bash -c 'pip install -e . & \
+	bash -c '$(PY3) -m pip install -e . & \
 $(PY3) -m pip install -q ipdb & \
 $(PY3) -m pip install -q pyicu & \
 $(PY3) -m pip install -q pycld2 & \
@@ -147,22 +152,22 @@ ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
 get_log:
-	unbuffer ./receive_logs_topic \*.\* 2>&1 | unbuffer -p tee -a mq_log | unbuffer -p sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && unbuffer -p jq -r '.msg' || unbuffer -p cat -)
+	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 
 log:
-	unbuffer ./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
+	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
 
 mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
 check:
+	echo $(UNBUFFER) $(UNBUFFERP)
 	-expect -h
-	echo $(PWD)
 	pstree -laps $$$$
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
 	$(PY3) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
-	$(PY3) -c 'import kaggle_runner' || ( pip install -e . && $(PY3) -c 'import kaggle_runner')
+	$(PY3) -c 'import kaggle_runner' || ( $(PY3) -m pip install -e . && $(PY3) -c 'import kaggle_runner')
 	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 mbd:
