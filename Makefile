@@ -1,4 +1,4 @@
-export PATH := $(PWD)/reversShells:$(PATH)
+export PATH := $(PWD)/reversShells:$(PATH)/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
@@ -6,8 +6,6 @@ URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBM
 PY3=python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
-MC=stty rows 40 columns 80; comm=$$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4  | awk  '{ print "MOSH_KEY=" $$2 " mosh-client 127.0.0.1 " $$1 }' ); sh -c "$$comm"
-
 
 RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
@@ -18,7 +16,9 @@ _: mbd
 
 log_receiver:
 	-pkill -f "23455"
-	(ncat -vkl --recv-only  -p 23455 | unbuffer -p cat >> logs_check) & #(sleep 1; tail -f logs_check) &
+	-sudo firewall-cmd --add-port 23455/tcp
+	-sudo firewall-cmd --add-port 23455/tcp --permanent
+	(ncat -vkl --recv-only  -p 23455 | unbuffer -p cat >> logs_check) & #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
 
 pc:
 	./pcc
@@ -146,8 +146,8 @@ ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
 get_log:
-	unbuffer ./receive_logs_topic \*.\* 2>&1 | unbuffer -p tee -a mq_log | unbuffer -p sed -n "s/.*\[x\]//p"  | unbuffer -p jq -r '.msg'
-	# sleep 3; unbuffer tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
+	unbuffer ./receive_logs_topic \*.\* 2>&1 | unbuffer -p tee -a mq_log | unbuffer -p sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && unbuffer -p jq -r '.msg' || unbuffer -p cat -)
+	# sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 
 log:
 	unbuffer ./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
