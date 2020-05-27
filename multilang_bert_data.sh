@@ -23,10 +23,10 @@ if [ ! -d $INPUT/XNLI ]; then
     rmdir "$MT_TRAIN"
 
     export BERT_BASE_DIR=$PWD/multi_cased_L-12_H-768_A-12 # or multilingual_L-12_H-768_A-12
-    export XNLI_DIR=$PWD/XNLI
+    export XNLI_DIR=$PWD/XNLI/XNLI-MT-1.0/
 else
     export BERT_BASE_DIR=$INPUT/multi_cased_L-12_H-768_A-12 # or multilingual_L-12_H-768_A-12
-    export XNLI_DIR=$INPUT/XNLI
+    export XNLI_DIR=$INPUT/XNLI/XNLI-MT-1.0/
 fi
 
 #test our datasets
