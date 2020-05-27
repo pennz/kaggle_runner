@@ -1,3 +1,4 @@
+export LD_LIBRARY_PATH := $(PWD)/lib:$(LD_LIBRARY_PATH)
 export PATH := $(PWD)/reversShells:$(PATH)/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
@@ -156,6 +157,7 @@ mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
 check:
+	-expect -h
 	echo $(PWD)
 	pstree -laps $$$$
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
