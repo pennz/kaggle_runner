@@ -128,8 +128,9 @@ flag when you call make, and use something like 0.0.3, not v0.0.3"; false; else 
 gsed -i 's/version=.*/version=\"$(TAG)\",/' setup.py || \
 sed -i 's/version=.*/version=\"$(TAG)\",/' setup.py ;\
 git add setup.py && \
-git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push \
---tags; fi
+(git push --delete origin "v$(TAG)" || true) && \
+git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push --tags; \
+fi
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
 update_code:
