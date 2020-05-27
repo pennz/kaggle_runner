@@ -25,8 +25,7 @@ setuptools.setup(
         "slug",
         "parse",
         "python_logging_rabbitmq",
-        "jupytext",
         "kaggle",
-        "ipdb",
+        "ipdb",  # later we can remove this
     ],
 )
