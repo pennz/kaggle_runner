@@ -23,9 +23,9 @@ _: mbd
 
 log_receiver:
 	-pkill -f "23455"
-	-sudo firewall-cmd --add-port 23455/tcp
-	-sudo firewall-cmd --add-port 23455/tcp --permanent
-	(ncat -vkl --recv-only  -p 23455 | $(UNBUFFERP) cat >> logs_check) & #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
+	-[ type firewall-cmd ] && sudo firewall-cmd --add-port 23455/tcp
+	-[ type firewall-cmd ] && sudo firewall-cmd --add-port 23455/tcp --permanent
+	ncat -vkl --recv-only  -p 23455 #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
 
 pc:
 	./pcc
@@ -43,7 +43,8 @@ rvs_session:
 	-tmux new-session -d -n "good-day" -s rvsConnector "cat"
 	-tmux set-option -t rvsConnector renumber-windows on
 	
-pccnct: check rvs_session log_receiver
+pccnct: check rvs_session
+	make log_receiver &
 	-sudo service rabbitmq-server start
 	bash -xc '$(RUN_PC)'  # for mosh, start listen instances
 	@echo "pc connector is fine now"
