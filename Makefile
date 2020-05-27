@@ -44,6 +44,7 @@ rvs_session:
 	-tmux set-option -t rvsConnector renumber-windows on
 	
 pccnct: check rvs_session log_receiver
+	-sudo service rabbitmq-server start
 	bash -xc '$(RUN_PC)'  # for mosh, start listen instances
 	@echo "pc connector is fine now"
 
@@ -152,7 +153,7 @@ ripdbrv:
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
-get_log:
+rcv_log:
 	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 
