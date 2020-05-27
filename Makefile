@@ -8,6 +8,15 @@ ifneq ($(UNBUFFER),)
 	UNBUFFERP := $(UNBUFFER) -p
 endif
 
+SERVER := $(SERVER)
+CHECK_PORT := $(CHECK_PORT)
+ifeq ($(SERVER),)
+	SERVER := pengyuzhou.com
+endif
+ifeq ($(CHECK_PORT),)
+	CHECK_PORT := 23455
+endif
+
 URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth"
 PY3=python3
 SRC=$(wildcard */**.py)
@@ -22,20 +31,20 @@ _: mbd
 	#kill 7 8 # magic pids
 
 log_receiver:
-	-pkill -f "23455"
-	-[ type firewall-cmd ] && sudo firewall-cmd --add-port 23455/tcp
-	-[ type firewall-cmd ] && sudo firewall-cmd --add-port 23455/tcp --permanent
-	ncat -vkl --recv-only  -p 23455 #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
+	-pkill -f "$(CHECK_PORT)"
+	-[ type firewall-cmd ] && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
+	-[ type firewall-cmd ] && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp --permanent
+	ncat -vkl --recv-only  -p $(CHECK_PORT)  #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
 
 pc:
 	./pcc
 	make connect
 
 mosh:
-	while true; do (./setup_mosh_server 2>&1 | $(UNBUFFERP) ncat --send-only vtool.duckdns.org 23455) & sleep $$((60*25)); done
+	while true; do (./setup_mosh_server 2>&1 | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT)) & sleep $$((60*25)); done
 
 m:
-	( while true; do ./setup_mosh_server; done 2>&1 | $(UNBUFFERP) tee -a ms_connect_log | $(UNBUFFERP) ncat --send-only vtool.duckdns.org 23455 ) &
+	( while true; do ./setup_mosh_server; done 2>&1 | $(UNBUFFERP) tee -a ms_connect_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT) ) &
 	#@sleep 1
 	#tail ms_connect_log
 
@@ -95,7 +104,7 @@ toxic: wt check
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
-	if [ -z $$DEBUG ]; then DEBUG=true $(PY3) tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only pengyuzhou.com 23455; else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
+	if [ -z $$DEBUG ]; then DEBUG=true $(PY3) tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only $(SERVER) $(CHECK_PORT); else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
 test: update_code $(SRC)
@@ -166,7 +175,8 @@ mlocal:
 
 check:
 	-ps aux | grep make
-	echo $(UNBUFFER) $(UNBUFFERP)
+	-echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT)
+	-echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT) | ncat $(SERVER) $(CHECK_PORT)
 	-expect -h
 	pstree -laps $$$$
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
