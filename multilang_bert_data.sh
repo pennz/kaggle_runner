@@ -1,6 +1,6 @@
 #!/bin/bash
-INPUT=/kaggle/input
-if[ ! -d $INPUT/XNLI ]; then
+INPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
+if [ ! -d $INPUT/XNLI ]; then
     curl -O https://www.nyu.edu/projects/bowman/xnli/XNLI-1.0.zip
     curl -O https://www.nyu.edu/projects/bowman/xnli/XNLI-MT-1.0.zip
     curl -O https://storage.googleapis.com/bert_models/2018_11_23/multi_cased_L-12_H-768_A-12.zip
@@ -30,8 +30,8 @@ else
 fi
 
 #test our datasets
-gitclone --depth=1 https://github.com/google-research/bert
-cdbert && python run_classifier.py \
+git clone --depth=1 https://github.com/google-research/bert
+cd bert && python run_classifier.py \
 --task_name=XNLI \
 --do_train=true \
 --do_eval=true \
