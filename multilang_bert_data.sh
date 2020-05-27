@@ -30,9 +30,10 @@ else
 fi
 
 #test our datasets
-git clone --depth=1 https://github.com/google-research/bert
-cd bert &&
-sed -i "s/import tensorflow as tf/import tensorflow.compat.v1 as tf\ntf.disable_v2_behavior()/" *.py
+git clone --depth=1 https://github.com/ultrons/bert
+#https://github.com/google-research/bert
+#tf_upgrade_v2 --intree bert/ --outtree bert_v2 --reportfile report.txt
+cd bert
 
 python run_classifier.py \
 --task_name=XNLI \
