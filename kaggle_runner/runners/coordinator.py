@@ -279,9 +279,13 @@ apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect >/dev/
 conda init bash
 cat >> ~/.bashrc << EOF
 conda activate base # as my dotfiles will fiddle with conda
+export SERVER=$SERVER
+export CHECK_PORT=$CHECK_PORT
 EOF
 
 source rpt # rvs IDE env setup
+export SERVER=$SERVER
+export CHECK_PORT=$CHECK_PORT
 
 wait_ncat() {
     wait_for_ncat=$1
