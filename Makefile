@@ -163,6 +163,7 @@ mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
 check:
+	-ps aux | grep make
 	echo $(UNBUFFER) $(UNBUFFERP)
 	-expect -h
 	pstree -laps $$$$
