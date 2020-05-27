@@ -1,5 +1,5 @@
 export LD_LIBRARY_PATH := $(PWD)/lib:$(LD_LIBRARY_PATH)
-export PATH := $(PWD)/reversShells:$(PATH)/bin:$(PATH)
+export PATH := $(PWD)/reversShells:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
@@ -18,7 +18,8 @@ then echo "start mosh connector"; \
 $(UNBUFFER) ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash -x addNewNode.sh mosh"; fi
 
 _: mbd
-	kill 7 8 # magic pids
+	echo "DONE"
+	#kill 7 8 # magic pids
 
 log_receiver:
 	-pkill -f "23455"
