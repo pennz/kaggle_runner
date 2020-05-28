@@ -187,4 +187,7 @@ check:
 mbd:
 	bash -x multilang_bert_data.sh
 
+p:
+	git push --progress --no-verify
+
 .PHONY: clean connect inner_lstm
