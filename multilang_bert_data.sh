@@ -43,7 +43,7 @@ python run_classifier.py \
 --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
 --do_lower_case=False \
 --max_seq_length=128 \
---train_batch_size=32 \
+--train_batch_size=128 \
 --learning_rate=5e-5 \
---num_train_epochs=0.1 \
+--num_train_epochs=0.5 \
 --output_dir=/tmp/xnli_output/
