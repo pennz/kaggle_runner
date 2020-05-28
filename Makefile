@@ -24,7 +24,7 @@ SHELL=/bin/bash
 
 RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
-$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash -x addNewNode.sh mosh"; fi
+$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash addNewNode.sh mosh"; fi
 
 _: mbd
 	echo "DONE"
@@ -103,7 +103,7 @@ wt:
 toxic: wt check
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
-	bash -xc 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
+	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
 	if [ -z $$DEBUG ]; then DEBUG=true $(PY3) tests/test_distilbert_model.py | tee -a toxic_log | ncat --send-only $(SERVER) $(CHECK_PORT); else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
@@ -187,6 +187,7 @@ check:
 
 mbd:
 	bash -x multilang_bert_data.sh
+
 dataset: mbd
 	-mkdir .k && mv * .* .k
 
