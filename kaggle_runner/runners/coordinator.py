@@ -361,7 +361,8 @@ fi
 
 if [ x"${PHASE}" = x"data" ]; then
     bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
-    make
+    #make
+    wait
 fi
 
 if [ x"${PHASE}" = x"run" ]; then
