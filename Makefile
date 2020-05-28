@@ -191,4 +191,7 @@ mbd:
 p:
 	git push --progress --no-verify
 
+githooks:
+	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
+
 .PHONY: clean connect inner_lstm
