@@ -187,6 +187,8 @@ check:
 
 mbd:
 	bash -x multilang_bert_data.sh
+dataset: mbd
+	-mkdir .k && mv * .* .k
 
 p:
 	git push --progress --no-verify
