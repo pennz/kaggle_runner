@@ -65,8 +65,8 @@ rvs_session:
 pccnct: rvs_session
 	make log_receiver & # will output to current process
 	-sudo service rabbitmq-server start # For AMQP log, our server 
-	bash -xc '$(RUN_PC)'  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
-	@echo "pc connector is fine now"
+	bash -xc '$(RUN_PC)' &  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
+	@echo "pc connector started now"
 
 all: $(SRC)
 	-git push
@@ -207,7 +207,7 @@ dataset: mbd
 p:
 	git push --progress --no-verify
 
-test: pccnct m
+t: pccnct m
 	echo "Please check local mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 	echo -e "\n\n\n\n\n\n\n\n\n"
