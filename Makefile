@@ -1,4 +1,4 @@
-export LD_LIBRARY_PATH := $(PWD)/lib:$(LD_LIBRARY_PATH)
+#export LD_LIBRARY_PATH := $(PWD)/lib:$(LD_LIBRARY_PATH)
 export PATH := $(PWD)/reversShells:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
@@ -46,7 +46,7 @@ mosh:
 	while true; do (./setup_mosh_server 2>&1 | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT)) & sleep $$((60*25)); done
 
 m:
-	( while true; do ./setup_mosh_server; done 2>&1 | $(UNBUFFERP) tee -a ms_connect_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT) ) &
+	( while true; do bash -x ./setup_mosh_server; done 2>&1 | $(UNBUFFERP) tee -a ms_connect_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT) ) &
 	#@sleep 1
 	#tail ms_connect_log
 
@@ -57,7 +57,7 @@ rvs_session:
 pccnct: rvs_session
 	make log_receiver & # will output to current process
 	-sudo service rabbitmq-server start # For AMQP log, our server 
-	bash -c '$(RUN_PC)'  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
+	bash -xc '$(RUN_PC)'  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
 	@echo "pc connector is fine now"
 
 all: $(SRC)

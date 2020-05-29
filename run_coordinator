@@ -25,5 +25,5 @@ fi
 kversion=$(echo $push_log | sed -n "s/.*Kernel version \([0-9]\{,\}\).*/\1/p")
 echo Code pushed. TCP port $PORT - version $kversion. Please wait rvs to connect.
 if [[ -n "$kversion" ]] && [[ $PORT -gt 0 ]]; then
-    tmux rename-window -t rvsConnector:{end} "v$kversion:$PORT:$(git show --no-patch --oneline)"
+    tmux rename-window -t rvsConnector:{end} "v$kversion:$PORT:$(git show --no-patch --oneline | tr " " "_")"
 fi
