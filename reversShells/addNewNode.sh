@@ -2,7 +2,7 @@
 # trap ctrl-c and call ctrl_c()
 PS4='L${LINENO}: '
 
-type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
+type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port ${CHECK_PORT:-23455}/tcp
 mosh=
 phase=
 
