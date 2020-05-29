@@ -24,17 +24,18 @@ SHELL=/bin/bash
 
 RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
-$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date) New Incoming >>mosh_log; bash addNewNode.sh mosh"; fi
+$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date): New Incoming >>mosh_log; bash -x addNewNode.sh mosh"; fi
 
 _: mbd
 	echo "DONE"
 	#kill 7 8 # magic pids
 
 log_receiver:
+	@echo "$@" will use tcp to receive logs
 	-pkill -f "$(CHECK_PORT)"
-	-[ type firewall-cmd ] && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
-	-[ type firewall-cmd ] && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp --permanent
-	ncat -vkl --recv-only  -p $(CHECK_PORT)  #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
+	-type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
+	-type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp --permanent
+	ncat -vkl --recv-only  -p $(CHECK_PORT) -o logs_check & sleep 1; tail -f logs_check # logs_check will be used by pcc to get mosh-client connect authentication info
 
 pc:
 	./pcc
@@ -53,11 +54,10 @@ rvs_session:
 	-tmux set-option -t rvsConnector renumber-windows on
 	
 pccnct: check rvs_session
-	make log_receiver &
-	-sudo service rabbitmq-server start
-	bash -xc '$(RUN_PC)'  # for mosh, start listen instances
+	make log_receiver & # will output to current process
+	-sudo service rabbitmq-server start # For AMQP log, our server 
+	bash -c '$(RUN_PC)'  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
 	@echo "pc connector is fine now"
-
 
 all: $(SRC)
 	-git push
@@ -164,7 +164,10 @@ ripdbrv:
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
+r:
+	bash -xc 'while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "rcv_log" -v "sh" | cut -d" " -f 2 | xargs -I{} kill {}; make rcv_log & sleep 60; done'
 rcv_log:
+	-sudo systemctl restart rabbitmq-server.service
 	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 
