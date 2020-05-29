@@ -89,7 +89,7 @@ connect() {
     fi
 
     tmux >/dev/null select-window -t rvsConnector:{end}
-    tmux >/dev/null new-window -t rvsConnector:+1 -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
+    tmux >/dev/null new-window -t rvsConnector:+1 -n "$(git show --no-patch --oneline | tr " " "_")" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
 
     # tcpserver waits for connections from TCP clients. For each connection, it
     # runs prog, with descriptor 0 reading from the network and descriptor 1 writing
