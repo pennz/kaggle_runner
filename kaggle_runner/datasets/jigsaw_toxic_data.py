@@ -15,8 +15,8 @@ def get_column(csv_file, col_name):
     d = pd.read_csv(csv_file)
 
     return d[col_name]
-def get_toxic_commnet(p):
-    dtr = get_column(os.path.join(DATA_PATH, p), "commnet_text")
+def get_toxic_comment(p):
+    dtr = get_column(os.path.join(DATA_PATH, p), "comment_text")
 
     r = random.randint(0, len(dtr)-1)
     logger.debug("toxic comment data example: %s", dtr[r])
@@ -24,9 +24,9 @@ def get_toxic_commnet(p):
     return dtr
 
 def merge_all_data():
-    dtr = get_toxic_commnet(TRD)
-    vd = get_toxic_commnet(VD)
-    td = get_toxic_commnet(TD)
+    dtr = get_toxic_comment(TRD)
+    vd = get_toxic_comment(VD)
+    td = get_toxic_comment(TD)
     c = pd.concat([dtr, vd, td])
     pd.to_csv(OUT_PATH, index=False)
     print("%d %d %d" % (len(dtr), len(vd), len(td)))

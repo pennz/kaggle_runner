@@ -22,7 +22,7 @@ if [ ! $push_ret -eq 0 ]; then
     echo >&2 Push failed, please check.
     exit $push_ret
 fi
-kversion=$(echo $push_log | sed -n "s/.*Kernel version \([0-9]\{,\}\).*/\1/p")
+kversion=$(echo $push_log | ${SED:-sed} -n "s/.*Kernel version \([0-9]\{,\}\).*/\1/p")
 echo Code pushed. TCP port $PORT - version $kversion. Please wait rvs to connect.
 if [[ -n "$kversion" ]] && [[ $PORT -gt 0 ]]; then
     tmux rename-window -t rvsConnector:{end} "v$kversion:$PORT:$(git show --no-patch --oneline | tr " " "_")"

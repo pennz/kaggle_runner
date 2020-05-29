@@ -8,6 +8,12 @@ ifneq ($(UNBUFFER),)
 	UNBUFFERP := $(UNBUFFER) -p
 endif
 
+SED := $(shell command -v gsed)
+ifneq ($(SED),)
+	SED := $(shell command -v sed)
+endif
+export SED := $(SED)
+
 SERVER := $(SERVER)
 CHECK_PORT := $(CHECK_PORT)
 ifeq ($(SERVER),)
@@ -26,6 +32,8 @@ RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
 $(UNBUFFER) ncat -uklp 50001 -c "echo $$(date): New Incoming >>mosh_log; bash -x reversShells/addNewNode.sh mosh"; fi
 
+IS_CENTOS=type firewall-cmd >/dev/null 2>&1
+
 _: mbd
 	echo "DONE"
 	#kill 7 8 # magic pids
@@ -33,9 +41,9 @@ _: mbd
 log_receiver:
 	@echo "$@" will use tcp to receive logs
 	-pkill -f "$(CHECK_PORT)"
-	-pgrep -f firewalld >/dev/null || sudo systemctl start firewalld
-	-type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
-	-type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp --permanent
+	-$(IS_CENTOS) && (pgrep -f firewalld >/dev/null || sudo systemctl start firewalld)
+	-$(IS_CENTOS) && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
+	-$(IS_CENTOS) && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp --permanent
 	ncat -vkl --recv-only  -p $(CHECK_PORT) -o logs_check & sleep 1; tail -f logs_check # logs_check will be used by pcc to get mosh-client connect authentication info
 
 pc:
@@ -72,7 +80,7 @@ all: $(SRC)
 push: check rvs_session $(SRC)
 	-#git push # push first as kernel will download the codes, so put new code to github first
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
-	source ./run_coordinator $(PHASE)
+	./run_coordinator $(PHASE) # source only works in specific shell: bash or ...
 
 connect:
 	tmux select-window -t rvsConnector:{end}
@@ -112,7 +120,7 @@ test: update_code $(SRC)
 	eval 'echo $$(which $(PY3)) is our $(PY3) executable'
 	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
 clean:
-	#-bash -c 'currentPpid=$$(pstree -spa $$$$ | sed -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | sed "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
+	#-bash -c 'currentPpid=$$(pstree -spa $$$$ | $(SED) -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | $(SED) "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
 	-ps aux | grep "vvlp" | grep -v "while" | awk '{print $$2} ' | xargs -I{} kill {}
 	-rm -rf __pycache__ mylogs dist/* build/*
 
@@ -128,7 +136,7 @@ publish: twine
 	if [[ x$(TAG) =~ xv ]] || [ -z $(TAG) ]; then >&2 echo "Please pass TAG \
 flag when you call make, and use something like 0.0.3, not v0.0.3"; false; else \
 gsed -i 's/version=.*/version=\"$(TAG)\",/' setup.py || \
-sed -i 's/version=.*/version=\"$(TAG)\",/' setup.py ;\
+$(SED) -i 's/version=.*/version=\"$(TAG)\",/' setup.py ;\
 git add setup.py && \
 (git tag -d "v$(TAG)"; git push --delete origin "v$(TAG)" || true) && \
 git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push --tags; \
@@ -160,7 +168,7 @@ wait'
 	#conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 
 connect_close:
-	stty raw -echo && ( ps aux | sed -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
+	stty raw -echo && ( ps aux | $(SED) -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
 
 ripdbrv:
 	while true; do ncat 112.65.9.197 23454 --sh-exec 'ncat -w 3 127.1 4444' ; sleep 1; echo -n "." ; done;
@@ -173,8 +181,8 @@ mq:
 
 amqp_log:
 	sudo systemctl restart rabbitmq-server.service
-	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
-	# sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
+	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
+	# sleep 3; tail -f mq_log | $(SED) -n "s/\(.*\)\[x.*/\1/p"
 
 mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
@@ -201,11 +209,11 @@ p:
 
 test: pccnct m
 	echo "Please check local mosh setup result"
-	-sudo firewall-cmd --list-ports
+	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 	echo -e "\n\n\n\n\n\n\n\n\n"
 	make push
 	echo "Please check remote mosh setup result"
-	-sudo firewall-cmd --list-ports
+	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit

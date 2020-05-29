@@ -19,7 +19,7 @@ else
         newNode=${newNode_passed}
     fi
 
-    pcomm="$(echo $comm | sed -e "s/600[0-9]\{1,\}.*/$newNode/" -e "s/.*MOSH/MOSH/" )"  # trim PS4 if command set out as set-x mode
+    pcomm="$(echo $comm | ${SED:-sed} -e "s/600[0-9]\{1,\}.*/$newNode/" -e "s/.*MOSH/MOSH/" )"  # trim PS4 if command set out as set-x mode
     echo \"$pcomm\" will be used
     hn=$(echo $comm | cut -d" " -f 5)
     #tmux select-pane -t rvsConnector -m

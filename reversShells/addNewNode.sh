@@ -2,7 +2,7 @@
 # trap ctrl-c and call ctrl_c()
 PS4='L${LINENO}: '
 
-type firewall-cmd >/dev/null 2>&1 || sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
+type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
 mosh=
 phase=
 
@@ -63,7 +63,7 @@ mosh_connect() {
     # echo "" # blank message, to activate? will make it fail?
     $NC -ulp $newPort
 
-    sed -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
+    ${SED:-sed} -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
     return $ret
 }
 
@@ -97,7 +97,7 @@ connect() {
     # so I need a program print the despriptor 0 content out and receive tty input
     # orignially, use ncat -lp 9000, so RVS:48852 -> :25454 (tcpserver) -> ncat 9000 [0] from the RVS, and waiting input from [1]
     sleep 3
-    sed -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
+    ${SED:-sed} -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
 
     return $ret
 }
