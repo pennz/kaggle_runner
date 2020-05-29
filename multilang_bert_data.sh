@@ -36,33 +36,28 @@ cd bert
 STAGE="extract_feature"
 
 if [ $STAGE = "extract_feature" ]; then
-python run_classifier.py \
---task_name=XNLI \
---do_train=true \
---do_eval=true \
---data_dir="$XNLI_DIR" \
---vocab_file="$BERT_BASE_DIR/vocab.txt" \
---bert_config_file="$BERT_BASE_DIR/bert_config.json" \
---init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
---do_lower_case=False \
---max_seq_length=128 \
---train_batch_size=32 \
---learning_rate=5e-5 \
---num_train_epochs=0.5 \
---output_dir=/tmp/xnli_output/
+python extract_features.py \
+  --input_file=/tmp/input.txt \
+  --output_file=./multi_cased_features.jsonl \
+  --vocab_file="$BERT_BASE_DIR/vocab.txt" \
+  --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
+  --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
+  --layers=-1,-2,-3,-4 \
+  --max_seq_length=128 \
+  --batch_size=32
 else
 python run_classifier.py \
---task_name=XNLI \
---do_train=true \
---do_eval=true \
---data_dir="$XNLI_DIR" \
---vocab_file="$BERT_BASE_DIR/vocab.txt" \
---bert_config_file="$BERT_BASE_DIR/bert_config.json" \
---init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
---do_lower_case=False \
---max_seq_length=128 \
---train_batch_size=32 \
---learning_rate=5e-5 \
---num_train_epochs=0.5 \
---output_dir=/tmp/xnli_output/
+  --task_name=XNLI \
+  --do_train=true \
+  --do_eval=true \
+  --data_dir="$XNLI_DIR" \
+  --vocab_file="$BERT_BASE_DIR/vocab.txt" \
+  --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
+  --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
+  --do_lower_case=False \
+  --max_seq_length=128 \
+  --train_batch_size=32 \
+  --learning_rate=5e-5 \
+  --num_train_epochs=0.5 \
+  --output_dir=/tmp/xnli_output/
 fi
