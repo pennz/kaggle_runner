@@ -22,6 +22,7 @@ endif
 ifeq ($(CHECK_PORT),)
 	CHECK_PORT := 23455
 endif
+export CHECK_PORT
 
 URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth"
 PY3=python3
@@ -61,11 +62,13 @@ m:
 rvs_session:
 	-tmux new-session -d -n "good-day" -s rvsConnector "cat"
 	-tmux set-option -t rvsConnector renumber-windows on
+
+_pccnct:
+	bash -xc '$(RUN_PC)' &  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
 	
-pccnct: rvs_session
+pccnct: rvs_session _pccnct
 	make log_receiver & # will output to current process
 	-sudo service rabbitmq-server start # For AMQP log, our server 
-	bash -xc '$(RUN_PC)' &  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
 	@echo "pc connector started now"
 
 all: $(SRC)
