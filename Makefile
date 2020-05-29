@@ -183,7 +183,7 @@ mq:
 	while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "amqp" | tee /dev/tty |  grep -v -e "sh" -e "grep" | awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs ; sleep 60; done
 
 amqp_log:
-	sudo systemctl restart rabbitmq-server.service
+	-sudo systemctl restart rabbitmq-server.service
 	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | $(SED) -n "s/\(.*\)\[x.*/\1/p"
 
