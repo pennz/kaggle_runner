@@ -55,7 +55,7 @@ rvs_session:
 	
 pccnct: check rvs_session
 	make log_receiver & # will output to current process
-	-sudo service rabbitmq-server start # For AMQP log
+	-sudo service rabbitmq-server start # For AMQP log, our server 
 	bash -c '$(RUN_PC)'  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
 	@echo "pc connector is fine now"
 
@@ -164,8 +164,10 @@ ripdbrv:
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
+r:
+	bash -xc 'while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "rcv_log" -v "sh" | cut -d" " -f 2 | xargs -I{} kill {}; make rcv_log & sleep 60; done'
 rcv_log:
-	-[ $(ps -u rabbitmq | wc -l) -lt 5 ] && sudo systemctl restart rabbitmq-server.service
+	-sudo systemctl restart rabbitmq-server.service
 	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 
