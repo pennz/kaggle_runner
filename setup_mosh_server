@@ -2,7 +2,7 @@
 PC=pengyuzhou.com
 
 stty rows 40 columns 80
-comm=$(LC_ALL=en_US.UTF-8 mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4 | awk '{ print "MOSH_KEY=" $2 " mosh-client 127.0.0.1 " $1 }')
+comm=$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | cut -d" " -f 3,4 | awk '{ print "MOSH_KEY=" $2 " mosh-client 127.0.0.1 " $1 }')
 echo $comm \#$HOSTNAME
 
 port=$(echo $comm | cut -d" " -f 4)  # port for local mosh-server
