@@ -166,10 +166,11 @@ ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
 mq:
-	pkill -f "amqp_log"; make amqp_log & 
-	bash -xc 'while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "amqp_log" | grep -v "sh" | cut -d" " -f 2 | xargs -I{} kill {}; make amqp_log & sleep 60; done'
+	make amqp_log & 
+	while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "amqp" | tee /dev/tty |  grep -v -e "sh" -e "grep" | awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs ; sleep 60; done
+
 amqp_log:
-	-sudo systemctl restart rabbitmq-server.service
+	sudo systemctl restart rabbitmq-server.service
 	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
 
