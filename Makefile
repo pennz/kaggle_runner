@@ -9,7 +9,7 @@ ifneq ($(UNBUFFER),)
 endif
 
 SED := $(shell command -v gsed)
-ifneq ($(SED),)
+ifeq ($(SED),)
 	SED := $(shell command -v sed)
 endif
 export SED := $(SED)
@@ -181,7 +181,7 @@ mq:
 
 amqp_log:
 	sudo systemctl restart rabbitmq-server.service
-	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
+	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $$($(SED):-sed) -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | $(SED) -n "s/\(.*\)\[x.*/\1/p"
 
 mlocal:
