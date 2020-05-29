@@ -24,7 +24,7 @@ SHELL=/bin/bash
 
 RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
-$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date): New Incoming >>mosh_log; bash -x addNewNode.sh mosh"; fi
+$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date): New Incoming >>mosh_log; bash -x reversShells/addNewNode.sh mosh"; fi
 
 _: mbd
 	echo "DONE"
@@ -136,7 +136,8 @@ fi
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine upload dist/*
 update_code:
-	-git stash; git pull
+	#-git stash;
+	git pull
 install_dep_seg:
 	bash -c '$(PY3) -m pip install -e . & \
 (test -z "$$($(PY3) -m albumentations 2>&1 | grep direct)" && $(PY3) -m pip install -U git+https://github.com/albu/albumentations) & \
@@ -198,7 +199,15 @@ dataset: mbd
 p:
 	git push --progress --no-verify
 
+test: pccnct m
+	echo "Please check local mosh setup result"
+	-sudo firewall-cmd --list-ports
+	echo -e "\n\n\n\n\n\n\n\n\n"
+	make push
+	echo "Please check remote mosh setup result"
+	-sudo firewall-cmd --list-ports
+
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
 
-.PHONY: clean connect inner_lstm
+.PHONY: clean connect inner_lstm pc

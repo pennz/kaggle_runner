@@ -57,7 +57,7 @@ mosh_connect() {
 
     (
         sleep 1
-        bash pcc $newPort >/dev/null 2>&1
+        bash -x pcc $newPort >/dev/null 2>&1
     ) &
 
     # echo "" # blank message, to activate? will make it fail?

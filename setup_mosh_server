@@ -7,4 +7,4 @@ echo $comm \#$HOSTNAME
 
 port=$(echo $comm | cut -d" " -f 4)  # port for local mosh-server
 
-ncat -u $PC 50001 -c "ncat -u 127.0.0.1 $port" # so mosh-server runs in kaggle server , the tunnel will be
+ncat -u $PC 50001 -c "echo; ncat -u 127.0.0.1 $port" # need to do a echo to trigger server
