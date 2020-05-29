@@ -76,7 +76,7 @@ push: check rvs_session $(SRC)
 
 connect:
 	tmux select-window -t rvsConnector:{end}
-	#tmux switch -t rvsConnector:{end}
+	tmux switch -t rvsConnector:{end}
 
 
 lint: $(SRC)
