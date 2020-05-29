@@ -35,7 +35,7 @@ log_receiver:
 	-pkill -f "$(CHECK_PORT)"
 	-type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
 	-type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp --permanent
-	ncat -vkl --recv-only  -p $(CHECK_PORT)  #(sleep 1; tail -f logs_check) &# it will be called as dep, so put it in background
+	ncat -vkl --recv-only  -p $(CHECK_PORT) -o logs_check & sleep 1; tail -f logs_check # logs_check will be used by pcc to get mosh-client connect authentication info
 
 pc:
 	./pcc
