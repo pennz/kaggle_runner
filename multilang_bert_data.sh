@@ -36,9 +36,13 @@ cd bert
 STAGE="extract_feature"
 
 if [ $STAGE = "extract_feature" ]; then
+wc_l_info=$(python kaggle_runner/datasets/jigsaw_toxic_data.py | tail -n 1)
+head /tmp/input.txt
+echo "lines info: $wc_l_info"
+
 python extract_features.py \
   --input_file=/tmp/input.txt \
-  --output_file=./multi_cased_features.jsonl \
+  --output_file="$PWD/multi_cased_features.jsonl" \
   --vocab_file="$BERT_BASE_DIR/vocab.txt" \
   --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
   --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
