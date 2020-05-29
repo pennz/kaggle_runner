@@ -21,7 +21,7 @@ else
 
     pcomm="$(echo "$comm" | "${SED:-sed}" -e "s/600[0-9]\{1,\}.*/$newNode/" -e "s/.*MOSH/MOSH/" )"  # trim PS4 if command set out as set-x mode
     echo \""$pcomm"\" will be used
-    hn=$(echo "$comm" | "${SED:-sed}" 's/.*MOSH/MOSH/' | awk '{print $5}')
+    hn=$(echo "$comm" | "${SED:-sed}" 's/.*MOSH/MOSH/' | awk '{print $4}')
     #tmux select-pane -t rvsConnector -m
     #tmux select-window -t rvsConnector:$
     tmux new-window -d -t rvsConnector -n "m.$hn.$(git show --no-patch --oneline | tr " " "_")" sh -c "LC_ALL=en_US.UTF-8 $pcomm"
