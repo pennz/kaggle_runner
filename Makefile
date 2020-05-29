@@ -53,7 +53,7 @@ rvs_session:
 	-tmux new-session -d -n "good-day" -s rvsConnector "cat"
 	-tmux set-option -t rvsConnector renumber-windows on
 	
-pccnct: check rvs_session
+pccnct: rvs_session
 	make log_receiver & # will output to current process
 	-sudo service rabbitmq-server start # For AMQP log, our server 
 	bash -c '$(RUN_PC)'  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
@@ -164,15 +164,13 @@ ripdbrv:
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; nc 127.0.0.1 $(PORT); stty $$SAVED_STTY"
 
-r:
-	bash -xc 'while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "rcv_log" -v "sh" | cut -d" " -f 2 | xargs -I{} kill {}; make rcv_log & sleep 60; done'
-rcv_log:
+mq:
+	pkill -f "amqp_log"; make amqp_log & 
+	bash -xc 'while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "amqp_log" | grep -v "sh" | cut -d" " -f 2 | xargs -I{} kill {}; make amqp_log & sleep 60; done'
+amqp_log:
 	-sudo systemctl restart rabbitmq-server.service
 	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) sed -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | sed -n "s/\(.*\)\[x.*/\1/p"
-
-log:
-	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 |  sed -n "s/.*\[x\]//p"
 
 mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
