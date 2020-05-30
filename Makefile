@@ -202,8 +202,8 @@ check:
 	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 mbd:
-	$(UNBUFFER) bash -x multilang_bert_data.sh >mbd_log 2>&1
-	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$(date) {}"'
+	$(UNBUFFER) bash -x multilang_bert_data.sh >mbd_log 2>&1 &
+	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 
 dataset: mbd
 	-mkdir .k && mv * .* .k
