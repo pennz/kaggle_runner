@@ -5,7 +5,7 @@ if [ "$#" -gt 0 ]; then
     newNode_passed=$1
 fi
 
-comm="$(tail -n 100 logs_check | grep MOSH | tail -n 1)"
+comm="$(tail -n 100 logs_check | grep -v echo | grep MOSH | tail -n 1)"
 echo \""$comm"\" found from remote
 
 if [ -z "$comm" ]; then
