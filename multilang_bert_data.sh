@@ -59,7 +59,7 @@ else
     OUT_PARA="--output_file=$PWD/multi_cased_features.jsonl" 
 fi
 
-python extract_features.py \
+python -m ipdb extract_features.py \
   --input_file=/tmp/input.txt \
   --vocab_file="$BERT_BASE_DIR/vocab.txt" \
   --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
