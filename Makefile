@@ -29,9 +29,9 @@ PY3=python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
 
-RUN_PC=cnt=$$(pgrep -f "50001.*addNew" | wc -l); echo $$cnt; if [ $$cnt -lt 3 ]; \
-then echo "start mosh connector"; \
-$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date): New Incoming >>mosh_log; bash -x reversShells/addNewNode.sh mosh"; fi
+RUN_PC=cnt=$$(pgrep -f "50001.*addNew" | wc -l); echo $$cnt; [ $$cnt -lt 3 ] && \
+( echo "start mosh connector"; \
+$(UNBUFFER) ncat -uklp 50001 -c 'echo $$(date): New Incoming >>mosh_log; bash -x reversShells/addNewNode.sh mosh' )
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 

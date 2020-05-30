@@ -7,6 +7,7 @@ import sys
 from string import Template
 
 import slug
+import ipdb
 
 from kaggle_runner.utils import AMQPURL, logger
 
@@ -575,7 +576,7 @@ if __name__ == "__main__":
     port = sys.argv[1]
     assert int(port) >= 0
     phase = sys.argv[2]
-    logger.debug(f"{sys.argv}")
+    logger.debug(f"Paramters for creating runner: {sys.argv}")
     tmp_path = '.r'
 
     subprocess.run(f"rm -rf {tmp_path}", shell=True, check=True)
