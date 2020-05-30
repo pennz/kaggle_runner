@@ -1,6 +1,6 @@
 #!/bin/bash
 INPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
-if [ -d $INPUT/XNLI ]; then
+if [ ! -d $INPUT/XNLI ]; then
     curl -O https://www.nyu.edu/projects/bowman/xnli/XNLI-1.0.zip
     curl -O https://www.nyu.edu/projects/bowman/xnli/XNLI-MT-1.0.zip
     curl -O https://storage.googleapis.com/bert_models/2018_11_23/multi_cased_L-12_H-768_A-12.zip
