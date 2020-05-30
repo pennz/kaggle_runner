@@ -65,7 +65,7 @@ if [ $STAGE = "extract_feature" ]; then
       --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
       --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
       --layers=-1,-2,-3,-4 \
-      --max_seq_length=256 $OUT_PARA $TPU_Parameter \
+      --max_seq_length=128 $OUT_PARA $TPU_Parameter \
       --batch_size=32
     
 else
