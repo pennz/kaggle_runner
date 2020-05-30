@@ -29,7 +29,7 @@ def merge_all_data():
     vd = get_toxic_comment(VD)
     td = get_toxic_comment(TD, "content")
     c = pd.concat([dtr, vd, td])
-    pd.to_csv(OUT_PATH, index=False)
+    c.to_csv(OUT_PATH, index=False)
     print("%d %d %d" % (len(dtr), len(vd), len(td)))
 
 if __name__ == "__main__":

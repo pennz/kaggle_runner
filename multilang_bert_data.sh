@@ -30,8 +30,6 @@ else
 fi
 
 #test our datasets
-git clone --depth=1 https://github.com/ultrons/bert
-cd bert
 
 STAGE="extract_feature"
 
@@ -40,6 +38,8 @@ wc_l_info=$(python kaggle_runner/datasets/jigsaw_toxic_data.py | tail -n 1)
 head /tmp/input.txt
 echo "lines info: $wc_l_info"
 
+git clone --depth=1 https://github.com/ultrons/bert
+cd bert
 python extract_features.py \
   --input_file=/tmp/input.txt \
   --output_file="$PWD/multi_cased_features.jsonl" \
