@@ -202,7 +202,7 @@ check:
 	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 mbd:
-	bash -x multilang_bert_data.sh
+	bash -x multilang_bert_data.sh | tee mbd_log
 
 dataset: mbd
 	-mkdir .k && mv * .* .k
