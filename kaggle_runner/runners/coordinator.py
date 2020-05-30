@@ -437,6 +437,7 @@ class Coordinator:
         s = Template(
             """#!/usr/bin/env python3
 from importlib import reload
+import os
 import selectors
 import subprocess
 import sys
@@ -464,12 +465,13 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 
-server = os.getenv("SERVER")
+server = os.environ.get("SERVER")
 if server is None:
-    server = "pengyuzhou.com"
+    server = "vtool.duckdns.org"
+    os.environ['SERVER'] = server
 
-entry_str = f\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 "{server}" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
+entry_str = r\"\"\"#!/bin/bash
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 \"\"\"+ server +\"\"\" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"

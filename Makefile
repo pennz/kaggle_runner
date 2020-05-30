@@ -29,7 +29,7 @@ PY3=python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
 
-RUN_PC=cnt=$$(pgrep -cf "50001.*addNew"); echo $$cnt; if [ $$cnt -lt 3 ]; \
+RUN_PC=cnt=$$(pgrep -f "50001.*addNew" | wc -l); echo $$cnt; if [ $$cnt -lt 3 ]; \
 then echo "start mosh connector"; \
 $(UNBUFFER) ncat -uklp 50001 -c "echo $$(date): New Incoming >>mosh_log; bash -x reversShells/addNewNode.sh mosh"; fi
 
