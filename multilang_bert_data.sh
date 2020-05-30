@@ -34,7 +34,11 @@ fi
 STAGE="extract_feature"
 
 if [ $STAGE = "extract_feature" ]; then
-wc_l_info=$(python kaggle_runner/datasets/jigsaw_toxic_data.py | tail -n 1)
+
+if [ ! -f /tmp/input.txt ]; then
+    wc_l_info=$(python kaggle_runner/datasets/jigsaw_toxic_data.py | tail -n 1)
+fi
+
 echo "head of the comments list:"
 head /tmp/input.txt
 echo "lines info: $wc_l_info"
