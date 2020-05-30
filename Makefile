@@ -68,7 +68,7 @@ _pccnct:
 	
 pccnct: rvs_session _pccnct
 	make log_receiver & # will output to current process
-	-sudo service rabbitmq-server start # For AMQP log, our server 
+	-$(IS_CENTOS) && sudo service rabbitmq-server start # For AMQP log, our server 
 	@echo "pc connector started now"
 
 all: $(SRC)
@@ -183,7 +183,7 @@ mq:
 	while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "amqp" | tee /dev/tty |  grep -v -e "sh" -e "grep" | awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs ; sleep 60; done
 
 amqp_log:
-	-sudo systemctl restart rabbitmq-server.service
+	-$(IS_CENTOS) && sudo systemctl restart rabbitmq-server.service
 	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | $(SED) -n "s/\(.*\)\[x.*/\1/p"
 
@@ -201,9 +201,13 @@ check:
 	$(PY3) -c 'import kaggle_runner' || ( $(PY3) -m pip install -e . && $(PY3) -c 'import kaggle_runner')
 	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
-mbd:
-	$(UNBUFFER) bash -x multilang_bert_data.sh >mbd_log 2>&1 &
+mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
+mbd_interactive:
+	$(UNBUFFER) bash -x multilang_bert_data.sh >mbd_log 2>&1
+mbd:
+	make mbd_interactive &
+	make mbd_log
 
 dataset: mbd
 	-mkdir .k && mv * .* .k
