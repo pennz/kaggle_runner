@@ -35,20 +35,34 @@ STAGE="extract_feature"
 
 if [ $STAGE = "extract_feature" ]; then
 wc_l_info=$(python kaggle_runner/datasets/jigsaw_toxic_data.py | tail -n 1)
+echo "head of the comments list:"
 head /tmp/input.txt
 echo "lines info: $wc_l_info"
 
 git clone --depth=1 https://github.com/ultrons/bert
-cd bert
+cd bert || exit 1
+
+export STORAGE_BUCKET=gs://kaggle_runner/
+export TASK_NAME=toxic
+
+if [ ! -z $TPU_NAME ]; then
+    export BERT_BASE_DIR=gs://cloud-tpu-checkpoints/bert/multi_cased_L-12_H-768_A-12
+    TPU_Parameter="--use_tpu=True --tpu_name=$TPU_NAME --output_dir=${STORAGE_BUCKET}/${TASK_NAME}"
+else
+    export BERT_BASE_DIR=gs://cloud-tpu-checkpoints/bert/multi_cased_L-12_H-768_A-12
+    OUT_PARA="--output_file=$PWD/multi_cased_features.jsonl" 
+fi
+
 python extract_features.py \
   --input_file=/tmp/input.txt \
-  --output_file="$PWD/multi_cased_features.jsonl" \
   --vocab_file="$BERT_BASE_DIR/vocab.txt" \
   --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
   --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
   --layers=-1,-2,-3,-4 \
-  --max_seq_length=512 \
+  --max_seq_length=512 $OUT_PARA $TPU_Parameter \
   --batch_size=32
+
+
 else
 python run_classifier.py \
   --task_name=XNLI \
