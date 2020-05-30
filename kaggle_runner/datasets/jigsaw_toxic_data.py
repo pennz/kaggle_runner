@@ -14,7 +14,7 @@ OUT_PATH = "/tmp/input.txt"
 def get_column(csv_file, col_name):
     d = pd.read_csv(csv_file)
 
-    return d. [col_name]
+    return d[col_name]
 
 def get_toxic_comment(p, col_name="comment_text"):
     dtr = get_column(os.path.join(DATA_PATH, p), col_name=col_name)
