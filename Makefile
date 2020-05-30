@@ -31,7 +31,8 @@ SHELL=/bin/bash
 
 RUN_PC=cnt=$$(pgrep -f "50001.*addNew" | wc -l); echo $$cnt; [ $$cnt -lt 3 ] && \
 ( echo "start mosh connector"; \
-$(UNBUFFER) ncat -uklp 50001 -c 'echo $$(date): New Incoming >>mosh_log; bash -x reversShells/addNewNode.sh mosh' )
+$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date): New Incoming >>mosh_log; bash -x reversShells/addNewNode.sh mosh"; \
+echo "connection done." )
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
@@ -65,6 +66,7 @@ rvs_session:
 
 _pccnct:
 	bash -xc '$(RUN_PC)' &  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
+	echo "pccnct has been put to backgound"
 	
 pccnct: rvs_session _pccnct
 	make log_receiver & # will output to current process
