@@ -463,8 +463,13 @@ with open("gdrive_setup", "w") as f:
     f.write(
 r\"\"\"${gdrive_str}\"\"\"
     )
-entry_str = r\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 "pengyuzhou.com" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
+
+server = os.getenv("SERVER")
+if server is None:
+    server = "pengyuzhou.com"
+
+entry_str = f\"\"\"#!/bin/bash
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 "{server}" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
@@ -501,31 +506,7 @@ while True:
 # https://stackoverflow.com/questions/31833897/python-read-from-subprocess-stdout-and-stderr-separately-while-pr
 # eserving-order
 # Title: Python read from subprocess stdout and stderr separately while preserving order - Stack Overflow
-#
-# Size: 110088
-# Codepage: Unicode UTF-8
-# SSL Cipher: 128-bit TLSv1.2 ECDHE-RSA-AES128-GCM-SHA256
-# Encoding: gzip
-# Date: Mon, 04 May 2020 23:38:11 GMT
-# Last modified: Mon, 04 May 2020 23:38:11 GMT
-# Time since loading: 13:08
-# Last visit time: Tue May  5 07:41:07 2020
-#
-# Link: https://stackoverflow.com/a/56918582
-# Link title: short permalink to this answer
-
-# just a test problem
-# import sys
-# from time import sleep
-#
-# for i in range(10):
-#     print(f" x{i} ", file=sys.stderr, end="")
-#     sleep(0.1)
-#     print(f" y{i} ", end="")
-#     sleep(0.1)
-# %%
-# #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
-    """
+"""
         )
 
         try:

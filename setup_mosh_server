@@ -1,5 +1,5 @@
 #!/bin/bash
-PC=pengyuzhou.com
+PC=${SERVER:-pengyuzhou.com}
 
 stty rows 40 columns 80
 comm=$(mosh-server new 2>/dev/null | grep -n "MOSH CONNECT" | tee /dev/tty |  awk '{ print "MOSH_KEY=" $4 " mosh-client 127.0.0.1 " $3 }')
