@@ -47,7 +47,7 @@ python extract_features.py \
   --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
   --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
   --layers=-1,-2,-3,-4 \
-  --max_seq_length=128 \
+  --max_seq_length=512 \
   --batch_size=32
 else
 python run_classifier.py \
