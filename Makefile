@@ -204,9 +204,9 @@ check:
 mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 mbd_interactive:
-	$(UNBUFFER) bash -x multilang_bert_data.sh >mbd_log 2>&1
+	bash -x multilang_bert_data.sh
 mbd:
-	make mbd_interactive &
+	$(UNBUFFER) make mbd_interactive >mbd_log 2>&1 &
 	make mbd_log
 
 dataset: mbd
