@@ -203,7 +203,7 @@ check:
 
 mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
-mbd_interactive:
+mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh
 mbd:
 	$(UNBUFFER) make mbd_interactive >mbd_log 2>&1 &
@@ -226,4 +226,4 @@ t: pccnct m
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
 
-.PHONY: clean connect inner_lstm pc
+.PHONY: clean connect inner_lstm pc mbd_log
