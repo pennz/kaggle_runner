@@ -1,8 +1,11 @@
 #!/bin/env python
 import os
-import pandas as pd
-from kaggle_runner import logger
 import random
+
+import ipdb
+import pandas as pd
+
+from kaggle_runner import logger
 
 DATA_PATH = "/kaggle/input/jigsaw-multilingual-toxic-comment-classification"
 TRD = "jigsaw-toxic-comment-train.csv"
@@ -28,6 +31,7 @@ def merge_all_data():
     dtr = get_toxic_comment(TRD)
     vd = get_toxic_comment(VD)
     td = get_toxic_comment(TD, "content")
+    ipdb.set_trace()
     c = pd.concat([dtr, vd, td])
     c.to_csv(OUT_PATH, index=False)
     print("%d %d %d" % (len(dtr), len(vd), len(td))) # lines info: 223549 8000 63812
