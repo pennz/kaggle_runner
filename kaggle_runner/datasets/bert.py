@@ -36,8 +36,10 @@ val_data = None
 test_data = None
 train_data = None
 
-data_package = get_kaggle_dataset_input("jigsaw-multilingula-toxicity-token-encoded/toxic_fast_tok_512.pk")
-csv_data_package = get_kaggle_dataset_input("jigsaw-multilingula-toxicity-token-encoded/toxic_csv.pk")
+data_package = get_kaggle_dataset_input(
+    "jigsaw-multilingula-toxicity-token-encoded/toxic_fast_tok_512.pk")
+csv_data_package = get_kaggle_dataset_input(
+    "jigsaw-multilingula-toxicity-token-encoded/toxic_csv.pk")
 
 if csv_data_package is None:
     val_data = pd.read_csv(VAL_PATH)
@@ -123,7 +125,7 @@ else:
 
 TRAIN_LEN = len(x_train)
 VALID_LEN = len(x_valid)
-TEST_LEN  = len(x_test)
+TEST_LEN = len(x_test)
 
 if DEBUG:
     TRAIN_LEN = TRAIN_LEN//10
@@ -131,7 +133,7 @@ if DEBUG:
     x_train = x_train[:TRAIN_LEN, :140]
     y_train = y_train[:TRAIN_LEN]  # y just all pass, they are labels
     x_valid = x_valid[:VALID_LEN, :140]
-    y_valid = y_valid[:VALID_LEN] # it just one dimention
+    y_valid = y_valid[:VALID_LEN]  # it just one dimention
     # TEST_LEN = TEST_LEN//100
     # x_test  = x_test[:TEST_LEN, :140]
 
