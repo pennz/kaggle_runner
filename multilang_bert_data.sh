@@ -46,7 +46,7 @@ if [ $STAGE = "extract_feature" ]; then
     head /tmp/input.txt
     echo "lines info: $wc_l_info"
 
-    git clone --depth=1 https://github.com/pennz/bert
+    git clone https://github.com/pennz/bert
     cd bert || exit 1
 
     export STORAGE_BUCKET=gs://kaggle_runner/
