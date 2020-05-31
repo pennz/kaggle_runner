@@ -34,7 +34,7 @@ def join_line(ml):
     return ml.replace("\n", "\\n")
 
 def clean(text):
-    text = text.fillna("fillna").str.lower()
+    text = text.fillna("fillna")
     text = text.map(lambda x: re.sub('\\n', ' ', str(x)))
     text = text.map(lambda x: re.sub(
         "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", '', str(x)))
