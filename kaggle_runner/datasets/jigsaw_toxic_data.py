@@ -27,10 +27,16 @@ def get_toxic_comment(p, col_name="comment_text"):
 
     return dtr
 
+def join_line(ml):
+    return ml.replace("\n", " ")
+
 def merge_all_data():
     dtr = get_toxic_comment(TRD)
     vd = get_toxic_comment(VD)
     td = get_toxic_comment(TD, "content")
+    dtr.map(join_line)
+    vd.map(join_line)
+    td.map(join_line)
     ipdb.set_trace()
     c = pd.concat([dtr, vd, td])
     c.to_csv(OUT_PATH, index=False)
