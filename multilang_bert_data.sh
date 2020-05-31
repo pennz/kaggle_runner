@@ -37,7 +37,7 @@ if [ $STAGE = "extract_feature" ]; then
 
 	TI=/tmp/input.txt
 	if [ ! -f /tmp/input.txt ]; then
-		sed -i 's/".*"$/\1/' $TI
+		sed -i 's/"\(.*\)"$/\1/' $TI
 		wc_l_info=$(wc -l $TI)
 	fi
 
