@@ -5,7 +5,6 @@ import random
 import re
 import subprocess
 
-import ipdb
 import pandas as pd
 
 from kaggle_runner import logger
@@ -50,9 +49,8 @@ def merge_all_data():
     dtr =clean(dtr)
     vd = clean( vd)
     td = clean( td)
-    ipdb.set_trace()
     c = pd.concat([dtr, vd, td])
-    pd.DataFrame.to_csv(c,OUT_PATH, index=False)
+    pd.DataFrame.to_csv(c,OUT_PATH, index=False, header=False)
     print("%d %d %d, %d" % (len(dtr), len(vd), len(td), sum((len(dtr), len(vd), len(td))))) # lines info: 223549 8000 63812
 
 
