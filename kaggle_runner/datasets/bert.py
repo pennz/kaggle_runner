@@ -12,7 +12,7 @@ from kaggle_runner import may_debug
 from kaggle_runner.defaults import DEBUG
 from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
                                               get_obj_or_dump)
-from kaggle_runner.utils.tpu import BATCH_SIZE, GCS_DS_PATH, strategy
+from kaggle_runner.utils.tpu import BATCH_SIZE, GCS_DS_PATH, strategy, tpu
 
 #if DEBUG:
 tf.executing_eagerly()
@@ -23,7 +23,7 @@ AUTO = tf.data.experimental.AUTOTUNE
 
 DATA_PATH = "/kaggle/input/jigsaw-multilingual-toxic-comment-classification/"
 
-if strategy is not None:
+if tpu is not None:
     DATA_PATH = GCS_DS_PATH + '/'
 # os.listdir(DATA_PATH)
 

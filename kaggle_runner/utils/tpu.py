@@ -12,15 +12,20 @@ try:
     tf.tpu.experimental.initialize_tpu_system(tpu)
     strategy = tf.distribute.experimental.TPUStrategy(tpu)
     BATCH_SIZE = 32 * strategy.num_replicas_in_sync
+    logger.debug('Running on TPU: %s', tpu.master())
 except ValueError as e:
     logger.error("%s",e)
     tpu = None
-    strategy = None
+    strategy = tf.distribute.get_strategy()
+    # strategy = None
+    logger.debug('NOT running on TPU.')
 
     if DEBUG:
         BATCH_SIZE = 32 * 2
     else:
         BATCH_SIZE = 32 * 32
+
+logger.info("REPLICAS: %d", strategy.num_replicas_in_sync)
 
 GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
 
