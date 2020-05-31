@@ -38,7 +38,7 @@ if [ $STAGE = "extract_feature" ]; then
     TI=/tmp/input.txt
     if [ ! -f $TI ]; then
         python kaggle_runner/datasets/jigsaw_toxic_data.py
-        sed -i 's/"\{1,3\}\s\{1,\}\(.*\)\s\{1,\}"\{1,3\}$/\1/' $TI
+        sed -i 's/"\{1,3\}\s*\(.*\)\s*"\{1,3\}$/\1/' $TI
         wc_l_info=$(wc -l $TI)
     fi
 
