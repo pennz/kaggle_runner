@@ -53,8 +53,8 @@ def merge_all_data():
     ipdb.set_trace()
     c = pd.concat([dtr, vd, td])
     pd.DataFrame.to_csv(c,OUT_PATH, index=False)
-    subprocess.run(f'sed -i "s/\".*\"$/\1/" {OUT_PATH}; wc -l {OUT_PATH}', shell=True)
-    print("%d %d %d, %d" % (len(dtr), len(vd), len(td), sum(len(dtr), len(vd), len(td)))) # lines info: 223549 8000 63812
+    subprocess.run(r'sed -i "s/\".*\"$/\1/" ' + OUT_PATH + f' && wc -l {OUT_PATH}; head {OUT_PATH}', shell=True)
+    print("%d %d %d, %d" % (len(dtr), len(vd), len(td), sum((len(dtr), len(vd), len(td))))) # lines info: 223549 8000 63812
 
 
 if __name__ == "__main__":
