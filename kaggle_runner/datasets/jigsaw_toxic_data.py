@@ -35,12 +35,12 @@ def merge_all_data():
     dtr = get_toxic_comment(TRD)
     vd = get_toxic_comment(VD)
     td = get_toxic_comment(TD, "content")
-    dtr = dtr.map(join_line)
-    vd = vd.map(join_line)
-    td = td.map(join_line)
+    # dtr = dtr.map(join_line)
+    # vd = vd.map(join_line)
+    # td = td.map(join_line)
     ipdb.set_trace()
     c = pd.concat([dtr, vd, td])
-    pd.DataFrame.to_csv(c,OUT_PATH, index=False, quoting=csv.QUOTE_NONE)
+    pd.DataFrame.to_csv(c,OUT_PATH, index=False, quoting=csv.QUOTE_NONE, escapechar="\\")
     print("%d %d %d" % (len(dtr), len(vd), len(td))) # lines info: 223549 8000 63812
 
 if __name__ == "__main__":
