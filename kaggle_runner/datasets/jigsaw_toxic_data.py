@@ -1,4 +1,5 @@
 #!/bin/env python
+import csv
 import os
 import random
 
@@ -39,7 +40,7 @@ def merge_all_data():
     td.map(join_line)
     ipdb.set_trace()
     c = pd.concat([dtr, vd, td])
-    pd.DataFrame.to_csv(c,OUT_PATH, index=False, quoting=None, quotechar="")
+    pd.DataFrame.to_csv(c,OUT_PATH, index=False, quoting=csv.QUOTE_NONE)
     print("%d %d %d" % (len(dtr), len(vd), len(td))) # lines info: 223549 8000 63812
 
 if __name__ == "__main__":
