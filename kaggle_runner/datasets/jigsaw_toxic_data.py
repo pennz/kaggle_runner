@@ -2,6 +2,8 @@
 import csv
 import os
 import random
+import re
+import subprocess
 
 import ipdb
 import pandas as pd
@@ -31,17 +33,29 @@ def get_toxic_comment(p, col_name="comment_text"):
 def join_line(ml):
     return ml.replace("\n", "\\n")
 
+def clean(text):
+    text = text.fillna("fillna").str.lower()
+    text = text.map(lambda x: re.sub('\\n', ' ', str(x)))
+    text = text.map(lambda x: re.sub(
+        "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", '', str(x)))
+    text = text.map(lambda x: re.sub(
+        "\(http://.*?\s\(http://.*\)", '', str(x)))
+
+    return text
+
 def merge_all_data():
     dtr = get_toxic_comment(TRD)
     vd = get_toxic_comment(VD)
     td = get_toxic_comment(TD, "content")
-    # dtr = dtr.map(join_line)
-    # vd = vd.map(join_line)
-    # td = td.map(join_line)
+    dtr =dtr.map(clean)
+    vd =  vd.map(clean)
+    td =  td.map(clean)
     ipdb.set_trace()
     c = pd.concat([dtr, vd, td])
-    pd.DataFrame.to_csv(c,OUT_PATH, index=False, quoting=csv.QUOTE_NONE, escapechar="\\")
-    print("%d %d %d" % (len(dtr), len(vd), len(td))) # lines info: 223549 8000 63812
+    pd.DataFrame.to_csv(c,OUT_PATH, index=False)
+    subprocess.run(f'sed -i "s/\".*\"$/\1/" {OUT_PATH}; wc -l {OUT_PATH}', shell=True)
+    print("%d %d %d, %d" % (len(dtr), len(vd), len(td), sum(len(dtr), len(vd), len(td)))) # lines info: 223549 8000 63812
+
 
 if __name__ == "__main__":
     merge_all_data()
