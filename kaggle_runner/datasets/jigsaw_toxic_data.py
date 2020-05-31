@@ -28,7 +28,7 @@ def get_toxic_comment(p, col_name="comment_text"):
     return dtr
 
 def join_line(ml):
-    return ml.replace("\n", " ")
+    return ml.replace("\n", "\\n")
 
 def merge_all_data():
     dtr = get_toxic_comment(TRD)
@@ -39,7 +39,7 @@ def merge_all_data():
     td.map(join_line)
     ipdb.set_trace()
     c = pd.concat([dtr, vd, td])
-    c.to_csv(OUT_PATH, index=False)
+    pd.DataFrame.to_csv(c,OUT_PATH, index=False, quoting=None, quotechar="")
     print("%d %d %d" % (len(dtr), len(vd), len(td))) # lines info: 223549 8000 63812
 
 if __name__ == "__main__":
