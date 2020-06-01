@@ -6,8 +6,8 @@ import subprocess
 import sys
 from string import Template
 
-import slug
 import ipdb
+import slug
 
 from kaggle_runner.utils import AMQPURL, logger
 
@@ -467,10 +467,8 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 
-server = os.environ.get("SERVER")
-if server is None:
-    server = "pengyuzhou.com"
-    os.environ['SERVER'] = server
+server = "{server}"
+os.environ['SERVER'] = server
 
 entry_str = r\"\"\"#!/bin/bash
 PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 \"\"\"+ server +\"\"\" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
@@ -532,7 +530,8 @@ while True:
             seed=seed,
             gdrive_enable=gdrive_enable,
             port=port,
-            phase=phase
+            phase=phase,
+            server=os.environ.get("server", "vtool.duckdns.org"),
         )
         ss = s.safe_substitute(d)
 
