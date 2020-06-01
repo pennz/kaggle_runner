@@ -7,15 +7,15 @@ from kaggle_runner.defaults import DEBUG
 AUTO = tf.data.experimental.AUTOTUNE
 
 try:
-    tpu = tf.distribute.cluster_resolver.TPUClusterResolver()
-    tf.config.experimental_connect_to_cluster(tpu)
-    tf.tpu.experimental.initialize_tpu_system(tpu)
-    strategy = tf.distribute.experimental.TPUStrategy(tpu)
+    tpu_resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
+    tf.config.experimental_connect_to_cluster(tpu_resolver)
+    tf.tpu.experimental.initialize_tpu_system(tpu_resolver)
+    strategy = tf.distribute.experimental.TPUStrategy(tpu_resolver)
     BATCH_SIZE = 32 * strategy.num_replicas_in_sync
-    logger.debug('Running on TPU: %s', tpu.master())
+    logger.debug('Running on TPU: %s', tpu_resolver.master())
 except ValueError as e:
     logger.error("%s",e)
-    tpu = None
+    tpu_resolver = None
     strategy = tf.distribute.get_strategy()
     # strategy = None
     logger.debug('NOT running on TPU.')
