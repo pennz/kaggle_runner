@@ -467,7 +467,7 @@ with open("gdrive_setup", "w") as f:
 r\"\"\"${gdrive_str}\"\"\"
     )
 
-server = "{server}"
+server = "${server}"
 os.environ['SERVER'] = server
 
 entry_str = r\"\"\"#!/bin/bash
