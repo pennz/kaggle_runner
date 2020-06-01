@@ -28,5 +28,6 @@ except ValueError as e:
 logger.info("REPLICAS: %d", strategy.num_replicas_in_sync)
 
 GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
+GCS_DS_PATH_MINE = KaggleDatasets().get_gcs_path('jigsaw-multilingula-toxicity-token-encoded')
 
 EPOCHS = 2
