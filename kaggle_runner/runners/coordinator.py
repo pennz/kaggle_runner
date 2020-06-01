@@ -468,7 +468,7 @@ r\"\"\"${gdrive_str}\"\"\"
 
 server = os.environ.get("SERVER")
 if server is None:
-    server = "vtool.duckdns.org"
+    server = "pengyuzhou.com"
     os.environ['SERVER'] = server
 
 entry_str = r\"\"\"#!/bin/bash
