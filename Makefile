@@ -179,13 +179,13 @@ connect_close:
 ripdbrvs:
 	while true; do ncat $(SERVER) 23454 --sh-exec 'ncat -w 3 127.1 4444; echo \# nc return $?' ; sleep 1; echo -n "." ; done;
 rpdbs:
-	ncat -vlp 23454
+	while true; do ncat -vlp 23454; sleep 1; done
 ripdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; ncat -v 127.0.0.1 23454; stty $$SAVED_STTY"
 
 mq:
-	make amqp_log & 
-	while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do ps aux | grep "amqp" | tee /dev/tty |  grep -v -e "sh" -e "grep" | awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs ; sleep 60; done
+	make amqp_log & ( sleep 10; make check ) &
+	while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do sleep 60; ps aux | grep "amqp" | tee /dev/tty |  grep -v -e "sh" -e "grep" | awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs; done
 
 amqp_log:
 	-$(IS_CENTOS) && sudo systemctl restart rabbitmq-server.service
@@ -209,9 +209,9 @@ check:
 mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 mbd_interactive: multilang_bert_data.sh
-	bash -x multilang_bert_data.sh
+	bash -x multilang_bert_data.sh | tee -a mbd_i_log
 mbd:
-	$(UNBUFFER) make mbd_interactive >mbd_log 2>&1 &
+	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
 	make mbd_log
 
 dataset: mbd
