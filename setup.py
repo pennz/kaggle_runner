@@ -26,6 +26,6 @@ setuptools.setup(
         "parse",
         "python_logging_rabbitmq",
         "kaggle",
-        "ipdb",  # later we can remove this
+        "rpdb",
     ],
 )

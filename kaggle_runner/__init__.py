@@ -6,9 +6,10 @@ from .utils import logger
 logger = logger
 
 def may_debug(force=False):
-    import pdb
+    import rpdb
+
     if force:
-        pdb.set_trace()
+        rpdb.set_trace()
     else:
         if DEBUG:
-            pdb.set_trace()
+            rpdb.set_trace()
