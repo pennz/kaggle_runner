@@ -6,6 +6,8 @@ from kaggle_runner.defaults import DEBUG
 
 AUTO = tf.data.experimental.AUTOTUNE
 
+TPU_ADDRESS = os.environ.get('TPU_NAME')
+
 try:
     tpu = tf.distribute.cluster_resolver.TPUClusterResolver()
     tf.config.experimental_connect_to_cluster(tpu)

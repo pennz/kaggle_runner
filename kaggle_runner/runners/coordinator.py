@@ -6,7 +6,6 @@ import subprocess
 import sys
 from string import Template
 
-import ipdb
 import slug
 
 from kaggle_runner.utils import AMQPURL, logger
