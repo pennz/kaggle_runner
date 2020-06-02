@@ -176,11 +176,11 @@ wait'
 connect_close:
 	stty raw -echo && ( ps aux | $(SED) -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
 
-ripdbrvs:
+rdbrvs:
 	while true; do ncat $(SERVER) 23454 --sh-exec 'ncat -w 3 127.1 4444; echo \# nc return $?' ; sleep 1; echo -n "." ; done;
 rpdbs:
-	while true; do ncat -vlp 23454; sleep 1; done
-ripdbc:
+	while true; do ncat -vlp 23454; sleep 1; done  # just one debug session at a time, more will make you confused
+rdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; ncat -v 127.0.0.1 23454; stty $$SAVED_STTY"
 
 mq:
