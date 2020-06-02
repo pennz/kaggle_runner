@@ -42,6 +42,8 @@ fi
 #test our datasets
 
 STAGE="extract_feature"
+STAGE_Detail="pickle"
+export STAGE_Detail
 
 if [ $STAGE = "extract_feature" ]; then
 

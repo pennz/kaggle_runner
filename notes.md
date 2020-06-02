@@ -96,3 +96,7 @@ cd bert && python run_classifier.py \
   --num_train_epochs=0.1 \
   --output_dir=/tmp/xnli_output/
 ```
+
+## TODO
+1. bert data preprocess, remove "" at heads and tails, update datasets
+1. split module to prepare datasets
