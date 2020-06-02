@@ -50,8 +50,8 @@ if [ $STAGE = "extract_feature" ]; then
 
 	TI=/tmp/input.txt
 	if [ ! -f $TI ]; then
-		python kaggle_runner/datasets/jigsaw_toxic_data.py
-		sed -i 's/"\{1,3\}\s*\(.*\)\s*"\{1,3\}$/\1/' $TI
+		python kaggle_runner/datasets/jigsaw_toxic_data.py # put strings to $TI, one sentense perline, result could put to another file
+		sed -i -e 's/^"\{1,3\}\s*\(.*\)\s*"\{1,3\}$/\1/' -e 's/"\{1,2\}$//' $TI
 		wc_l_info=$(wc -l $TI)
 	fi
 
@@ -81,6 +81,7 @@ if [ $STAGE = "extract_feature" ]; then
 		--bert_config_file="$BERT_BASE_DIR/bert_config.json" \
 		--init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
 		--layers=-1,-2,-3,-4 \
+		--do_lower_case=False \
 		--stage_detail=$STAGE_DETAIL \
 		--max_seq_length=128 $OUT_PARA $TPU_Parameter \
 		--batch_size=$BATCH_SIZE
