@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 INPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
 if [ ! -d $INPUT/XNLI ]; then
     # prepare data for kaggle dataset/google storage
