@@ -203,8 +203,11 @@ check:
 	pstree -laps $$$$
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
 	$(PY3) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
-	$(PY3) -c 'import kaggle_runner' || ( $(PY3) -m pip install -e . && $(PY3) -c 'import kaggle_runner')
+	$(PY3) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner cannot be imported."; $(PY3) -m pip install -e . && $(PY3) -c 'import kaggle_runner')
+	$(PY3) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
 	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
+	-$(PY3) -c 'from kaggle_runner.utils.tpu import GCS_M_DS_PATH; print(GCS_M_DS_PATH)' 2>&1
+
 
 mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'

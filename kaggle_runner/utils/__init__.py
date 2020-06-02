@@ -1,3 +1,5 @@
 from .utils import AMQPURL, get_logger, logger
 
-__all__ = ["utils",'logger','AMQPURL', 'logger']
+AMQPURL = AMQPURL
+logger = logger
+__all__ = ['AMQPURL', 'logger']

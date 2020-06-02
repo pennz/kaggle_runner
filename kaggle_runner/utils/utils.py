@@ -17,6 +17,7 @@ class AMQPURL:
         host = "pengyuzhou.com"
         passwd = "9b83ca70cf4cda89524d2283a4d675f6"
         username = "kaggle"
+        port = "5672"
         Vhost = "/"
 
     def __init__(
@@ -25,11 +26,13 @@ class AMQPURL:
         passwd=__AMQPURL_DEV.passwd,
         Vhost=__AMQPURL_DEV.Vhost,
         username=__AMQPURL_DEV.username,
+        port=__AMQPURL_DEV.port
     ):
         self.host = host
         self.passwd = passwd
         self.Vhost = Vhost
         self.username = username
+        self.port = port
 
     def string(self):
         Vhost = self.Vhost
@@ -83,7 +86,7 @@ def attach_data_collector(logger, AMQPURL=AMQPURL()):
 
     rabbit = RabbitMQHandler(
         host=AMQPURL.host,
-        port=5672,
+        port=AMQPURL.port,
         username=AMQPURL.username,
         password=AMQPURL.passwd,
         exchange="logs_topic",

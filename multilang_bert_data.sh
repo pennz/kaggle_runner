@@ -60,7 +60,6 @@ if [ $STAGE = "extract_feature" ]; then
     export TASK_NAME=toxic
 
     if [ ! -z $TPU_NAME ]; then
-        python -c 'from kaggle_runner.utils.tpu import GCS_M_DS_PATH; print(GCS_M_DS_PATH)'
         #export BERT_BASE_DIR=gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12
         #export BERT_BASE_DIR=gs://cloud-tpu-checkpoints/bert/multi_cased_L-12_H-768_A-12
         TPU_Parameter="--use_tpu=True --tpu_name=$TPU_NAME --output_dir=${STORAGE_BUCKET}/${TASK_NAME}"

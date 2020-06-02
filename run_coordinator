@@ -10,11 +10,12 @@ echo Created new listen instance. TCP port $PORT is used for incomming conection
 echo "$(which python3) is our python executable"
 if [[ x$(which python3) =~ conda ]]; then echo conda env fine; else
     echo >&2 conda env not set correctly, please check.
-    false
     source ~/.bashrc
     conda activate pyt
+    echo "$(which python3) is our python executable"
 fi
-push_log=$(python3 kaggle_runner/runners/coordinator.py "$PORT" "$PHASE")
+PY=$(which python3)
+push_log=$($PY kaggle_runner/runners/coordinator.py "$PORT" "$PHASE")
 
 echo $push_log
 push_ret=$?
