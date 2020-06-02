@@ -1,5 +1,7 @@
 #!/bin/bash -x
 INPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
+BATCH_SIZE=32
+
 if [ ! -d $INPUT/XNLI ]; then
     # prepare data for kaggle dataset/google storage
     curl -O https://dl.fbaipublicfiles.com/XNLI/XNLI-1.0.zip
@@ -27,7 +29,8 @@ if [ ! -d $INPUT/XNLI ]; then
     export XNLI_DIR=$PWD/XNLI/XNLI-MT-1.0/
 else
     if [ ! -z $TPU_NAME ]; then
-        GCS_M_PATH=$(python -c 'from kaggle_runner.utils.tpu import GCS_M_DS_PATH; print(GCS_M_DS_PATH)')
+        GCS_M_DS_PATH=$(python -c 'from kaggle_runner.utils.tpu import GCS_M_DS_PATH; print(GCS_M_DS_PATH)')
+        BATCH_SIZE=32*8
     fi
     if [ ! -z $GCS_M_DS_PATH ]; then
         INPUT=$GCS_M_DS_PATH
@@ -76,7 +79,7 @@ if [ $STAGE = "extract_feature" ]; then
         --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
         --layers=-1,-2,-3,-4 \
         --max_seq_length=128 $OUT_PARA $TPU_Parameter \
-        --batch_size=32
+        --batch_size=$BATCH_SIZE
 
 else
     python run_classifier.py \
