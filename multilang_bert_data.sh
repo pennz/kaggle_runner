@@ -1,6 +1,7 @@
 #!/bin/bash
 INPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
 if [ ! -d $INPUT/XNLI ]; then
+    # prepare data for kaggle dataset/google storage
     curl -O https://dl.fbaipublicfiles.com/XNLI/XNLI-1.0.zip
     curl -O https://dl.fbaipublicfiles.com/XNLI/XNLI-MT-1.0.zip
     curl -O https://storage.googleapis.com/bert_models/2018_11_23/multi_cased_L-12_H-768_A-12.zip
@@ -25,8 +26,14 @@ if [ ! -d $INPUT/XNLI ]; then
     export BERT_BASE_DIR=$PWD/multi_cased_L-12_H-768_A-12 # or multilingual_L-12_H-768_A-12
     export XNLI_DIR=$PWD/XNLI/XNLI-MT-1.0/
 else
+    if [ ! -z $TPU_NAME ]; then
+        GCS_M_PATH=$(python -c 'from kaggle_runner.utils.tpu import GCS_M_DS_PATH; print(GCS_M_DS_PATH)')
+    fi
+    if [ ! -z $GCS_M_DS_PATH ]; then
+        INPUT=$GCS_M_DS_PATH
+    fi
     export BERT_BASE_DIR=$INPUT/multi_cased_L-12_H-768_A-12 # or multilingual_L-12_H-768_A-12
-    export XNLI_DIR=$INPUT/XNLI/XNLI-MT-1.0/
+    export XNLI_DIR=$INPUT/XNLI/XNLI-MT-1.0
 fi
 
 #test our datasets
@@ -53,6 +60,7 @@ if [ $STAGE = "extract_feature" ]; then
     export TASK_NAME=toxic
 
     if [ ! -z $TPU_NAME ]; then
+        python -c 'from kaggle_runner.utils.tpu import GCS_M_DS_PATH; print(GCS_M_DS_PATH)'
         #export BERT_BASE_DIR=gs://cloud-tpu-checkpoints/bert/uncased_L-12_H-768_A-12
         #export BERT_BASE_DIR=gs://cloud-tpu-checkpoints/bert/multi_cased_L-12_H-768_A-12
         TPU_Parameter="--use_tpu=True --tpu_name=$TPU_NAME --output_dir=${STORAGE_BUCKET}/${TASK_NAME}"
