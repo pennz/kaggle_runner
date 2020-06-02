@@ -59,7 +59,7 @@ if [ $STAGE = "extract_feature" ]; then
     git clone https://github.com/pennz/bert
     cd bert || exit 1
 
-    export STORAGE_BUCKET=gs://kaggle_runner/
+    export STORAGE_BUCKET=gs://kaggle_runner
     export TASK_NAME=toxic
 
     if [ ! -z $TPU_NAME ]; then
