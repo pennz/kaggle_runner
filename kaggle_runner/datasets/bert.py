@@ -38,6 +38,7 @@ def pickle_data(max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output="feature
     # --vocab_file="$BERT_BASE_DIR/vocab.txt" \
     # --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
     # --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
+    may_debug()
     load_data("pickle", "/tmp/input.txt", max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"), output=output)
 #if DEBUG:
 tf.executing_eagerly()
