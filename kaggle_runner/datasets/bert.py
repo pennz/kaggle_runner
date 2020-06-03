@@ -34,11 +34,11 @@ else:
     BERT_BASE_DIR = GCS_BERT_PRETRAINED
 
 
-def pickle_data(max_seq_length=128, bert_base_dir=BERT_BASE_DIR):
+def pickle_data(max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output="features.pkl"):
     # --vocab_file="$BERT_BASE_DIR/vocab.txt" \
     # --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
     # --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
-    load_data("pickle", "/tmp/input.txt", max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"))
+    load_data("pickle", "/tmp/input.txt", max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"), output=output)
 #if DEBUG:
 tf.executing_eagerly()
 # Dataloading related
