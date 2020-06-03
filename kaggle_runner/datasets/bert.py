@@ -20,7 +20,7 @@ from kaggle_datasets import KaggleDatasets
 GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
 GCS_M_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingula-toxicity-token-encoded')
 
-GCS_BERT_PRETRAINED = KaggleDatasets().get_gcs_path('')
+GCS_BERT_PRETRAINED = KaggleDatasets().get_gcs_path('bert-pretrained-models')
 
 def pickle_data(max_seq_length=128):
     # --vocab_file="$BERT_BASE_DIR/vocab.txt" \

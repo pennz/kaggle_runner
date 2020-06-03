@@ -12,7 +12,8 @@
     "tpu"
   ],
   "dataset_sources": [
-    "k1gaggle/jigsaw-multilingula-toxicity-token-encoded"
+    "k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
+    "maxjeblick/bert-pretrained-models"
   ],
   "kernel_sources": [],
   "competition_sources": [
