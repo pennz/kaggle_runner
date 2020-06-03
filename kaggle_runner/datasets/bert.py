@@ -26,7 +26,7 @@ else:
     GCS_M_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingula-toxicity-token-encoded')
 
     try:
-        GCS_BERT_PRETRAINED = KaggleDatasets().get_gcs_path('bert-pretrained-models')+'/multi_cased_L-12_H-768_A-12'
+        GCS_BERT_PRETRAINED = KaggleDatasets().get_gcs_path('bert-pretrained-models')+'/multi_cased_L-12_H-768_A-12'+'/multi_cased_L-12_H-768_A-12'
     except:
         GCS_BERT_PRETRAINED = GCS_M_DS_PATH+'/multi_cased_L-12_H-768_A-12'
 

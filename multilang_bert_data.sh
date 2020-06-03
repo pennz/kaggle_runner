@@ -75,7 +75,7 @@ if [ $STAGE = "extract_feature" ]; then
 
     python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(128, output="/kaggle/working/token_ids_512.pkl");' &
     python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(256, output="/kaggle/working/token_ids_256.pkl");'
-    python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(512, output="/kaggle/working/token_ids_512.pkl");'
+    python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(512, output="/kaggle/working/token_ids_128.pkl");'
     # python extract_features.py \
     #     --input_file=/tmp/input.txt \
     #     --vocab_file="$BERT_BASE_DIR/vocab.txt" \
