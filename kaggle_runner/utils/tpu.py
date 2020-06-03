@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-from kaggle_datasets import KaggleDatasets
 from kaggle_runner import logger
 from kaggle_runner.defaults import DEBUG
 
@@ -27,7 +26,5 @@ except ValueError as e:
 
 logger.info("REPLICAS: %d", strategy.num_replicas_in_sync)
 
-GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
-GCS_M_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingula-toxicity-token-encoded')
 
 EPOCHS = 2

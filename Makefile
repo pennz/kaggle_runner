@@ -221,7 +221,7 @@ dataset: mbd
 	-mkdir .k && mv * .* .k
 
 p:
-	git push --progress --no-verify
+	pushd kaggle_runner/hub/bert && (git commit -asm "GG" --no-gpg || true) && git push && popd && git add kaggle_runner/hub/bert && git commit -sm "Updated bert" --no-gpg && git push
 
 t: pccnct m
 	echo "Please check local mosh setup result"

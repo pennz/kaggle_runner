@@ -75,16 +75,17 @@ if [ $STAGE = "extract_feature" ]; then
         OUT_PARA="--output_file=/home/multi_cased_features.jsonl"
     fi
 
-    python extract_features.py \
-        --input_file=/tmp/input.txt \
-        --vocab_file="$BERT_BASE_DIR/vocab.txt" \
-        --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
-        --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
-        --layers=-1,-2,-3,-4 \
-        --do_lower_case=False \
-        --stage_detail=$STAGE_DETAIL \
-        --max_seq_length=128 $OUT_PARA $TPU_Parameter \
-        --batch_size=$BATCH_SIZE
+    python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(128);'
+    # python extract_features.py \
+    #     --input_file=/tmp/input.txt \
+    #     --vocab_file="$BERT_BASE_DIR/vocab.txt" \
+    #     --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
+    #     --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
+    #     --layers=-1,-2,-3,-4 \
+    #     --do_lower_case=False \
+    #     --stage_detail=$STAGE_DETAIL \
+    #     --max_seq_length=128 $OUT_PARA $TPU_Parameter \
+    #     --batch_size=$BATCH_SIZE
 
 else
     python run_classifier.py \
