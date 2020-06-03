@@ -327,7 +327,9 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
 
     git clone --single-branch --branch ${BRANCH} --depth=1 \
         https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
-        git submodule update --init --recursive
+    sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
+    sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
+    git submodule update --init --recursive
     find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
     find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
     popd
