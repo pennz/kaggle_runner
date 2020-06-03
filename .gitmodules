@@ -1,0 +1,3 @@
+[submodule "kaggle_runner/hub/bert"]
+	path = kaggle_runner/hub/bert
+	url = git@github.com:pennz/bert
