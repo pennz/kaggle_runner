@@ -46,6 +46,7 @@ STAGE_DETAIL=${STAGE_DETAIL:-"pickle"}
 export STAGE
 export STAGE_DETAIL
 
+git clone https://github.com/pennz/bert
 if [ $STAGE = "extract_feature" ]; then
 
     TI=/tmp/input.txt
@@ -58,9 +59,6 @@ if [ $STAGE = "extract_feature" ]; then
     echo "head of the comments list:"
     head /tmp/input.txt
     echo "lines info: $wc_l_info"
-
-    git clone https://github.com/pennz/bert
-    cd bert || exit 1
 
     export STORAGE_BUCKET=gs://kaggle_runner
     export TASK_NAME=toxic
@@ -88,7 +86,7 @@ if [ $STAGE = "extract_feature" ]; then
     #     --batch_size=$BATCH_SIZE
 
 else
-    python run_classifier.py \
+    python bert/run_classifier.py \
         --task_name=XNLI \
         --do_train=true \
         --do_eval=true \
