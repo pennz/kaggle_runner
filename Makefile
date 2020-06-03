@@ -222,6 +222,8 @@ dataset: mbd
 
 p:
 	pushd kaggle_runner/hub/bert && (git commit -asm "GG" --no-gpg || true) && git push && popd && git add kaggle_runner/hub/bert && git commit -sm "Updated bert" --no-gpg && git push
+pl:
+	git stash; git pull; git submodule update --init
 
 t: pccnct m
 	echo "Please check local mosh setup result"
