@@ -17,19 +17,28 @@ from kaggle_runner.utils.tpu import (BATCH_SIZE, strategy,
 from kaggle_runner.hub.bert.extract_features import load_data, get_tokenizer
 
 from kaggle_datasets import KaggleDatasets
-GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
-GCS_M_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingula-toxicity-token-encoded')
 
-try:
-    GCS_BERT_PRETRAINED = KaggleDatasets().get_gcs_path('bert-pretrained-models')+'/multi_cased_L-12_H-768_A-12'
-except:
-    GCS_BERT_PRETRAINED = GCS_M_DS_PATH+'/multi_cased_L-12_H-768_A-12'
+if tpu_resolver is None:
+    DATA_PATH = "/kaggle/input/jigsaw-multilingual-toxic-comment-classification/"
+    BERT_BASE_DIR = "/kaggle/input/jigsaw-multilingula-toxicity-token-encoded"+'/multi_cased_L-12_H-768_A-12'
+else:
+    GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
+    GCS_M_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingula-toxicity-token-encoded')
 
-def pickle_data(max_seq_length=128):
+    try:
+        GCS_BERT_PRETRAINED = KaggleDatasets().get_gcs_path('bert-pretrained-models')+'/multi_cased_L-12_H-768_A-12'
+    except:
+        GCS_BERT_PRETRAINED = GCS_M_DS_PATH+'/multi_cased_L-12_H-768_A-12'
+
+    DATA_PATH = GCS_DS_PATH + '/'
+    BERT_BASE_DIR = GCS_BERT_PRETRAINED
+
+
+def pickle_data(max_seq_length=128, bert_base_dir=BERT_BASE_DIR):
     # --vocab_file="$BERT_BASE_DIR/vocab.txt" \
     # --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
     # --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
-    load_data("pickle", "/tmp/input.txt", max_seq_length, get_tokenizer(GCS_BERT_PRETRAINED+"/vocab.txt"))
+    load_data("pickle", "/tmp/input.txt", max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"))
 #if DEBUG:
 tf.executing_eagerly()
 # Dataloading related
@@ -37,11 +46,6 @@ AUTO = tf.data.experimental.AUTOTUNE
 
 # ### Load the training, validation, and testing datasets
 
-DATA_PATH = "/kaggle/input/jigsaw-multilingual-toxic-comment-classification/"
-
-if tpu_resolver is not None:
-    DATA_PATH = GCS_DS_PATH + '/'
-# os.listdir(DATA_PATH)
 
 # +
 TEST_PATH = DATA_PATH + "test.csv"
