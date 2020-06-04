@@ -400,7 +400,8 @@ class Coordinator:
     @staticmethod
     def push(runner):
         "Push the code to server/kagger docker"
-        comm = f"PATH=~/.local/bin:$PATH kaggle kernels push -p {runner}"
+        hp = os.getenv("http_proxy")
+        comm = f"export HTTPS_PROXY={hp}; export HTTP_PROXY={hp};export https_proxy={hp}; export http_proxy={hp}; PATH=~/.local/bin:$PATH kaggle kernels push -p {runner}"
         logger.debug(comm)
 
         return subprocess.run(comm, shell=True)
