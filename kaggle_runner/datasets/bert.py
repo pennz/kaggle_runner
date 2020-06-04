@@ -18,9 +18,12 @@ from kaggle_runner.hub.bert.extract_features import load_data, get_tokenizer
 
 from kaggle_datasets import KaggleDatasets
 
+TOKENS_PATH = "/kaggle/input/jigsaw-toxic-token-ids-for-bert"
+
 if tpu_resolver is None:
     DATA_PATH = "/kaggle/input/jigsaw-multilingual-toxic-comment-classification/"
     BERT_BASE_DIR = "/kaggle/input/jigsaw-multilingula-toxicity-token-encoded"+'/multi_cased_L-12_H-768_A-12'
+
 else:
     GCS_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingual-toxic-comment-classification')
     GCS_M_DS_PATH = KaggleDatasets().get_gcs_path('jigsaw-multilingula-toxicity-token-encoded')
@@ -38,12 +41,11 @@ def pickle_data(max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output="feature
     # --vocab_file="$BERT_BASE_DIR/vocab.txt" \
     # --init_checkpoint="$BERT_BASE_DIR/bert_model.ckpt" \
     # --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
-    may_debug()
     load_data("pickle", "/tmp/input.txt", max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"), output=output)
 
-def load_tokens(data_base_dir, max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output=None):
-    tks = load_data("load_tokens", f'{data_base_dir}/token_ids_{max_seq_length}.pkl', max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"), output=output)
+def load_tokens(data_base_dir=TOKENS_PATH, max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output=None):
     may_debug()
+    tks = load_data("load_tokens", f'{data_base_dir}/token_ids_{max_seq_length}.pkl', max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"), output=output)
 
     return tks
 
