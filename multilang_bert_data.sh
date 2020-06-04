@@ -1,5 +1,6 @@
 #!/bin/bash -x
-INPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
+KINPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
+INPUT=$KINPUT
 BATCH_SIZE=32
 
 if [ ! -d $INPUT/XNLI ]; then
@@ -48,7 +49,7 @@ export STAGE_DETAIL
 
 git clone https://github.com/pennz/bert
 if [ $STAGE = "pretrain" ]; then
-    python -c 'from kaggle_runner.datasets.bert import load_tokens, load_lable;'
+    python -c "from kaggle_runner.datasets.bert import load_tokens, load_labels; load_tokens(\"$KINPUT\"); load_labels()"
 
 elif [ $STAGE = "extract_feature" ]; then
 

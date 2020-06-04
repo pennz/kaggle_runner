@@ -40,6 +40,17 @@ def pickle_data(max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output="feature
     # --bert_config_file="$BERT_BASE_DIR/bert_config.json" \
     may_debug()
     load_data("pickle", "/tmp/input.txt", max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"), output=output)
+
+def load_tokens(data_base_dir, max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output=None):
+    tks = load_data("load_tokens", f'{data_base_dir}/token_ids_{max_seq_length}.pkl', max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"), output=output)
+    may_debug()
+
+    return tks
+
+def load_labels():
+    lbs = None
+
+    return lbs
 #if DEBUG:
 tf.executing_eagerly()
 # Dataloading related
