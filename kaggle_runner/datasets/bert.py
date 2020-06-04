@@ -51,11 +51,6 @@ def load_tokens(data_base_dir=TOKENS_PATH, max_seq_length=128, bert_base_dir=BER
     return tks
 
 
-def load_labels():
-    lbs = None
-
-    return lbs
-
 
 #if DEBUG:
 tf.executing_eagerly()
@@ -200,3 +195,9 @@ test_dataset = (
     .from_tensor_slices(x_test)
     .batch(BATCH_SIZE)
 )
+
+def load_labels():
+    if DEBUG:
+        return (y_train[:100], y_valid[:100])
+    else:
+        return (y_train, y_valid)

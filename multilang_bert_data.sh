@@ -12,7 +12,7 @@ git clone https://github.com/pennz/bert
 
 case $STAGE in
 pretrain)
-    python -c "from kaggle_runner.datasets.bert import load_tokens, load_labels; load_tokens(\"$KINPUT\"); load_labels()"
+    python -c "from kaggle_runner.datasets.bert import load_tokens, load_labels; tokens = load_tokens(\"$KINPUT\"); yt, yv = load_labels(); print(tokens, yt[:10], pv[:10]);"
     ;;
 
 extract_feature)
