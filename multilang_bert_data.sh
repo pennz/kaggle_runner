@@ -12,6 +12,7 @@ git clone https://github.com/pennz/bert
 
 case $STAGE in
 pretrain)
+    pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ../input/nvidiaapex/repository/NVIDIA-apex-39e153a
     python -c "from kaggle_runner.kernels.bert_torch import for_pytorch;from kaggle_runner.datasets.bert import pack_data; for_pytorch(pack_data());"
     ;;
 

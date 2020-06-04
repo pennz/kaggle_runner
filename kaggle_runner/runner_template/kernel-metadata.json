@@ -14,7 +14,10 @@
   "dataset_sources": [
     "k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
     "maxjeblick/bert-pretrained-models",
-    "k1gaggle/jigsaw-toxic-token-ids-for-bert"
+    "k1gaggle/jigsaw-toxic-token-ids-for-bert",
+    "maxjeblick/bert-pretrained-models",
+    "matsuik/ppbert",
+    "gabrichy/nvidiaapex"
   ],
   "kernel_sources": [],
   "competition_sources": [
