@@ -65,8 +65,8 @@ extract_feature)
     head /tmp/input.txt
     echo "lines info: $wc_l_info"
 
-    python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(512, output="/kaggle/working/token_ids_512.pkl");' &
-    python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(256, output="/kaggle/working/token_ids_256.pkl");'
+    python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(512, output="/kaggle/working/token_ids_512.pkl");'
+    python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(256, output="/kaggle/working/token_ids_256.pkl");' &
     python -c 'from kaggle_runner.datasets.bert import pickle_data; pickle_data(128, output="/kaggle/working/token_ids_128.pkl");'
     # python extract_features.py \
     #     --input_file=/tmp/input.txt \
