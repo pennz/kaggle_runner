@@ -197,10 +197,7 @@ test_dataset = (
 )
 
 def load_labels():
-    if DEBUG:
-        return (y_train[:100], y_valid[:100])
-    else:
-        return (y_train, y_valid)
+    return (y_train, y_valid)
 
 def pack_data():
     may_debug()
@@ -209,9 +206,9 @@ def pack_data():
     lbs = load_labels()
 
     y = lbs[0]
-    X = tokens[:len(y)]
+    X = ( x.input_ids for x in tokens[:len(y)] )
 
     y_val = lbs[1]
-    X_val = tokens[len(y):len(y)+len(y_val)]
+    X_val =( x.input_ids for x in tokens[len(y):len(y)+len(y_val)])
 
     return X,y, X_val, y_val
