@@ -1,6 +1,6 @@
 #!/bin/bash -x
-KINPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
-INPUT=$KINPUT
+KINPUT=/kaggle/input/jigsaw-toxic-token-ids-for-bert
+INPUT=/kaggle/input/jigsaw-multilingula-toxicity-token-encoded
 BATCH_SIZE=32
 
 if [ ! -d $INPUT/XNLI ]; then
