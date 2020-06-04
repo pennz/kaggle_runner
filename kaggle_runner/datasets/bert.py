@@ -201,3 +201,17 @@ def load_labels():
         return (y_train[:100], y_valid[:100])
     else:
         return (y_train, y_valid)
+
+def pack_data(data_package):
+    may_debug()
+    tokens = load_tokens()
+    tokens = ( x.input_ids for x in tokens )
+    lbs = load_labels()
+
+    y = lbs[0]
+    X = tokens[:len(y)]
+
+    y_val = lbs[1]
+    X_val = tokens[len(y):len(y)+len(y_val)]
+
+    return X,y, X_val, y_val
