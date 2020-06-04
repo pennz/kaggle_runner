@@ -215,7 +215,10 @@ mbd_log:
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 mbd_pretrain: multilang_bert_data.sh
-	DEBUG=true STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
+	STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
+	touch /tmp/rvs_exit && pkill ncat && pkill -f "rvs.sh"
+	make distclean
+
 mbd:
 	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
 	make mbd_log
@@ -238,5 +241,11 @@ t: pccnct m
 
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
+
+distclean:
+	git ls-files | sed 's/kaggle_runner\/\([^\/]*\)\/.*/\1/' | xargs -I{} sh -c "echo {} ; rm -rf {} 2>/dev/null"
+	git ls-files | xargs -I{} sh -c 'rm -r $(dirname {})'
+	rm *.py *.sh *log
+	rm -r .git
 
 .PHONY: clean connect inner_lstm pc mbd_log
