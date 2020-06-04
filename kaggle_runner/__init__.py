@@ -8,19 +8,19 @@ logger = logger
 
 
 def may_debug(force=False):
-    import rpdb
+    # import rpdb
     import pdb
 
     if force:
         try:
-            rpdb.set_trace()
+            pdb.set_trace()
         except:
             ...
             pdb.set_trace()
     else:
         if DEBUG:
             try:
-                rpdb.set_trace()
+                pdb.set_trace()
             except:
                 ...
                 pdb.set_trace()
