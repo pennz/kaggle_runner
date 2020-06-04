@@ -12,7 +12,6 @@ from kaggle_runner.utils import AMQPURL, logger
 
 rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: ' # for debug
-NC=ncat
 
 # https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
 # coproc { sleep 30 && echo "Output" && exit 3; }
@@ -302,6 +301,14 @@ wait_ncat 60
 which $NC >/dev/null || NC=nc
 export NC
 
+if [ "x${ENABLE_RVS}" = x1 ]; then
+    if [ -z $(pgrep -f 'jupyter-notebook') ]; then
+        bash ./rvs.sh $SERVER $PORT 2>&1 &
+    else
+        screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
+    fi
+fi &
+
 pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
 # python3 -m pip install pyvim neovim msgpack==1.0.0 &
 # python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
@@ -351,15 +358,7 @@ if [ x"${PHASE}" = x"dev" ]; then
         make mosh
     ) &
 
-    if [ "x${ENABLE_RVS}" = x1 ]; then
-        make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi &
-
-        if [ -z $(pgrep -f 'jupyter-notebook') ]; then
-            bash ./rvs.sh $SERVER $PORT 2>&1 &
-        else
-            screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
-        fi
-    fi &
+    make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi &
     wait # not exit, when dev
 fi
 
