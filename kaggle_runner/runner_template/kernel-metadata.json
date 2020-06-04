@@ -1,7 +1,6 @@
 {
-  "id": "k1gaggle/jigsaw-multilingual-toxicity-eda-models",
-  "id_no": 9350196,
-  "title": "Jigsaw Multilingual Toxicity : EDA + Models \ud83e\udd2c",
+  "id": "dancez/jigsaw-multilingual-toxicity-eda-models",
+  "title": "Jigsaw Multilingual Toxicity : EDA + Models \ud83e\udd2c | 2bbb8f4_setup.py:_v0.1.4",
   "code_file": "main.py",
   "language": "python",
   "kernel_type": "script",

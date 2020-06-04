@@ -83,9 +83,11 @@ all: $(SRC)
 	coverage xml
 	./cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
-push: check rvs_session $(SRC)
+push: rvs_session $(SRC)
 	-#git push # push first as kernel will download the codes, so put new code to github first
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
+	title=$$(git show --no-patch --oneline | tr " " "_"); sed -i 's/title\(.*\)|.*"/title\1| '$$title\"/ kaggle_runner/runner_template/kernel-metadata.json
+	git add kaggle_runner/runner_template/kernel-metadata.json && git commit -sm "Update metadata when push to server" --no-gpg && git push &
 	./run_coordinator $(PHASE) # source only works in specific shell: bash or ...
 
 connect:
@@ -198,16 +200,16 @@ mlocal:
 
 check:
 	-ps aux | grep make
-	-echo $(http_proxy)
-	-echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT)
-	-echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT) | ncat $(SERVER) $(CHECK_PORT)
+	-@echo $(http_proxy)
+	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT)
+	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT) | ncat $(SERVER) $(CHECK_PORT)
 	-expect -h
 	pstree -laps $$$$
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
-	$(PY3) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
-	$(PY3) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner cannot be imported."; $(PY3) -m pip install -e . && $(PY3) -c 'import kaggle_runner')
-	$(PY3) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
-	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
+	@$(PY3) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
+	@$(PY3) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner cannot be imported."; $(PY3) -m pip install -e . && $(PY3) -c 'import kaggle_runner')
+	@$(PY3) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
+	-@timeout 3s $(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 
 mbd_log:
