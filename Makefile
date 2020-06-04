@@ -215,7 +215,7 @@ mbd_log:
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 mbd_pretrain: multilang_bert_data.sh
-	STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
+	DEBUG=true STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 	touch /tmp/rvs_exit && pkill ncat && pkill -f "rvs.sh"
 	make distclean
 
