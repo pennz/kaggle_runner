@@ -213,12 +213,14 @@ mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
+mbd_pretrain: multilang_bert_data.sh
+	STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 mbd:
 	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
 	make mbd_log
 
 dataset: mbd
-	-mkdir .k && mv * .* .k
+	-mkdir .k && mv * .* .k && mv .k/toxic*pkl . && rm -r .k
 
 p:
 	pushd kaggle_runner/hub/bert && (git commit -asm "GG" --no-gpg || true) && git push && popd && git add kaggle_runner/hub/bert && git commit -sm "Updated bert" --no-gpg && git push

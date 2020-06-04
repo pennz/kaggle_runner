@@ -47,7 +47,10 @@ export STAGE
 export STAGE_DETAIL
 
 git clone https://github.com/pennz/bert
-if [ $STAGE = "extract_feature" ]; then
+if [ $STAGE = "pretrain" ]; then
+    python -c 'from kaggle_runner.datasets.bert import load_tokens, load_lable;'
+
+elif [ $STAGE = "extract_feature" ]; then
 
     TI=/tmp/input.txt
     if [ ! -f $TI ]; then
