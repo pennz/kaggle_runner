@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
+sys.path.insert(0, package_dir_a)
+
 from pytorch_pretrained_bert import BertTokenizer, BertForSequenceClassification, BertAdam
 from pytorch_pretrained_bert import convert_tf_checkpoint_to_pytorch
 import shutil
