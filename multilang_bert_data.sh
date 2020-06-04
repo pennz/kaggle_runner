@@ -13,9 +13,7 @@ git clone https://github.com/pennz/bert
 case $STAGE in
 pretrain)
 	git clone --depth=1 https://github.com/NVIDIA/apex
-	pushd apex
-	python3 setup.py install
-	popd
+	pushd apex && python3 setup.py install && popd
 	python3 -c "from kaggle_runner.kernels.bert_torch import for_pytorch;from kaggle_runner.datasets.bert import pack_data; for_pytorch(pack_data());"
 	;;
 

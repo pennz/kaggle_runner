@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
+import sys
 package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
 sys.path.insert(0, package_dir_a)
 
@@ -21,7 +23,6 @@ import scipy.stats as stats
 import gc
 import re
 import operator
-import sys
 from sklearn import metrics
 from sklearn import model_selection
 import torch
