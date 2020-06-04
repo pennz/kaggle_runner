@@ -38,12 +38,23 @@ from tqdm import tqdm, tqdm_notebook
 import os
 from IPython.core.interactiveshell import InteractiveShell
 from kaggle_runner import may_debug
+from kaggle_runner.datasets.bert import BERT_BASE_DIR
 
 InteractiveShell.ast_node_interactivity = "all"
 warnings.filterwarnings(action='once')
 
 
 EPOCHS = 1
+WORK_DIR = '/kaggle/working/'
+
+def prepare_pretrained():
+    convert_tf_checkpoint_to_pytorch.convert_tf_checkpoint_to_pytorch(
+        BERT_BASE_DIR + '/bert_model.ckpt',
+        BERT_BASE_DIR + '/bert_config.json',
+    WORK_DIR + 'pytorch_model.bin')
+
+    shutil.copyfile(BERT_BASE_DIR + '/bert_config.json', WORK_DIR + 'bert_config.json')
+# -
 
 
 def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
@@ -62,6 +73,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
     torch.cuda.manual_seed(SEED)
     torch.backends.cudnn.deterministic = True
 
+    prepare_pretrained()
     model = BertForSequenceClassification.from_pretrained(
         "../working", cache_dir=None, num_labels=1 if len(y[0])< 1 else len(y[0]))
     model.zero_grad()
