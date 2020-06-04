@@ -364,9 +364,8 @@ if [ x"${PHASE}" = x"dev" ]; then
 fi
 
 if [ x"${PHASE}" = x"data" ]; then
-    bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
     make dataset
-    wait
 fi
 
 if [ x"${PHASE}" = x"run" ]; then
