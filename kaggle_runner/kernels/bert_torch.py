@@ -135,8 +135,6 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
         tq.set_postfix(avg_loss=avg_loss, avg_accuracy=avg_accuracy)
 
     torch.save(model.state_dict(), output_model_file)
-    may_debug()
-
 
 # +
 # Run validation

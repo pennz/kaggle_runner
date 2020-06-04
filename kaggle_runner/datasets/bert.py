@@ -208,4 +208,11 @@ def pack_data():
     y_val = lbs[1]
     X_val =[ x.input_ids for x in tokens[len(y):len(y)+len(y_val)]]
 
+    if DEBUG:
+        y = y[:100]
+        X = X[:100]
+        y_val = y_val[:100]
+        X_val = X_val[:100]
+
+
     return X,y, X_val, y_val
