@@ -44,7 +44,6 @@ def pickle_data(max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output="feature
 
 
 def load_tokens(data_base_dir=TOKENS_PATH, max_seq_length=128, bert_base_dir=BERT_BASE_DIR, output=None):
-    may_debug()
     tks = load_data("load_tokens", f'{data_base_dir}/token_ids_{max_seq_length}.pkl',
                     max_seq_length, get_tokenizer(bert_base_dir+"/vocab.txt"), output=output)
 
@@ -200,7 +199,6 @@ def load_labels():
     return (y_train, y_valid)
 
 def pack_data():
-    may_debug()
     tokens = load_tokens()
     lbs = load_labels()
 
