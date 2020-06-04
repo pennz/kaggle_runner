@@ -185,12 +185,12 @@ rpdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; ncat -v 127.0.0.1 23454; stty $$SAVED_STTY"
 
 mq:
-	make amqp_log & ( sleep 10; make check ) &
-	while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do sleep 60; ps aux | grep "amqp" | tee /dev/tty |  grep -v -e "sh" -e "grep" | awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs; done
+	make amqp_log &
+	id -u rabbitmq &>/dev/null && while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do sleep 60; ps aux | grep "amqp" | tee /dev/tty |  grep -v -e "sh" -e "grep" | awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs; done
 
 amqp_log:
 	-$(IS_CENTOS) && sudo systemctl restart rabbitmq-server.service
-	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n "s/.*\[x\]//p"  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
+	$(UNBUFFER) ./receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n 's/^.*\[x\] \(.*\)/\1/p'  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | $(SED) -n "s/\(.*\)\[x.*/\1/p"
 
 mlocal:
@@ -208,7 +208,6 @@ check:
 	$(PY3) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner cannot be imported."; $(PY3) -m pip install -e . && $(PY3) -c 'import kaggle_runner')
 	$(PY3) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
 	$(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
-	-$(PY3) -c 'from kaggle_runner.utils.tpu import GCS_M_DS_PATH; print(GCS_M_DS_PATH)' 2>&1
 
 
 mbd_log:
