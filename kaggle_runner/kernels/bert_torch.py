@@ -59,7 +59,6 @@ def prepare_pretrained():
 
 def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
     X, y, X_val, y_val = data_package
-    may_debug()
 
     train_dataset = torch.utils.data.TensorDataset(torch.tensor(
         X, dtype=torch.long), torch.tensor(y, dtype=torch.float))
@@ -75,7 +74,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
     prepare_pretrained()
     model = BertForSequenceClassification.from_pretrained(
-        "../working", cache_dir=None, num_labels=1 if len(y[0])< 1 else len(y[0]))
+        ".", cache_dir=None, num_labels=1 if len(y[0])< 1 else len(y[0]))
     model.zero_grad()
     model = model.to(device)
     param_optimizer = list(model.named_parameters())
@@ -147,24 +146,24 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 #    model.load_state_dict(torch.load(output_model_file))
 #    model.to(device)
 #
-#    for param in model.parameters():
-#        param.requires_grad = False
-#    model.eval()
-#    valid_preds = np.zeros((len(X_val)))
-#    valid = torch.utils.data.TensorDataset(
-#        torch.tensor(X_val, dtype=torch.long))
-#    valid_loader = torch.utils.data.DataLoader(
-#        valid, batch_size=32, shuffle=False)
-#
-#    tk0 = tqdm_notebook(valid_loader)
-#
-#    for i, (x_batch,) in enumerate(tk0):
-#        pred = model(x_batch.to(device), attention_mask=(
-#            x_batch > 0).to(device), labels=None)
-#        valid_preds[i*32:(i+1)*32] = pred[:,
-#                                          0].detach().cpu().squeeze().numpy()
-#
-#
+    for param in model.parameters():
+        param.requires_grad = False
+    model.eval()
+    valid_preds = np.zeros((len(X_val)))
+    valid = torch.utils.data.TensorDataset(
+        torch.tensor(X_val, dtype=torch.long))
+    valid_loader = torch.utils.data.DataLoader(
+        valid, batch_size=32, shuffle=False)
+
+    tk0 = tqdm_notebook(valid_loader)
+
+    for i, (x_batch,) in enumerate(tk0):
+        pred = model(x_batch.to(device), attention_mask=(
+            x_batch > 0).to(device), labels=None)
+        valid_preds[i*32:(i+1)*32] = pred[:,
+                                          0].detach().cpu().squeeze().numpy()
+
+
 ## +
 ## From baseline kernel
 #
