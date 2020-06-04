@@ -368,6 +368,11 @@ if [ x"${PHASE}" = x"data" ]; then
     make dataset
 fi
 
+if [ x"${PHASE}" = x"pretrain" ]; then
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    make mbd_pretrain
+fi
+
 if [ x"${PHASE}" = x"run" ]; then
     #pip install kaggle_runner
     bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
