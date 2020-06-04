@@ -37,7 +37,7 @@ echo "connection done." )
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
-_: mbd_interactive
+_: mbd_pretrain
 	echo "DONE"
 	#kill 7 8 # magic pids
 

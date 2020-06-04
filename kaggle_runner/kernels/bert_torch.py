@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 from pytorch_pretrained_bert import BertTokenizer, BertForSequenceClassification, BertAdam
 from pytorch_pretrained_bert import convert_tf_checkpoint_to_pytorch
 import shutil
@@ -6,9 +9,6 @@ import pickle
 import warnings
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 import datetime
 import pkg_resources
