@@ -202,7 +202,7 @@ def load_labels():
     else:
         return (y_train, y_valid)
 
-def pack_data(data_package):
+def pack_data():
     may_debug()
     tokens = load_tokens()
     tokens = ( x.input_ids for x in tokens )
