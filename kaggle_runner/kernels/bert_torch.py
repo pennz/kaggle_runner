@@ -32,6 +32,8 @@ from sklearn.metrics import roc_auc_score
 # %matplotlib inline
 from tqdm import tqdm, tqdm_notebook
 
+import torch_xla
+import torch_xla.core.xla_model as xm
 from apex import amp
 from kaggle_runner import may_debug
 from kaggle_runner.datasets.bert import BERT_BASE_DIR
@@ -58,7 +60,10 @@ def prepare_pretrained():
 # -
 
 
-def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
+def for_pytorch(data_package, device=xm.xla_device(), SEED=18):
+	if device is None:
+		device = torch.device('cuda')
+
     X, y, X_val, y_val = data_package
 
     train_dataset = torch.utils.data.TensorDataset(torch.tensor(
