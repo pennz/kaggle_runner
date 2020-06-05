@@ -222,7 +222,7 @@ mbd_pretrain: multilang_bert_data.sh torch_gpu_setup
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "entry.sh") &
 
 torch_gpu_setup: /kaggle/input/apex-compiled-for-gpu-kernel/apex
-	pip list apex || pip install /kaggle/input/apex-compiled-for-gpu-kernel/apex
+	type nvidia-smi &>/dev/null && (pip list apex || (cp -r /kaggle/input/apex-compiled-for-gpu-kernel/apex . && pip install apex))
 
 mbd:
 	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
