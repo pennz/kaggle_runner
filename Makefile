@@ -221,6 +221,9 @@ mbd_pretrain: multilang_bert_data.sh
 	make distclean
 	@sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "entry.sh") &
 
+torch_gpu: /kaggle/input/
+
+
 mbd:
 	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
 	make mbd_log
