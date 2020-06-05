@@ -245,8 +245,8 @@ githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
 
 distclean:
-	git ls-files | sed 's/kaggle_runner\/\([^\/]*\)\/.*/\1/' | xargs -I{} sh -c "echo {} ; rm -rf {} 2>/dev/null"
-	git ls-files | xargs -I{} sh -c 'rm -r $(dirname {})'
+	git ls-files | sed 's/kaggle_runner\/\([^\/]*\)\/.*/\1/' | xargs -I{} sh -c "echo rm -rf {}; rm -rf {} 2>/dev/null"
+	git ls-files | xargs -I{} sh -c 'echo rm -r $$(dirname {}); rm -r $$(dirname {}) 2>/dev/null'
 	rm *.py *.sh *log
 	rm -r .git
 
