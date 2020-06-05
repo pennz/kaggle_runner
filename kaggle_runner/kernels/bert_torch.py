@@ -61,8 +61,8 @@ def prepare_pretrained():
 
 
 def for_pytorch(data_package, device=xm.xla_device(), SEED=18):
-	if device is None:
-		device = torch.device('cuda')
+    if device is None:
+        device = torch.device('cuda')
 
     X, y, X_val, y_val = data_package
 
