@@ -1,6 +1,6 @@
 {
-  "id": "dancez/jigsaw-multilingual-toxicity-eda-models",
-  "title": "Jigsaw Multilingual Toxicity : EDA + Models \ud83e\udd2c | 6543b74_pip_show_apex",
+  "id": "test/jigsaw-multilingual-toxicity-eda-models",
+  "title": "Jigsaw Multilingual Toxicity : EDA + Models \ud83e\udd2c | ec48e48_Update_metadata_when_push_to_server",
   "code_file": "main.py",
   "language": "python",
   "kernel_type": "script",

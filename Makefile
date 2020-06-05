@@ -86,6 +86,7 @@ all: $(SRC)
 push: rvs_session $(SRC)
 	-#git push # push first as kernel will download the codes, so put new code to github first
 	-@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
+	-un=$$(jq '.username' ~/.kaggle/kaggle.json); sed -i 's/\(id": "\)\(.*\)\//\1'$$un\// kaggle_runner/runner_template/kernel-metadata.json
 	title=$$(git show --no-patch --oneline | tr " " "_"); sed -i 's/title\(.*\)|.*"/title\1| '$$title\"/ kaggle_runner/runner_template/kernel-metadata.json
 	git add kaggle_runner/runner_template/kernel-metadata.json && git commit -sm "Update metadata when push to server" --no-gpg && git push &
 	./run_coordinator $(PHASE) # source only works in specific shell: bash or ...
