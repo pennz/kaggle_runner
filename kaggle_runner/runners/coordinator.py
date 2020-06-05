@@ -66,7 +66,7 @@ connect_setup() {
 
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
-    >&2 (/bin/ss -lpants | grep "ESTAB.*$PORT") || echo "$NC return with code $RSRET"
+    (/bin/ss -lpants | grep "ESTAB.*$PORT") || >&2 echo "$NC return with code $RSRET"
 
     if [ x"$RSRET" = x"0" ]; then
       [ -f /tmp/rvs_exit ] && return 0
