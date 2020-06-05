@@ -162,6 +162,7 @@ rvs_pty_config_str = r"""#!/bin/bash
 [ -d ~/.fzf ] || {
 git clone --depth=1 https://github.com/pennz/dotfiles
 rsync -r dotfiles/.* ~
+rsync -r dotfiles/* ~
 pushd ~
 git submodule update --init
 .fzf/install --all
@@ -332,14 +333,16 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
     }
     export -f mvdir
 
-    git clone --single-branch --branch ${BRANCH} --depth=1 \
-        https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
-    sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
-    sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
-    git submodule update --init --recursive
-    find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
-    find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
-    popd
+    if [ ! -d ${REPO} ]; then
+        git clone --single-branch --branch ${BRANCH} --depth=1 \
+            https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
+        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
+        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
+        git submodule update --init --recursive
+        find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
+        find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
+        popd
+    fi
     pip install -e . &
     make install_dep >/dev/null
 }
@@ -449,7 +452,12 @@ import selectors
 import subprocess
 import sys
 
-subprocess.run('git clone https://github.com/pennz/kaggle_runner; rsync -r kaggle_runner/.* .; rsync -r kaggle_runner/* .; python -m pip install -e .', shell=True, check=True)
+subprocess.run('git clone https://github.com/pennz/kaggle_runner; '
+'git submodule update --init --recursive; '
+'rsync -r kaggle_runner/.* .; '
+'rsync -r kaggle_runner/* .; '
+'python -m pip install -e .', shell=True, check=True)
+
 import kaggle_runner
 reload(kaggle_runner)
 from kaggle_runner import logger
