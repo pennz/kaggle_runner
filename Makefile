@@ -227,7 +227,7 @@ mbd_pretrain: multilang_bert_data.sh may_torch_gpu_setup tpu_setup
 
 tpu_setup:
 	curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o /tmp/pytorch-xla-env-setup.py
-	VERSION="20200220"; $(PY) /tmp/pytorch-xla-env-setup.py --version $$VERSION #@param ["20200220","nightly", "xrt==1.15.0"]
+	$(PY) /tmp/pytorch-xla-env-setup.py #@param ["20200220","nightly", "xrt==1.15.0"]
 
 may_torch_gpu_setup:
 	-[ -d /kaggle/input/apex-compiled-for-gpu-kernel/apex ] && type nvidia-smi &>/dev/null && (pip show apex || (cp -r /kaggle/input/apex-compiled-for-gpu-kernel/apex . && pip install apex))
