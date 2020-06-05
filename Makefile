@@ -28,7 +28,7 @@ endif
 export CHECK_PORT
 
 URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth"
-PY3=python3
+PY=python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
 
@@ -87,7 +87,7 @@ all: $(SRC)
 
 push: rvs_session $(SRC)
 	-#git push # push first as kernel will download the codes, so put new code to github first
-	-@echo "$$(which $(PY3)) is our $(PY3) executable"; [[ x$$(which $(PY3)) =~ conda ]]
+	-@echo "$$(which $(PY)) is our $(PY) executable"; [[ x$$(which $(PY)) =~ conda ]]
 	sed -i 's/\(id": "\)\(.*\)\//\1$(KAGGLE_USER_NAME)\//' kaggle_runner/runner_template/kernel-metadata.json
 	title=$$(git show --no-patch --oneline | tr " " "_"); sed -i 's/title\(.*\)|.*"/title\1| '$$title\"/ kaggle_runner/runner_template/kernel-metadata.json
 	git add kaggle_runner/runner_template/kernel-metadata.json && git commit -sm "Update metadata when push to server" --no-gpg && git push &
@@ -103,7 +103,7 @@ lint: $(SRC)
 	pylint -E $(SRC)
 
 inner_lstm:
-	while true; do test x$$(git pull | grep -c Already) = x1 || { $(PY3) \
+	while true; do test x$$(git pull | grep -c Already) = x1 || { $(PY) \
 lstm.py 2>&1 | tee -a lstm_log; };  echo "$$(date) $$HOSTNAME CPU: "$$(grep \
 'cpu ' /proc/stat >/dev/null;sleep 0.1; grep 'cpu ' /proc/stat | awk -v RS='' \
 '{print ($$13-$$2+$$15-$$4)*100/($$13-$$2+$$15-$$4+$$16-$$5)}')% 'Mem: '$$(awk \
@@ -124,12 +124,12 @@ toxic: wt check
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
-	if [ -z $$DEBUG ]; then $(UNBUFFER) $(PY3) tests/test_distilbert_model.py 2>&1 | $(UNBUFFERP) tee -a toxic_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); else ./wt '$(PY3) -m ipdb tests/test_distilbert_model.py'; fi
+	if [ -z $$DEBUG ]; then $(UNBUFFER) $(PY) tests/test_distilbert_model.py 2>&1 | $(UNBUFFERP) tee -a toxic_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); else ./wt '$(PY) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
 test: update_code $(SRC)
-	eval 'echo $$(which $(PY3)) is our $(PY3) executable'
-	$(PY3) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY3) main.py
+	eval 'echo $$(which $(PY)) is our $(PY) executable'
+	$(PY) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY) main.py
 clean:
 	#-bash -c 'currentPpid=$$(pstree -spa $$$$ | $(SED) -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | $(SED) "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
 	-ps aux | grep "vlp" | grep -v "while" | grep -v "grep" | tee /dev/tty | awk '{print $$2} ' | xargs -I{} kill -9 {}
@@ -139,7 +139,7 @@ clean:
 submit:
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 run_submit:
-	$(PY3) DAF3D/Train.py
+	$(PY) DAF3D/Train.py
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 
 twine:
@@ -159,24 +159,24 @@ update_code:
 	#-git stash;
 	git pull
 install_dep_seg:
-	bash -c '$(PY3) -m pip install -e . & \
-(test -z "$$($(PY3) -m albumentations 2>&1 | grep direct)" && $(PY3) -m pip install -U git+https://github.com/albu/albumentations) & \
-(test -z "$$($(PY3) -m segmentation_models_pytorch 2>&1 | grep direct)" && $(PY3) -m pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
+	bash -c '$(PY) -m pip install -e . & \
+(test -z "$$($(PY) -m albumentations 2>&1 | grep direct)" && $(PY) -m pip install -U git+https://github.com/albu/albumentations) & \
+(test -z "$$($(PY) -m segmentation_models_pytorch 2>&1 | grep direct)" && $(PY) -m pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
 wait'
 
 install_dev_dep:
-	$(PY3) -m pip install kaggle
+	$(PY) -m pip install kaggle
 
 install_dep:
-	bash -c '$(PY3) -m pip install -e . & \
-$(PY3) -m pip install -q ipdb & \
-$(PY3) -m pip install -q pyicu & \
-$(PY3) -m pip install -q pycld2 & \
-$(PY3) -m pip install -q polyglot & \
-$(PY3) -m pip install -q textstat & \
-$(PY3) -m pip install -q googletrans & \
+	bash -c '$(PY) -m pip install -e . & \
+$(PY) -m pip install -q ipdb & \
+$(PY) -m pip install -q pyicu & \
+$(PY) -m pip install -q pycld2 & \
+$(PY) -m pip install -q polyglot & \
+$(PY) -m pip install -q textstat & \
+$(PY) -m pip install -q googletrans & \
 wait'
-	#$(PY3) -m pip install -q eumetsat expect &
+	#$(PY) -m pip install -q eumetsat expect &
 	#conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 
 connect_close:
@@ -208,21 +208,26 @@ check:
 	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT) | ncat $(SERVER) $(CHECK_PORT)
 	-expect -h
 	pstree -laps $$$$
-	-@echo "$$(which $(PY3)) is our $(PY3) executable"; if [[ x$$(which $(PY3)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
-	@$(PY3) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
-	@$(PY3) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner cannot be imported."; $(PY3) -m pip install -e . && $(PY3) -c 'import kaggle_runner')
-	@$(PY3) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
-	-@timeout 3s $(PY3) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
+	-@echo "$$(which $(PY)) is our $(PY) executable"; if [[ x$$(which $(PY)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
+	@$(PY) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
+	@$(PY) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner cannot be imported."; $(PY) -m pip install -e . && $(PY) -c 'import kaggle_runner')
+	@$(PY) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
+	-@timeout 3s $(PY) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 
 mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
-mbd_pretrain: multilang_bert_data.sh may_torch_gpu_setup
+
+mbd_pretrain: multilang_bert_data.sh may_torch_gpu_setup tpu_setup
 	DEBUG=true STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && make distclean
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "entry.sh") &
+
+tpu_setup:
+	curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o /tmp/pytorch-xla-env-setup.py
+	VERSION="20200220"; $(PY) /tmp/pytorch-xla-env-setup.py --version $$VERSION #@param ["20200220","nightly", "xrt==1.15.0"]
 
 may_torch_gpu_setup:
 	-[ -d /kaggle/input/apex-compiled-for-gpu-kernel/apex ] && type nvidia-smi &>/dev/null && (pip show apex || (cp -r /kaggle/input/apex-compiled-for-gpu-kernel/apex . && pip install apex))
