@@ -1,44 +1,45 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-import sys
-package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
-sys.path.insert(0, package_dir_a)
-
-from pytorch_pretrained_bert import BertTokenizer, BertForSequenceClassification, BertAdam
-from pytorch_pretrained_bert import convert_tf_checkpoint_to_pytorch
-import shutil
-from apex import amp
-import pickle
-import warnings
-import numpy as np  # linear algebra
-import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
+from __future__ import absolute_import, division, print_function
 
 import datetime
-import pkg_resources
-import seaborn as sns
-import time
-import scipy.stats as stats
 import gc
-import re
 import operator
-from sklearn import metrics
-from sklearn import model_selection
+import os
+import pickle
+import re
+import shutil
+import sys
+import time
+import warnings
+
+import numpy as np  # linear algebra
+import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
+import pkg_resources
+import scipy.stats as stats
+import seaborn as sns
 import torch
 import torch.nn as nn
-import torch.utils.data
 import torch.nn.functional as F
+import torch.utils.data
+from IPython.core.interactiveshell import InteractiveShell
 from nltk.stem import PorterStemmer
+from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
+                                     BertTokenizer,
+                                     convert_tf_checkpoint_to_pytorch)
+from sklearn import metrics, model_selection
 from sklearn.metrics import roc_auc_score
 # %load_ext autoreload
 # %autoreload 2
 # %matplotlib inline
 from tqdm import tqdm, tqdm_notebook
-import os
-from IPython.core.interactiveshell import InteractiveShell
+
+from apex import amp
 from kaggle_runner import may_debug
 from kaggle_runner.datasets.bert import BERT_BASE_DIR
+
+package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
+sys.path.insert(0, package_dir_a)
+
+
 
 InteractiveShell.ast_node_interactivity = "all"
 warnings.filterwarnings(action='once')
