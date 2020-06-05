@@ -99,7 +99,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
         model, optimizer, opt_level="O1", verbosity=0)
     model = model.train()
 
-    tq = tqdm_notebook(range(EPOCHS))
+    tq = tqdm(range(EPOCHS))
 
     for epoch in tq:
         train_loader = torch.utils.data.DataLoader(
@@ -107,7 +107,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
         avg_loss = 0.
         avg_accuracy = 0.
         lossf = None
-        tk0 = tqdm_notebook(enumerate(train_loader),
+        tk0 = tqdm(enumerate(train_loader),
                             total=len(train_loader), leave=False)
         optimizer.zero_grad()   # Bug fix - thanks to @chinhuic
 
@@ -135,7 +135,6 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
         tq.set_postfix(avg_loss=avg_loss, avg_accuracy=avg_accuracy)
 
     torch.save(model.state_dict(), output_model_file)
-
 # +
 # Run validation
 # The following 2 lines are not needed but show how to download the model for prediction
@@ -153,7 +152,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
     valid_loader = torch.utils.data.DataLoader(
         valid, batch_size=32, shuffle=False)
 
-    tk0 = tqdm_notebook(valid_loader)
+    tk0 = tqdm(valid_loader)
 
     for i, (x_batch,) in enumerate(tk0):
         pred = model(x_batch.to(device), attention_mask=(
