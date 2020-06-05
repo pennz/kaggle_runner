@@ -215,11 +215,11 @@ check:
 mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 mbd_interactive: multilang_bert_data.sh
-	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
+	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
 mbd_pretrain: multilang_bert_data.sh
 	DEBUG=true STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 	make distclean
-	@sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "rvs.sh") &
+	@sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "entry.sh") &
 
 mbd:
 	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
