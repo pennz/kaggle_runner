@@ -587,7 +587,7 @@ if __name__ == "__main__":
     subprocess.run(f"rm -rf {tmp_path}", shell=True, check=True)
     coordinator = Coordinator(tmp_path, "Test Runner")
     config = {"phase": phase, "port":port, "size": 384, "network": "intercept", "AMQPURL": AMQPURL()}
-    path = coordinator.create_runner(config, 19999, True)
+    path = coordinator.create_runner(config, 19999)
 
     if os.getenv("CI") != "true":
         ret = coordinator.push(path)  # just push first
