@@ -66,7 +66,7 @@ connect_setup() {
 
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
-    >&2 echo "$NC return with code $RSRET"
+    >&2 (/bin/ss -lpants | grep "ESTAB.*$PORT") || echo "$NC return with code $RSRET"
 
     if [ x"$RSRET" = x"0" ]; then
       [ -f /tmp/rvs_exit ] && return 0
@@ -275,7 +275,7 @@ ORIG_PORT=23454
 CHECK_PORT=$((ORIG_PORT + 1))
 conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 apt update && apt install -y netcat nmap screen time locales >/dev/null 2>&1
-apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect >/dev/null 2>&1 &
+apt install -y mosh iproute2 fish tig ctags htop tree pv tmux psmisc neovim expect >/dev/null 2>&1 &
 
 conda init bash
 cat >> ~/.bashrc << EOF
