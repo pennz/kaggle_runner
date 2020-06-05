@@ -11,6 +11,7 @@ logger = logger
 
 def reload_me():
     current_module = sys.modules[__name__]
+    pdb.set_trace()
     reload(current_module)
 
 def may_debug(force=False):
