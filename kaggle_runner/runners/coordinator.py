@@ -490,7 +490,9 @@ if ${gdrive_enable}:
 with open("entry.sh", "w") as f:
     f.write(entry_str)
 
-
+import os
+import sys
+sys.path.append(os.getcwd())
 
 import selectors
 import subprocess
