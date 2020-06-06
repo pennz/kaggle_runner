@@ -24,7 +24,8 @@ def may_debug(force=False):
     try:
         print("TRY pytest set_trace")
         pytest.set_trace()
-    except:
+    except Exception as e:
+        print(e)
         print("TRY pytest set_trace failed")
         import pytest
         pytest.set_trace()
@@ -32,6 +33,7 @@ def may_debug(force=False):
 
     if force:
         if "pytest" in sys.modules:
+            import pytest
             pytest.set_trace()
         else:
             if INTERACTIVE:
@@ -41,6 +43,7 @@ def may_debug(force=False):
                 pdb.set_trace()
     elif DEBUG:
         if "pytest" in sys.modules:
+            import pytest
             pytest.set_trace()
         else:
             if INTERACTIVE:

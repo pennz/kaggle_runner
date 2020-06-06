@@ -233,7 +233,7 @@ mbd_pretrain: multilang_bert_data.sh may_torch_gpu_setup
 
 exit:
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && make distclean
-	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "rvs.sh") &
+	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill screen && pkill -f "rvs.sh") &
 
 tpu_setup:
 	curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o /tmp/pytorch-xla-env-setup.py
