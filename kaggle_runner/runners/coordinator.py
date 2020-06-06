@@ -590,19 +590,3 @@ while True:
         self.runners.append(path)
 
         return path
-
-if __name__ == "__main__":
-    port = sys.argv[1]
-    assert int(port) >= 0
-    phase = sys.argv[2]
-    logger.debug(f"Paramters for creating runner: {sys.argv}")
-    tmp_path = '.r'
-
-    subprocess.run(f"rm -rf {tmp_path}", shell=True, check=True)
-    coordinator = Coordinator(tmp_path, "Test Runner")
-    config = {"phase": phase, "port":port, "size": 384, "network": "intercept", "AMQPURL": AMQPURL()}
-    path = coordinator.create_runner(config, 19999)
-
-    if os.getenv("CI") != "true":
-        ret = coordinator.push(path)  # just push first
-        assert ret.returncode == 0
