@@ -61,7 +61,8 @@ def prepare_pretrained():
 
 
 def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
-    y_columns = ['toxic']
+    y_columns = ['toxic', "severe_toxic","obscene","threat","insult","identity_hate"]
+
 
     if device is None and os.getenv("TPU_NAME") is not None:
         import torch_xla
