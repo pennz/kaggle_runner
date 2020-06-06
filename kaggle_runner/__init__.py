@@ -23,13 +23,18 @@ def may_debug(force=False):
     import pdb
 
     if force:
-        if INTERACTIVE:
-            import ipdb
-            ipdb.set_trace()
+        if "pytest" in sys.modules:
+            pytest.set_trace()
         else:
-            pdb.set_trace()
-    else:
-        if DEBUG:
+            if INTERACTIVE:
+                import ipdb
+                ipdb.set_trace()
+            else:
+                pdb.set_trace()
+    elif DEBUG:
+        if "pytest" in sys.modules:
+            pytest.set_trace()
+        else:
             if INTERACTIVE:
                 import ipdb
                 ipdb.set_trace()
