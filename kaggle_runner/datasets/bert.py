@@ -79,8 +79,11 @@ train_data = None
 data_package = get_kaggle_dataset_input(
     "jigsaw-multilingula-toxicity-token-encoded/toxic_fast_tok_512.pk")
 try:
-    csv_data_package = get_kaggle_dataset_input(
-        "jigsaw-multilingula-toxicity-token-encoded/toxic_csv.pk")
+    toxic_csv = get_obj_or_dump("toxic_csv.pk")
+
+    if toxic_csv is None:
+        csv_data_package = get_kaggle_dataset_input(
+            "jigsaw-multilingula-toxicity-token-encoded/toxic_csv.pk")
 except ModuleNotFoundError as e:
     logger.error("%s", e)
     csv_data_package = None
