@@ -167,8 +167,7 @@ update_code:
 	#-git stash;
 	git pull
 install_dep_seg:
-	bash -c '$(PY) -m pip install -e . & \
-(test -z "$$($(PY) -m albumentations 2>&1 | grep direct)" && $(PY) -m pip install -U git+https://github.com/albu/albumentations) & \
+	bash -c '(test -z "$$($(PY) -m albumentations 2>&1 | grep direct)" && $(PY) -m pip install -U git+https://github.com/albu/albumentations) & \
 (test -z "$$($(PY) -m segmentation_models_pytorch 2>&1 | grep direct)" && $(PY) -m pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
 wait'
 
@@ -176,8 +175,7 @@ install_dev_dep:
 	$(PY) -m pip install kaggle
 
 install_dep:
-	bash -c '$(PY) -m pip install -e . & \
-$(PY) -m pip install -q ipdb & \
+	bash -c '$(PY) -m pip install -q ipdb & \
 $(PY) -m pip install -q pyicu & \
 $(PY) -m pip install -q pycld2 & \
 $(PY) -m pip install -q polyglot & \

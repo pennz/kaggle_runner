@@ -346,9 +346,9 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
         find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
         popd
     fi
-    pip install -e . &
-    make install_dep >/dev/null
 }
+
+make install_dep >/dev/null &
 
 USE_AMQP=true
 export USE_AMQP
@@ -371,6 +371,11 @@ fi
 if [ x"${PHASE}" = x"data" ]; then
     bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
     make dataset
+fi
+
+if [ x"${PHASE}" = x"test" ]; then
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    make test
 fi
 
 if [ x"${PHASE}" = x"pretrain" ]; then
