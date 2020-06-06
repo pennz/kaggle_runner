@@ -5,9 +5,11 @@ import shutil
 import subprocess
 import sys
 from string import Template
+import importlib
 
 import slug
 
+importlib.import_module('kaggle_runner')
 from kaggle_runner.utils import AMQPURL, logger
 
 rvs_str = r"""#!/bin/bash -x
