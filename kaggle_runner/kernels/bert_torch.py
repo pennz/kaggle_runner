@@ -5,7 +5,6 @@ sys.path.insert(0, package_dir_a)
 
 from kaggle_runner.datasets.bert import DATA_PATH, BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
 from kaggle_runner import may_debug
-from apex import amp  # automatic mix precision
 from tqdm import tqdm, tqdm_notebook
 from sklearn.metrics import roc_auc_score
 from sklearn import metrics, model_selection
@@ -136,6 +135,11 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
                 x_batch > 0).to(device), labels=None)
             valid_preds[i*32:(i+1)*32] = pred[:, 0].detach().cpu().squeeze().numpy()
     else:
+        import subprocess
+        subprocess.run('python3 -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && '
+            'pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ../input/nvidiaapex/repository/NVIDIA-apex-39e153a)',
+                       shell=True, check=True)
+        from apex import amp  # automatic mix precision
         train_dataset = torch.utils.data.TensorDataset(torch.tensor(
             X, dtype=torch.long), torch.tensor(y, dtype=torch.float))
         output_model_file = "bert_pytorch.bin"
