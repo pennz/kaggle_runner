@@ -21,7 +21,14 @@ def may_debug(force=False):
     reload_me()
 
     import pdb
-    pytest.set_trace()
+    try:
+        print("TRY pytest set_trace")
+        pytest.set_trace()
+    except:
+        print("TRY pytest set_trace failed")
+        import pytest
+        pytest.set_trace()
+        pdb.set_trace()
 
     if force:
         if "pytest" in sys.modules:
