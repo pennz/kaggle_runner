@@ -38,9 +38,12 @@ echo "connection done." )
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
-_: mbd_pretrain
+_: test_bert_torch
 	echo "DONE"
 	#kill 7 8 # magic pids
+
+test_bert_torch:
+	$(PY) -m pytest -k "test_generate_runner" 
 
 log_receiver:
 	@echo "$@" will use tcp to receive logs
