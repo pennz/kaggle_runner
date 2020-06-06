@@ -1,14 +1,14 @@
 {
-  "id": "k1gaggle/jigsaw-multilingual-toxicity-eda-models",
-  "title": "Jigsaw Multilingual Toxicity : EDA + Models \ud83e\udd2c",
+  "id": "k1gaggle/toxic-bert-plain-vanila",
+  "id_no": 9906840,
+  "title": "Toxic  BERT plain vanila",
   "code_file": "main.py",
   "language": "python",
-  "kernel_type": "script",
+  "kernel_type": "notebook",
   "is_private": true,
   "enable_gpu": true,
   "enable_internet": true,
   "keywords": [
-    "tpu",
     "gpu"
   ],
   "dataset_sources": [
@@ -16,8 +16,10 @@
     "maxjeblick/bert-pretrained-models",
     "k1gaggle/jigsaw-toxic-token-ids-for-bert",
     "matsuik/ppbert",
-    "dancez/apex-compiled-for-gpu-kernel"
+    "gabrichy/nvidiaapex"
   ],
   "kernel_sources": [],
-  "competition_sources": []
+  "competition_sources": [
+    "jigsaw-unintended-bias-in-toxicity-classification"
+  ]
 }

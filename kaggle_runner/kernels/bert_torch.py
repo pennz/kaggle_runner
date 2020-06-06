@@ -32,7 +32,7 @@ from sklearn.metrics import roc_auc_score
 # %matplotlib inline
 from tqdm import tqdm, tqdm_notebook
 
-from apex import amp
+from apex import amp # automatic mix precision
 from kaggle_runner import may_debug
 from kaggle_runner.datasets.bert import BERT_BASE_DIR
 
