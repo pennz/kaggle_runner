@@ -96,8 +96,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
         for i, (x_batch,) in enumerate(tk0):
             pred = model(x_batch.to(device), attention_mask=(
                 x_batch > 0).to(device), labels=None)
-            valid_preds[i*32:(i+1)*32] = pred[:,
-                                              0].detach().cpu().squeeze().numpy()
+            valid_preds[i*32:(i+1)*32] = pred[:, 0].detach().cpu().squeeze().numpy()
     else:
         train_dataset = torch.utils.data.TensorDataset(torch.tensor(
             X, dtype=torch.long), torch.tensor(y, dtype=torch.float))

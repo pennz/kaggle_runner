@@ -15,7 +15,8 @@
     "matsuik/ppbert",
     "gabrichy/nvidiaapex",
     "k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
-    "k1gaggle/jigsaw-toxic-token-ids-for-bert"
+    "k1gaggle/jigsaw-toxic-token-ids-for-bert",
+	"k1gaggle/toxic-multilang-trained-torch-model"
   ],
   "kernel_sources": [],
   "competition_sources": [
