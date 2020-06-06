@@ -10,7 +10,7 @@ from tqdm import tqdm, tqdm_notebook
 from sklearn.metrics import roc_auc_score
 from sklearn import metrics, model_selection
 from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
-                                     BertTokenizer,
+                                     BertTokenizer, BertConfig
                                      convert_tf_checkpoint_to_pytorch)  # needed fused_layer_norm_cuda, so TPU won't work
 
 import datetime
@@ -73,7 +73,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
     if os.path.exists(PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"):
         output_model_file = PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"
-        bert_config = PRETRAIND_PICKLE_AND_MORE + "/bert_config.json"
+        bert_config = BertConfig.from_json_file(PRETRAIND_PICKLE_AND_MORE + "/bert_config.json")
 
 # Run validation
 # The following 2 lines are not needed but show how to download the model for prediction
