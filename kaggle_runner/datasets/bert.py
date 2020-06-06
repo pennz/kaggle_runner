@@ -12,13 +12,21 @@ from kaggle_runner import may_debug
 from kaggle_runner.defaults import DEBUG
 from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
                                               get_obj_or_dump)
-from kaggle_runner.utils.tpu import (BATCH_SIZE, strategy,
+from kaggle_runner.utils.tpu import (strategy,
                                      tpu_resolver)
 from kaggle_runner.hub.bert.extract_features import load_data, get_tokenizer
 
 from kaggle_datasets import KaggleDatasets
 
 TOKENS_PATH = "/kaggle/input/jigsaw-toxic-token-ids-for-bert"
+
+if tpu_resolver is None:
+    if DEBUG:
+        BATCH_SIZE = 32 * 2
+    else:
+        BATCH_SIZE = 32 * 32
+else:
+    BATCH_SIZE = 32 * strategy.num_replicas_in_sync
 
 if tpu_resolver is None:
     DATA_PATH = "/kaggle/input/jigsaw-multilingual-toxic-comment-classification/"
