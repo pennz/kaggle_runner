@@ -1,3 +1,4 @@
+from __future__ import absolute_import, division, print_function
 from kaggle_runner.datasets.bert import BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
 from kaggle_runner import may_debug
 from apex import amp  # automatic mix precision
@@ -7,7 +8,6 @@ from sklearn import metrics, model_selection
 from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
                                      BertTokenizer,
                                      convert_tf_checkpoint_to_pytorch)  # needed fused_layer_norm_cuda, so TPU won't work
-from __future__ import absolute_import, division, print_function
 
 import datetime
 import gc
