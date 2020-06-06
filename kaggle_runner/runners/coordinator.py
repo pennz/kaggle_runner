@@ -449,22 +449,15 @@ class Coordinator:
     def _change_main_py(path, size, net, AMQPURL, seed, port, gdrive_enable=False, phase='dev'):
         s = Template(
             """#!/usr/bin/env python3
-from importlib import reload
 import os
-import selectors
 import subprocess
 import sys
 
-subprocess.run('git clone https://github.com/pennz/kaggle_runner; '
+subprocess.run('[ -f setup.py ] || (git clone https://github.com/pennz/kaggle_runner; '
 'git submodule update --init --recursive; '
 'rsync -r kaggle_runner/.* .; '
-'rsync -r kaggle_runner/* .; '
-'python -m pip install -e .', shell=True, check=True)
-
-import kaggle_runner
-reload(kaggle_runner)
-from kaggle_runner import logger
-logger.debug("Logger loaded")
+'rsync -r kaggle_runner/* .;); '
+'python3 -m pip install -e .', shell=True, check=True)
 
 with open("runner.sh", "w") as f:
     f.write(
@@ -495,6 +488,14 @@ if ${gdrive_enable}:
 with open("entry.sh", "w") as f:
     f.write(entry_str)
 
+
+
+import selectors
+import subprocess
+from importlib import reload, import_module
+import_module('kaggle_runner')
+from kaggle_runner import logger
+logger.debug("Logger loaded. Will run entry.sh.")
 
 p = subprocess.Popen(
 'bash -x entry.sh',
