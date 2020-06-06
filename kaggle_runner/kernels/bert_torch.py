@@ -10,7 +10,7 @@ from tqdm import tqdm, tqdm_notebook
 from sklearn.metrics import roc_auc_score
 from sklearn import metrics, model_selection
 from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
-                                     BertTokenizer, BertConfig
+                                     BertTokenizer, BertConfig,
                                      convert_tf_checkpoint_to_pytorch)  # needed fused_layer_norm_cuda, so TPU won't work
 
 import datetime
