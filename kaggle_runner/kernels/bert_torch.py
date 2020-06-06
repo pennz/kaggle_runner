@@ -59,7 +59,7 @@ def prepare_pretrained():
 # -
 
 
-def get_trained_model( fine_tuned = "bert_pytorch.bin", device=torch.device('cpu')):
+def get_trained_model(fine_tuned = "bert_pytorch.bin", device=torch.device('cpu')):
     model = None
     y_columns = ['toxic', "severe_toxic","obscene","threat","insult","identity_hate"]
     pretrain_data_folder = PRETRAIND_PICKLE_AND_MORE
@@ -82,6 +82,9 @@ def get_trained_model( fine_tuned = "bert_pytorch.bin", device=torch.device('cpu
 
 def get_test_result(self, test_dataset, device=torch.device('cpu'), data_path=DATA_PATH):
     model = self.model
+
+    if self.model is None:
+        return
     sub = pd.read_csv(os.path.join(data_path , 'sample_submission.csv'))
 
     for param in model.parameters():
@@ -118,7 +121,7 @@ def for_pytorch(data_package, device=torch.device('cpu'), SEED=18, phase="predic
 
     if model is None:
         try:
-            model = get_trained_model(device)
+            model = get_trained_model(device=device)
         except RuntimeError as e:
             logger.debug("%s", e)
 
