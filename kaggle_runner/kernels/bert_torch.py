@@ -3,7 +3,7 @@ import sys
 package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
 sys.path.insert(0, package_dir_a)
 
-from kaggle_runner.datasets.bert import BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
+from kaggle_runner.datasets.bert import DATA_PATH, BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
 from kaggle_runner import may_debug
 from apex import amp  # automatic mix precision
 from tqdm import tqdm, tqdm_notebook
@@ -60,20 +60,10 @@ def prepare_pretrained():
 # -
 
 
-def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
+def get_trained_model( device=torch.device('cuda')):
+    model = None
     y_columns = ['toxic', "severe_toxic","obscene","threat","insult","identity_hate"]
-
-
-    if device is None and os.getenv("TPU_NAME") is not None:
-        import torch_xla
-        import torch_xla.core.xla_model as xm
-        device = xm.xla_device()
-
-    X, y, X_val, y_val = data_package
-
     pretrain_data_folder = PRETRAIND_PICKLE_AND_MORE
-
-    may_debug()
 
     if not os.path.exists(pretrain_data_folder+"/bert_pytorch.bin"):
         pretrain_data_folder = '/home/working'
@@ -89,6 +79,47 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
         model.load_state_dict(torch.load(output_model_file))
         model.to(device)
 
+    return model
+
+def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=DATA_PATH):
+    model = self.model
+    sub = pd.read_csv(os.path.join(data_path , 'sample_submission.csv'))
+
+    for param in model.parameters():
+        param.requires_grad = False
+    model.eval()
+
+    test_preds = np.zeros((len(test_dataset)))
+    test = torch.utils.data.TensorDataset(
+        torch.tensor(test_dataset, dtype=torch.long))
+    test_loader = torch.utils.data.DataLoader(
+        test, batch_size=32, shuffle=False)
+
+    tk0 = tqdm(test_loader)
+
+    for i, (x_batch,) in enumerate(tk0):
+        pred = model(x_batch.to(device), attention_mask=(
+            x_batch > 0).to(device), labels=None)
+        test_preds[i*32:(i+1)*32] = pred[:, 0].detach().cpu().squeeze().numpy()
+
+    pred = test_preds
+
+    sub['toxic'][:len(pred)] = pred
+    sub.to_csv('submission.csv', index=False)
+
+
+def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
+
+    if device is None and os.getenv("TPU_NAME") is not None:
+        import torch_xla
+        import torch_xla.core.xla_model as xm
+        device = xm.xla_device()
+
+    X, y, X_val, y_val, X_test = data_package
+
+    model = get_trained_model(device)
+
+    if model is not None:
         for param in model.parameters():
             param.requires_grad = False
         model.eval()
@@ -181,31 +212,6 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
         torch.save(model.state_dict(), output_model_file)
 # +
-# Run validation
-# The following 2 lines are not needed but show how to download the model for prediction
-#    model = BertForSequenceClassification(
-#        bert_config, num_labels=len(y_columns))
-#    model.load_state_dict(torch.load(output_model_file))
-#    model.to(device)
-#
-#    for param in model.parameters():
-#        param.requires_grad = False
-#    model.eval()
-#    valid_preds = np.zeros((len(X_val)))
-#    valid = torch.utils.data.TensorDataset(
-#        torch.tensor(X_val, dtype=torch.long))
-#    valid_loader = torch.utils.data.DataLoader(
-#        valid, batch_size=32, shuffle=False)
-#
-#    tk0 = tqdm(valid_loader)
-#
-#    for i, (x_batch,) in enumerate(tk0):
-#        pred = model(x_batch.to(device), attention_mask=(
-#            x_batch > 0).to(device), labels=None)
-#        valid_preds[i*32:(i+1)*32] = pred[:,
-#                                          0].detach().cpu().squeeze().numpy()
-#
-#
 ## +
 ## From baseline kernel
 #

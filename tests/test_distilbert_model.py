@@ -10,6 +10,25 @@ from kaggle_runner.kernels.bert import (bert_cbs,
                                         get_test_result)
 from kaggle_runner.utils.visualizer import visualize_model_preds
 
+from kaggle_runner.kernels import bert_torch
+from kaggle_runner.datasets.bert import pack_data
+
+class Test_bert_multi_lang:
+    @classmethod
+    def setup_class(cls):
+        cls.model = bert_torch.get_trained_model()
+        logger.debug("Start Test bert multi lang")
+
+    def setup_method(self, method):
+        logger.debug("setup for method %s", method)
+
+    def teardown_method(self, method):
+        logger.debug("teardown method %s", method)
+
+    def test_result(self):
+        data=pack_data()
+        bert_torch.get_test_result(self, data[-1])
+
 
 class Test_distilbert_model:
     @classmethod
@@ -17,15 +36,15 @@ class Test_distilbert_model:
         # subprocess.run("make ripdbrv &", shell=True)
 
         if DEBUG:
-            cls.model_distilbert = build_distilbert_model_singleton(140)
+            cls.model = build_distilbert_model_singleton(140)
         else:
-            cls.model_distilbert = build_distilbert_model_singleton(512)
+            cls.model = build_distilbert_model_singleton(512)
 
     @classmethod
     def teardown_class(cls):
         #subprocess.run("pkill -f \"make ripdbrv\"", shell=True)
         try:
-            del cls.model_distilbert
+            del cls.model
         except Exception as e:
             print(e)
         logger.debug("tear down test %s", "Test_distilbert_model")
@@ -42,11 +61,11 @@ class Test_distilbert_model:
 
     def test_summary(self):
         self.setup_class()
-        self.model_distilbert.summary()
+        self.model.summary()
         assert True
 
     def test_fit_adv(self):
-        # self.model_distilbert_dev = build_distilbert_model_singleton(model_type="1st")
+        # self.model_dev = build_distilbert_model_singleton(model_type="1st")
 
         if DEBUG:
             steps = 10
@@ -57,7 +76,7 @@ class Test_distilbert_model:
             epochs = 1
         logger.debug("Every epoch, steps is %s", steps)
 
-        train_history = self.model_distilbert.fit(
+        train_history = self.model.fit(
             train_dataset,
             steps_per_epoch=steps,
             validation_data=valid_dataset,
@@ -69,7 +88,7 @@ class Test_distilbert_model:
 
     def test_visualize(self):
         # model_distilbert.summary()
-        visualize_model_preds(self.model_distilbert, val_data, x_valid, y_valid,
+        visualize_model_preds(self.model, val_data, x_valid, y_valid,
                               indices=[2,3, 5, 6, 7, 8, 1, 4])
 
 if __name__ == "__main__":

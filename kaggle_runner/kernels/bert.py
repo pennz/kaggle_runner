@@ -88,7 +88,7 @@ def build_distilbert_model_singleton(max_len):
 
 def get_test_result(self, test_dataset=test_dataset, data_path=DATA_PATH):
     sub = pd.read_csv(os.path.join(data_path , 'sample_submission.csv'))
-    pred = self.model_distilbert.predict(test_dataset, verbose=1)
+    pred = self.model.predict(test_dataset, verbose=1)
 
     if len(pred.shape) <= 1 or pred.shape[1] > 1:
         pred = pred[:,0]
