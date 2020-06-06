@@ -22,7 +22,9 @@ import torch.nn.functional as F
 import torch.utils.data
 from IPython.core.interactiveshell import InteractiveShell
 from nltk.stem import PorterStemmer
-sys.path.append('/kaggle/input/ppbert/pytorch-pretrained-BERT/')
+
+package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
+sys.path.insert(0, package_dir_a)
 from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
                                      BertTokenizer,
                                      convert_tf_checkpoint_to_pytorch) # needed fused_layer_norm_cuda, so TPU won't work
@@ -36,9 +38,6 @@ from tqdm import tqdm, tqdm_notebook
 from apex import amp # automatic mix precision
 from kaggle_runner import may_debug
 from kaggle_runner.datasets.bert import BERT_BASE_DIR
-
-package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
-sys.path.insert(0, package_dir_a)
 
 
 
@@ -105,7 +104,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
                          t_total=num_train_optimization_steps)
 
     model, optimizer = amp.initialize(
-        model, optimizer, opt_level="O1", verbosity=0)
+        model, optimizer, opt_level="O1", verbosity=1)
     model = model.train()
 
     tq = tqdm(range(EPOCHS))
