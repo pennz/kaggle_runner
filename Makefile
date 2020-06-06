@@ -46,7 +46,7 @@ test: test_bert_torch
 	echo "TEST DONE"
 
 test_bert_torch: pytest
-	$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT))
+	$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT)
 
 pytest:
 	$(PY) -m pip show pytest | grep 3.6 &>/dev/null || $(PY) -m pip install pytest==3.6
