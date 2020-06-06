@@ -5,8 +5,6 @@ import re
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import transformers
-from tokenizers import BertWordPieceTokenizer
 
 from kaggle_runner import may_debug
 from kaggle_runner.defaults import DEBUG
@@ -95,6 +93,8 @@ else:
 
 
 if data_package is None:
+    import transformers
+    from tokenizers import BertWordPieceTokenizer
     tokenizer = transformers.DistilBertTokenizer.from_pretrained(
         'distilbert-base-multilingual-cased')
 
