@@ -71,6 +71,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
     X, y, X_val, y_val = data_package
 
+	global PRETRAIND_PICKLE_AND_MORE
     if not os.path.exists(PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"):
         PRETRAIND_PICKLE_AND_MORE = '/home/working'
 
