@@ -59,7 +59,7 @@ def prepare_pretrained():
 # -
 
 
-def get_trained_model(fine_tuned = "bert_pytorch.bin", device=torch.device('cpu')):
+def get_trained_model(fine_tuned = "bert_pytorch.bin", device=torch.device('cuda')):
     model = None
     y_columns = ['toxic', "severe_toxic","obscene","threat","insult","identity_hate"]
     pretrain_data_folder = PRETRAIND_PICKLE_AND_MORE
@@ -80,7 +80,7 @@ def get_trained_model(fine_tuned = "bert_pytorch.bin", device=torch.device('cpu'
 
     return model
 
-def get_test_result(self, test_dataset, device=torch.device('cpu'), data_path=DATA_PATH):
+def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=DATA_PATH):
     model = self.model
 
     if self.model is None:
@@ -110,7 +110,7 @@ def get_test_result(self, test_dataset, device=torch.device('cpu'), data_path=DA
     sub.to_csv('submission.csv', index=False)
 
 
-def for_pytorch(data_package, device=torch.device('cpu'), SEED=18, phase="predict", model=None):
+def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predict", model=None):
 
     if device is None and os.getenv("TPU_NAME") is not None:
         import torch_xla
