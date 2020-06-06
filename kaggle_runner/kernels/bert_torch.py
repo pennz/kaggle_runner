@@ -102,7 +102,7 @@ def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=D
             x_batch > 0).to(device), labels=None)
         test_preds[i*32:(i+1)*32] = pred[:, 0].detach().cpu().squeeze().numpy()
 
-    pred = test_preds
+    pred = 1 / (1+np.exp(- test_preds))
 
     sub['toxic'][:len(pred)] = pred
     sub.to_csv('submission.csv', index=False)

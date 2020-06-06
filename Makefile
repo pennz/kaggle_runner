@@ -231,7 +231,7 @@ mbd_pretrain: multilang_bert_data.sh may_torch_gpu_setup
 
 exit:
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && make distclean
-	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "entry.sh") &
+	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "rvs.sh") &
 
 tpu_setup:
 	curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o /tmp/pytorch-xla-env-setup.py
@@ -265,7 +265,7 @@ t: pccnct m
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
 
-distclean:
+distclean: clean
 	-@git ls-files | sed 's/kaggle_runner\/\([^\/]*\)\/.*/\1/' | xargs -I{} sh -c "echo rm -rf {}; rm -rf {} 2>/dev/null"
 	-@git ls-files | xargs -I{} sh -c 'echo rm -r $$(dirname {}); rm -r $$(dirname {}) 2>/dev/null'
 	rm *.py *.sh *log
