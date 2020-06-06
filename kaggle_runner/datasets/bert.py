@@ -13,7 +13,6 @@ from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
 #from kaggle_runner.utils.tpu import (strategy, tpu_resolver)
 from kaggle_runner.hub.bert.extract_features import load_data, get_tokenizer
 
-from kaggle_datasets import KaggleDatasets
 
 TOKENS_PATH = "/kaggle/input/jigsaw-toxic-token-ids-for-bert"
 
@@ -35,6 +34,7 @@ if tpu_resolver is None:
         '/multi_cased_L-12_H-768_A-12' + '/multi_cased_L-12_H-768_A-12'
 
 else:
+    from kaggle_datasets import KaggleDatasets
     GCS_DS_PATH = KaggleDatasets().get_gcs_path(
         'jigsaw-multilingual-toxic-comment-classification')
     GCS_BERT_PRETRAINED = KaggleDatasets().get_gcs_path('bert-pretrained-models') + \
