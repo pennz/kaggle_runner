@@ -1,4 +1,4 @@
-coordrocess
+import subprocess
 import os
 import sys
 from importlib import reload
@@ -6,7 +6,7 @@ __all__ = ["may_debug", "logger", "runners.runner",
            "runners.coordinator", "utils"]
 
 from .defaults import DEBUG, RIPDB
-from .utils import logger, AMQPURLcoord
+from .utils import logger, AMQPURL
 from .runners import coordinator
 
 logger = logger
@@ -24,18 +24,10 @@ def may_debug(force=False):
     import pdb
 
     if force:
-        try:coord
-            pdb.set_trace()
-        except:
-            ...
-            pdb.set_trace()
+        pdb.set_trace()
     else:
         if DEBUG:
-            try:
-                pdb.set_trace()
-            except:
-                ...
-                pdb.set_trace()
+            pdb.set_trace()
 
 if __name__ == "__main__":
     port = sys.argv[1]
@@ -46,7 +38,8 @@ if __name__ == "__main__":
 
     subprocess.run(f"rm -rf {tmp_path}", shell=True, check=True)
     coord = coordinator.Coordinator(tmp_path, "Test Runner")
-    config = {"phase": phase, "port":port, "size": 384, "network": "intercept", "AMQPURL": AMQPURL()}
+    config = {"phase": phase, "port":port, "size": 384, "network": "intercept",
+              "AMQPURL": AMQPURL()}
     path = coord.create_runner(config, 19999)
 
     if os.getenv("CI") != "true":
