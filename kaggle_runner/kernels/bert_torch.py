@@ -158,6 +158,15 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
 
         param_optimizer = list(model.named_parameters())
         may_debug()
+
+        req_grad = ['layer.11', 'bert.poole', 'classifier']
+
+        for n, p in param_optimizer:
+            if any(nd in n for nd in req_grad):
+                p.requires_grad = True
+            else:
+                p.requires_grad = False
+
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
             {'params': [p for n, p in param_optimizer if not any(
