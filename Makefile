@@ -219,7 +219,8 @@ mbd_log:
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
 
-mbd_pretrain: multilang_bert_data.sh may_torch_gpu_setup tpu_setup
+mbd_pretrain: multilang_bert_data.sh may_torch_gpu_setup 
+	-make tpu_setup
 	DEBUG=true STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && make distclean
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill -f "entry.sh") &
