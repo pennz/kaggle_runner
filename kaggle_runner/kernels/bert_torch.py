@@ -1,4 +1,8 @@
 from __future__ import absolute_import, division, print_function
+import sys
+package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
+sys.path.insert(0, package_dir_a)
+
 from kaggle_runner.datasets.bert import BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
 from kaggle_runner import may_debug
 from apex import amp  # automatic mix precision
@@ -16,7 +20,6 @@ import os
 import pickle
 import re
 import shutil
-import sys
 import time
 import warnings
 
@@ -32,8 +35,6 @@ import torch.utils.data
 from IPython.core.interactiveshell import InteractiveShell
 from nltk.stem import PorterStemmer
 
-package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
-sys.path.insert(0, package_dir_a)
 
 # %load_ext autoreload
 # %autoreload 2
