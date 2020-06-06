@@ -42,8 +42,11 @@ _: test_bert_torch
 	echo "DONE"
 	#kill 7 8 # magic pids
 
-test_bert_torch:
-	$(PY) -m pytest -k "test_generate_runner" 
+test_bert_torch: pytest
+	$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_distilbert_model.py
+
+pytest:
+	$(PY) -m pip show pytest | grep 3.6 &>/dev/null || $(PY) -m pip install pytest==3.6
 
 log_receiver:
 	@echo "$@" will use tcp to receive logs

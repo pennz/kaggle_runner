@@ -2,7 +2,6 @@ import os
 
 import pandas as pd
 import tensorflow as tf
-import transformers
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import binary_accuracy
@@ -71,6 +70,7 @@ def _build_distilbert_model(transformer, max_len=512):
 def build_distilbert_model_singleton(max_len):
     global __model_distilbert
 
+    import transformers
     #if __model_distilbert is None:
 
     if True:
