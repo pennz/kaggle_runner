@@ -10,9 +10,9 @@ endif
 
 KAGGLE_USER_NAME=$(shell jq -r '.username' ~/.kaggle/kaggle.json)
 
-SED := $(shell command -v gsed)
+SED := $(shell type -p gsed)
 ifeq ($(SED),)
-	SED := $(shell command -v sed)
+	SED := $(shell tpye -p sed)
 endif
 export SED := $(SED)
 
