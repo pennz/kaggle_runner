@@ -2,24 +2,25 @@
   "id": "k1gaggle/toxic-bert-plain-vanila",
   "id_no": 9906840,
   "title": "Toxic  BERT plain vanila",
-  "code_file": "main.py",
+  "code_file": "main.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": true,
-  "enable_gpu": true,
-  "enable_internet": true,
+  "enable_gpu": false,
+  "enable_internet": false,
   "keywords": [
     "gpu"
   ],
   "dataset_sources": [
-    "k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
     "maxjeblick/bert-pretrained-models",
-    "k1gaggle/jigsaw-toxic-token-ids-for-bert",
     "matsuik/ppbert",
-    "gabrichy/nvidiaapex"
+    "gabrichy/nvidiaapex",
+    "k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
+    "k1gaggle/jigsaw-toxic-token-ids-for-bert"
   ],
   "kernel_sources": [],
   "competition_sources": [
-    "jigsaw-unintended-bias-in-toxicity-classification"
+    "jigsaw-unintended-bias-in-toxicity-classification",
+    "jigsaw-multilingual-toxic-comment-classification"
   ]
 }
