@@ -1,3 +1,4 @@
+import os
 import tensorflow as tf
 
 from kaggle_runner import logger, may_debug
@@ -7,7 +8,7 @@ AUTO = tf.data.experimental.AUTOTUNE
 
 may_debug()
 try:
-    tpu_resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
+    tpu_resolver = tf.distribute.cluster_resolver.TPUClusterResolver(os.getenv("TPU_NAME"))
     tf.config.experimental_connect_to_cluster(tpu_resolver)
     tf.tpu.experimental.initialize_tpu_system(tpu_resolver)
     strategy = tf.distribute.experimental.TPUStrategy(tpu_resolver)
