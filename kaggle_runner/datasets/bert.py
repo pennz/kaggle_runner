@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-from kaggle_runner import may_debug
+from kaggle_runner import may_debug, logger
 from kaggle_runner.defaults import DEBUG
 from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
                                               get_obj_or_dump)
@@ -32,7 +32,6 @@ if tpu_resolver is None:
     DATA_PATH = "/kaggle/input/jigsaw-multilingual-toxic-comment-classification/"
     BERT_BASE_DIR = "/kaggle/input/bert-pretrained-models" + \
         '/multi_cased_L-12_H-768_A-12' + '/multi_cased_L-12_H-768_A-12'
-
 else:
     from kaggle_datasets import KaggleDatasets
     GCS_DS_PATH = KaggleDatasets().get_gcs_path(
@@ -79,15 +78,19 @@ train_data = None
 
 data_package = get_kaggle_dataset_input(
     "jigsaw-multilingula-toxicity-token-encoded/toxic_fast_tok_512.pk")
-csv_data_package = get_kaggle_dataset_input(
-    "jigsaw-multilingula-toxicity-token-encoded/toxic_csv.pk")
+try:
+    csv_data_package = get_kaggle_dataset_input(
+        "jigsaw-multilingula-toxicity-token-encoded/toxic_csv.pk")
+except ModuleNotFoundError as e:
+    logger.error("%s", e)
+    csv_data_package = None
 
 if csv_data_package is None:
     val_data = pd.read_csv(VAL_PATH)
     test_data = pd.read_csv(TEST_PATH)
     train_data = pd.read_csv(TRAIN_PATH)
-    csv_data_package = get_obj_or_dump(
-        "toxic_csv.pk", default=(val_data, test_data, train_data))
+    csv_data_package = (val_data, test_data, train_data)
+    get_obj_or_dump("toxic_csv.pk", default=csv_data_package)
 else:
     val_data, test_data, train_data = csv_data_package
 
