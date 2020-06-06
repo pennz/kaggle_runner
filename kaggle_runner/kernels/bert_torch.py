@@ -4,7 +4,7 @@ package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT
 sys.path.insert(0, package_dir_a)
 
 from kaggle_runner.datasets.bert import DATA_PATH, BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
-from kaggle_runner import may_debug
+from kaggle_runner import may_debug, logger
 from tqdm import tqdm, tqdm_notebook
 from sklearn.metrics import roc_auc_score
 from sklearn import metrics, model_selection
