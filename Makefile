@@ -230,7 +230,7 @@ tpu_setup:
 	pip show torch_xla || $(PY) /tmp/pytorch-xla-env-setup.py #@param ["20200220","nightly", "xrt==1.15.0"]
 
 may_torch_gpu_setup:
-	-[ -d /kaggle/input/apex-compiled-for-gpu-kernel/apex ] && type nvidia-smi &>/dev/null && (pip show apex || (cp -r /kaggle/input/apex-compiled-for-gpu-kernel/apex . && pushd apex && pip install .))
+	-[ -d /kaggle/input/apex-compiled-for-gpu-kernel/apex ] && (pip show apex || (cp -r /kaggle/input/apex-compiled-for-gpu-kernel/apex . && pushd apex && pip install .))
 
 mbd:
 	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
