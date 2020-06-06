@@ -71,14 +71,14 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
     X, y, X_val, y_val = data_package
 
-    global PRETRAIND_PICKLE_AND_MORE
+    pretrain_data_folder = PRETRAIND_PICKLE_AND_MORE
 
-    if not os.path.exists(PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"):
-        PRETRAIND_PICKLE_AND_MORE = '/home/working'
+    if not os.path.exists(pretrain_data_folder+"/bert_pytorch.bin"):
+        pretrain_data_folder = '/home/working'
 
-    if os.path.exists(PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"):
-        output_model_file = PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"
-        bert_config = BertConfig.from_json_file(PRETRAIND_PICKLE_AND_MORE + "/bert_config.json")
+    if os.path.exists(pretrain_data_folder+"/bert_pytorch.bin"):
+        output_model_file = pretrain_data_folder+"/bert_pytorch.bin"
+        bert_config = BertConfig.from_json_file(pretrain_data_folder + "/bert_config.json")
 
 # Run validation
 # The following 2 lines are not needed but show how to download the model for prediction
