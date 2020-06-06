@@ -13,6 +13,8 @@ from kaggle_runner.utils import AMQPURL, logger
 rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: ' # for debug
 
+NC=${NC:-ncat}
+type $NC || ( echo >&2 "$NC cannot be found. Exit."; exit 1;)
 # https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
 # coproc { sleep 30 && echo "Output" && exit 3; }
 # Saving the coprocess's PID for later, as COPROC_PID apparently unsets when its finished
