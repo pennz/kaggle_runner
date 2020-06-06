@@ -72,7 +72,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
     if os.path.exists(PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"):
         output_model_file = PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"
-	bert_config = PRETRAIND_PICKLE_AND_MORE + "/bert_config.json"
+    bert_config = PRETRAIND_PICKLE_AND_MORE + "/bert_config.json"
 
 # Run validation
 # The following 2 lines are not needed but show how to download the model for prediction
@@ -98,81 +98,81 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
             valid_preds[i*32:(i+1)*32] = pred[:,
                                               0].detach().cpu().squeeze().numpy()
     else:
-		train_dataset = torch.utils.data.TensorDataset(torch.tensor(
-			X, dtype=torch.long), torch.tensor(y, dtype=torch.float))
-		output_model_file = "bert_pytorch.bin"
+        train_dataset = torch.utils.data.TensorDataset(torch.tensor(
+            X, dtype=torch.long), torch.tensor(y, dtype=torch.float))
+        output_model_file = "bert_pytorch.bin"
 
-		lr = 2e-5
-		batch_size = 32
-		accumulation_steps = 2
-		np.random.seed(SEED)
-		torch.manual_seed(SEED)
-		torch.cuda.manual_seed(SEED)
-		torch.backends.cudnn.deterministic = True
+        lr = 2e-5
+        batch_size = 32
+        accumulation_steps = 2
+        np.random.seed(SEED)
+        torch.manual_seed(SEED)
+        torch.cuda.manual_seed(SEED)
+        torch.backends.cudnn.deterministic = True
 
-		prepare_pretrained()
-		model = BertForSequenceClassification.from_pretrained(
-			".", cache_dir=None, num_labels=1 if len(y[0]) < 1 else len(y[0]))
-		model.zero_grad()
-		model = model.to(device)
-		param_optimizer = list(model.named_parameters())
-		no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-		optimizer_grouped_parameters = [
-			{'params': [p for n, p in param_optimizer if not any(
-				nd in n for nd in no_decay)], 'weight_decay': 0.01},
-			{'params': [p for n, p in param_optimizer if any(
-				nd in n for nd in no_decay)], 'weight_decay': 0.0}
-		]
-		train = train_dataset
+        prepare_pretrained()
+        model = BertForSequenceClassification.from_pretrained(
+            ".", cache_dir=None, num_labels=1 if len(y[0]) < 1 else len(y[0]))
+        model.zero_grad()
+        model = model.to(device)
+        param_optimizer = list(model.named_parameters())
+        no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+        optimizer_grouped_parameters = [
+            {'params': [p for n, p in param_optimizer if not any(
+                nd in n for nd in no_decay)], 'weight_decay': 0.01},
+            {'params': [p for n, p in param_optimizer if any(
+                nd in n for nd in no_decay)], 'weight_decay': 0.0}
+        ]
+        train = train_dataset
 
-		num_train_optimization_steps = int(
-			EPOCHS*len(train)/batch_size/accumulation_steps)
+        num_train_optimization_steps = int(
+            EPOCHS*len(train)/batch_size/accumulation_steps)
 
-		optimizer = BertAdam(optimizer_grouped_parameters,
+        optimizer = BertAdam(optimizer_grouped_parameters,
                        lr=lr,
                        warmup=0.05,
                        t_total=num_train_optimization_steps)
 
-		model, optimizer = amp.initialize(
-			model, optimizer, opt_level="O1", verbosity=1)
-		model = model.train()
+        model, optimizer = amp.initialize(
+            model, optimizer, opt_level="O1", verbosity=1)
+        model = model.train()
 
-		tq = tqdm(range(EPOCHS))
+        tq = tqdm(range(EPOCHS))
 
-		for epoch in tq:
-			train_loader = torch.utils.data.DataLoader(
-				train, batch_size=batch_size, shuffle=True)
-			avg_loss = 0.
-			avg_accuracy = 0.
-			lossf = None
-			tk0 = tqdm(enumerate(train_loader),
+        for epoch in tq:
+            train_loader = torch.utils.data.DataLoader(
+                train, batch_size=batch_size, shuffle=True)
+            avg_loss = 0.
+            avg_accuracy = 0.
+            lossf = None
+            tk0 = tqdm(enumerate(train_loader),
                             total=len(train_loader), leave=False)
-			optimizer.zero_grad()   # Bug fix - thanks to @chinhuic
+            optimizer.zero_grad()   # Bug fix - thanks to @chinhuic
 
-			for i, (x_batch, y_batch) in tk0:
-				#        optimizer.zero_grad()
-				y_pred = model(x_batch.to(device), attention_mask=(
-					x_batch > 0).to(device), labels=None)
-				loss = F.binary_cross_entropy_with_logits(
-					y_pred, y_batch.to(device))
-				with amp.scale_loss(loss, optimizer) as scaled_loss:
-					scaled_loss.backward()
+            for i, (x_batch, y_batch) in tk0:
+                #        optimizer.zero_grad()
+                y_pred = model(x_batch.to(device), attention_mask=(
+                    x_batch > 0).to(device), labels=None)
+                loss = F.binary_cross_entropy_with_logits(
+                    y_pred, y_batch.to(device))
+                with amp.scale_loss(loss, optimizer) as scaled_loss:
+                    scaled_loss.backward()
 
-				if (i+1) % accumulation_steps == 0:             # Wait for several backward steps
-					optimizer.step()                            # Now we can do an optimizer step
-					optimizer.zero_grad()
+                if (i+1) % accumulation_steps == 0:             # Wait for several backward steps
+                    optimizer.step()                            # Now we can do an optimizer step
+                    optimizer.zero_grad()
 
-				if lossf:
-					lossf = 0.98*lossf+0.02*loss.item()
-				else:
-					lossf = loss.item()
-				tk0.set_postfix(loss=lossf)
-				avg_loss += loss.item() / len(train_loader)
-				avg_accuracy += torch.mean(((torch.sigmoid(y_pred[:, 0]) > 0.5) == (
-					y_batch[:, 0] > 0.5).to(device)).to(torch.float)).item()/len(train_loader)
-			tq.set_postfix(avg_loss=avg_loss, avg_accuracy=avg_accuracy)
+                if lossf:
+                    lossf = 0.98*lossf+0.02*loss.item()
+                else:
+                    lossf = loss.item()
+                tk0.set_postfix(loss=lossf)
+                avg_loss += loss.item() / len(train_loader)
+                avg_accuracy += torch.mean(((torch.sigmoid(y_pred[:, 0]) > 0.5) == (
+                    y_batch[:, 0] > 0.5).to(device)).to(torch.float)).item()/len(train_loader)
+            tq.set_postfix(avg_loss=avg_loss, avg_accuracy=avg_accuracy)
 
-		torch.save(model.state_dict(), output_model_file)
+        torch.save(model.state_dict(), output_model_file)
 # +
 # Run validation
 # The following 2 lines are not needed but show how to download the model for prediction
