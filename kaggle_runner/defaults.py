@@ -24,7 +24,10 @@ Data_Folder = '/home/'
 RIPDB = os.environ.get("RIPDB") == 'true'
 DEBUG = os.environ.get("DEBUG") == 'true'
 INTERACTIVE = False
-__note = subprocess.check_output('pgrep -f "jupyter notebook"', shell=True)
+try:
+	__note = subprocess.check_output('pgrep -f "jupyter notebook"', shell=True)
 
-if __note.strip() != "":
-    INTERACTIVE = True
+	if __note.strip() != "":
+		INTERACTIVE = True
+except:
+	pass
