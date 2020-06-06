@@ -266,4 +266,7 @@ distclean:
 	rm -r .git
 	rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
 
+dataset:
+	kaggle datasets download -d k1gaggle/toxic-multilang-trained-torch-model
+
 .PHONY: clean connect inner_lstm pc mbd_log

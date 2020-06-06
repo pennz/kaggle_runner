@@ -1,3 +1,12 @@
+from kaggle_runner.datasets.bert import BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
+from kaggle_runner import may_debug
+from apex import amp  # automatic mix precision
+from tqdm import tqdm, tqdm_notebook
+from sklearn.metrics import roc_auc_score
+from sklearn import metrics, model_selection
+from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
+                                     BertTokenizer,
+                                     convert_tf_checkpoint_to_pytorch)  # needed fused_layer_norm_cuda, so TPU won't work
 from __future__ import absolute_import, division, print_function
 
 import datetime
@@ -25,20 +34,10 @@ from nltk.stem import PorterStemmer
 
 package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
 sys.path.insert(0, package_dir_a)
-from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
-                                     BertTokenizer,
-                                     convert_tf_checkpoint_to_pytorch) # needed fused_layer_norm_cuda, so TPU won't work
-from sklearn import metrics, model_selection
-from sklearn.metrics import roc_auc_score
+
 # %load_ext autoreload
 # %autoreload 2
 # %matplotlib inline
-from tqdm import tqdm, tqdm_notebook
-
-from apex import amp # automatic mix precision
-from kaggle_runner import may_debug
-from kaggle_runner.datasets.bert import BERT_BASE_DIR
-
 
 
 InteractiveShell.ast_node_interactivity = "all"
@@ -48,18 +47,21 @@ warnings.filterwarnings(action='once')
 EPOCHS = 1
 WORK_DIR = '/kaggle/working/'
 
+
 def prepare_pretrained():
     convert_tf_checkpoint_to_pytorch.convert_tf_checkpoint_to_pytorch(
         BERT_BASE_DIR + '/bert_model.ckpt',
         BERT_BASE_DIR + '/bert_config.json',
-    WORK_DIR + 'pytorch_model.bin')
+        WORK_DIR + 'pytorch_model.bin')
 
-    shutil.copyfile(BERT_BASE_DIR + '/bert_config.json', WORK_DIR + 'bert_config.json')
+    shutil.copyfile(BERT_BASE_DIR + '/bert_config.json',
+                    WORK_DIR + 'bert_config.json')
 # -
 
 
 def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
     may_debug()
+    y_columns = ['toxic']
 
     if device is None and os.getenv("TPU_NAME") is not None:
         import torch_xla
@@ -68,81 +70,109 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
     X, y, X_val, y_val = data_package
 
-    train_dataset = torch.utils.data.TensorDataset(torch.tensor(
-        X, dtype=torch.long), torch.tensor(y, dtype=torch.float))
-    output_model_file = "bert_pytorch.bin"
+    if os.path.exists(PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"):
+        output_model_file = PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"
+	bert_config = PRETRAIND_PICKLE_AND_MORE + "/bert_config.json"
 
-    lr = 2e-5
-    batch_size = 32
-    accumulation_steps = 2
-    np.random.seed(SEED)
-    torch.manual_seed(SEED)
-    torch.cuda.manual_seed(SEED)
-    torch.backends.cudnn.deterministic = True
+# Run validation
+# The following 2 lines are not needed but show how to download the model for prediction
+        model = BertForSequenceClassification(
+            bert_config, num_labels=len(y_columns))
+        model.load_state_dict(torch.load(output_model_file))
+        model.to(device)
 
-    prepare_pretrained()
-    model = BertForSequenceClassification.from_pretrained(
-        ".", cache_dir=None, num_labels=1 if len(y[0])< 1 else len(y[0]))
-    model.zero_grad()
-    model = model.to(device)
-    param_optimizer = list(model.named_parameters())
-    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(
-            nd in n for nd in no_decay)], 'weight_decay': 0.01},
-        {'params': [p for n, p in param_optimizer if any(
-            nd in n for nd in no_decay)], 'weight_decay': 0.0}
-    ]
-    train = train_dataset
+        for param in model.parameters():
+            param.requires_grad = False
+        model.eval()
+        valid_preds = np.zeros((len(X_val)))
+        valid = torch.utils.data.TensorDataset(
+            torch.tensor(X_val, dtype=torch.long))
+        valid_loader = torch.utils.data.DataLoader(
+            valid, batch_size=32, shuffle=False)
 
-    num_train_optimization_steps = int(
-        EPOCHS*len(train)/batch_size/accumulation_steps)
+        tk0 = tqdm(valid_loader)
 
-    optimizer = BertAdam(optimizer_grouped_parameters,
-                         lr=lr,
-                         warmup=0.05,
-                         t_total=num_train_optimization_steps)
-
-    model, optimizer = amp.initialize(
-        model, optimizer, opt_level="O1", verbosity=1)
-    model = model.train()
-
-    tq = tqdm(range(EPOCHS))
-
-    for epoch in tq:
-        train_loader = torch.utils.data.DataLoader(
-            train, batch_size=batch_size, shuffle=True)
-        avg_loss = 0.
-        avg_accuracy = 0.
-        lossf = None
-        tk0 = tqdm(enumerate(train_loader),
-                            total=len(train_loader), leave=False)
-        optimizer.zero_grad()   # Bug fix - thanks to @chinhuic
-
-        for i, (x_batch, y_batch) in tk0:
-            #        optimizer.zero_grad()
-            y_pred = model(x_batch.to(device), attention_mask=(
+        for i, (x_batch,) in enumerate(tk0):
+            pred = model(x_batch.to(device), attention_mask=(
                 x_batch > 0).to(device), labels=None)
-            loss = F.binary_cross_entropy_with_logits(
-                y_pred, y_batch.to(device))
-            with amp.scale_loss(loss, optimizer) as scaled_loss:
-                scaled_loss.backward()
+            valid_preds[i*32:(i+1)*32] = pred[:,
+                                              0].detach().cpu().squeeze().numpy()
+    else:
+		train_dataset = torch.utils.data.TensorDataset(torch.tensor(
+			X, dtype=torch.long), torch.tensor(y, dtype=torch.float))
+		output_model_file = "bert_pytorch.bin"
 
-            if (i+1) % accumulation_steps == 0:             # Wait for several backward steps
-                optimizer.step()                            # Now we can do an optimizer step
-                optimizer.zero_grad()
+		lr = 2e-5
+		batch_size = 32
+		accumulation_steps = 2
+		np.random.seed(SEED)
+		torch.manual_seed(SEED)
+		torch.cuda.manual_seed(SEED)
+		torch.backends.cudnn.deterministic = True
 
-            if lossf:
-                lossf = 0.98*lossf+0.02*loss.item()
-            else:
-                lossf = loss.item()
-            tk0.set_postfix(loss=lossf)
-            avg_loss += loss.item() / len(train_loader)
-            avg_accuracy += torch.mean(((torch.sigmoid(y_pred[:, 0]) > 0.5) == (
-                y_batch[:, 0] > 0.5).to(device)).to(torch.float)).item()/len(train_loader)
-        tq.set_postfix(avg_loss=avg_loss, avg_accuracy=avg_accuracy)
+		prepare_pretrained()
+		model = BertForSequenceClassification.from_pretrained(
+			".", cache_dir=None, num_labels=1 if len(y[0]) < 1 else len(y[0]))
+		model.zero_grad()
+		model = model.to(device)
+		param_optimizer = list(model.named_parameters())
+		no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+		optimizer_grouped_parameters = [
+			{'params': [p for n, p in param_optimizer if not any(
+				nd in n for nd in no_decay)], 'weight_decay': 0.01},
+			{'params': [p for n, p in param_optimizer if any(
+				nd in n for nd in no_decay)], 'weight_decay': 0.0}
+		]
+		train = train_dataset
 
-    torch.save(model.state_dict(), output_model_file)
+		num_train_optimization_steps = int(
+			EPOCHS*len(train)/batch_size/accumulation_steps)
+
+		optimizer = BertAdam(optimizer_grouped_parameters,
+                       lr=lr,
+                       warmup=0.05,
+                       t_total=num_train_optimization_steps)
+
+		model, optimizer = amp.initialize(
+			model, optimizer, opt_level="O1", verbosity=1)
+		model = model.train()
+
+		tq = tqdm(range(EPOCHS))
+
+		for epoch in tq:
+			train_loader = torch.utils.data.DataLoader(
+				train, batch_size=batch_size, shuffle=True)
+			avg_loss = 0.
+			avg_accuracy = 0.
+			lossf = None
+			tk0 = tqdm(enumerate(train_loader),
+                            total=len(train_loader), leave=False)
+			optimizer.zero_grad()   # Bug fix - thanks to @chinhuic
+
+			for i, (x_batch, y_batch) in tk0:
+				#        optimizer.zero_grad()
+				y_pred = model(x_batch.to(device), attention_mask=(
+					x_batch > 0).to(device), labels=None)
+				loss = F.binary_cross_entropy_with_logits(
+					y_pred, y_batch.to(device))
+				with amp.scale_loss(loss, optimizer) as scaled_loss:
+					scaled_loss.backward()
+
+				if (i+1) % accumulation_steps == 0:             # Wait for several backward steps
+					optimizer.step()                            # Now we can do an optimizer step
+					optimizer.zero_grad()
+
+				if lossf:
+					lossf = 0.98*lossf+0.02*loss.item()
+				else:
+					lossf = loss.item()
+				tk0.set_postfix(loss=lossf)
+				avg_loss += loss.item() / len(train_loader)
+				avg_accuracy += torch.mean(((torch.sigmoid(y_pred[:, 0]) > 0.5) == (
+					y_batch[:, 0] > 0.5).to(device)).to(torch.float)).item()/len(train_loader)
+			tq.set_postfix(avg_loss=avg_loss, avg_accuracy=avg_accuracy)
+
+		torch.save(model.state_dict(), output_model_file)
 # +
 # Run validation
 # The following 2 lines are not needed but show how to download the model for prediction
@@ -151,24 +181,24 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 #    model.load_state_dict(torch.load(output_model_file))
 #    model.to(device)
 #
-    for param in model.parameters():
-        param.requires_grad = False
-    model.eval()
-    valid_preds = np.zeros((len(X_val)))
-    valid = torch.utils.data.TensorDataset(
-        torch.tensor(X_val, dtype=torch.long))
-    valid_loader = torch.utils.data.DataLoader(
-        valid, batch_size=32, shuffle=False)
-
-    tk0 = tqdm(valid_loader)
-
-    for i, (x_batch,) in enumerate(tk0):
-        pred = model(x_batch.to(device), attention_mask=(
-            x_batch > 0).to(device), labels=None)
-        valid_preds[i*32:(i+1)*32] = pred[:,
-                                          0].detach().cpu().squeeze().numpy()
-
-
+#    for param in model.parameters():
+#        param.requires_grad = False
+#    model.eval()
+#    valid_preds = np.zeros((len(X_val)))
+#    valid = torch.utils.data.TensorDataset(
+#        torch.tensor(X_val, dtype=torch.long))
+#    valid_loader = torch.utils.data.DataLoader(
+#        valid, batch_size=32, shuffle=False)
+#
+#    tk0 = tqdm(valid_loader)
+#
+#    for i, (x_batch,) in enumerate(tk0):
+#        pred = model(x_batch.to(device), attention_mask=(
+#            x_batch > 0).to(device), labels=None)
+#        valid_preds[i*32:(i+1)*32] = pred[:,
+#                                          0].detach().cpu().squeeze().numpy()
+#
+#
 ## +
 ## From baseline kernel
 #
