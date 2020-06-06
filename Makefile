@@ -42,6 +42,9 @@ _: test_bert_torch
 	echo "DONE"
 	#kill 7 8 # magic pids
 
+test: test_bert_torch
+	echo "TEST DONE"
+
 test_bert_torch: pytest
 	$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py
 
