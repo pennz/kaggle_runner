@@ -5,29 +5,11 @@ from kaggle_runner.datasets.bert import (BATCH_SIZE, TRAIN_LEN, train_dataset,
                                          val_data, valid_dataset, x_valid,
                                          y_valid)
 from kaggle_runner.defaults import DEBUG
+from kaggle_runner.utils.visualizer import visualize_model_preds
+
 from kaggle_runner.kernels.bert import (bert_cbs,
                                         build_distilbert_model_singleton,
                                         get_test_result)
-from kaggle_runner.utils.visualizer import visualize_model_preds
-
-from kaggle_runner.kernels import bert_torch
-from kaggle_runner.datasets.bert import pack_data
-
-class Test_bert_multi_lang:
-    @classmethod
-    def setup_class(cls):
-        cls.model = bert_torch.get_trained_model()
-        logger.debug("Start Test bert multi lang")
-
-    def setup_method(self, method):
-        logger.debug("setup for method %s", method)
-
-    def teardown_method(self, method):
-        logger.debug("teardown method %s", method)
-
-    def test_result(self):
-        data=pack_data()
-        bert_torch.get_test_result(self, data[-1])
 
 
 class Test_distilbert_model:

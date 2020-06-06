@@ -43,7 +43,7 @@ _: test_bert_torch
 	#kill 7 8 # magic pids
 
 test_bert_torch: pytest
-	$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_distilbert_model.py
+	$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py
 
 pytest:
 	$(PY) -m pip show pytest | grep 3.6 &>/dev/null || $(PY) -m pip install pytest==3.6
