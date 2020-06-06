@@ -137,9 +137,6 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
             valid_preds[i*32:(i+1)*32] = pred[:, 0].detach().cpu().squeeze().numpy()
     else:
         import subprocess
-        subprocess.run('python3 -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && '
-            'pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ../input/nvidiaapex/repository/NVIDIA-apex-39e153a)',
-                       shell=True, check=True)
         train_dataset = torch.utils.data.TensorDataset(torch.tensor(
             X, dtype=torch.long), torch.tensor(y, dtype=torch.float))
         output_model_file = "bert_pytorch.bin"
@@ -178,6 +175,9 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
                        warmup=0.05,
                        t_total=num_train_optimization_steps)
 
+        subprocess.run('python3 -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && '
+            'pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ../input/nvidiaapex/repository/NVIDIA-apex-39e153a)',
+                       shell=True, check=True)
         from apex import amp  # automatic mix precision
         model, optimizer = amp.initialize(
             model, optimizer, opt_level="O1", verbosity=1)
