@@ -5,7 +5,7 @@ from importlib import reload
 __all__ = ["may_debug", "logger", "runners.runner",
            "runners.coordinator", "utils"]
 
-from .defaults import DEBUG, RIPDB
+from .defaults import DEBUG, RIPDB, INTERACTIVE
 
 from .utils import logger
 
@@ -23,7 +23,15 @@ def may_debug(force=False):
     import pdb
 
     if force:
-        pdb.set_trace()
+        if INTERACTIVE:
+            import ipdb
+            ipdb.set_trace()
+        else:
+            pdb.set_trace()
     else:
         if DEBUG:
-            pdb.set_trace()
+            if INTERACTIVE:
+                import ipdb
+                ipdb.set_trace()
+            else:
+                pdb.set_trace()

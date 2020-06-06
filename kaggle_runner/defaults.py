@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 FOCAL_LOSS_GAMMA = 0.0
 FOCAL_LOSS_GAMMA_NEG_POS = 0.25
@@ -22,3 +23,8 @@ Data_Folder = '/home/'
 
 RIPDB = os.environ.get("RIPDB") == 'true'
 DEBUG = os.environ.get("DEBUG") == 'true'
+INTERACTIVE = False
+__note = subprocess.check_output('pgrep -f "jupyter notebook"', shell=True)
+
+if __note.strip() != "":
+    INTERACTIVE = True
