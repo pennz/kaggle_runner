@@ -44,7 +44,7 @@ InteractiveShell.ast_node_interactivity = "all"
 warnings.filterwarnings(action='once')
 
 
-EPOCHS = 1
+EPOCHS = 3
 WORK_DIR = '/kaggle/working/'
 
 
@@ -59,16 +59,16 @@ def prepare_pretrained():
 # -
 
 
-def get_trained_model( device=torch.device('cuda')):
+def get_trained_model( fine_tuned = "bert_pytorch.bin", device=torch.device('cuda')):
     model = None
     y_columns = ['toxic', "severe_toxic","obscene","threat","insult","identity_hate"]
     pretrain_data_folder = PRETRAIND_PICKLE_AND_MORE
 
-    if not os.path.exists(pretrain_data_folder+"/bert_pytorch.bin"):
+    if not os.path.exists(pretrain_data_folder+"/" + fine_tuned):
         pretrain_data_folder = '/home/working'
 
-    if os.path.exists(pretrain_data_folder+"/bert_pytorch.bin"):
-        output_model_file = pretrain_data_folder+"/bert_pytorch.bin"
+    if os.path.exists(pretrain_data_folder+"/"+fine_tuned):
+        output_model_file = pretrain_data_folder+"/"+fine_tuned
         bert_config = BertConfig.from_json_file(pretrain_data_folder + "/bert_config.json")
 
 # Run validation
@@ -107,7 +107,7 @@ def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=D
     sub.to_csv('submission.csv', index=False)
 
 
-def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
+def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predict"):
 
     if device is None and os.getenv("TPU_NAME") is not None:
         import torch_xla
@@ -118,7 +118,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
     model = get_trained_model(device)
 
-    if model is not None:
+    if model is not None and phase=="predict":
         for param in model.parameters():
             param.requires_grad = False
         model.eval()
@@ -139,25 +139,27 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
         subprocess.run('python3 -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && '
             'pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ../input/nvidiaapex/repository/NVIDIA-apex-39e153a)',
                        shell=True, check=True)
-        from apex import amp  # automatic mix precision
         train_dataset = torch.utils.data.TensorDataset(torch.tensor(
             X, dtype=torch.long), torch.tensor(y, dtype=torch.float))
         output_model_file = "bert_pytorch.bin"
 
         lr = 2e-5
         batch_size = 32
-        accumulation_steps = 2
+        accumulation_steps = 3
         np.random.seed(SEED)
         torch.manual_seed(SEED)
         torch.cuda.manual_seed(SEED)
-        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.deterministic = False
 
-        prepare_pretrained()
-        model = BertForSequenceClassification.from_pretrained(
-            ".", cache_dir=None, num_labels=1 if len(y[0]) < 1 else len(y[0]))
+        if model is None:
+            prepare_pretrained()
+            model = BertForSequenceClassification.from_pretrained(
+                ".", cache_dir=None, num_labels=1 if len(y[0]) < 1 else len(y[0]))
         model.zero_grad()
         model = model.to(device)
+
         param_optimizer = list(model.named_parameters())
+        may_debug()
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
             {'params': [p for n, p in param_optimizer if not any(
@@ -175,6 +177,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
                        warmup=0.05,
                        t_total=num_train_optimization_steps)
 
+        from apex import amp  # automatic mix precision
         model, optimizer = amp.initialize(
             model, optimizer, opt_level="O1", verbosity=1)
         model = model.train()
