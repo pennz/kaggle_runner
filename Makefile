@@ -136,9 +136,9 @@ toxic: wt check
 	if [ -z $$DEBUG ]; then $(UNBUFFER) $(PY) tests/test_distilbert_model.py 2>&1 | $(UNBUFFERP) tee -a toxic_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); else ./wt '$(PY) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
-test: update_code $(SRC)
-	eval 'echo $$(which $(PY)) is our $(PY) executable'
+test_coor: update_code $(SRC)
 	$(PY) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY) main.py
+
 clean:
 	#-bash -c 'currentPpid=$$(pstree -spa $$$$ | $(SED) -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | $(SED) "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
 	-ps aux | grep "vlp" | grep -v "while" | grep -v "grep" | tee /dev/tty | awk '{print $$2} ' | xargs -I{} kill -9 {}
@@ -274,7 +274,7 @@ distclean: clean
 	rm -r .git
 	rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
 
-dataset:
+kaggle_dataset:
 	kaggle datasets download -d k1gaggle/toxic-multilang-trained-torch-model
 
 .PHONY: clean connect inner_lstm pc mbd_log
