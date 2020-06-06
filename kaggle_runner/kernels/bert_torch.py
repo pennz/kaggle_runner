@@ -22,6 +22,7 @@ import torch.nn.functional as F
 import torch.utils.data
 from IPython.core.interactiveshell import InteractiveShell
 from nltk.stem import PorterStemmer
+sys.path.append('/kaggle/input/ppbert/pytorch-pretrained-BERT/')
 from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
                                      BertTokenizer,
                                      convert_tf_checkpoint_to_pytorch) # needed fused_layer_norm_cuda, so TPU won't work
