@@ -181,7 +181,6 @@ echo "alias vim='nvim -u ~/.vimrc_back'" >> ~/.bash_aliases
 popd
 
 cat >> ~/.profile << EOF
-reset
 export SHELL=/bin/bash
 export TERM=screen-256color
 stty intr ^\c susp ^\x eof ^\f echo opost
@@ -289,7 +288,6 @@ export SERVER=$SERVER
 export CHECK_PORT=$CHECK_PORT
 EOF
 
-stty rows 40 columns 120
 source rpt # rvs IDE env setup
 export SERVER=$SERVER
 export CHECK_PORT=$CHECK_PORT
