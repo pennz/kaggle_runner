@@ -61,7 +61,6 @@ def prepare_pretrained():
 
 
 def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
-    may_debug()
     y_columns = ['toxic']
 
     if device is None and os.getenv("TPU_NAME") is not None:
@@ -72,6 +71,8 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
     X, y, X_val, y_val = data_package
 
     pretrain_data_folder = PRETRAIND_PICKLE_AND_MORE
+
+    may_debug()
 
     if not os.path.exists(pretrain_data_folder+"/bert_pytorch.bin"):
         pretrain_data_folder = '/home/working'
