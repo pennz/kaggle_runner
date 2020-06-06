@@ -183,7 +183,6 @@ reset
 export SHELL=/bin/bash
 export TERM=screen-256color
 stty intr ^\c susp ^\x eof ^\f echo opost
-stty rows 40 columns 120
 # https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
 # unsetopt ZLE # for zsh
 # for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p
@@ -288,6 +287,7 @@ export SERVER=$SERVER
 export CHECK_PORT=$CHECK_PORT
 EOF
 
+stty rows 40 columns 120
 source rpt # rvs IDE env setup
 export SERVER=$SERVER
 export CHECK_PORT=$CHECK_PORT
