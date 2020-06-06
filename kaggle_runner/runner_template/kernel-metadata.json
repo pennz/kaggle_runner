@@ -1,7 +1,6 @@
 {
-  "id": "k1gaggle/toxic-bert-plain-vanila",
-  "id_no": 9906840,
-  "title": "Toxic  BERT plain vanila",
+  "id": "k1gaggle/fork-of-toxic-bert-plain-vanila",
+  "title": "Toxic BERT plain vanila",
   "code_file": "main.ipynb",
   "language": "python",
   "kernel_type": "notebook",

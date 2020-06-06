@@ -15,7 +15,8 @@ if [[ x$(which python3) =~ conda ]]; then echo conda env fine; else
     echo "$(which python3) is our python executable"
 fi
 PY=$(which python3)
-push_log=$($PY -m kaggle_runner "$PORT" "$PHASE")
+#push_log=$($PY -m kaggle_runner "$PORT" "$PHASE")
+push_log=$(kaggle kernels push -p kaggle_runner/runner_template/)
 
 echo $push_log
 push_ret=$?
