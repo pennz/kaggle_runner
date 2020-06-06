@@ -107,7 +107,7 @@ def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=D
     sub.to_csv('submission.csv', index=False)
 
 
-def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predict"):
+def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predict", model=None):
 
     if device is None and os.getenv("TPU_NAME") is not None:
         import torch_xla
@@ -116,7 +116,8 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
 
     X, y, X_val, y_val, X_test = data_package
 
-    model = get_trained_model(device)
+    if model is None:
+        model = get_trained_model(device)
 
     if model is not None and phase=="predict":
         for param in model.parameters():

@@ -276,7 +276,7 @@ shift
 ORIG_PORT=23454
 
 CHECK_PORT=$((ORIG_PORT + 1))
-pip install --upgrade pip
+pip install --upgrade pip &
 conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 apt update && apt install -y netcat nmap screen time locales >/dev/null 2>&1
 apt install -y mosh iproute2 fish tig ctags htop tree pv tmux psmisc >/dev/null 2>&1 &
