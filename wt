@@ -1,9 +1,9 @@
 #!/bin/bash
 git pull
-bash -x -c "$*"
+bash -x -c "$*" </dev/tty
 
 while true; do
-    test x$(git pull | grep -c Already) = x1 || bash -c "$*"
+    test x$(git pull | grep -c Already) = x1 || bash -c "$*" </dev/tty
 
     echo "$(date) $HOSTNAME CPU: "$(
         grep \
