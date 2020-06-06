@@ -260,5 +260,6 @@ distclean:
 	-@git ls-files | xargs -I{} sh -c 'echo rm -r $$(dirname {}); rm -r $$(dirname {}) 2>/dev/null'
 	rm *.py *.sh *log
 	rm -r .git
+	rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
 
 .PHONY: clean connect inner_lstm pc mbd_log
