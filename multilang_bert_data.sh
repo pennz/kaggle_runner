@@ -13,8 +13,10 @@ git clone https://github.com/pennz/bert
 case $STAGE in
 pretrain)
     pip show apex || (
-        git clone --depth=1 https://github.com/NVIDIA/apex
-        pushd apex && python setup.py install --cuda_ext --cpp_ext && python -m pip install . && popd
+        [ -d /kaggle/input/apex-compiled-for-gpu-kernel/apex ] && (cp -rf /kaggle/input/apex-compiled-for-gpu-kernel/apex . && pushd apex && pip install .) || (
+            git clone --depth=1 https://github.com/NVIDIA/apex
+            pushd apex && python setup.py install --cuda_ext --cpp_ext && python -m pip install . && popd
+        )
     )
 
     python3 -c "from kaggle_runner.kernels.bert_torch import for_pytorch;from kaggle_runner.datasets.bert import pack_data; for_pytorch(pack_data());"
