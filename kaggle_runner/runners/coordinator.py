@@ -1,3 +1,4 @@
+from ..utils import AMQPURL, logger
 import json
 import os
 import re
@@ -10,7 +11,6 @@ import importlib
 import slug
 
 importlib.import_module('kaggle_runner')
-from kaggle_runner.utils import AMQPURL, logger
 
 rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: ' # for debug
