@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from kaggle_runner import logger
-from kaggle_runner.defaults import DEBUG, may_debug
+from kaggle_runner import logger, may_debug
+from kaggle_runner.defaults import DEBUG
 
 AUTO = tf.data.experimental.AUTOTUNE
 
