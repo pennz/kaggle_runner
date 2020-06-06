@@ -2,7 +2,6 @@
 export PATH := $(PWD)/reversShells:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
-export http_proxy := $(http_proxy)
 
 UNBUFFER := $(shell command -v unbuffer)
 ifneq ($(UNBUFFER),)
