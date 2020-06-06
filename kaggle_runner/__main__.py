@@ -12,10 +12,10 @@ if __name__ == "__main__":
     tmp_path = '.r'
 
     subprocess.run(f"rm -rf {tmp_path}", shell=True, check=True)
-    coord = coordinator.Coordinator(tmp_path, "Test Runner")
+    coord = coordinator.Coordinator("Test Runner", tmp_path)
     config = {"phase": phase, "port":port, "size": 384, "network": "intercept",
               "AMQPURL": AMQPURL()}
-    path = coord.create_runner(config, 19999)
+    path = coord.create_runner(config, 19999, script=False)
 
     if os.getenv("CI") != "true":
         ret = coord.push(path)  # just push first

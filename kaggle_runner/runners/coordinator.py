@@ -393,7 +393,7 @@ class Coordinator:
     template_path = "kaggle_runner/runner_template/"  # TODO just put it in the code
     """run in controller side, the runners run in dockers with GPUs"""
 
-    def __init__(self, tmp_path, title_prefix):
+    def __init__(self, title_prefix, tmp_path=".r"):
         self.tmp_path = tmp_path
         self.runners = []
         self.title_prefix = title_prefix
