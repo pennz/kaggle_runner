@@ -61,6 +61,8 @@ def prepare_pretrained():
 
 
 def for_pytorch(data_package, device=xm.xla_device(), SEED=18):
+    may_debug()
+
     if device is None:
         device = torch.device('cuda')
 
