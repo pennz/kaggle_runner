@@ -71,6 +71,9 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18):
 
     X, y, X_val, y_val = data_package
 
+    if not os.path.exists(PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"):
+        PRETRAIND_PICKLE_AND_MORE = '/home/working'
+
     if os.path.exists(PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"):
         output_model_file = PRETRAIND_PICKLE_AND_MORE+"/bert_pytorch.bin"
         bert_config = BertConfig.from_json_file(PRETRAIND_PICKLE_AND_MORE + "/bert_config.json")
