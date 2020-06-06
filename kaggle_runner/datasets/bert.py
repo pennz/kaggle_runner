@@ -15,6 +15,7 @@ from kaggle_runner.hub.bert.extract_features import load_data, get_tokenizer
 
 
 TOKENS_PATH = "/kaggle/input/jigsaw-toxic-token-ids-for-bert"
+PRETRAIND_PICKLE_AND_MORE='/kaggle/input/toxic-multilang-trained-torch-model'
 
 strategy=None
 tpu_resolver=None
