@@ -117,7 +117,10 @@ def for_pytorch(data_package, device=torch.device('cpu'), SEED=18, phase="predic
     X, y, X_val, y_val, X_test = data_package
 
     if model is None:
-        model = get_trained_model(device)
+        try:
+            model = get_trained_model(device)
+        except RuntimeError as e:
+            logger.debug("%s", e)
 
     if model is not None and phase=="predict":
         for param in model.parameters():

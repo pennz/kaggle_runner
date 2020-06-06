@@ -6,7 +6,10 @@ from kaggle_runner import logger, may_debug
 class Test_bert_multi_lang:
     @classmethod
     def setup_class(cls):
-        cls.model = bert_torch.get_trained_model()
+        try:
+            cls.model = bert_torch.get_trained_model()
+        except RuntimeError:
+            cls.model = None
         cls.data=pack_data()
         logger.debug("Start Test bert multi lang")
 
