@@ -24,7 +24,7 @@ from IPython.core.interactiveshell import InteractiveShell
 from nltk.stem import PorterStemmer
 from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
                                      BertTokenizer,
-                                     convert_tf_checkpoint_to_pytorch)
+                                     convert_tf_checkpoint_to_pytorch) # needed fused_layer_norm_cuda, so TPU won't work
 from sklearn import metrics, model_selection
 from sklearn.metrics import roc_auc_score
 # %load_ext autoreload
