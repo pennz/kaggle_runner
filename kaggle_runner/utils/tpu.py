@@ -1,10 +1,11 @@
 import tensorflow as tf
 
 from kaggle_runner import logger
-from kaggle_runner.defaults import DEBUG
+from kaggle_runner.defaults import DEBUG, may_debug
 
 AUTO = tf.data.experimental.AUTOTUNE
 
+may_debug()
 try:
     tpu_resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
     tf.config.experimental_connect_to_cluster(tpu_resolver)
