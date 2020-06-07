@@ -249,7 +249,7 @@ kaggle: /root/.kaggle/kaggle.json
 push_dataset:
 	cp datas/dataset-metadata.json datas/dm.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
-	cp log.txt datas
+	-cp log.txt /kaggle/submission.csv datas
 	kaggle datasets create -p datas/
 
 /root/.kaggle/kaggle.json:
