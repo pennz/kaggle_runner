@@ -39,11 +39,11 @@ echo "connection done." )
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
 _: test
-	echo "DONE"
+	echo "DONE $@"
 	#kill 7 8 # magic pids
 
 test: test_bert_torch
-	echo "TEST DONE"
+	echo "DONE $@"
 
 test_bert_torch: pytest
 	if [ -z $$DEBUG ]; then $(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py 2>&1 | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); \
