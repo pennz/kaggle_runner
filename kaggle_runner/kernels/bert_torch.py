@@ -107,8 +107,6 @@ def get_validation_result(model, test_dataset, y_targets, device=torch.device('c
     test_preds = get_predict(model, test_dataset, device)
     pred = 1 / (1+np.exp(- test_preds))
 
-    may_debug(True)
-
     if len(y_targets.shape) == 1:
         return roc_auc_score(y_targets, pred)
 
