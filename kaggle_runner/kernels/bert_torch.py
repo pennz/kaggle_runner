@@ -179,20 +179,24 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
         may_debug()
 
         req_grad = ['layer.10', 'layer.11', 'bert.poole', 'classifier']
-
-        for n, p in param_optimizer:
-            if any(nd in n for nd in req_grad):
-                p.requires_grad = True
-            else:
-                p.requires_grad = False
-
         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-        optimizer_grouped_parameters = [
-            {'params': [p for n, p in param_optimizer if not any(
-                nd in n for nd in no_decay)], 'weight_decay': 0.01},
-            {'params': [p for n, p in param_optimizer if any(
-                nd in n for nd in no_decay)], 'weight_decay': 0.0}
-        ]
+
+        def para_opt_configure(req_grad, no_decay):
+            for n, p in param_optimizer:
+                if any(nd in n for nd in req_grad):
+                    p.requires_grad = True
+                else:
+                    p.requires_grad = False
+
+            optimizer_grouped_parameters = [
+                {'params': [p for n, p in param_optimizer if not any(
+                    nd in n for nd in no_decay)], 'weight_decay': 0.01},
+                {'params': [p for n, p in param_optimizer if any(
+                    nd in n for nd in no_decay)], 'weight_decay': 0.0}
+            ]
+
+            return optimizer_grouped_parameters
+        optimizer_grouped_parameters = para_opt_configure(req_grad, no_decay)
         train = train_dataset
 
         num_train_optimization_steps = int(
@@ -219,6 +223,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
             avg_loss = 0.
             avg_accuracy = 0.
             lossf = None
+            para_opt_configure(req_grad, no_decay)  # valication will change it
             tk0 = tqdm(enumerate(train_loader), total=len(train_loader), leave=True)
             optimizer.zero_grad()   # Bug fix - thanks to @chinhuic
 
