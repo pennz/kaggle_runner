@@ -7,7 +7,6 @@ from kaggle_runner.datasets.bert import DATA_PATH, BERT_BASE_DIR, PRETRAIND_PICK
 from kaggle_runner import may_debug, logger
 from tqdm import tqdm, tqdm_notebook
 from sklearn.metrics import roc_auc_score
-import ignite
 from sklearn import metrics, model_selection
 from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
                                      BertTokenizer, BertConfig,
@@ -108,7 +107,7 @@ def get_validation_result(model, test_dataset, y_targets, device=torch.device('c
     test_preds = get_predict(model, test_dataset, device)
     pred = 1 / (1+np.exp(- test_preds))
 
-    return ignite.metrics.roc_auc.roc_auc_compute_fn(pred, y_targets)
+    return roc_auc_score(y_targets[:,0], pred)
 
 def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=DATA_PATH):
     test_preds = get_predict(self.model, test_dataset, device)
