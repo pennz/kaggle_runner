@@ -105,7 +105,10 @@ def get_predict(model, test_dataset, device=torch.device('cuda')):
     return test_preds
 
 def get_validation_result(model, test_dataset, y_targets, device=torch.device('cuda')) :
-    return ignite.metrics.roc_auc.roc_auc_compute_fn(get_predict(model, test_dataset, device), y_targets)
+    test_preds = get_predict(model, test_dataset, device)
+    pred = 1 / (1+np.exp(- test_preds))
+
+    return ignite.metrics.roc_auc.roc_auc_compute_fn(pred, y_targets)
 
 def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=DATA_PATH):
     test_preds = get_predict(self.model, test_dataset, device)
