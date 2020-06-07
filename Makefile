@@ -245,9 +245,10 @@ kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
 cd /kaggle/input/$$cmp_name; unzip '*.zip'
 
 kaggle: /root/.kaggle/kaggle.json
+
 push_dataset:
 	cp datas/dataset-metadata.json datas/dm.json
-	-ls *.bin | grep -v "last" | xargs -I{} cp {} datas/
+	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	cp log.txt datas
 	kaggle datasets create -p datas/
 
