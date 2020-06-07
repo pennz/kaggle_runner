@@ -242,9 +242,8 @@ data_download: kaggle
 	sed 's/"\(.*\)"/\1' .datasets | xargs -I{} bash -xc 'kaggle datasets download --unzip -p /kaggle/input {} &'
 
 kaggle: /root/.kaggle/kaggle.json
-	@mkdir -p ~/.kaggle
-	@echo "Please paste your kaggle API token"
-	cat > ~/.kaggle/kaggle.json </dev/tty
+	-@mkdir -p ~/.kaggle
+	@grep "username" ~/.kaggle/kaggle.json || (echo "Please paste your kaggle API token"; cat > ~/.kaggle/kaggle.json </dev/tty)
 	chmod 600 ~/.kaggle/kaggle.json
 
 mbd_pretrain: multilang_bert_data.sh apex
