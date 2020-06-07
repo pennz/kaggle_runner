@@ -109,6 +109,9 @@ def get_validation_result(model, test_dataset, y_targets, device=torch.device('c
 
     may_debug(True)
 
+    if len(y_targets.shape) == 1:
+        return roc_auc_score(y_targets, pred)
+
     return roc_auc_score(y_targets[:,0], pred)
 
 def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=DATA_PATH):
