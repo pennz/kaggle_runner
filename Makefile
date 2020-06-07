@@ -47,7 +47,7 @@ test: test_bert_torch
 
 test_bert_torch: pytest
 	if [ -z $$DEBUG ]; then $(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py 2>&1 | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); \
-else ./wt '$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py' </dev/tty ; fi
+else ./wt $(PY) tests/test_bert_torch.py </dev/tty ; fi
 
 pytest:
 	$(PY) -m pip show pytest | grep "Version: 5." &>/dev/null || ($(PY) -m pip install --upgrade pytest && $(PY) -m pip install --upgrade pytest-cov)

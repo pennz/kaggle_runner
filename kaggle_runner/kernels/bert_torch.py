@@ -206,8 +206,7 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
             avg_loss = 0.
             avg_accuracy = 0.
             lossf = None
-            tk0 = tqdm(enumerate(train_loader),
-                            total=len(train_loader), leave=False)
+            tk0 = tqdm(enumerate(train_loader), total=len(train_loader), leave=False)
             optimizer.zero_grad()   # Bug fix - thanks to @chinhuic
 
             for i, (x_batch, y_batch) in tk0:
