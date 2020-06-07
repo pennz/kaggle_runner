@@ -38,7 +38,7 @@ echo "connection done." )
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
-_: test_bert_torch
+_: test
 	echo "DONE"
 	#kill 7 8 # magic pids
 
@@ -50,7 +50,7 @@ test_bert_torch: pytest
 else ./wt '$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py' </dev/tty ; fi
 
 pytest:
-	$(PY) -m pip show pytest | grep "Version: 5.0" &>/dev/null || $(PY) -m pip install pytest==5.0
+	$(PY) -m pip show pytest | grep "Version: 5." &>/dev/null || $(PY) -m pip install --upgrade pytest
 
 log_receiver:
 	@echo "$@" will use tcp to receive logs
