@@ -50,7 +50,7 @@ test_bert_torch: pytest
 else ./wt '$(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py' </dev/tty ; fi
 
 pytest:
-	$(PY) -m pip show pytest | grep "Version: 5." &>/dev/null || $(PY) -m pip install --upgrade pytest
+	$(PY) -m pip show pytest | grep "Version: 5." &>/dev/null || ($(PY) -m pip install --upgrade pytest && $(PY) -m pip install --upgrade pytest-cov)
 
 log_receiver:
 	@echo "$@" will use tcp to receive logs
