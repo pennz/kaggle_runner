@@ -245,6 +245,8 @@ kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
 cd /kaggle/input/$$cmp_name; unzip '*.zip'
 
 kaggle: /root/.kaggle/kaggle.json
+
+/root/.kaggle/kaggle.json:
 	-@mkdir -p ~/.kaggle
 	@grep "username" ~/.kaggle/kaggle.json || (echo "Please paste your kaggle API token"; cat > ~/.kaggle/kaggle.json </dev/tty)
 	chmod 600 ~/.kaggle/kaggle.json
