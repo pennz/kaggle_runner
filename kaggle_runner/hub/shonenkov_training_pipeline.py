@@ -715,20 +715,38 @@ shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
 
 # + {"colab_type": "code", "id": "qFp80AuJu9Ii", "colab": {}}
-def onehot(size, target):
-    vec = torch.zeros(size, dtype=torch.float32)
-    vec[target] = 1.
+def onehot(size, target, aux=None):
+    if aux is not None:
+        vec = np.zeros(size+len(aux), dtype=float32)
+        vec[target] = 1.
+        vec[2:] = aux
+        vec = torch.tensor(vec, dtype=torch.float32)
+    else:
+        vec = torch.zeros(size, dtype=torch.float32)
+        vec[target] = 1.
 
     return vec
 
-class DatasetRetriever(Dataset):
+from kaggle_runner import may_debug
 
-    def __init__(self, labels_or_ids, comment_texts, langs, use_train_transforms=False, test=False):
+class DatasetRetriever(Dataset):
+    def __init__(self, labels_or_ids, comment_texts, langs,
+                 severe_toxic, obscene, threat, insult, identity_hate,
+                 use_train_transforms=False, test=False, use_aux=True):
         self.test = test
         self.labels_or_ids = labels_or_ids
         self.comment_texts = comment_texts
         self.langs = langs
+        self.severe_toxic = severe_toxic
+        self.obscene = obscene
+        self.threat = threat
+        self.insult = insult
+        self.identity_hate = identity_hate
         self.use_train_transforms = use_train_transforms
+        self.aux = None
+
+        if use_aux:
+            self.aux = [self.severe_toxic, self.obscene, self.threat, self.insult, self.identity_hate]
 
     def get_tokens(self, text):
         encoded = tokenizer.encode_plus(
@@ -749,7 +767,8 @@ class DatasetRetriever(Dataset):
 
         if self.test is False:
             label = self.labels_or_ids[idx]
-            target = onehot(2, label)
+            may_debug()
+            target = onehot(2, label, aux=self.aux)
 
         if self.use_train_transforms:
             text, _ = train_transforms(data=(text, lang))['data']
@@ -764,7 +783,7 @@ class DatasetRetriever(Dataset):
                 tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
 
                 return target, tokens, attention_mask
-
+        # else: not transformers
         tokens, attention_mask = self.get_tokens(str(text))
         tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
 
@@ -787,8 +806,13 @@ train_dataset = DatasetRetriever(
     labels_or_ids=df_train['toxic'].values,
     comment_texts=df_train['comment_text'].values,
     langs=df_train['lang'].values,
+    severe_toxic=df_train['severe_toxic'].values,
+    obscene=df_train['obscene'].values,
+    threat=df_train['threat'].values,
+    insult=df_train['insult'].values,
+    identity_hate=df_train['identity_hate'].values,
     use_train_transforms=True,
-)
+    )
 
 del df_train
 gc.collect();
@@ -1099,13 +1123,17 @@ from transformers import XLMRobertaModel
 
 class ToxicSimpleNNModel(nn.Module):
 
-    def __init__(self):
+    def __init__(self, use_aux=True):
         super(ToxicSimpleNNModel, self).__init__()
         self.backbone = XLMRobertaModel.from_pretrained(BACKBONE_PATH)
         self.dropout = nn.Dropout(0.3)
+        aux_len = 0
+
+        if use_aux:
+            aux_len = 5
         self.linear = nn.Linear(
             in_features=self.backbone.pooler.dense.out_features*2,
-            out_features=2,
+            out_features=2+aux_len,
         )
 
     def forward(self, input_ids, attention_masks):
