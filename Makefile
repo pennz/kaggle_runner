@@ -246,7 +246,10 @@ cd /kaggle/input/$$cmp_name; unzip '*.zip'
 
 kaggle: /root/.kaggle/kaggle.json
 
-push_dataset:
+dmetadata: kaggle 
+	mkdir datas
+	kaggle datasets metadata -p datas/ k1gaggle/bert-for-toxic-classfication-trained
+push_dataset: dmetadata
 	cp datas/dataset-metadata.json datas/dm.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	-cp log.txt /kaggle/submission.csv datas
