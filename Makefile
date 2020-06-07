@@ -3,14 +3,14 @@ export PATH := $(PWD)/reversShells:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
-define write_dataset_list =
-in a multi-line variable
-cat >.datasets << EOF
+define _write_dataset_list
+cat >.datasets <<'EOF'
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
 "shonenkov/jigsaw-public-baseline-train-data",
 "shonenkov/jigsaw-public-baseline-results"
 EOF
 endef
+export write_dataset_list_script = $(value _write_dataset_list)
 
 UNBUFFER := $(shell command -v unbuffer)
 ifneq ($(UNBUFFER),)
@@ -236,10 +236,10 @@ mbd_log:
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
 
-data_download: kaggle
-	@ eval $(write_dataset_list)
+data_download:
+	@ eval "$$write_dataset_list_script"
 	-mkdir -p /kaggle/input
-	sed 's/"\(.*\)"/\1' .datasets | xargs -I{} bash -xc 'kaggle datasets download --unzip -p /kaggle/input {} &'
+	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'kaggle datasets download --unzip -p /kaggle/input {} &'
 
 kaggle: /root/.kaggle/kaggle.json
 	-@mkdir -p ~/.kaggle
