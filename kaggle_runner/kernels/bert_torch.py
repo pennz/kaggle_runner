@@ -121,7 +121,7 @@ def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=D
     sub.to_csv('submission.csv', index=False)
 
 
-def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predict", model=None):
+def for_pytorch(data_package, device=torch.device('cuda'), SEED=118, phase="predict", model=None):
 
     if device is None and os.getenv("TPU_NAME") is not None:
         import torch_xla
