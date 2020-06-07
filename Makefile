@@ -240,7 +240,7 @@ mbd_interactive: multilang_bert_data.sh
 data_download:
 	@ eval "$$write_dataset_list_script"
 	-mkdir -p /kaggle/input
-	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed 's/.*\//'); kaggle datasets download --unzip -p /kaggle/input {}/$${folder}'
+	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed 's/.*\///'); kaggle datasets download --unzip -p /kaggle/input/$${folder}'
 
 kaggle: /root/.kaggle/kaggle.json
 	-@mkdir -p ~/.kaggle
