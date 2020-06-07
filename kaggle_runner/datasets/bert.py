@@ -12,6 +12,7 @@ from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
                                               get_obj_or_dump)
 #from kaggle_runner.utils.tpu import (strategy, tpu_resolver)
 from kaggle_runner.hub.bert.extract_features import load_data, get_tokenizer
+import torch
 
 
 TOKENS_PATH = "/kaggle/input/jigsaw-toxic-token-ids-for-bert"
@@ -212,6 +213,13 @@ test_dataset = (
     .from_tensor_slices(x_test)
     .batch(BATCH_SIZE)
 )
+
+def xlmr_data():
+    xlmr = torch.hub.load('pytorch/fairseq', 'xlmr.large')
+    xlmr.eval()
+
+    xlmr.encode('Hello world!')
+    del xlmr
 
 def load_labels():
     return (y_train, y_valid)
