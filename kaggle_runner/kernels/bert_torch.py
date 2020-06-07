@@ -165,6 +165,8 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
             prepare_pretrained()
             model = BertForSequenceClassification.from_pretrained(
                 ".", cache_dir=None, num_labels=1 if len(y[0]) < 1 else len(y[0]))
+            assert model is not None
+        logger.info("AUC for valication: %f", get_validation_result(model, X_val, y_val))
         model.zero_grad()
         model = model.to(device)
 
