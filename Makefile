@@ -227,7 +227,7 @@ mbd_log:
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
 
-mbd_pretrain: multilang_bert_data.sh may_torch_gpu_setup 
+mbd_pretrain: multilang_bert_data.sh apex
 	-make tpu_setup
 	STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 
@@ -239,7 +239,7 @@ tpu_setup:
 	curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o /tmp/pytorch-xla-env-setup.py
 	pip show torch_xla || $(PY) /tmp/pytorch-xla-env-setup.py #@param ["20200220","nightly", "xrt==1.15.0"]
 
-may_torch_gpu_setup:
+apex:
 	-$(PY) -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && \
 pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ../input/nvidiaapex/repository/NVIDIA-apex-39e153a)
 	$(PY) -c "from apex import amp"
