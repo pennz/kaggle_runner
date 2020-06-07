@@ -20,13 +20,6 @@
 #
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
 
-# + {"colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751", "colab": {"base_uri": "https://localhost:8080/", "height": 955}}
-# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
-# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
-# !pip install transformers==2.5.1 > /dev/null
-# !pip install pandarallel > /dev/null
-# !pip install catalyst==20.4.2 > /dev/null
-
 # + {"colab_type": "code", "id": "n6uGvKL3upio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0", "colab": {"base_uri": "https://localhost:8080/", "height": 54}}
 import subprocess
 
@@ -437,7 +430,7 @@ if False:
 with open("entry.sh", "w") as f:
     f.write(entry_str)
 
-# + {"id": "UAC8442XCRlq", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 34}, "outputId": "3b52996b-c161-4279-f8a7-ab6b45e88e3e"}
+# + {"id": "UAC8442XCRlq", "colab_type": "code", "outputId": "3b52996b-c161-4279-f8a7-ab6b45e88e3e", "colab": {"base_uri": "https://localhost:8080/", "height": 34}}
 import os
 import sys
 sys.path.append(os.getcwd())
@@ -453,6 +446,13 @@ logger.debug("Logger loaded. Will run entry.sh.")
 import subprocess
 p = subprocess.run(
 'bash -x entry.sh &',shell=True)
+
+# + {"colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751", "colab": {"base_uri": "https://localhost:8080/", "height": 955}}
+# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
+# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
+# !pip install transformers==2.5.1 > /dev/null
+# !pip install pandarallel > /dev/null
+# !pip install catalyst==20.4.2 > /dev/null
 
 # + {"id": "KFZrVc5nCRlw", "colab_type": "code", "outputId": "b21d3de4-5ea2-4233-9736-36261b7de356", "colab": {"base_uri": "https://localhost:8080/", "height": 156}}
 import numpy as np
@@ -694,7 +694,7 @@ class SynthesicOpenSubtitlesTransform(NLPTransform):
         return text, toxic
 
 
-# + {"colab_type": "code", "id": "K5BdJ9HWvnLW", "outputId": "eeadb258-3d56-4b38-90f2-a749d74ba483", "colab": {"base_uri": "https://localhost:8080/", "height": 34, "referenced_widgets": ["845fc7a27787461e95026f1d36f4ef8b"]}}
+# + {"colab_type": "code", "id": "K5BdJ9HWvnLW", "outputId": "eeadb258-3d56-4b38-90f2-a749d74ba483", "colab": {"base_uri": "https://localhost:8080/", "height": 34, "referenced_widgets": ["845fc7a27787461e95026f1d36f4ef8b", "9fa9c3af9c804ec29d87fa5300fa657d", "a6b7a79f1c524356b800c64df25d7284", "c2c417dab722401a909327db58b48033"]}}
 def get_train_transforms():
     return albumentations.Compose([
         ExcludeUsersMentionedTransform(p=0.95),
@@ -783,7 +783,7 @@ class DatasetRetriever(Dataset):
                 tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
 
                 return target, tokens, attention_mask
-        # else: not transformers
+
         tokens, attention_mask = self.get_tokens(str(text))
         tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
 
@@ -812,7 +812,7 @@ train_dataset = DatasetRetriever(
     insult=df_train['insult'].values,
     identity_hate=df_train['identity_hate'].values,
     use_train_transforms=True,
-    )
+)
 
 del df_train
 gc.collect();
@@ -1123,7 +1123,7 @@ from transformers import XLMRobertaModel
 
 class ToxicSimpleNNModel(nn.Module):
 
-    def __init__(self, use_aux=True):
+    def __init__(self):
         super(ToxicSimpleNNModel, self).__init__()
         self.backbone = XLMRobertaModel.from_pretrained(BACKBONE_PATH)
         self.dropout = nn.Dropout(0.3)
@@ -1260,6 +1260,8 @@ def _mp_fn(rank, flags):
 # + {"colab_type": "code", "id": "aKuUULH7l5W1", "outputId": "6f9fe5df-d9d8-4dc5-f0a8-c45f9886750c", "colab": {"base_uri": "https://localhost:8080/", "height": 677}}
 FLAGS={}
 xmp.spawn(_mp_fn, args=(FLAGS,), nprocs=8, start_method='fork')
+from datetime import date; today = date.today(); output_model_file='bert_tpu_trained.bin'
+torch.save(net.state_dict(), f"{today}_{output_model_file}")
 
 # + {"colab_type": "code", "id": "Wu0VhhZAFuYs", "colab": {}}
 submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
