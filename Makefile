@@ -3,6 +3,15 @@ export PATH := $(PWD)/reversShells:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
+define write_dataset_list =
+in a multi-line variable
+cat >.datasets << EOF
+"shonenkov/open-subtitles-toxic-pseudo-labeling",
+"shonenkov/jigsaw-public-baseline-train-data",
+"shonenkov/jigsaw-public-baseline-results"
+EOF
+endef
+
 UNBUFFER := $(shell command -v unbuffer)
 ifneq ($(UNBUFFER),)
 	UNBUFFERP := $(UNBUFFER) -p
@@ -226,7 +235,13 @@ mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
-kaggle:
+
+data_download: kaggle
+	@ eval $(write_dataset_list)
+	-mkdir -p /kaggle/input
+	sed 's/"\(.*\)"/\1' .datasets | xargs -I{} bash -xc 'kaggle datasets download --unzip -p /kaggle/input {} &'
+
+kaggle: /root/.kaggle/kaggle.json
 	@mkdir -p ~/.kaggle
 	@echo "Please paste your kaggle API token"
 	cat > ~/.kaggle/kaggle.json </dev/tty
@@ -283,7 +298,5 @@ distclean: clean
 	rm -r .git
 	rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
 
-kaggle_dataset:
-	kaggle datasets download -d k1gaggle/toxic-multilang-trained-torch-model
-
 .PHONY: clean connect inner_lstm pc mbd_log
+
