@@ -107,6 +107,8 @@ def get_validation_result(model, test_dataset, y_targets, device=torch.device('c
     test_preds = get_predict(model, test_dataset, device)
     pred = 1 / (1+np.exp(- test_preds))
 
+    may_debug(true)
+
     return roc_auc_score(y_targets[:,0], pred)
 
 def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=DATA_PATH):
