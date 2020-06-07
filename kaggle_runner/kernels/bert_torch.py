@@ -7,6 +7,7 @@ from kaggle_runner.datasets.bert import DATA_PATH, BERT_BASE_DIR, PRETRAIND_PICK
 from kaggle_runner import may_debug, logger
 from tqdm import tqdm, tqdm_notebook
 from sklearn.metrics import roc_auc_score
+import ignite
 from sklearn import metrics, model_selection
 from pytorch_pretrained_bert import (BertAdam, BertForSequenceClassification,
                                      BertTokenizer, BertConfig,
@@ -80,12 +81,9 @@ def get_trained_model(fine_tuned = "bert_pytorch.bin", device=torch.device('cuda
 
     return model
 
-def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=DATA_PATH):
-    model = self.model
-
-    if self.model is None:
+def get_predict(model, test_dataset, device=torch.device('cuda')):
+    if model is None:
         return
-    sub = pd.read_csv(os.path.join(data_path , 'sample_submission.csv'))
 
     for param in model.parameters():
         param.requires_grad = False
@@ -104,8 +102,16 @@ def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=D
             x_batch > 0).to(device), labels=None)
         test_preds[i*32:(i+1)*32] = pred[:, 0].detach().cpu().squeeze().numpy()
 
+    return test_preds
+
+def get_validation_result(model, test_dataset, y_targets, device=torch.device('cuda')) :
+    return ignite.contrib.metrics.roc_auc.roc_auc_compute_fn(get_predict(model, test_dataset, device), y_targets)
+
+def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=DATA_PATH):
+    test_preds = get_predict(self.model, test_dataset, device)
     pred = 1 / (1+np.exp(- test_preds))
 
+    sub = pd.read_csv(os.path.join(data_path , 'sample_submission.csv'))
     sub['toxic'][:len(pred)] = pred
     sub.to_csv('submission.csv', index=False)
 
@@ -231,8 +237,11 @@ def for_pytorch(data_package, device=torch.device('cuda'), SEED=18, phase="predi
                 avg_accuracy += torch.mean(((torch.sigmoid(y_pred[:, 0]) > 0.5) == (
                     y_batch[:, 0] > 0.5).to(device)).to(torch.float)).item()/len(train_loader)
             tq.set_postfix(avg_loss=avg_loss, avg_accuracy=avg_accuracy)
+            logger.info("AUC for valication: %f", get_validation_result(model, X_val, y_val))
 
-        torch.save(model.state_dict(), output_model_file)
+        from datetime import date
+        today = date.today()
+        torch.save(model.state_dict(), f"{today}_{output_model_file}")
 # +
 ## +
 ## From baseline kernel

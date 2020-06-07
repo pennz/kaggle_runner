@@ -177,6 +177,7 @@ install_dev_dep:
 
 install_dep:
 	bash -c '$(PY) -m pip install -q ipdb & \
+$(PY) -m pip install -q ignite & \
 $(PY) -m pip install -q pyicu & \
 $(PY) -m pip install -q pycld2 & \
 $(PY) -m pip install -q polyglot & \
