@@ -250,7 +250,7 @@ push_dataset:
 	cp datas/dataset-metadata.json datas/dm.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	-cp log.txt /kaggle/submission.csv datas
-	kaggle datasets version -p datas/ -m "data from colab"
+	kaggle datasets version -p datas/ -m "data from colab $$(date)"
 
 /root/.kaggle/kaggle.json:
 	-@mkdir -p ~/.kaggle
