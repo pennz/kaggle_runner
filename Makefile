@@ -226,6 +226,11 @@ mbd_log:
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
+kaggle:
+	@mkdir -p ~/.kaggle
+	@echo "Please paste your kaggle API token"
+	cat > ~/.kaggle/kaggle.json </dev/tty
+	chmod 600 ~/.kaggle/kaggle.json
 
 mbd_pretrain: multilang_bert_data.sh apex
 	-make tpu_setup
