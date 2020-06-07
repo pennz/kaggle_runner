@@ -24,3 +24,9 @@ class Test_bert_multi_lang:
 
     def test_result(self):
         bert_torch.get_test_result(self, self.data[-1])
+
+if __name__ == "__main__":
+    Test_bert_multi_lang.setup_class()
+    t = Test_bert_multi_lang()
+    t.test_continue_train()
+    t.test_result()
