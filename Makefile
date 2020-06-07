@@ -46,7 +46,7 @@ test: test_bert_torch
 	echo "DONE $@"
 
 test_bert_torch: pytest
-	if [ -z $$DEBUG ]; then $(PY) -m pytest -s -k "Test_bert_multi_lang" tests/test_bert_torch.py 2>&1 | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); \
+	if [ -z $$DEBUG ]; then $(PY) tests/test_bert_torch.py 2>&1 | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); \
 else ./wt $(PY) -m pdb tests/test_bert_torch.py </dev/tty ; fi
 
 pytest:
