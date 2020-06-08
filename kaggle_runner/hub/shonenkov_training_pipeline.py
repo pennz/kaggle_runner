@@ -439,7 +439,7 @@ logger.debug("Logger loaded. Will run entry.sh.")
 
 # + {"id": "mC6qgI68EMQm", "colab_type": "code", "colab": {}}
 # %%bash -bg --out runner_log --err runner_err_log
-# bash -x entry.sh
+bash -x entry.sh
 
 # + {"id": "KFZrVc5nCRlw", "colab_type": "code", "outputId": "b21d3de4-5ea2-4233-9736-36261b7de356", "colab": {"base_uri": "https://localhost:8080/", "height": 156}}
 import numpy as np
