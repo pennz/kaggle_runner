@@ -7,17 +7,18 @@
 #
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 55}, "colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751"}
-# !python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
-# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
-# !python3 pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
-# !python3 -m pip install transformers==2.5.1 > /dev/null
-# !python3 -m pip install pandarallel > /dev/null
-# !python3 -m pip install catalyst==20.4.2 > /dev/null
-
 # + {"colab": {"base_uri": "https://localhost:8080/", "height": 54}, "colab_type": "code", "id": "n6uGvKL3upio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0"}
 # %load_ext autoreload
 # %autoreload 2
+
+# + {"colab": {"base_uri": "https://localhost:8080/", "height": 55}, "colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751"}
+# !python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
+# !python -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
+# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
+# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
+# !python3 -m pip install transformers==2.5.1 > /dev/null
+# !python3 -m pip install pandarallel > /dev/null
+# !python3 -m pip install catalyst==20.4.2 > /dev/null
 
 # + {"colab": {"base_uri": "https://localhost:8080/", "height": 54}, "colab_type": "code", "id": "n6uGvKL3epio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0"}
 import subprocess
@@ -910,6 +911,7 @@ class AverageMeter(object):
 
 
 # + {"colab": {}, "colab_type": "code", "id": "arcC5IeYxUbr"}
+from kaggle_runner import may_debug
 class LabelSmoothing(nn.Module):
     def __init__(self, smoothing = 0.1):
         super(LabelSmoothing, self).__init__()
@@ -917,8 +919,6 @@ class LabelSmoothing(nn.Module):
         self.smoothing = smoothing
 
     def forward(self, x, target):
-        may_debug()
-
         if self.training:
             x = x.float()
             toxic=x[:, :2]
@@ -929,7 +929,7 @@ class LabelSmoothing(nn.Module):
             aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, aux_target)
 
             logprobs = torch.nn.functional.log_softmax(toxic, dim = -1)
-            nll_loss = -logprobs * target
+            nll_loss = -logprobs * toxic_target
             nll_loss = nll_loss.sum(-1)
 
             smooth_loss = -logprobs.mean(dim=-1)
@@ -947,6 +947,7 @@ class LabelSmoothing(nn.Module):
             nll_loss = nll_loss.sum(-1)
 
             return nll_loss.mean()
+
 
 
 # + {"colab": {}, "colab_type": "code", "id": "Ow13PTlFwbiH"}
@@ -1278,7 +1279,7 @@ def _gpu_fn():
 
     losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
     logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
-    #run_inference(net, device, TrainGlobalConfig, test_loader)
+
 
 # + {"colab": {}, "colab_type": "code", "id": "INecI_CbxXA_"}
 def _mp_fn(rank, flags):
