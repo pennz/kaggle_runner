@@ -254,7 +254,7 @@ jq -s '.[0] * .[1]' kaggle_runner/hub/tpu_colab.ipynb $$tmp > kaggle_runner/hub/
 rm $$tmp
 
 dmetadata: kaggle 
-	[ -d datas] || mkdir datas
+	[ -d datas ] || mkdir datas
 	kaggle datasets metadata -p datas/ k1gaggle/bert-for-toxic-classfication-trained
 push_dataset: dmetadata
 	cp datas/dataset-metadata.json datas/dm.json
