@@ -699,7 +699,7 @@ shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 # + {"colab_type": "code", "id": "qFp80AuJu9Ii", "colab": {}}
 def onehot(size, target, aux=None):
     if aux is not None:
-        vec = np.zeros(size+len(aux), dtype=float32)
+        vec = np.zeros(size+len(aux), dtype=np.float32)
         vec[target] = 1.
         vec[2:] = aux
         vec = torch.tensor(vec, dtype=torch.float32)
@@ -816,6 +816,11 @@ validation_tune_dataset = DatasetRetriever(
     labels_or_ids=df_val['toxic'].values,
     comment_texts=df_val['comment_text'].values,
     langs=df_val['lang'].values,
+    severe_toxic=df_train['severe_toxic'].values,
+    obscene=df_train['obscene'].values,
+    threat=df_train['threat'].values,
+    insult=df_train['insult'].values,
+    identity_hate=df_train['identity_hate'].values,
     use_train_transforms=True,
 )
 
@@ -825,6 +830,11 @@ validation_dataset = DatasetRetriever(
     labels_or_ids=df_val['toxic'].values,
     comment_texts=df_val['comment_text'].values,
     langs=df_val['lang'].values,
+    severe_toxic=df_train['severe_toxic'].values,
+    obscene=df_train['obscene'].values,
+    threat=df_train['threat'].values,
+    insult=df_train['insult'].values,
+    identity_hate=df_train['identity_hate'].values,
     use_train_transforms=False,
 )
 
