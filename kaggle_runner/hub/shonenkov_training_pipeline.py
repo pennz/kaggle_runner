@@ -926,7 +926,7 @@ class LabelSmoothing(nn.Module):
             t = target.float()
             toxic_target = t[:,:2]
             aux_target = t[:, 2:]
-            aux_loss = torch.nn.functional.cross_entropy(aux, aux_target)
+            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, aux_target)
 
             logprobs = torch.nn.functional.log_softmax(toxic, dim = -1)
             nll_loss = -logprobs * target
@@ -938,7 +938,15 @@ class LabelSmoothing(nn.Module):
 
             return loss.mean() + aux_loss
         else:
-            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
+            x = x.float()
+            toxic=x[:, :2]
+            t = target.float()
+            toxic_target = t[:,:2]
+            logprobs = torch.nn.functional.log_softmax(toxic, dim = -1)
+            nll_loss = -logprobs * toxic_target
+            nll_loss = nll_loss.sum(-1)
+
+            return nll_loss.mean()
 
 
 # + {"colab": {}, "colab_type": "code", "id": "Ow13PTlFwbiH"}
@@ -1192,20 +1200,48 @@ def _gpu_fn():
     device = torch.device('cuda')
     net.to(device)
 
-    test_sampler = torch.utils.data.distributed.DistributedSampler(
-        test_dataset,
-        num_replicas=xm.xrt_world_size(),
-        rank=xm.get_ordinal(),
-        shuffle=False
-    )
+    #test_sampler = torch.utils.data.distributed.DistributedSampler(
+    #    test_dataset,
+    #    num_replicas=xm.xrt_world_size(),
+    #    rank=xm.get_ordinal(),
+    #    shuffle=False
+    #)
     test_loader = torch.utils.data.DataLoader(
         test_dataset,
         batch_size=TrainGlobalConfig.batch_size,
-        sampler=test_sampler,
+    #    sampler=test_sampler,
         pin_memory=False,
         drop_last=False,
         num_workers=TrainGlobalConfig.num_workers
     )
+
+    def validation(model, device, config, val_loader, criterion):
+        model.eval()
+        losses = AverageMeter()
+        final_scores = RocAucMeter()
+
+        t = time.time()
+
+        for step, (targets, inputs, attention_masks) in enumerate(val_loader):
+            if config.verbose:
+                if step % config.verbose_step == 0:
+                    logger.info(
+                        f'Valid Step {step}, loss: ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
+                        f'time: {(time.time() - t):.5f}'
+                    )
+            with torch.no_grad():
+                inputs = inputs.to(device, dtype=torch.long)
+                attention_masks = attention_masks.to(device, dtype=torch.long)
+                targets = targets.to(device, dtype=torch.float)
+
+                outputs = model(inputs, attention_masks)
+                loss = criterion(outputs, targets)
+
+                batch_size = inputs.size(0)
+
+                final_scores.update(targets, outputs)
+                losses.update(loss.detach().item(), batch_size)
 
     def run_inference(model, device, config, test_loader):
         model.eval()
@@ -1225,8 +1261,25 @@ def _gpu_fn():
 
             result['id'].extend(ids.cpu().numpy())
             result['toxic'].extend(toxics)
+    #validation_sampler = torch.utils.data.distributed.DistributedSampler(
+    #    validation_dataset,
+    #    num_replicas=xm.xrt_world_size(),
+    #    rank=xm.get_ordinal(),
+    #    shuffle=False
+    #)
+    validation_loader = torch.utils.data.DataLoader(
+        validation_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+    #    sampler=validation_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
 
-    run_inference(net, device, TrainGlobalConfig, test_loader)
+    losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
+    logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
+    #run_inference(net, device, TrainGlobalConfig, test_loader)
+
 # + {"colab": {}, "colab_type": "code", "id": "INecI_CbxXA_"}
 def _mp_fn(rank, flags):
     device = xm.xla_device()

@@ -308,6 +308,10 @@ t: pccnct m
 	echo "Please check remote mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
+sshl:
+	apt install autossh
+	autossh -fNR 10000:172.28.0.2:9000 -p $(SSH_PORT) v@vtool.duckdns.org
+
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
 
