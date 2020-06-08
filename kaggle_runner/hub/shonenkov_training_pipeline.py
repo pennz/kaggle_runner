@@ -713,7 +713,7 @@ from kaggle_runner import may_debug
 
 class DatasetRetriever(Dataset):
     def __init__(self, labels_or_ids, comment_texts, langs,
-                 severe_toxic, obscene, threat, insult, identity_hate,
+                 severe_toxic=None, obscene=None, threat=None, insult=None, identity_hate=None,
                  use_train_transforms=False, test=False, use_aux=True):
         self.test = test
         self.labels_or_ids = labels_or_ids
@@ -746,11 +746,14 @@ class DatasetRetriever(Dataset):
     def __getitem__(self, idx):
         text = self.comment_texts[idx]
         lang = self.langs[idx]
-        aux = [self.severe_toxic[idx], self.obscene[idx], self.threat[idx], self.insult[idx], self.identity_hate[idx]]
+
+        if self.severe_toxic is None:
+            aux = [0., 0., 0., 0., 0.]
+        else:
+            aux = [self.severe_toxic[idx], self.obscene[idx], self.threat[idx], self.insult[idx], self.identity_hate[idx]]
 
         if self.test is False:
             label = self.labels_or_ids[idx]
-            may_debug()
             target = onehot(2, label, aux=aux)
 
         if self.use_train_transforms:
@@ -817,11 +820,6 @@ validation_tune_dataset = DatasetRetriever(
     labels_or_ids=df_val['toxic'].values,
     comment_texts=df_val['comment_text'].values,
     langs=df_val['lang'].values,
-    severe_toxic=df_val['severe_toxic'].values,
-    obscene=df_val['obscene'].values,
-    threat=df_val['threat'].values,
-    insult=df_val['insult'].values,
-    identity_hate=df_val['identity_hate'].values,
     use_train_transforms=True,
 )
 
@@ -831,11 +829,6 @@ validation_dataset = DatasetRetriever(
     labels_or_ids=df_val['toxic'].values,
     comment_texts=df_val['comment_text'].values,
     langs=df_val['lang'].values,
-    severe_toxic=df_val['severe_toxic'].values,
-    obscene=df_val['obscene'].values,
-    threat=df_val['threat'].values,
-    insult=df_val['insult'].values,
-    identity_hate=df_val['identity_hate'].values,
     use_train_transforms=False,
 )
 
@@ -919,21 +912,28 @@ class LabelSmoothing(nn.Module):
         self.smoothing = smoothing
 
     def forward(self, x, target):
+        may_debug()
+
         if self.training:
             x = x.float()
-            target = target.float()
-            logprobs = torch.nn.functional.log_softmax(x, dim = -1)
+            toxic=x[:, :2]
+            aux=x[:, 2:]
+            t = target.float()
+            toxic_target = t[:,:2]
+            aux_target = t[:, 2:]
+            aux_loss = torch.nn.functional.cross_entropy(aux, aux_target)
 
+            logprobs = torch.nn.functional.log_softmax(toxic, dim = -1)
             nll_loss = -logprobs * target
             nll_loss = nll_loss.sum(-1)
 
             smooth_loss = -logprobs.mean(dim=-1)
 
-            loss = self.confidence * nll_loss + self.smoothing * smooth_loss
+            loss = self.confidence * nll_loss + self.smoothing * smooth_loss + aux_loss
 
             return loss.mean()
         else:
-            return torch.nn.functional.cross_entropy(x, target)
+            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
 
 
 # + {"colab_type": "code", "id": "Ow13PTlFwbiH", "colab": {}}
@@ -1140,12 +1140,13 @@ class ToxicSimpleNNModel(nn.Module):
         return self.linear(x)
 
 
+
 # + {"colab_type": "code", "id": "dZmTJ4XQwb9y", "colab": {}}
 class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs
-    n_epochs = 3  # количество эпох для обучения
+    n_epochs = 2  # количество эпох для обучения
     lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
     fold_number = 0  # номер фолда для обучения
 
