@@ -5,6 +5,7 @@ export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
+"k1gaggle/jigsaw-toxicity-train-data-with-aux",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
 "shonenkov/jigsaw-public-baseline-train-data",
 "shonenkov/jigsaw-public-baseline-results"

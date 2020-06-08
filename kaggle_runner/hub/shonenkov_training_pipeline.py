@@ -786,7 +786,7 @@ class DatasetRetriever(Dataset):
 # + {"colab_type": "code", "id": "3DVkkUVMu9Ka", "outputId": "2434e74b-0f48-41e7-aa86-a9b8a8984772", "colab": {"base_uri": "https://localhost:8080/", "height": 173}}
 # %%time
 
-df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-public-baseline-train-data/train_data.csv')
+df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
 
 
 train_dataset = DatasetRetriever(
