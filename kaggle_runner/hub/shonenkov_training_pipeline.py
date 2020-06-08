@@ -1123,7 +1123,7 @@ from transformers import XLMRobertaModel
 
 class ToxicSimpleNNModel(nn.Module):
 
-    def __init__(self):
+    def __init__(self, use_aux=True):
         super(ToxicSimpleNNModel, self).__init__()
         self.backbone = XLMRobertaModel.from_pretrained(BACKBONE_PATH)
         self.dropout = nn.Dropout(0.3)
