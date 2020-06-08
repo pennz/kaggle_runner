@@ -7,6 +7,13 @@
 #
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
 
+# + {"colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751", "colab": {"base_uri": "https://localhost:8080/", "height": 955}}
+# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
+# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
+# !pip install transformers==2.5.1 > /dev/null
+# !pip install pandarallel > /dev/null
+# !pip install catalyst==20.4.2 > /dev/null
+
 # + {"colab_type": "code", "id": "n6uGvKL3upio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0", "colab": {"base_uri": "https://localhost:8080/", "height": 54}}
 import subprocess
 
@@ -433,13 +440,6 @@ logger.debug("Logger loaded. Will run entry.sh.")
 import subprocess
 p = subprocess.run(
 'bash -x entry.sh &',shell=True)
-
-# + {"colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751", "colab": {"base_uri": "https://localhost:8080/", "height": 955}}
-# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
-# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
-# !pip install transformers==2.5.1 > /dev/null
-# !pip install pandarallel > /dev/null
-# !pip install catalyst==20.4.2 > /dev/null
 
 # + {"id": "KFZrVc5nCRlw", "colab_type": "code", "outputId": "b21d3de4-5ea2-4233-9736-36261b7de356", "colab": {"base_uri": "https://localhost:8080/", "height": 156}}
 import numpy as np
