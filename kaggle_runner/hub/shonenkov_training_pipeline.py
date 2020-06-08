@@ -49,7 +49,7 @@ shift
 ORIG_PORT=23454
 
 CHECK_PORT=$((ORIG_PORT + 1))
-pip install --upgrade pip
+python3 -m pip install --upgrade pip
 conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 apt update && apt install -y netcat nmap screen time locales >/dev/null 2>&1
 apt install -y mosh iproute2 fish tig ctags htop tree pv tmux psmisc >/dev/null 2>&1 &
@@ -86,9 +86,8 @@ if [ "x${ENABLE_RVS}" = x1 ]; then
     fi
 fi &
 
-pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
-# python3 -m pip install pyvim neovim msgpack==1.0.0 &
-# python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
+python3 -m pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
+python3 -m pip install pyvim neovim msgpack==1.0.0 & # for vim
 
 SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
@@ -119,7 +118,6 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
         find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
         popd
     fi
-    pip install -e . &
     make install_dep >/dev/null
 }
 
@@ -152,7 +150,6 @@ if [ x"${PHASE}" = x"test" ]; then
 fi
 
 if [ x"${PHASE}" = x"run" ]; then
-    #pip install kaggle_runner
     bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
     make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
     # basically the reverse of the calling path

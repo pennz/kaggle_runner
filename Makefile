@@ -162,7 +162,7 @@ run_submit:
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 
 twine:
-	@python3 -m twine -h >/dev/null || ( echo "twine not found, will install it." ; python3 -m pip install --user --upgrade twine )
+	@$(PY) -m twine -h >/dev/null || ( echo "twine not found, will install it." ; $(PY) -m pip install --user --upgrade twine )
 publish: clean twine
 	if [[ x$(TAG) =~ xv ]] || [ -z $(TAG) ]; then >&2 echo "Please pass TAG \
 flag when you call make, and use something like 0.0.3, not v0.0.3"; false; else \
@@ -172,8 +172,8 @@ git add setup.py && \
 (git tag -d "v$(TAG)"; git push --delete origin "v$(TAG)" || true) && \
 git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push --tags; \
 fi
-	python3 setup.py sdist bdist_wheel
-	python3 -m twine upload dist/*
+	$(PY) setup.py sdist bdist_wheel
+	$(PY) -m twine upload dist/*
 update_code:
 	#-git stash;
 	git pull
@@ -285,7 +285,7 @@ xlmr:
 
 apex:
 	-$(PY) -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && \
-pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ../input/nvidiaapex/repository/NVIDIA-apex-39e153a)
+$(PY) -m pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ../input/nvidiaapex/repository/NVIDIA-apex-39e153a)
 	$(PY) -c "from apex import amp"
 
 mbd:
