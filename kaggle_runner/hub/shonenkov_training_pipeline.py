@@ -1,17 +1,4 @@
 # -*- coding: utf-8 -*-
-# ---
-# jupyter:
-#   jupytext:
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.4'
-#       jupytext_version: 1.1.7
-#   kernelspec:
-#     display_name: Python 3
-#     name: python3
-# ---
-
 # + {"id": "view-in-github", "colab_type": "text", "cell_type": "markdown"}
 # <a href="https://colab.research.google.com/github/pennz/kaggle_runner/blob/master/kaggle_runner/hub/shonenkov_training_pipeline.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 

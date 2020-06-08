@@ -246,6 +246,12 @@ cd /kaggle/input/$$cmp_name; unzip '*.zip'
 
 kaggle: /root/.kaggle/kaggle.json
 
+update_sh_ipynb:
+	tmp=$$(mktemp).ipynb; \
+jupytext --to .ipynb kaggle_runner/hub/shonenkov_training_pipeline.py -o $$tmp && \
+jq -s '.[0] * .[1]' kaggle_runner/hub/shonenkov_training_pipeline.ipynb $$tmp > kaggle_runner/hub/shonenkov_training_pipeline.ipynb && \
+rm $$tmp
+
 dmetadata: kaggle 
 	mkdir datas
 	kaggle datasets metadata -p datas/ k1gaggle/bert-for-toxic-classfication-trained
