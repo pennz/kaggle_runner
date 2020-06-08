@@ -817,11 +817,11 @@ validation_tune_dataset = DatasetRetriever(
     labels_or_ids=df_val['toxic'].values,
     comment_texts=df_val['comment_text'].values,
     langs=df_val['lang'].values,
-    severe_toxic=df_train['severe_toxic'].values,
-    obscene=df_train['obscene'].values,
-    threat=df_train['threat'].values,
-    insult=df_train['insult'].values,
-    identity_hate=df_train['identity_hate'].values,
+    severe_toxic=df_val['severe_toxic'].values,
+    obscene=df_val['obscene'].values,
+    threat=df_val['threat'].values,
+    insult=df_val['insult'].values,
+    identity_hate=df_val['identity_hate'].values,
     use_train_transforms=True,
 )
 
@@ -831,11 +831,11 @@ validation_dataset = DatasetRetriever(
     labels_or_ids=df_val['toxic'].values,
     comment_texts=df_val['comment_text'].values,
     langs=df_val['lang'].values,
-    severe_toxic=df_train['severe_toxic'].values,
-    obscene=df_train['obscene'].values,
-    threat=df_train['threat'].values,
-    insult=df_train['insult'].values,
-    identity_hate=df_train['identity_hate'].values,
+    severe_toxic=df_val['severe_toxic'].values,
+    obscene=df_val['obscene'].values,
+    threat=df_val['threat'].values,
+    insult=df_val['insult'].values,
+    identity_hate=df_val['identity_hate'].values,
     use_train_transforms=False,
 )
 
