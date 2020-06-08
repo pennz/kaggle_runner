@@ -8,8 +8,9 @@
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
 
 # + {"colab": {"base_uri": "https://localhost:8080/", "height": 55}, "colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751"}
+# !python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 # !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
-# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
+# !python3 pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
 # !python3 -m pip install transformers==2.5.1 > /dev/null
 # !python3 -m pip install pandarallel > /dev/null
 # !python3 -m pip install catalyst==20.4.2 > /dev/null
@@ -1185,6 +1186,47 @@ class TrainGlobalConfig:
 net = ToxicSimpleNNModel()
 
 
+# + {"colab": {}, "colab_type": "code", "id": "InecI_CbxXA_"}
+def _gpu_fn():
+    from kaggle_runner import logger
+    device = torch.device('cuda')
+    net.to(device)
+
+    test_sampler = torch.utils.data.distributed.DistributedSampler(
+        test_dataset,
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=False
+    )
+    test_loader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=test_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+
+    def run_inference(model, device, config, test_loader):
+        model.eval()
+        result = {'id': [], 'toxic': []}
+        t = time.time()
+
+        for step, (ids, inputs, attention_masks) in enumerate(test_loader):
+            if config.verbose:
+                if step % config.verbose_step == 0:
+                    logger.info(f'Prediction Step {step}, time: {(time.time() - t):.5f}')
+
+            with torch.no_grad():
+                inputs = inputs.to(device, dtype=torch.long)
+                attention_masks = attention_masks.to(device, dtype=torch.long)
+                outputs = model(inputs, attention_masks)
+                toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
+
+            result['id'].extend(ids.cpu().numpy())
+            result['toxic'].extend(toxics)
+
+    run_inference(net, device, TrainGlobalConfig, test_loader)
 # + {"colab": {}, "colab_type": "code", "id": "INecI_CbxXA_"}
 def _mp_fn(rank, flags):
     device = xm.xla_device()
