@@ -437,7 +437,7 @@ import_module('kaggle_runner')
 from kaggle_runner import logger
 logger.debug("Logger loaded. Will run entry.sh.")
 
-# + {"colab": {}, "colab_type": "code", "id": "mC6qgI68EMQm", "magic_args": "-bg --out runner_log --err runner_err_log", "language": "bash"}
+# + {"colab": {}, "colab_type": "code", "id": "mC6qgI68EMQm", "magic_args": "--bg --out runner_log --err runner_err_log", "language": "bash"}
 # bash -x entry.sh
 
 # + {"colab": {"base_uri": "https://localhost:8080/", "height": 156}, "colab_type": "code", "id": "KFZrVc5nCRlw", "outputId": "b21d3de4-5ea2-4233-9736-36261b7de356"}
