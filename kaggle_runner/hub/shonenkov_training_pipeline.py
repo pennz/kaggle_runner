@@ -746,11 +746,12 @@ class DatasetRetriever(Dataset):
     def __getitem__(self, idx):
         text = self.comment_texts[idx]
         lang = self.langs[idx]
+        aux = [self.severe_toxic[idx], self.obscene[idx], self.threat[idx], self.insult[idx], self.identity_hate[idx]]
 
         if self.test is False:
             label = self.labels_or_ids[idx]
             may_debug()
-            target = onehot(2, label, aux=self.aux)
+            target = onehot(2, label, aux=aux)
 
         if self.use_train_transforms:
             text, _ = train_transforms(data=(text, lang))['data']
