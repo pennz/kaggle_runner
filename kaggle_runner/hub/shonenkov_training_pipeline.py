@@ -929,9 +929,9 @@ class LabelSmoothing(nn.Module):
 
             smooth_loss = -logprobs.mean(dim=-1)
 
-            loss = self.confidence * nll_loss + self.smoothing * smooth_loss + aux_loss
+            loss = self.confidence * nll_loss + self.smoothing * smooth_loss
 
-            return loss.mean()
+            return loss.mean() + aux_loss
         else:
             return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
 
