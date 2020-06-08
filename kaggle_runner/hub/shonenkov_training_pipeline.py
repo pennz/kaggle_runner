@@ -89,10 +89,10 @@ fi &
 python3 -m pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
 python3 -m pip install pyvim neovim msgpack==1.0.0 & # for vim
 
-SRC_WORK_FOLDER=/kaggle/working
-[ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
-
-cd ${SRC_WORK_FOLDER}
+# SRC_WORK_FOLDER=/kaggle/working # it is just current working folder
+# [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
+#
+# cd ${SRC_WORK_FOLDER}
 
 if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
 
@@ -434,9 +434,7 @@ from kaggle_runner import logger
 logger.debug("Logger loaded. Will run entry.sh.")
 
 # + {"id": "mC6qgI68EMQm", "colab_type": "code", "colab": {}}
-import subprocess
-p = subprocess.run(
-'bash -x entry.sh &',shell=True)
+# ! bash -x entry.sh &
 
 # + {"id": "KFZrVc5nCRlw", "colab_type": "code", "outputId": "b21d3de4-5ea2-4233-9736-36261b7de356", "colab": {"base_uri": "https://localhost:8080/", "height": 156}}
 import numpy as np
