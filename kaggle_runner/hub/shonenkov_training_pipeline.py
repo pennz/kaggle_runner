@@ -917,33 +917,32 @@ from kaggle_runner import may_debug
 
 class LabelSmoothing(nn.Module):
     """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
-
     def __init__(self, smoothing = 0.1, dim=-1):
         super(LabelSmoothing, self).__init__()
-        self.cls = 2
         self.confidence = 1.0 - smoothing
         self.smoothing = smoothing
+        self.cls = 2
         self.dim = dim
 
     def forward(self, x, target):
         if self.training:
-            toxic_pred = x[:,:2].log_softmax(dim=self.dim)
+            x = x.float()
+            target = target.float()
+            logprobs = torch.nn.functional.log_softmax(x, dim = -1)
+
+            nll_loss = -logprobs * target
+            nll_loss = nll_loss.sum(-1)
+
+            smooth_loss = -logprobs.mean(dim=-1)
+
+            loss = self.confidence * nll_loss + self.smoothing * smooth_loss
+
             aux_pred=x[:, 2:]
-
-            toxic_target = target[:,:2]
             aux_target = target[:, 2:]
-            with torch.no_grad():
-                smooth_toxic_target = torch.zeros_like(toxic_pred)
-                smooth_toxic_target.fill_(self.smoothing / (self.cls - 1))
-                smooth_toxic_target.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
 
-                smooth_aux_target = torch.zeros_like(aux_target)
-                smooth_aux_target.fill_(self.smoothing) # only for binary cross entropy
-                smooth_aux_target += (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux_pred, self.smoothing + (1-self.smoothing*2)*aux_target)
 
-            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux_pred, smooth_aux_target)
-
-            return torch.mean(torch.sum(-toxic_pred * smooth_toxic_target, dim=self.dim)) + aux_loss/5
+            return loss.mean() + aux_loss/5
         else:
             # This criterion combines `log_softmax` and `nll_loss` in a single
             # function. nll -> negative log likelihood loss.
