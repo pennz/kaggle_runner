@@ -6,6 +6,7 @@
 # ### Dont forget turn on TPU & HIGH-RAM modes :)
 #
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
+# Have a good day!
 
 # + {"colab": {"base_uri": "https://localhost:8080/", "height": 54}, "colab_type": "code", "id": "n6uGvKL3upio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0"}
 # %load_ext autoreload
