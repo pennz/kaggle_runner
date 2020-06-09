@@ -240,10 +240,10 @@ mbd_interactive: multilang_bert_data.sh
 data_download: kaggle
 	@ eval "$$write_dataset_list_script"
 	-mkdir -p /kaggle/input
-	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}'
-	cmp_name="jigsaw-multilingual-toxic-comment-classification"; \
+	(cmp_name="jigsaw-multilingual-toxic-comment-classification"; \
 kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
-cd /kaggle/input/$$cmp_name; unzip '*.zip'
+cd /kaggle/input/$$cmp_name; unzip '*.zip') &
+	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}'
 
 kaggle: /root/.kaggle/kaggle.json
 
