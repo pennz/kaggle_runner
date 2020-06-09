@@ -312,6 +312,8 @@ sshR:
 	ssh -fNR 10000:172.28.0.2:9000 -p $(SSH_PORT) v@vtool.duckdns.org
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 sshRj:
+	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
+	$(PY) -m jupyter lab --ip="172.28.0.2" --port=9001
 	ssh -fNR 10001:172.28.0.2:9001 -p $(SSH_PORT) v@vtool.duckdns.org
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 

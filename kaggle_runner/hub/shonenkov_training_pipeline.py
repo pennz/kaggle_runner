@@ -947,7 +947,7 @@ class LabelSmoothing(nn.Module):
 
             return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/5
         else:
-            return torch.nn.functional.binary_cross_entropy_with_logits(x[:,:2], target[:,:2])
+            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
 
 
 # + {"colab": {}, "colab_type": "code", "id": "Ow13PTlFwbiH"}
