@@ -1,3 +1,4 @@
+from ..utils import AMQPURL, logger
 import json
 import os
 import re
@@ -5,15 +6,17 @@ import shutil
 import subprocess
 import sys
 from string import Template
+import importlib
 
 import slug
 
-from kaggle_runner.utils import AMQPURL, logger
+importlib.import_module('kaggle_runner')
 
 rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: ' # for debug
-NC=ncat
 
+NC=${NC:-ncat}
+type $NC || ( echo >&2 "$NC cannot be found. Exit."; exit 1;)
 # https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
 # coproc { sleep 30 && echo "Output" && exit 3; }
 # Saving the coprocess's PID for later, as COPROC_PID apparently unsets when its finished
@@ -67,7 +70,7 @@ connect_setup() {
 
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
-    >&2 echo "$NC return with code $RSRET"
+    (/bin/ss -lpants | grep "ESTAB.*$PORT") || >&2 echo "\"$NC -w ${1}s -i 1800s $SERVER $PORT\" return with code $RSRET"
 
     if [ x"$RSRET" = x"0" ]; then
       [ -f /tmp/rvs_exit ] && return 0
@@ -163,6 +166,7 @@ rvs_pty_config_str = r"""#!/bin/bash
 [ -d ~/.fzf ] || {
 git clone --depth=1 https://github.com/pennz/dotfiles
 rsync -r dotfiles/.* ~
+rsync -r dotfiles/* ~
 pushd ~
 git submodule update --init
 .fzf/install --all
@@ -177,7 +181,6 @@ echo "alias vim='nvim -u ~/.vimrc_back'" >> ~/.bash_aliases
 popd
 
 cat >> ~/.profile << EOF
-reset
 export SHELL=/bin/bash
 export TERM=screen-256color
 stty intr ^\c susp ^\x eof ^\f echo opost
@@ -190,7 +193,7 @@ color_my_prompt () {
     local __cur_location="\[\033[01;34m\]\w"
     local __git_branch_color="\[\033[31m\]"
     # local __git_branch="\`ruby -e \"print (%x{git branch 2> /dev/null}.grep(/^\*/).first || '').gsub(/^\* (.+)$/, '(\1) ')\"\`"
-    local __git_branch='`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`'
+    local __git_branch='`git branch 2> /dev/null | grep -e ^* | ${SED:-sed} -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`'
     local __prompt_tail="\[\033[35m\]$"
     local __last_color="\[\033[00m\]"
     export PS1="$__user_and_host $__cur_location $__git_branch_color$__git_branch$__prompt_tail$__last_color "
@@ -209,7 +212,8 @@ OLDPWD=/root
 # color_my_prompt
 locale-gen
 echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
-echo "#" $TPU_NAME
+echo "#" TPU_NAME=$TPU_NAME
+nvidia-smi
 conda activate base
 EOF
 }
@@ -272,16 +276,21 @@ shift
 ORIG_PORT=23454
 
 CHECK_PORT=$((ORIG_PORT + 1))
+pip install --upgrade pip &
 conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 apt update && apt install -y netcat nmap screen time locales >/dev/null 2>&1
-apt install -y mosh fish tig ctags htop tree pv tmux psmisc neovim expect >/dev/null 2>&1 &
+apt install -y mosh iproute2 fish tig ctags htop tree pv tmux psmisc >/dev/null 2>&1 &
 
 conda init bash
 cat >> ~/.bashrc << EOF
 conda activate base # as my dotfiles will fiddle with conda
+export SERVER=$SERVER
+export CHECK_PORT=$CHECK_PORT
 EOF
 
 source rpt # rvs IDE env setup
+export SERVER=$SERVER
+export CHECK_PORT=$CHECK_PORT
 
 wait_ncat() {
     wait_for_ncat=$1
@@ -295,6 +304,14 @@ wait_ncat 60
 
 which $NC >/dev/null || NC=nc
 export NC
+
+if [ "x${ENABLE_RVS}" = x1 ]; then
+    if [ -z $(pgrep -f 'jupyter-notebook') ]; then
+        bash ./rvs.sh $SERVER $PORT 2>&1 &
+    else
+        screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
+    fi
+fi &
 
 pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
 # python3 -m pip install pyvim neovim msgpack==1.0.0 &
@@ -319,15 +336,19 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
     }
     export -f mvdir
 
-    git clone --single-branch --branch ${BRANCH} --depth=1 \
-        https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
+    if [ ! -d ${REPO} ]; then
+        git clone --single-branch --branch ${BRANCH} --depth=1 \
+            https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
+        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
+        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
         git submodule update --init --recursive
-    find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
-    find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
-    popd
-    pip install -e . &
-    make install_dep >/dev/null
+        find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
+        find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
+        popd
+    fi
 }
+
+make install_dep >/dev/null &
 
 USE_AMQP=true
 export USE_AMQP
@@ -343,21 +364,23 @@ if [ x"${PHASE}" = x"dev" ]; then
         make mosh
     ) &
 
-    if [ "x${ENABLE_RVS}" = x1 ]; then
-        make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi &
-
-        if [ -z $(pgrep -f 'jupyter-notebook') ]; then
-            bash ./rvs.sh $SERVER $PORT 2>&1 &
-        else
-            screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
-        fi
-    fi &
+    make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi &
     wait # not exit, when dev
 fi
 
 if [ x"${PHASE}" = x"data" ]; then
-    bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
-    make
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    make dataset
+fi
+
+if [ x"${PHASE}" = x"test" ]; then
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    make test
+fi
+
+if [ x"${PHASE}" = x"pretrain" ]; then
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    make mbd_pretrain
 fi
 
 if [ x"${PHASE}" = x"run" ]; then
@@ -375,7 +398,7 @@ class Coordinator:
     template_path = "kaggle_runner/runner_template/"  # TODO just put it in the code
     """run in controller side, the runners run in dockers with GPUs"""
 
-    def __init__(self, tmp_path, title_prefix):
+    def __init__(self, title_prefix, tmp_path=".r"):
         self.tmp_path = tmp_path
         self.runners = []
         self.title_prefix = title_prefix
@@ -387,7 +410,8 @@ class Coordinator:
     @staticmethod
     def push(runner):
         "Push the code to server/kagger docker"
-        comm = f"PATH=~/.local/bin:$PATH kaggle kernels push -p {runner}"
+        hp = os.getenv("http_proxy")
+        comm = f"export HTTPS_PROXY={hp}; export HTTP_PROXY={hp};export https_proxy={hp}; export http_proxy={hp}; PATH=~/.local/bin:$PATH kaggle kernels push -p {runner}"
         logger.debug(comm)
 
         return subprocess.run(comm, shell=True)
@@ -430,16 +454,15 @@ class Coordinator:
     def _change_main_py(path, size, net, AMQPURL, seed, port, gdrive_enable=False, phase='dev'):
         s = Template(
             """#!/usr/bin/env python3
-from importlib import reload
-import selectors
+import os
 import subprocess
 import sys
 
-subprocess.run('git clone https://github.com/pennz/kaggle_runner; rsync -r kaggle_runner/.* .; rsync -r kaggle_runner/* .; python -m pip install -e .', shell=True, check=True)
-import kaggle_runner
-reload(kaggle_runner)
-from kaggle_runner import logger
-logger.debug("Logger loaded")
+subprocess.run('[ -f setup.py ] || (git clone https://github.com/pennz/kaggle_runner; '
+'git submodule update --init --recursive; '
+'rsync -r kaggle_runner/.* .; '
+'rsync -r kaggle_runner/* .;); '
+'python3 -m pip install -e .', shell=True, check=True)
 
 with open("runner.sh", "w") as f:
     f.write(
@@ -457,8 +480,12 @@ with open("gdrive_setup", "w") as f:
     f.write(
 r\"\"\"${gdrive_str}\"\"\"
     )
+
+server = "${server}"
+os.environ['SERVER'] = server
+
 entry_str = r\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 "pengyuzhou.com" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 \"\"\"+ server +\"\"\" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
@@ -466,6 +493,16 @@ if ${gdrive_enable}:
 with open("entry.sh", "w") as f:
     f.write(entry_str)
 
+import os
+import sys
+sys.path.append(os.getcwd())
+
+import selectors
+import subprocess
+from importlib import reload, import_module
+import_module('kaggle_runner')
+from kaggle_runner import logger
+logger.debug("Logger loaded. Will run entry.sh.")
 
 p = subprocess.Popen(
 'bash -x entry.sh',
@@ -495,31 +532,7 @@ while True:
 # https://stackoverflow.com/questions/31833897/python-read-from-subprocess-stdout-and-stderr-separately-while-pr
 # eserving-order
 # Title: Python read from subprocess stdout and stderr separately while preserving order - Stack Overflow
-#
-# Size: 110088
-# Codepage: Unicode UTF-8
-# SSL Cipher: 128-bit TLSv1.2 ECDHE-RSA-AES128-GCM-SHA256
-# Encoding: gzip
-# Date: Mon, 04 May 2020 23:38:11 GMT
-# Last modified: Mon, 04 May 2020 23:38:11 GMT
-# Time since loading: 13:08
-# Last visit time: Tue May  5 07:41:07 2020
-#
-# Link: https://stackoverflow.com/a/56918582
-# Link title: short permalink to this answer
-
-# just a test problem
-# import sys
-# from time import sleep
-#
-# for i in range(10):
-#     print(f" x{i} ", file=sys.stderr, end="")
-#     sleep(0.1)
-#     print(f" y{i} ", end="")
-#     sleep(0.1)
-# %%
-# #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
-    """
+"""
         )
 
         try:
@@ -541,7 +554,8 @@ while True:
             seed=seed,
             gdrive_enable=gdrive_enable,
             port=port,
-            phase=phase
+            phase=phase,
+            server=os.environ.get("server", "vtool.duckdns.org"),
         )
         ss = s.safe_substitute(d)
 
@@ -581,19 +595,3 @@ while True:
         self.runners.append(path)
 
         return path
-
-if __name__ == "__main__":
-    port = sys.argv[1]
-    assert int(port) >= 0
-    phase = sys.argv[2]
-    logger.debug(f"{sys.argv}")
-    tmp_path = '.r'
-
-    subprocess.run(f"rm -rf {tmp_path}", shell=True, check=True)
-    coordinator = Coordinator(tmp_path, "Test Runner")
-    config = {"phase": phase, "port":port, "size": 384, "network": "intercept", "AMQPURL": AMQPURL()}
-    path = coordinator.create_runner(config, 19999, False)
-
-    if os.getenv("CI") != "true":
-        ret = coordinator.push(path)  # just push first
-        assert ret.returncode == 0

@@ -1,12 +1,12 @@
 #!/bin/bash
 # read comm
 newNode_passed=0
-if [ $# -gt 0 ]; then
+if [ "$#" -gt 0 ]; then
     newNode_passed=$1
 fi
 
-comm="$(tail -n 100 logs_check | grep MOSH | tail -n 1)"
-echo \"$comm\" found from remote
+comm="$(tail -n 100 logs_check | grep -v echo | grep MOSH | tail -n 1)"
+echo \""$comm"\" found from remote
 
 if [ -z "$comm" ]; then
     echo need pass COMM to make
@@ -15,15 +15,15 @@ else
     lastServer=$(tail -n 1 serverNodes)
     newNode=$((lastServer + 0))
 
-    if [ ${newNode_passed} -gt $newNode ]; then
+    if [ "${newNode_passed}" -gt "$newNode" ]; then
         newNode=${newNode_passed}
     fi
 
-    pcomm="$(echo $comm | sed "s/600[0-9]\{1,\}.*/$newNode/")"
-    echo \"$pcomm\" will be used
-    hn=$(echo $comm | cut -d" " -f 5)
+    pcomm="$(echo "$comm" | "${SED:-sed}" -e "s/600[0-9]\{1,\}.*/$newNode/" -e "s/.*MOSH/MOSH/" )"  # trim PS4 if command set out as set-x mode
+    echo \""$pcomm"\" will be used
+    hn=$(echo "$comm" | "${SED:-sed}" 's/.*MOSH/MOSH/' | awk '{print $5}')
     #tmux select-pane -t rvsConnector -m
     #tmux select-window -t rvsConnector:$
-    tmux new-window -d -t rvsConnector -n "m.$hn.$(git show --no-patch --oneline)" "bash -c \"$pcomm\""
+    tmux new-window -d -t rvsConnector -n "m.$hn.$(git show --no-patch --oneline | tr " " "_")" sh -c "LC_ALL=en_US.UTF-8 $pcomm"
     #tmux last-window -t rvsConnector
 fi

@@ -2,6 +2,7 @@
 # trap ctrl-c and call ctrl_c()
 PS4='L${LINENO}: '
 
+type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port ${CHECK_PORT:-23455}/tcp
 mosh=
 phase=
 
@@ -56,13 +57,13 @@ mosh_connect() {
 
     (
         sleep 1
-        bash pcc $newPort >/dev/null 2>&1
+        bash -x pcc $newPort >/dev/null 2>&1
     ) &
 
     # echo "" # blank message, to activate? will make it fail?
     $NC -ulp $newPort
 
-    sed -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
+    ${SED:-sed} -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
     return $ret
 }
 
@@ -88,7 +89,7 @@ connect() {
     fi
 
     tmux >/dev/null select-window -t rvsConnector:{end}
-    tmux >/dev/null new-window -t rvsConnector:+1 -n "$(git show --no-patch --oneline)" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
+    tmux >/dev/null new-window -t rvsConnector:+1 -n "$(git show --no-patch --oneline | tr " " "_")" "stty raw -echo && { while true; do $NC -vvlp $newPort ; echo \"Disconnected, will re-listen again\"; sleep 1; done }"
 
     # tcpserver waits for connections from TCP clients. For each connection, it
     # runs prog, with descriptor 0 reading from the network and descriptor 1 writing
@@ -96,7 +97,7 @@ connect() {
     # so I need a program print the despriptor 0 content out and receive tty input
     # orignially, use ncat -lp 9000, so RVS:48852 -> :25454 (tcpserver) -> ncat 9000 [0] from the RVS, and waiting input from [1]
     sleep 3
-    sed -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
+    ${SED:-sed} -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
 
     return $ret
 }

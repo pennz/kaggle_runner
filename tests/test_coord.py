@@ -57,7 +57,7 @@ class TestCoordinator:
             assert ret.returncode == 0
 
     def test_push_runner_cmd(self, runner_configs):
-        subprocess.run(f"python ./kaggle_runner/runners/coordinator.py "
+        subprocess.run(f"python -m kaggle_runner "
                        f"{runner_configs[1]['port']} dev", shell=True, check=True)
 
     @pytest.mark.timeout(10)
