@@ -22,7 +22,7 @@ KAGGLE_USER_NAME=$(shell jq -r '.username' ~/.kaggle/kaggle.json)
 
 SED := $(shell type -p gsed)
 ifeq ($(SED),)
-	SED := $(shell tpye -p sed)
+	SED := $(shell type -p sed)
 endif
 export SED := $(SED)
 
@@ -220,6 +220,7 @@ mlocal:
 
 check:
 	-ps aux | grep make
+	echo $(SED)
 	-@echo $(http_proxy)
 	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT)
 	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT) | ncat $(SERVER) $(CHECK_PORT)
