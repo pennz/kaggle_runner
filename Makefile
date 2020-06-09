@@ -312,6 +312,9 @@ t: pccnct m
 sshR:
 	ssh -fNR 10000:172.28.0.2:9000 -p $(SSH_PORT) v@vtool.duckdns.org
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
+sshRj:
+	ssh -fNR 10001:172.28.0.2:9001 -p $(SSH_PORT) v@vtool.duckdns.org
+	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
