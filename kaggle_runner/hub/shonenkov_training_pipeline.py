@@ -1366,3 +1366,4 @@ submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
 # + {"colab": {}, "colab_type": "code", "id": "ARz9TllfyVVa"}
 # # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
+# !make push_dataset

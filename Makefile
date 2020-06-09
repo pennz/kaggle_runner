@@ -308,7 +308,7 @@ t: pccnct m
 	echo "Please check remote mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
-sshl:
+sshR:
 	ssh -fNR 10000:172.28.0.2:9000 -p $(SSH_PORT) v@vtool.duckdns.org
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 
