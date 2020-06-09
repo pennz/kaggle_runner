@@ -949,8 +949,6 @@ class LabelSmoothing(nn.Module):
             return torch.nn.functional.binary_cross_entropy_with_logits(x[:,:2], target[:,:2])
 
 
-
-
 # + {"colab": {}, "colab_type": "code", "id": "Ow13PTlFwbiH"}
 import warnings
 
