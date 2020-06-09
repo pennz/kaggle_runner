@@ -927,26 +927,27 @@ class LabelSmoothing(nn.Module):
 
     def forward(self, x, target):
         if self.training:
-            pred = x[:,:2].log_softmax(dim=self.dim)
-            aux=x[:, 2:]
+            toxic_pred = x[:,:2].log_softmax(dim=self.dim)
+            aux_pred=x[:, 2:]
 
             toxic_target = target[:,:2]
             aux_target = target[:, 2:]
             with torch.no_grad():
-                # true_dist = pred.data.clone()
-                true_dist = torch.zeros_like(pred)
-                true_dist.fill_(self.smoothing / (self.cls - 1))
-                true_dist.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
+                smooth_toxic_target = torch.zeros_like(toxic_pred)
+                smooth_toxic_target.fill_(self.smoothing / (self.cls - 1))
+                smooth_toxic_target.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
 
-                # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
-                smooth_aux = torch.zeros_like(aux_target)
-                smooth_aux.fill_(self.smoothing) # only for binary cross entropy
-                smooth_aux += (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+                smooth_aux_target = torch.zeros_like(aux_target)
+                smooth_aux_target.fill_(self.smoothing) # only for binary cross entropy
+                smooth_aux_target += (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
 
-            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
+            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux_pred, smooth_aux_target)
 
-            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/5
+            return torch.mean(torch.sum(-toxic_pred * smooth_toxic_target, dim=self.dim)) + aux_loss/5
         else:
+            # This criterion combines `log_softmax` and `nll_loss` in a single
+            # function. nll -> negative log likelihood loss.
+
             return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
 
 
