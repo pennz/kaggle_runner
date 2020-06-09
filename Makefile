@@ -255,7 +255,7 @@ jq -s '.[0] * .[1]' kaggle_runner/hub/tpu_colab.ipynb $$tmp > kaggle_runner/hub/
 rm $$tmp
 
 dmetadata: kaggle 
-	mkdir datas
+	[ -d datas ] || mkdir datas
 	kaggle datasets metadata -p datas/ k1gaggle/bert-for-toxic-classfication-trained
 push_dataset: dmetadata
 	cp datas/dataset-metadata.json datas/dm.json
@@ -308,6 +308,10 @@ t: pccnct m
 	make push
 	echo "Please check remote mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
+
+sshR:
+	ssh -fNR 10000:172.28.0.2:9000 -p $(SSH_PORT) v@vtool.duckdns.org
+	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit

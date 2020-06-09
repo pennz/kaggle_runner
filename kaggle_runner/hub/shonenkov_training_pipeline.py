@@ -6,17 +6,20 @@
 # ### Dont forget turn on TPU & HIGH-RAM modes :)
 #
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
+# Have a good day!
+
+# + {"colab": {"base_uri": "https://localhost:8080/", "height": 54}, "colab_type": "code", "id": "n6uGvKL3upio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0"}
+# %load_ext autoreload
+# %autoreload 2
 
 # + {"colab": {"base_uri": "https://localhost:8080/", "height": 55}, "colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751"}
+# !python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
+# !python -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 # !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
 # !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
 # !python3 -m pip install transformers==2.5.1 > /dev/null
 # !python3 -m pip install pandarallel > /dev/null
 # !python3 -m pip install catalyst==20.4.2 > /dev/null
-
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 54}, "colab_type": "code", "id": "n6uGvKL3upio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0"}
-# %load_ext autoreload
-# %autoreload 2
 
 # + {"colab": {"base_uri": "https://localhost:8080/", "height": 54}, "colab_type": "code", "id": "n6uGvKL3epio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0"}
 import subprocess
@@ -909,35 +912,42 @@ class AverageMeter(object):
 
 
 # + {"colab": {}, "colab_type": "code", "id": "arcC5IeYxUbr"}
+from kaggle_runner import may_debug
+
+
 class LabelSmoothing(nn.Module):
-    def __init__(self, smoothing = 0.1):
+    """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
+
+    def __init__(self, smoothing = 0.1, dim=-1):
         super(LabelSmoothing, self).__init__()
+        self.cls = 2
         self.confidence = 1.0 - smoothing
         self.smoothing = smoothing
+        self.dim = dim
 
     def forward(self, x, target):
-        may_debug()
-
         if self.training:
-            x = x.float()
-            toxic=x[:, :2]
+            pred = x[:,:2].log_softmax(dim=self.dim)
             aux=x[:, 2:]
-            t = target.float()
-            toxic_target = t[:,:2]
-            aux_target = t[:, 2:]
-            aux_loss = torch.nn.functional.cross_entropy(aux, aux_target)
 
-            logprobs = torch.nn.functional.log_softmax(toxic, dim = -1)
-            nll_loss = -logprobs * target
-            nll_loss = nll_loss.sum(-1)
+            toxic_target = target[:,:2]
+            aux_target = target[:, 2:]
+            with torch.no_grad():
+                # true_dist = pred.data.clone()
+                true_dist = torch.zeros_like(pred)
+                true_dist.fill_(self.smoothing / (self.cls - 1))
+                true_dist.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
 
-            smooth_loss = -logprobs.mean(dim=-1)
+                # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
+                smooth_aux = torch.zeros_like(aux_target)
+                smooth_aux.fill_(self.smoothing) # only for binary cross entropy
+                smooth_aux += (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
 
-            loss = self.confidence * nll_loss + self.smoothing * smooth_loss
+            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
 
-            return loss.mean() + aux_loss
+            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/5
         else:
-            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
+            return torch.nn.functional.binary_cross_entropy_with_logits(x[:,:2], target[:,:2])
 
 
 # + {"colab": {}, "colab_type": "code", "id": "Ow13PTlFwbiH"}
@@ -1185,6 +1195,92 @@ class TrainGlobalConfig:
 net = ToxicSimpleNNModel()
 
 
+# + {"colab": {}, "colab_type": "code", "id": "InecI_CbxXA_"}
+def _gpu_fn():
+    from kaggle_runner import logger
+    device = torch.device('cuda')
+    net.to(device)
+
+    #test_sampler = torch.utils.data.distributed.DistributedSampler(
+    #    test_dataset,
+    #    num_replicas=xm.xrt_world_size(),
+    #    rank=xm.get_ordinal(),
+    #    shuffle=False
+    #)
+    test_loader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+    #    sampler=test_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+
+    def validation(model, device, config, val_loader, criterion):
+        model.eval()
+        losses = AverageMeter()
+        final_scores = RocAucMeter()
+
+        t = time.time()
+
+        for step, (targets, inputs, attention_masks) in enumerate(val_loader):
+            if config.verbose:
+                if step % config.verbose_step == 0:
+                    logger.info(
+                        f'Valid Step {step}, loss: ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
+                        f'time: {(time.time() - t):.5f}'
+                    )
+            with torch.no_grad():
+                inputs = inputs.to(device, dtype=torch.long)
+                attention_masks = attention_masks.to(device, dtype=torch.long)
+                targets = targets.to(device, dtype=torch.float)
+
+                outputs = model(inputs, attention_masks)
+                loss = criterion(outputs, targets)
+
+                batch_size = inputs.size(0)
+
+                final_scores.update(targets, outputs)
+                losses.update(loss.detach().item(), batch_size)
+
+    def run_inference(model, device, config, test_loader):
+        model.eval()
+        result = {'id': [], 'toxic': []}
+        t = time.time()
+
+        for step, (ids, inputs, attention_masks) in enumerate(test_loader):
+            if config.verbose:
+                if step % config.verbose_step == 0:
+                    logger.info(f'Prediction Step {step}, time: {(time.time() - t):.5f}')
+
+            with torch.no_grad():
+                inputs = inputs.to(device, dtype=torch.long)
+                attention_masks = attention_masks.to(device, dtype=torch.long)
+                outputs = model(inputs, attention_masks)
+                toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
+
+            result['id'].extend(ids.cpu().numpy())
+            result['toxic'].extend(toxics)
+    #validation_sampler = torch.utils.data.distributed.DistributedSampler(
+    #    validation_dataset,
+    #    num_replicas=xm.xrt_world_size(),
+    #    rank=xm.get_ordinal(),
+    #    shuffle=False
+    #)
+    validation_loader = torch.utils.data.DataLoader(
+        validation_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+    #    sampler=validation_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+
+    losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
+    logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
+
+
 # + {"colab": {}, "colab_type": "code", "id": "INecI_CbxXA_"}
 def _mp_fn(rank, flags):
     device = xm.xla_device()
@@ -1270,3 +1366,4 @@ submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
 # + {"colab": {}, "colab_type": "code", "id": "ARz9TllfyVVa"}
 # # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
+# !make push_dataset
