@@ -654,7 +654,7 @@ class ExcludeUrlsTransform(NLPTransform):
 
 # + {"colab_type": "code", "id": "uFB3UeyAsYCp", "colab": {}}
 class SynthesicOpenSubtitlesTransform(NLPTransform):
-    def __init__(self, always_apply=False, p=0.5):
+    def __init__(self, always_apply=False, supliment_toxic=None, p=0.5, mix=False):
         super(SynthesicOpenSubtitlesTransform, self).__init__(always_apply, p)
         df = pd.read_csv(f'{ROOT_PATH}/input/open-subtitles-toxic-pseudo-labeling/open-subtitles-synthesic.csv', index_col='id')[['comment_text', 'toxic', 'lang']]
         df = df[~df['comment_text'].isna()]
@@ -665,28 +665,39 @@ class SynthesicOpenSubtitlesTransform(NLPTransform):
         self.synthesic_toxic = df[df['toxic'] == 1].comment_text.values
         self.synthesic_non_toxic = df[df['toxic'] == 0].comment_text.values
 
+        if supliment_toxic is not None:
+             self.synthesic_toxic = self.synthesic_toxic.append(supliment_toxic)
+        self.mix = mix
+
         del df
         gc.collect();
+
+    def _mix_both(texts)
+        for i in range(random.randint(0,2)):
+            texts.append(random.choice(self.synthesic_non_toxic))
+
+        for i in range(random.randint(1,3)):
+            texts.append(random.choice(self.synthesic_toxic))
 
     def generate_synthesic_sample(self, text, toxic):
         texts = [text]
 
         if toxic == 0:
-            for i in range(random.randint(1,5)):
-                texts.append(random.choice(self.synthesic_non_toxic))
+            if self.mix:
+                _mix_both(texts)
+                toxic = 1
+            else:
+                for i in range(random.randint(1,5)):
+                    texts.append(random.choice(self.synthesic_non_toxic))
         else:
-            for i in range(random.randint(0,2)):
-                texts.append(random.choice(self.synthesic_non_toxic))
-
-            for i in range(random.randint(1,3)):
-                texts.append(random.choice(self.synthesic_toxic))
+            _mix_both(texts)
         random.shuffle(texts)
 
-        return ' '.join(texts)
+        return ' '.join(texts), toxic
 
     def apply(self, data, **params):
         text, toxic = data
-        text = self.generate_synthesic_sample(text, toxic)
+        text, toxic = self.generate_synthesic_sample(text, toxic)
 
         return text, toxic
 
@@ -701,12 +712,23 @@ def get_train_transforms():
         ExcludeDuplicateSentencesTransform(p=0.95),
     ], p=1.0)
 
-def get_synthesic_transforms():
-    return SynthesicOpenSubtitlesTransform(p=0.5)
+def get_synthesic_transforms(supliment_toxic, p=0.5, mix=True):
+    return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
 
+def get_toxic_comments(df):
+        df = df[~df['comment_text'].isna()]
+        df = df.drop_duplicates(subset='comment_text')
+        df['toxic'] = df['toxic'].round().astype(np.int)
+
+        return df[df['toxic'] == 1].comment_text.values
+
+df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
+df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+supliment_toxic = get_toxic_comments(df_train)
 
 train_transforms = get_train_transforms();
-synthesic_transforms = get_synthesic_transforms()
+synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
+synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
 tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
 shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
@@ -767,9 +789,13 @@ class DatasetRetriever(Dataset):
         else:
             aux = [self.severe_toxic[idx], self.obscene[idx], self.threat[idx], self.insult[idx], self.identity_hate[idx]]
 
-        if self.test is False:
-            label = self.labels_or_ids[idx]
-            target = onehot(2, label, aux=aux)
+        label = self.labels_or_ids[idx]
+        target = onehot(2, label, aux=aux)
+
+        if self.test is True:
+            tokens, attention_mask = self.get_tokens(str(text))
+
+            return self.labels_or_ids[idx], tokens, attention_mask
 
         if self.use_train_transforms:
             text, _ = train_transforms(data=(text, lang))['data']
@@ -779,19 +805,16 @@ class DatasetRetriever(Dataset):
             if token_length > 0.8*MAX_LENGTH:
                 text, _ = shuffle_transforms(data=(text, lang))['data']
             elif token_length < 60:
-                text, _ = synthesic_transforms(data=(text, label))['data']
-            else:
+                text, label = synthesic_transforms(data=(text, label))['data']
+            else: # will not need to use transforms
                 tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
 
                 return target, tokens, attention_mask
-
+        # text is transformed
         tokens, attention_mask = self.get_tokens(str(text))
         tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
 
-        if self.test is False:
-            return target, tokens, attention_mask
-
-        return self.labels_or_ids[idx], tokens, attention_mask
+        return target, tokens, attention_mask
 
     def get_labels(self):
         return list(np.char.add(self.labels_or_ids.astype(str), self.langs))
@@ -800,7 +823,8 @@ class DatasetRetriever(Dataset):
 # + {"colab_type": "code", "id": "3DVkkUVMu9Ka", "colab": {}}
 # %%time
 
-df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
+if df_train is None:
+    df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
 
 
 train_dataset = DatasetRetriever(
