@@ -881,13 +881,15 @@ class RocAucMeter(object):
         self.y_true = np.array([0,1])
         self.y_pred = np.array([0.5,0.5])
         self.score = 0
+        self.aux_part = 0
 
-    def update(self, y_true, y_pred):
+    def update(self, y_true, y_pred, aux_part=0):
         y_true = y_true.cpu().numpy().argmax(axis=1)
         y_pred = nn.functional.softmax(y_pred, dim=1).data.cpu().numpy()[:,1]
         self.y_true = np.hstack((self.y_true, y_true))
         self.y_pred = np.hstack((self.y_pred, y_pred))
         self.score = sklearn.metrics.roc_auc_score(self.y_true, self.y_pred, labels=np.array([0, 1]))
+        self.aux_part = aux_part
 
     @property
     def avg(self):
@@ -1063,6 +1065,7 @@ class TPUFitter:
                     self.log(
                         f'Train Step {step}, loss: ' + \
                         f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
+                        f'{losses.aux_part:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
 

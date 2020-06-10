@@ -97,3 +97,79 @@ cd bert && python run_classifier.py \
 ## TODO
 1. bert data preprocess, remove "" at heads and tails, update datasets
 1. split module to prepare datasets
+
+## log
+0610: version 6, 
+
+from kaggle_runner import may_debug
+
+
+class LabelSmoothing(nn.Module):
+    """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
+
+    def __init__(self, smoothing = 0.1, dim=-1):
+        super(LabelSmoothing, self).__init__()
+        self.cls = 2
+        self.confidence = 1.0 - smoothing
+        self.smoothing = smoothing
+        self.dim = dim
+
+    def forward(self, x, target):
+        may_debug()
+        if self.training:
+            pred = x[:,:2].log_softmax(dim=self.dim)
+            aux=x[:, 2:]
+
+            toxic_target = target[:,:2]
+            aux_target = target[:, 2:]
+            with torch.no_grad():
+                # true_dist = pred.data.clone()
+                true_dist = torch.zeros_like(pred)
+                true_dist.fill_(self.smoothing) # hardcode for binary classification
+                true_dist += (1-self.smoothing*2)*toxic_target
+                # true_dist.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
+
+                # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
+                smooth_aux = torch.zeros_like(aux_target)
+                smooth_aux.fill_(self.smoothing) # only for binary cross entropy
+                smooth_aux += (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+
+            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
+
+            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/5
+        else:
+            return torch.nn.functional.binary_cross_entropy_with_logits(x[:,:2], target[:,:2])
+
+class TrainGlobalConfig:
+    """ Global Config for this notebook """
+    num_workers = 0  # количество воркеров для loaders
+    batch_size = 16  # bs
+    n_epochs = 2  # количество эпох для обучения
+    lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
+    fold_number = 0  # номер фолда для обучения
+
+    # -------------------
+    verbose = True  # выводить принты
+    verbose_step = 50  # количество шагов для вывода принта
+    # -------------------
+
+    # --------------------
+    step_scheduler = False  # выполнять scheduler.step после вызова optimizer.step
+    validation_scheduler = True  # выполнять scheduler.step после валидации loss (например для плато)
+    SchedulerClass = torch.optim.lr_scheduler.ReduceLROnPlateau
+    scheduler_params = dict(
+        mode='max',
+        factor=0.7,
+        patience=0,
+        verbose=False,
+        threshold=0.0001,
+        threshold_mode='abs',
+        cooldown=0,
+        min_lr=1e-8,
+        eps=1e-08
+    )
+    # --------------------
+
+    # -------------------
+    criterion = LabelSmoothing()
+    # -------------------
