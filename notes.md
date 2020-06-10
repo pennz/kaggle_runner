@@ -99,7 +99,7 @@ cd bert && python run_classifier.py \
 1. split module to prepare datasets
 
 ## log
-0610: version 6, 
+### 0610: version 6, 
 
 from kaggle_runner import may_debug
 
@@ -173,3 +173,9 @@ class TrainGlobalConfig:
     # -------------------
     criterion = LabelSmoothing()
     # -------------------
+### version 7
+3 epoches, and for aux it is /3
+
+## compare logs
+as we trained on validation set, it will always get better.
+train loss less(longer) and the final test result is better
