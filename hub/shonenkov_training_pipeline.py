@@ -1,27 +1,23 @@
 # -*- coding: utf-8 -*-
-# + {"colab_type": "text", "id": "view-in-github", "cell_type": "markdown"}
-# <a href="https://colab.research.google.com/github/pennz/kaggle_runner/blob/master/kaggle_runner/hub/shonenkov_training_pipeline.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
-
 # + {"colab_type": "text", "id": "wzoWM76m0Rfg", "cell_type": "markdown"}
 # ### Dont forget turn on TPU & HIGH-RAM modes :)
 #
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
 # Have a good day!
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 54}, "colab_type": "code", "id": "n6uGvKL3upio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0"}
+# + {"id": "ppiQVOL5vW96", "colab_type": "code", "outputId": "3cc1df75-ff0f-4e61-97fa-0525459d3b78", "colab": {}}
+# !python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
+
+# + {"id": "_43yMxyEvW-q", "colab_type": "code", "outputId": "5975062a-6192-4c9e-b83e-6353ab9df3ec", "colab": {"base_uri": "https://localhost:8080/", "height": 86}}
+# !echo $HOSTNAME
+# !echo $TPU_NAME
+# !nvidia-smi
+
+# + {"colab_type": "code", "id": "n6uGvKL3upio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0", "colab": {"base_uri": "https://localhost:8080/", "height": 54}}
 # %load_ext autoreload
 # %autoreload 2
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 55}, "colab_type": "code", "id": "HsZb7QICuRIe", "outputId": "cbb9b6cb-669d-41c5-d6a1-650228728751"}
-# !python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
-# !python -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
-# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
-# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
-# !python3 -m pip install transformers==2.5.1 > /dev/null
-# !python3 -m pip install pandarallel > /dev/null
-# !python3 -m pip install catalyst==20.4.2 > /dev/null
-
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 54}, "colab_type": "code", "id": "n6uGvKL3epio", "outputId": "6b29ea48-a25e-41d4-ba7f-ab0aa8fd7eb0"}
+# + {"colab_type": "code", "id": "n6uGvKL3epio", "colab": {}}
 import subprocess
 
 subprocess.run('[ -f setup.py ] || (git clone https://github.com/pennz/kaggle_runner; '
@@ -30,7 +26,7 @@ subprocess.run('[ -f setup.py ] || (git clone https://github.com/pennz/kaggle_ru
 'rsync -r kaggle_runner/* .;); '
 'python3 -m pip install -e .', shell=True, check=True)
 
-# + {"colab": {}, "colab_type": "code", "id": "wV017Cj1CRlg"}
+# + {"colab_type": "code", "id": "wV017Cj1CRlg", "colab": {}}
 with open("runner.sh", "w") as f:
     f.write(
 r"""#!/bin/bash -x
@@ -414,7 +410,7 @@ SRC_WORK_FOLDER=/kaggle/input
 """
     )
 
-# + {"colab": {}, "colab_type": "code", "id": "fk22W4JeCRlm"}
+# + {"colab_type": "code", "id": "fk22W4JeCRlm", "colab": {}}
 import os
 server = "vtool.duckdns.org"
 os.environ['SERVER'] = server
@@ -428,7 +424,7 @@ if False:
 with open("entry.sh", "w") as f:
     f.write(entry_str)
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 34}, "colab_type": "code", "id": "UAC8442XCRlq", "outputId": "3b52996b-c161-4279-f8a7-ab6b45e88e3e"}
+# + {"colab_type": "code", "id": "UAC8442XCRlq", "colab": {}}
 import os
 import sys
 sys.path.append(os.getcwd())
@@ -440,10 +436,22 @@ import_module('kaggle_runner')
 from kaggle_runner import logger
 logger.debug("Logger loaded. Will run entry.sh.")
 
-# + {"colab": {}, "colab_type": "code", "id": "mC6qgI68EMQm", "magic_args": "--bg --out runner_log --err runner_err_log", "language": "bash"}
+# + {"colab_type": "code", "id": "mC6qgI68EMQm", "outputId": "31827dc1-9bc8-40fe-c230-1aefbc223d5c", "colab": {"base_uri": "https://localhost:8080/", "height": 34}, "magic_args": "--bg --out runner_log --err runner_err_log", "language": "bash"}
 # bash -x entry.sh
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 156}, "colab_type": "code", "id": "KFZrVc5nCRlw", "outputId": "b21d3de4-5ea2-4233-9736-36261b7de356"}
+# + {"id": "IklWPKSwNsXN", "colab_type": "text", "cell_type": "markdown"}
+# # NOW kernel code
+
+# + {"colab_type": "code", "id": "HsZb7QICuRIe", "colab": {}}
+# !python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
+# !python -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
+# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
+# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
+# !python3 -m pip install transformers==2.5.1 > /dev/null
+# !python3 -m pip install pandarallel > /dev/null
+# !python3 -m pip install catalyst==20.4.2 > /dev/null
+
+# + {"colab_type": "code", "id": "KFZrVc5nCRlw", "colab": {}}
 import numpy as np
 import pandas as pd
 
@@ -483,7 +491,7 @@ from pandarallel import pandarallel
 
 pandarallel.initialize(nb_workers=4, progress_bar=False)
 
-# + {"colab": {}, "colab_type": "code", "id": "M-VP4QbZu9EB"}
+# + {"colab_type": "code", "id": "M-VP4QbZu9EB", "colab": {}}
 SEED = 42
 
 MAX_LENGTH = 224
@@ -503,7 +511,7 @@ def seed_everything(seed):
 
 seed_everything(SEED)
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 86}, "colab_type": "code", "id": "63ceMzcxu9GS", "outputId": "d78a51d9-9e15-4793-e70f-2b222231e842"}
+# + {"colab_type": "code", "id": "63ceMzcxu9GS", "colab": {}}
 from nltk import sent_tokenize
 from random import shuffle
 import random
@@ -644,7 +652,7 @@ class ExcludeUrlsTransform(NLPTransform):
         return text, lang
 
 
-# + {"colab": {}, "colab_type": "code", "id": "uFB3UeyAsYCp"}
+# + {"colab_type": "code", "id": "uFB3UeyAsYCp", "colab": {}}
 class SynthesicOpenSubtitlesTransform(NLPTransform):
     def __init__(self, always_apply=False, p=0.5):
         super(SynthesicOpenSubtitlesTransform, self).__init__(always_apply, p)
@@ -683,7 +691,7 @@ class SynthesicOpenSubtitlesTransform(NLPTransform):
         return text, toxic
 
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 34, "referenced_widgets": ["845fc7a27787461e95026f1d36f4ef8b", "9fa9c3af9c804ec29d87fa5300fa657d", "a6b7a79f1c524356b800c64df25d7284", "c2c417dab722401a909327db58b48033"]}, "colab_type": "code", "id": "K5BdJ9HWvnLW", "outputId": "eeadb258-3d56-4b38-90f2-a749d74ba483"}
+# + {"colab_type": "code", "id": "K5BdJ9HWvnLW", "colab": {}}
 def get_train_transforms():
     return albumentations.Compose([
         ExcludeUsersMentionedTransform(p=0.95),
@@ -703,7 +711,7 @@ tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
 shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
 
-# + {"colab": {}, "colab_type": "code", "id": "qFp80AuJu9Ii"}
+# + {"colab_type": "code", "id": "qFp80AuJu9Ii", "colab": {}}
 def onehot(size, target, aux=None):
     if aux is not None:
         vec = np.zeros(size+len(aux), dtype=np.float32)
@@ -789,7 +797,7 @@ class DatasetRetriever(Dataset):
         return list(np.char.add(self.labels_or_ids.astype(str), self.langs))
 
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 173}, "colab_type": "code", "id": "3DVkkUVMu9Ka", "outputId": "2434e74b-0f48-41e7-aa86-a9b8a8984772"}
+# + {"colab_type": "code", "id": "3DVkkUVMu9Ka", "colab": {}}
 # %%time
 
 df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
@@ -817,10 +825,10 @@ print(targets)
 print(tokens.shape)
 print(attention_masks.shape)
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 52}, "colab_type": "code", "id": "PlcGdUdSYewm", "outputId": "3f81ef87-94f8-45a1-9011-3addf641e5bb"}
+# + {"colab_type": "code", "id": "PlcGdUdSYewm", "colab": {}}
 np.unique(train_dataset.get_labels())
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 69}, "colab_type": "code", "id": "bW4dEWaYu9NF", "outputId": "7223d7c0-1b1c-40bf-b821-998b39d4f466"}
+# + {"colab_type": "code", "id": "bW4dEWaYu9NF", "colab": {}}
 df_val = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/validation.csv', index_col='id')
 
 validation_tune_dataset = DatasetRetriever(
@@ -849,7 +857,7 @@ print(targets)
 print(tokens.shape)
 print(attention_masks.shape)
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 69}, "colab_type": "code", "id": "zNdADp28v3av", "outputId": "56519c84-55fa-4de1-da37-ac4578fba3b9"}
+# + {"colab_type": "code", "id": "zNdADp28v3av", "colab": {}}
 df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/test.csv', index_col='id')
 df_test['comment_text'] = df_test.parallel_apply(lambda x: clean_text(x['content'], x['lang']), axis=1)
 
@@ -872,7 +880,7 @@ print(tokens.shape)
 print(attention_masks.shape)
 
 
-# + {"colab": {}, "colab_type": "code", "id": "I2bN_NySwU6c"}
+# + {"colab_type": "code", "id": "I2bN_NySwU6c", "colab": {}}
 class RocAucMeter(object):
     def __init__(self):
         self.reset()
@@ -883,7 +891,7 @@ class RocAucMeter(object):
         self.score = 0
         self.aux_part = 0
 
-    def update(self, y_true, y_pred, aux_part=0):
+    def update(self, y_true, y_pred):
         y_true = y_true.cpu().numpy().argmax(axis=1)
         y_pred = nn.functional.softmax(y_pred, dim=1).data.cpu().numpy()[:,1]
         self.y_true = np.hstack((self.y_true, y_true))
@@ -913,46 +921,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-# + {"colab": {}, "colab_type": "code", "id": "arcC5IeYxUbr"}
-from kaggle_runner import may_debug
-
-
-class LabelSmoothing(nn.Module):
-    """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
-    def __init__(self, smoothing = 0.1, dim=-1):
-        super(LabelSmoothing, self).__init__()
-        self.confidence = 1.0 - smoothing
-        self.smoothing = smoothing
-        self.cls = 2
-        self.dim = dim
-
-    def forward(self, x, target):
-        if self.training:
-            x = x.float()
-            target = target.float()
-            logprobs = torch.nn.functional.log_softmax(x, dim = -1)
-
-            nll_loss = -logprobs * target
-            nll_loss = nll_loss.sum(-1)
-
-            smooth_loss = -logprobs.mean(dim=-1)
-
-            loss = self.confidence * nll_loss + self.smoothing * smooth_loss
-
-            aux_pred=x[:, 2:]
-            aux_target = target[:, 2:]
-
-            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux_pred, self.smoothing + (1-self.smoothing*2)*aux_target)
-
-            return loss.mean() + aux_loss/5
-        else:
-            # This criterion combines `log_softmax` and `nll_loss` in a single
-            # function. nll -> negative log likelihood loss.
-
-            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
-
-
-# + {"colab": {}, "colab_type": "code", "id": "Ow13PTlFwbiH"}
+# + {"colab_type": "code", "id": "Ow13PTlFwbiH", "colab": {}}
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -1065,7 +1034,6 @@ class TPUFitter:
                     self.log(
                         f'Train Step {step}, loss: ' + \
                         f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
-                        f'{losses.aux_part:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
@@ -1128,7 +1096,7 @@ class TPUFitter:
             xm.master_print(f'{message}', logger)
 
 
-# + {"colab": {}, "colab_type": "code", "id": "kO9ovGhdwb7W"}
+# + {"colab_type": "code", "id": "kO9ovGhdwb7W", "colab": {}}
 from transformers import XLMRobertaModel
 
 class ToxicSimpleNNModel(nn.Module):
@@ -1158,12 +1126,52 @@ class ToxicSimpleNNModel(nn.Module):
 
 
 
-# + {"colab": {}, "colab_type": "code", "id": "dZmTJ4XQwb9y"}
+# + {"colab_type": "code", "id": "arcC5IeYxUbr", "colab": {}}
+from kaggle_runner import may_debug
+
+
+class LabelSmoothing(nn.Module):
+    """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
+
+    def __init__(self, smoothing = 0.1, dim=-1):
+        super(LabelSmoothing, self).__init__()
+        self.cls = 2
+        self.confidence = 1.0 - smoothing
+        self.smoothing = smoothing
+        self.dim = dim
+
+    def forward(self, x, target):
+        if self.training:
+            pred = x[:,:2].log_softmax(dim=self.dim)
+            aux=x[:, 2:]
+
+            toxic_target = target[:,:2]
+            aux_target = target[:, 2:]
+            with torch.no_grad():
+                # true_dist = pred.data.clone()
+                true_dist = torch.zeros_like(pred)
+                true_dist.fill_(self.smoothing) # hardcode for binary classification
+                true_dist += (1-self.smoothing*2)*toxic_target
+                # true_dist.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
+
+                # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
+                smooth_aux = torch.zeros_like(aux_target)
+                smooth_aux.fill_(self.smoothing) # only for binary cross entropy
+                smooth_aux += (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+
+            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
+
+            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/5
+        else:
+            return torch.nn.functional.binary_cross_entropy_with_logits(x[:,:2], target[:,:2])
+
+
+# + {"colab_type": "code", "id": "dZmTJ4XQwb9y", "colab": {}}
 class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs
-    n_epochs = 2  # количество эпох для обучения
+    n_epochs = 3  # количество эпох для обучения
     lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
     fold_number = 0  # номер фолда для обучения
 
@@ -1194,14 +1202,14 @@ class TrainGlobalConfig:
     # -------------------
 
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 116, "referenced_widgets": ["0ccb005ba947422690d07ef78baa1a7a", "294b563929184f44a10a4863a9226dc8", "24d04c1e3ad04c51b9a00b245f878291", "0526c4b17e21402491202127c3a3d085", "39a1cd7166f145d8aec6502badba27ff", "8ab315cc4bf54df3bd7cb3f8d1c91c66", "45ed802494e943c1b32597829a5232c0", "707a2436e59b447eab6fce9dfd6f8c4d", "387da2c8aa984eaa84ebaa00205ec89a", "47d4753fe35a46a3b8599bb4da4f8630", "c88d3ee1730d45468fb04fa06192246e", "b4ee953b01bc4f82b29ae4885dc9dd24", "9035a40f51e84a219a82d4524f60d0f1", "4ee4bf92166a4b5d8bfbe816a75a9bff", "2562c88dcf9f41a7ac3d80bb5a8f69fa", "c05fd87a1a0b49c98c078d8c33fb8b0f"]}, "colab_type": "code", "id": "_79qoceFwcAF", "outputId": "09f5510d-c2e1-4f19-9dfa-8956d414a564"}
+# + {"colab_type": "code", "id": "_79qoceFwcAF", "colab": {}}
 net = ToxicSimpleNNModel()
 
 
-# + {"colab": {}, "colab_type": "code", "id": "InecI_CbxXA_"}
-def _gpu_fn():
+# + {"colab_type": "code", "id": "InecI_CbxXA_", "colab": {}}
+def _test_model_fn():
     from kaggle_runner import logger
-    device = torch.device('cuda')
+    device = torch.device('cpu')
     net.to(device)
 
     #test_sampler = torch.utils.data.distributed.DistributedSampler(
@@ -1284,7 +1292,7 @@ def _gpu_fn():
     logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
 
 
-# + {"colab": {}, "colab_type": "code", "id": "INecI_CbxXA_"}
+# + {"colab_type": "code", "id": "INecI_CbxXA_", "colab": {}}
 def _mp_fn(rank, flags):
     device = xm.xla_device()
     net.to(device)
@@ -1354,19 +1362,19 @@ def _mp_fn(rank, flags):
     fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
 
 
-# + {"colab": {"base_uri": "https://localhost:8080/", "height": 677}, "colab_type": "code", "id": "aKuUULH7l5W1", "outputId": "6f9fe5df-d9d8-4dc5-f0a8-c45f9886750c"}
+# + {"colab_type": "code", "id": "aKuUULH7l5W1", "outputId": "e7561416-59dc-4a13-ab8f-beef7da82e1f", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
 FLAGS={}
 xmp.spawn(_mp_fn, args=(FLAGS,), nprocs=8, start_method='fork')
 from datetime import date; today = date.today(); output_model_file='bert_tpu_trained.bin'
 torch.save(net.state_dict(), f"{today}_{output_model_file}")
 
-# + {"colab": {}, "colab_type": "code", "id": "Wu0VhhZAFuYs"}
+# + {"colab_type": "code", "id": "Wu0VhhZAFuYs", "outputId": "ac86e91e-804d-4d3d-9077-a1180ea6bc02", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
 submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
 submission['toxic'].hist(bins=100)
 
-# + {"colab": {}, "colab_type": "code", "id": "RRr-yzJ_yVTW"}
+# + {"colab_type": "code", "id": "RRr-yzJ_yVTW", "colab": {}}
 submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
-# + {"colab": {}, "colab_type": "code", "id": "ARz9TllfyVVa"}
+# + {"colab_type": "code", "id": "ARz9TllfyVVa", "colab": {}}
 # # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
 # !make push_dataset
