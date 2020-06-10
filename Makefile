@@ -104,6 +104,10 @@ all: $(SRC)
 	coverage xml
 	./cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
+get_submission:
+	kaggle datasets download --file submission.csv --unzip k1gaggle/bert-for-toxic-classfication-trained
+	-unzip '*.zip' && rm *.zip && mv *.csv submission.csv
+
 push: rvs_session $(SRC)
 	-#git push # push first as kernel will download the codes, so put new code to github first
 	-@echo "$$(which $(PY)) is our $(PY) executable"; [[ x$$(which $(PY)) =~ conda ]]
