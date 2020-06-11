@@ -1681,7 +1681,7 @@ def get_toxic_comments(df):
         df['toxic'] = df['toxic'].round().astype(np.int)
 
         return df[df['toxic'] == 1].comment_text.values
-        
+
 if df_train is None:
     df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
     df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
@@ -1714,7 +1714,8 @@ def get_toxic_comments(df):
         df['toxic'] = df['toxic'].round().astype(np.int)
 
         return df[df['toxic'] == 1].comment_text.values
-if globals().get('df_train') is None:    
+
+if globals().get('df_train') is None:
     df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
     df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
 supliment_toxic = get_toxic_comments(df_train)
@@ -2640,7 +2641,7 @@ class TrainGlobalConfig:
 
     # -------------------
     verbose = True  # выводить принты
-    verbose_step = 50  # количество шагов для вывода принта
+    verbose_step = 25  # количество шагов для вывода принта
     # -------------------
 
     # --------------------

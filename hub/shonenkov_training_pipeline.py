@@ -750,6 +750,7 @@ def onehot(size, target, aux=None):
 
 from kaggle_runner import may_debug
 
+
 class DatasetRetriever(Dataset):
     def __init__(self, labels_or_ids, comment_texts, langs,
                  severe_toxic=None, obscene=None, threat=None, insult=None, identity_hate=None,
@@ -792,14 +793,8 @@ class DatasetRetriever(Dataset):
             aux = [self.severe_toxic[idx], self.obscene[idx], self.threat[idx], self.insult[idx], self.identity_hate[idx]]
 
         label = self.labels_or_ids[idx]
-        target = onehot(2, label, aux=aux)
 
-        if self.test is True:
-            tokens, attention_mask = self.get_tokens(str(text))
-
-            return self.labels_or_ids[idx], tokens, attention_mask
-
-        if self.use_train_transforms:
+        if self.use_train_transforms and (not self.test):
             text, _ = train_transforms(data=(text, lang))['data']
             tokens, attention_mask = self.get_tokens(str(text))
             token_length = sum(attention_mask)
@@ -807,11 +802,12 @@ class DatasetRetriever(Dataset):
             if token_length > 0.8*MAX_LENGTH:
                 text, _ = shuffle_transforms(data=(text, lang))['data']
             elif token_length < 60:
-                text, label = synthesic_transforms(data=(text, label))['data']
+                text, label = synthesic_transforms_often(data=(text, label))['data']
             else: # will not need to use transforms
-                tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
+                text, label = synthesic_transforms_low(data=(text, label))['data']
 
-                return target, tokens, attention_mask
+        # label might be changed
+        target = onehot(2, label, aux=aux)
         # text is transformed
         tokens, attention_mask = self.get_tokens(str(text))
         tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
@@ -820,7 +816,6 @@ class DatasetRetriever(Dataset):
 
     def get_labels(self):
         return list(np.char.add(self.labels_or_ids.astype(str), self.langs))
-
 
 # + {"colab_type": "code", "id": "3DVkkUVMu9Ka", "colab": {}}
 # %%time
@@ -917,7 +912,7 @@ class RocAucMeter(object):
         self.score = 0
         self.aux_part = 0
 
-    def update(self, y_true, y_pred):
+    def update(self, y_true, y_pred, aux_part=0):
         y_true = y_true.cpu().numpy().argmax(axis=1)
         y_pred = nn.functional.softmax(y_pred, dim=1).data.cpu().numpy()[:,1]
         self.y_true = np.hstack((self.y_true, y_true))
@@ -1187,7 +1182,7 @@ class LabelSmoothing(nn.Module):
 
             aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
 
-            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/5
+            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/3
         else:
             return torch.nn.functional.binary_cross_entropy_with_logits(x[:,:2], target[:,:2])
 
@@ -1203,7 +1198,7 @@ class TrainGlobalConfig:
 
     # -------------------
     verbose = True  # выводить принты
-    verbose_step = 50  # количество шагов для вывода принта
+    verbose_step = 25  # количество шагов для вывода принта
     # -------------------
 
     # --------------------
@@ -1234,6 +1229,7 @@ net = ToxicSimpleNNModel()
 
 # + {"colab_type": "code", "id": "InecI_CbxXA_", "colab": {}}
 def _test_model_fn():
+    "test with CPU, easier to debug"
     from kaggle_runner import logger
     device = torch.device('cpu')
     net.to(device)
@@ -1299,6 +1295,8 @@ def _test_model_fn():
 
             result['id'].extend(ids.cpu().numpy())
             result['toxic'].extend(toxics)
+
+        return result
     #validation_sampler = torch.utils.data.distributed.DistributedSampler(
     #    validation_dataset,
     #    num_replicas=xm.xrt_world_size(),
@@ -1314,8 +1312,12 @@ def _test_model_fn():
         num_workers=TrainGlobalConfig.num_workers
     )
 
+    may_debug()
     losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
     logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
+
+    results = run_inference(net, device, TrainGlobalConfig, validation_loader)
+    logger.info(f"Test done, result len %d", len(results))
 
 
 # + {"colab_type": "code", "id": "INecI_CbxXA_", "colab": {}}
