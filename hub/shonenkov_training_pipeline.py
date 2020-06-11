@@ -652,6 +652,8 @@ class ExcludeUrlsTransform(NLPTransform):
 
 
 # + {"colab_type": "code", "id": "uFB3UeyAsYCp", "colab": {}}
+from kaggle_runner import may_debug
+
 class SynthesicOpenSubtitlesTransform(NLPTransform):
     def __init__(self, always_apply=False, supliment_toxic=None, p=0.5, mix=False):
         super(SynthesicOpenSubtitlesTransform, self).__init__(always_apply, p)
@@ -665,13 +667,14 @@ class SynthesicOpenSubtitlesTransform(NLPTransform):
         self.synthesic_non_toxic = df[df['toxic'] == 0].comment_text.values
 
         if supliment_toxic is not None:
-             self.synthesic_toxic = self.synthesic_toxic.append(supliment_toxic)
+            #may_debug(True)
+            self.synthesic_toxic = np.concatenate((self.synthesic_toxic, supliment_toxic))
         self.mix = mix
 
         del df
         gc.collect();
 
-    def _mix_both(texts)
+    def _mix_both(self, texts):
         for i in range(random.randint(0,2)):
             texts.append(random.choice(self.synthesic_non_toxic))
 
@@ -683,13 +686,13 @@ class SynthesicOpenSubtitlesTransform(NLPTransform):
 
         if toxic == 0:
             if self.mix:
-                _mix_both(texts)
+                self._mix_both(texts)
                 toxic = 1
             else:
                 for i in range(random.randint(1,5)):
                     texts.append(random.choice(self.synthesic_non_toxic))
         else:
-            _mix_both(texts)
+            self._mix_both(texts)
         random.shuffle(texts)
 
         return ' '.join(texts), toxic
