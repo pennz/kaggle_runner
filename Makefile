@@ -332,5 +332,8 @@ distclean: clean
 	rm -r .git
 	rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
 
+ks:
+	curl -sSLG 172.28.0.20:9000/api/sessions
+
 .PHONY: clean connect inner_lstm pc mbd_log
 
