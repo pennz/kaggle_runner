@@ -334,10 +334,17 @@ distclean: clean
 
 ks:
 	curl -sSLG 172.28.0.2:9000/api/sessions
+
 push_code:
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .gitmodules
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .git/config
 	git push
+
+gpt2: jigsaw-unintended-bias-in-toxicity-classification
+	-mkdir -p /kaggle/input
+	(cmp_name=$@; \
+kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
+cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 
 .PHONY: clean connect inner_lstm pc mbd_log
 
