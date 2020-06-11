@@ -340,11 +340,14 @@ push_code:
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .git/config
 	git push
 
-gpt2: jigsaw-unintended-bias-in-toxicity-classification
+jigsaw-unintended-bias-in-toxicity-classification:
+	test ! -d /kaggle/input/jigsaw-unintended-bias-in-toxicity-classification
+
+gpt2: jigsaw-unintended-bias-in-toxicity-classification kaggle
 	-mkdir -p /kaggle/input
-	(cmp_name=$@; \
-kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
-cd /kaggle/input/$$cmp_name; unzip '*.zip') &
+	(cmp_name=$<; \
+kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name && \
+cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 
 .PHONY: clean connect inner_lstm pc mbd_log
 
