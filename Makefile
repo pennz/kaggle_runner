@@ -335,8 +335,8 @@ distclean: clean
 ks:
 	curl -sSLG 172.28.0.2:9000/api/sessions
 push_code:
-	-sed -i 's/https://\(\*\)\//git@\1:' .gitmodules
-	-sed -i 's/https://\(\*\)\//git@\1:' .git/config
+	-sed -i 's/https:\/\/\(\*\)\//git@\1:' .gitmodules
+	-sed -i 's/https:\/\/\(\*\)\//git@\1:' .git/config
 	git push
 
 .PHONY: clean connect inner_lstm pc mbd_log
