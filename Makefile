@@ -266,7 +266,7 @@ push_dataset: dmetadata
 	cp datas/dataset-metadata.json datas/dm.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	-cp *.pkl log.txt /kaggle/submission.csv datas
-	kaggle datasets version -p datas/ -m "data from colab $$(date)"
+	kaggle datasets version -p datas/ -m "$$(git show --no-patch --oneline) $$(date)"
 
 /root/.kaggle/kaggle.json:
 	-@mkdir -p ~/.kaggle

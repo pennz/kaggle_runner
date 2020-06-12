@@ -98,11 +98,10 @@ cd bert && python run_classifier.py \
 1. bert data pre-process, remove "" at heads and tails, update datasets
 1. split module to prepare datasets
 
-## submission log
-### 0610: version 6, 
+# submission log
 
+## 0610: version 6, 
 from kaggle_runner import may_debug
-
 
 class LabelSmoothing(nn.Module):
     """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
@@ -200,8 +199,8 @@ Train Step 50, loss: 0.50945, final_score: 0.96875, time: 60.62506
 
 ```
 
-*score* 0.9431
 *change* 3 epochs, aux /3
+*score* 0.9431
 
 ## compare logs
 as we trained on validation set, it will always get better.
@@ -212,9 +211,11 @@ error for providing test datasets
 
 ### version 9
 save the model after using more data augmentation
+
 ### Version 10
 test dummy submission
 **score** 0.8897
+
 ### Version 11
 *change* more data augmentation
 might be over-fit or some other problem
@@ -230,6 +231,7 @@ Train Step 25, loss: 0.50914, final_score: 0.98519, time: 26.09558
 Train Step 50, loss: 0.50297, final_score: 0.98700, time: 52.20791
 ```
 **score** 0.9310
+
 ## Version 12
 test failed again (no submission.csv), 3 epochs, data augmentation no mix
 
@@ -245,13 +247,22 @@ Train Step 50, loss: 0.51703, final_score: 0.95678, time: 52.89321
 ## version 13
 
 test 1 epoch, data aug no mix
+```
+[RESULT]: Train. Epoch: 0, loss: 0.53342, final_score: 0.97880, time: 2472.48243
+[RESULT]: Validation. Epoch: 0, loss: 0.62269, final_score: 0.95234, time: 29.54635
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.10594
+Train Step 25, loss: 0.50945, final_score: 0.96992, time: 25.95953
+Train Step 50, loss: 0.51980, final_score: 0.95819, time: 52.14686
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.10220
+Train Step 25, loss: 0.49641, final_score: 0.98152, time: 26.33078
+Train Step 50, loss: 0.49699, final_score: 0.97833, time: 52.59766
+```
 
 *score* 0.9411
 
 ## Vesion 14
 
-2 epochs
-*score* 0.9423
+2 epochs, data aug no mix
 ```
 [RESULT]: Train. Epoch: 0, loss: 0.53821, final_score: 0.97950, time: 2481.05183
 [RESULT]: Validation. Epoch: 0, loss: 0.59097, final_score: 0.95094, time: 29.88211
@@ -265,3 +276,13 @@ Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.10594
 Train Step 25, loss: 0.49531, final_score: 0.98055, time: 26.42729
 Train Step 50, loss: 0.50309, final_score: 0.97200, time: 52.56680
 ```
+
+**score** 0.9423
+## Version 15
+pickle data
+
+## Version 15
+aux_loss/1
+
+**score** ??
+
