@@ -138,21 +138,21 @@ def binary_crossentropy_with_focal(
     y_true, y_pred, gamma=1.0, alpha=0.5, custom_weights_in_Y_true=True
 ):
     """
-    https://arxiv.org/pdf/1708.02002.pdf
-
-    $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
-    $$ p_t=p\: if\: y=1$$
-    $$ p_t=1-p\: otherwise$$
-
-    :param y_true:
-    :param y_pred:
+    :param y_true: y_true
+    :param y_pred: y_pred
     :param gamma: make easier ones weights down
     :param alpha: weight for positive classes. default to 1 - (true
         positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha
         for calss -1.   In practice α may be set by inverse class freqency or
         hyperparameter.
     :return: bce
+    Reference: https://arxiv.org/pdf/1708.02002.pdf
+
+    $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
+    $$ p_t=p\: if\: y=1$$
+    $$ p_t=1-p\: otherwise$$
     """
+
     # assert 0 <= alpha <= 1 and gamma >= 0
     # hyper parameters, just use the one for binary?
     # alpha = 1. # maybe smaller one can help, as multi-class will make the
