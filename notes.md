@@ -231,8 +231,8 @@ Train Step 50, loss: 0.50297, final_score: 0.98700, time: 52.20791
 ```
 **score** 0.9310
 ## Version 12
-test failed again, 3 epochs, data augmentation no mix
-model saved
+test failed again (no submission.csv), 3 epochs, data augmentation no mix
+
 ```
 [RESULT]: Train. Epoch: 2, loss: 0.50892, final_score: 0.99015, time: 2470.52454
 [RESULT]: Validation. Epoch: 2, loss: 0.64159, final_score: 0.95372, time:
@@ -248,3 +248,20 @@ test 1 epoch, data aug no mix
 
 *score* 0.9411
 
+## Vesion 14
+
+2 epochs
+*score* 0.9423
+```
+[RESULT]: Train. Epoch: 0, loss: 0.53821, final_score: 0.97950, time: 2481.05183
+[RESULT]: Validation. Epoch: 0, loss: 0.59097, final_score: 0.95094, time: 29.88211
+
+[RESULT]: Train. Epoch: 1, loss: 0.51774, final_score: 0.98717, time: 2470.12558
+[RESULT]: Validation. Epoch: 1, loss: 0.61562, final_score: 0.95022, time: 28.81456
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.11438
+Train Step 25, loss: 0.52422, final_score: 0.93982, time: 26.49946
+Train Step 50, loss: 0.52055, final_score: 0.94838, time: 52.72035
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.10594
+Train Step 25, loss: 0.49531, final_score: 0.98055, time: 26.42729
+Train Step 50, loss: 0.50309, final_score: 0.97200, time: 52.56680
+```

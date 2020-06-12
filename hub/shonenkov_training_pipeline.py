@@ -1183,22 +1183,17 @@ class LabelSmoothing(nn.Module):
             toxic_target = target[:,:2]
             aux_target = target[:, 2:]
             with torch.no_grad():
-                # true_dist = pred.data.clone()
-                true_dist = torch.zeros_like(pred)
-                true_dist.fill_(self.smoothing) # hardcode for binary classification
-                true_dist += (1-self.smoothing*2)*toxic_target
-                # true_dist.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
-
+                # smooth_toxic = pred.data.clone()
+                smooth_toxic = self.smoothing + (1-self.smoothing*2)*toxic_target
+                # smooth_toxic.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
                 # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
-                smooth_aux = torch.zeros_like(aux_target)
-                smooth_aux.fill_(self.smoothing) # only for binary cross entropy
-                smooth_aux += (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+                smooth_aux = self.smoothing + (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
 
             aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
 
-            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/3
+            return torch.mean(torch.sum(-smooth_toxic * pred, dim=self.dim)) + aux_loss
         else:
-            return torch.nn.functional.binary_cross_entropy_with_logits(x[:,:2], target[:,:2])
+            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
 
 
 # + {"colab": {}, "colab_type": "code", "id": "dZmTJ4XQwb9y"}
@@ -1206,7 +1201,7 @@ class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs
-    n_epochs = 1  # количество эпох для обучения
+    n_epochs = 3  # количество эпох для обучения
     lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
     fold_number = 0  # номер фолда для обучения
 
