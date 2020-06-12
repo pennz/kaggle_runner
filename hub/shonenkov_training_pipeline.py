@@ -792,6 +792,7 @@ class DatasetRetriever(Dataset):
         else:
             aux = [self.severe_toxic[idx], self.obscene[idx], self.threat[idx], self.insult[idx], self.identity_hate[idx]]
 
+
         label = self.labels_or_ids[idx]
 
         if self.use_train_transforms and (not self.test):
@@ -806,11 +807,24 @@ class DatasetRetriever(Dataset):
             else: # will not need to use transforms
                 text, label = synthesic_transforms_low(data=(text, label))['data']
 
-        # label might be changed
-        target = onehot(2, label, aux=aux)
-        # text is transformed
+        # TODO add language detection and shuffle
+        # https://pypi.org/project/langdetect/
+        # if self.use_train_transforms and self.test:
+        #    text, _ = train_transforms(data=(text, lang))['data']
+        #    tokens, attention_mask = self.get_tokens(str(text))
+        #    token_length = sum(attention_mask)
+
+        #    if token_length > 0.8*MAX_LENGTH:
+        #        text, _ = shuffle_transforms(data=(text, lang))['data']
+        # to tensors
         tokens, attention_mask = self.get_tokens(str(text))
         tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
+
+        if self.test:  # for test, return id TODO TTA
+            return self.labels_or_ids[idx], tokens, attention_mask
+
+        # label might be changed
+        target = onehot(2, label, aux=aux)
 
         return target, tokens, attention_mask
 
@@ -883,7 +897,7 @@ df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-clas
 df_test['comment_text'] = df_test.parallel_apply(lambda x: clean_text(x['content'], x['lang']), axis=1)
 
 test_dataset = DatasetRetriever(
-    labels_or_ids=df_test.index.values,
+    labels_or_ids=df_test.index.values, ## here different!!!
     comment_texts=df_test['comment_text'].values,
     langs=df_test['lang'].values,
     use_train_transforms=False,
@@ -1312,84 +1326,116 @@ def _test_model_fn():
         num_workers=TrainGlobalConfig.num_workers
     )
 
-    may_debug()
-    losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
-    logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
+    #train_sampler = DistributedSamplerWrapper(
+    #    sampler=BalanceClassSampler(labels=train_dataset.get_labels(), mode="downsampling"),
+    #    num_replicas=xm.xrt_world_size(),
+    #    rank=xm.get_ordinal(),
+    #    shuffle=True
+    #)
+    #train_loader = torch.utils.data.DataLoader(
+    #    train_dataset,
+    #    batch_size=TrainGlobalConfig.batch_size,
+    #    sampler=train_sampler,
+    #    pin_memory=False,
+    #    drop_last=True,
+    #    num_workers=TrainGlobalConfig.num_workers,
+    #)
+    #validation_tune_sampler = torch.utils.data.distributed.DistributedSampler(
+    #    validation_tune_dataset,
+    #    num_replicas=xm.xrt_world_size(),
+    #    rank=xm.get_ordinal(),
+    #    shuffle=True
+    #)
+    validation_tune_loader = torch.utils.data.DataLoader(
+        validation_tune_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        #sampler=validation_tune_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+    #test_sampler = torch.utils.data.distributed.DistributedSampler(
+    #    test_dataset,
+    #    num_replicas=xm.xrt_world_size(),
+    #    rank=xm.get_ordinal(),
+    #    shuffle=False
+    #)
+    test_loader = torch.utils.data.DataLoader(
+        test_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        #sampler=test_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
 
-    results = run_inference(net, device, TrainGlobalConfig, validation_loader)
-    logger.info(f"Test done, result len %d", len(results))
+    def train_one_epoch(self, train_loader):
+        self.model.train()
+
+        losses = AverageMeter()
+        final_scores = RocAucMeter()
+        t = time.time()
+
+        for step, (targets, inputs, attention_masks) in enumerate(train_loader):
+            if self.config.verbose:
+                if step % self.config.verbose_step == 0:
+                    self.log(
+                        f'Train Step {step}, loss: ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
+                        f'time: {(time.time() - t):.5f}'
+                    )
+
+            inputs = inputs.to(self.device, dtype=torch.long)
+            attention_masks = attention_masks.to(self.device, dtype=torch.long)
+            targets = targets.to(self.device, dtype=torch.float)
+
+            self.optimizer.zero_grad()
+
+            outputs = self.model(inputs, attention_masks)
+            loss = self.criterion(outputs, targets)
+
+            batch_size = inputs.size(0)
+
+            final_scores.update(targets, outputs)
+
+            losses.update(loss.detach().item(), batch_size)
+
+            loss.backward()
+            xm.optimizer_step(self.optimizer)
+
+            if self.config.step_scheduler:
+                self.scheduler.step()
+
+        self.model.eval()
+        #self.save('last-checkpoint.bin')
+
+        return losses, final_scores
+
+    def run_tuning_and_inference(self, test_loader, validation_tune_loader):
+        for e in range(1):
+            self.optimizer.param_groups[0]['lr'] = self.config.lr*8
+            #losses, final_scores = self.train_one_epoch(validation_tune_loader)
+            run_inference(net, device, TrainGlobalConfig, validation_loader)
+
+    if rank == 0:
+        time.sleep(1)
+
+    may_debug(True)
+    fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
+    from types import MethodType
+    fitter.train_one_epoch = MethodType(train_one_epoch, fitter)
+    fitter.run_tuning_and_inference = MethodType(run_tuning_and_inference, fitter)
+
+    fitter.run_tuning_and_inference(test_loader, validation_tune_loader)  # error happens here
+
+    #losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
+    #logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
+
+    #results = run_inference(net, device, TrainGlobalConfig, validation_loader)
+    #logger.info(f"Test done, result len %d", len(results))
 
 
 
-# + {"colab": {}, "colab_type": "code", "id": "InacI_CbxXA_"}
-# test in cpu, it is easier to debug
-device = torch.device("cpu")
-net.to(device)
-
-rank=xm.get_ordinal()
-
-train_sampler = DistributedSamplerWrapper(
-    sampler=BalanceClassSampler(labels=train_dataset.get_labels(), mode="downsampling"),
-    num_replicas=xm.xrt_world_size(),
-    rank=xm.get_ordinal(),
-    shuffle=True
-)
-train_loader = torch.utils.data.DataLoader(
-    train_dataset,
-    batch_size=TrainGlobalConfig.batch_size,
-    sampler=train_sampler,
-    pin_memory=False,
-    drop_last=True,
-    num_workers=TrainGlobalConfig.num_workers,
-)
-validation_sampler = torch.utils.data.distributed.DistributedSampler(
-    validation_dataset,
-    num_replicas=xm.xrt_world_size(),
-    rank=xm.get_ordinal(),
-    shuffle=False
-)
-validation_loader = torch.utils.data.DataLoader(
-    validation_dataset,
-    batch_size=TrainGlobalConfig.batch_size,
-    sampler=validation_sampler,
-    pin_memory=False,
-    drop_last=False,
-    num_workers=TrainGlobalConfig.num_workers
-)
-validation_tune_sampler = torch.utils.data.distributed.DistributedSampler(
-    validation_tune_dataset,
-    num_replicas=xm.xrt_world_size(),
-    rank=xm.get_ordinal(),
-    shuffle=True
-)
-validation_tune_loader = torch.utils.data.DataLoader(
-    validation_tune_dataset,
-    batch_size=TrainGlobalConfig.batch_size,
-    sampler=validation_tune_sampler,
-    pin_memory=False,
-    drop_last=False,
-    num_workers=TrainGlobalConfig.num_workers
-)
-test_sampler = torch.utils.data.distributed.DistributedSampler(
-    test_dataset,
-    num_replicas=xm.xrt_world_size(),
-    rank=xm.get_ordinal(),
-    shuffle=False
-)
-test_loader = torch.utils.data.DataLoader(
-    test_dataset,
-    batch_size=TrainGlobalConfig.batch_size,
-    sampler=test_sampler,
-    pin_memory=False,
-    drop_last=False,
-    num_workers=TrainGlobalConfig.num_workers
-)
-
-if rank == 0:
-    time.sleep(1)
-
-fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
-fitter.run_tuning_and_inference(test_loader, validation_tune_loader)  # error happens here
 
 # + {"colab": {}, "colab_type": "code", "id": "INecI_CbxXA_"}
 def _mp_fn(rank, flags):
