@@ -174,7 +174,6 @@ class TrainGlobalConfig:
     criterion = LabelSmoothing()
     # -------------------
 
-
 ```
 Train Step 2300, loss: 0.46885, final_score: 0.98592, time: 2692.24801
 [RESULT]: Train. Epoch: 1, loss: 0.46894, final_score: 0.98586, time: 2737.68178
@@ -186,6 +185,7 @@ Train Step 50, loss: 0.46219, final_score: 0.96771, time: 60.06645
 ```
 *score*  0.9421
 **change** use aux
+
 ### version 7
 3 epochs, and for aux it is /3
 ```
