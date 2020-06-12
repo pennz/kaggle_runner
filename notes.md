@@ -182,7 +182,7 @@ Train Step 50, loss: 0.48480, final_score: 0.94857, time: 119.47729
 Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.07922
 Train Step 50, loss: 0.46219, final_score: 0.96771, time: 60.06645
 ```
-*score*  0.9421
+**score**  0.9421
 **change** use aux
 
 ### version 7
@@ -200,7 +200,7 @@ Train Step 50, loss: 0.50945, final_score: 0.96875, time: 60.62506
 ```
 
 *change* 3 epochs, aux /3
-*score* 0.9431
+**score** 0.9431
 
 ## compare logs
 as we trained on validation set, it will always get better.
@@ -257,8 +257,7 @@ Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.10220
 Train Step 25, loss: 0.49641, final_score: 0.98152, time: 26.33078
 Train Step 50, loss: 0.49699, final_score: 0.97833, time: 52.59766
 ```
-
-*score* 0.9411
+**score** 0.9411
 
 ## Vesion 14
 
@@ -281,7 +280,7 @@ Train Step 50, loss: 0.50309, final_score: 0.97200, time: 52.56680
 ## Version 15
 pickle data
 
-## Version 15
+## Version 16
 aux_loss/1
 
 **score** ??
