@@ -1206,7 +1206,7 @@ class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs
-    n_epochs = 3  # количество эпох для обучения
+    n_epochs = 1  # количество эпох для обучения
     lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
     fold_number = 0  # номер фолда для обучения
 

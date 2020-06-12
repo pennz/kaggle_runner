@@ -230,3 +230,14 @@ Train Step 25, loss: 0.50914, final_score: 0.98519, time: 26.09558
 Train Step 50, loss: 0.50297, final_score: 0.98700, time: 52.20791
 ```
 **score** 0.9310
+## Version 12
+test failed again, 3 epochs, data augmentation no mix
+model saved
+```
+[RESULT]: Train. Epoch: 2, loss: 0.50892, final_score: 0.99015, time: 2470.52454
+[RESULT]: Validation. Epoch: 2, loss: 0.64159, final_score: 0.95372, time:
+28.67925
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.11701
+Train Step 25, loss: 0.51453, final_score: 0.96150, time: 26.66932
+Train Step 50, loss: 0.51703, final_score: 0.95678, time: 52.89321
+```
