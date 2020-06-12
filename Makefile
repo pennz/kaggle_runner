@@ -253,7 +253,7 @@ cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 kaggle: /root/.kaggle/kaggle.json
 
 update_sh_ipynb:
-	jupytext --sync hub/shonenkov_training_pipeline.py 
+	jupytext --sync hub/shonenkov_training_pipeline.ipynb || jupytext --set-formats ipynb,py hub/shonenkov_training_pipeline.ipynb
 
 dmetadata: kaggle 
 	[ -d datas ] || mkdir datas
