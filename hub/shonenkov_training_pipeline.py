@@ -648,6 +648,7 @@ class ExcludeUrlsTransform(NLPTransform):
 
         return text, lang
 
+
 # + {"colab": {}, "colab_type": "code", "id": "KFCrVc5nCRlw"}
 # !cp /kaggle/input/bert-for-toxic-classfication-trained/*.pkl .
 
@@ -951,6 +952,8 @@ print(attention_masks.shape)
 
 
 # + {"colab": {}, "colab_type": "code", "id": "I2bN_NySwU6c"}
+from kaggle_runner.metrics.metrics import matthews_correlation
+
 class RocAucMeter(object):
     def __init__(self):
         self.reset()
@@ -966,12 +969,16 @@ class RocAucMeter(object):
         y_pred = nn.functional.softmax(y_pred, dim=1).data.cpu().numpy()[:,1]
         self.y_true = np.hstack((self.y_true, y_true))
         self.y_pred = np.hstack((self.y_pred, y_pred))
-        self.score = sklearn.metrics.roc_auc_score(self.y_true, self.y_pred, labels=np.array([0, 1]))
+        self.score = sklearn.metrics.roc_auc_score(self.y_true[:,2], self.y_pred[:,2], labels=np.array([0, 1]))
+        self.mc_score = matthews_correlation(self.y_true[:,2], self.y_pred[:,2])
         self.aux_part = aux_part
 
     @property
     def avg(self):
         return self.score
+    @property
+    def mc_avg(self):
+        return self.mc_score
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
@@ -1040,13 +1047,13 @@ class TPUFitter:
             para_loader = pl.ParallelLoader(train_loader, [self.device])
             losses, final_scores = self.train_one_epoch(para_loader.per_device_loader(self.device))
 
-            self.log(f'[RESULT]: Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, time: {(time.time() - t):.5f}')
+            self.log(f'[RESULT]: Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, time: {(time.time() - t):.5f}')
 
             t = time.time()
             para_loader = pl.ParallelLoader(validation_loader, [self.device])
             losses, final_scores = self.validation(para_loader.per_device_loader(self.device))
 
-            self.log(f'[RESULT]: Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, time: {(time.time() - t):.5f}')
+            self.log(f'[RESULT]: Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, time: {(time.time() - t):.5f}')
 
             if self.config.validation_scheduler:
                 self.scheduler.step(metrics=final_scores.avg)
@@ -1073,7 +1080,7 @@ class TPUFitter:
                 if step % self.config.verbose_step == 0:
                     xm.master_print(
                         f'Valid Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
             with torch.no_grad():
@@ -1103,7 +1110,7 @@ class TPUFitter:
                 if step % self.config.verbose_step == 0:
                     self.log(
                         f'Train Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
@@ -1305,7 +1312,7 @@ def _test_model_fn():
                 if step % config.verbose_step == 0:
                     logger.info(
                         f'Valid Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
             with torch.no_grad():
@@ -1411,7 +1418,7 @@ def _test_model_fn():
                 if step % self.config.verbose_step == 0:
                     self.log(
                         f'Train Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
