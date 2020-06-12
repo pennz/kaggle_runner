@@ -648,6 +648,9 @@ class ExcludeUrlsTransform(NLPTransform):
 
         return text, lang
 
+# + {"colab": {}, "colab_type": "code", "id": "KFCrVc5nCRlw"}
+# !cp /kaggle/input/bert-for-toxic-classfication-trained/*.pkl .
+
 
 # + {"colab": {}, "colab_type": "code", "id": "uFB3UeyAsYCp"}
 from kaggle_runner import may_debug
