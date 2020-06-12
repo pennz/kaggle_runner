@@ -95,10 +95,10 @@ cd bert && python run_classifier.py \
 ```
 
 ## TODO
-1. bert data preprocess, remove "" at heads and tails, update datasets
+1. bert data pre-process, remove "" at heads and tails, update datasets
 1. split module to prepare datasets
 
-## log
+## submission log
 ### 0610: version 6, 
 
 from kaggle_runner import may_debug
@@ -173,14 +173,60 @@ class TrainGlobalConfig:
     # -------------------
     criterion = LabelSmoothing()
     # -------------------
+
+
+```
+Train Step 2300, loss: 0.46885, final_score: 0.98592, time: 2692.24801
+[RESULT]: Train. Epoch: 1, loss: 0.46894, final_score: 0.98586, time: 2737.68178
+[RESULT]: Validation. Epoch: 1, loss: 0.63544, final_score: 0.95572, time: 63.45235
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.07880
+Train Step 50, loss: 0.48480, final_score: 0.94857, time: 119.47729
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.07922
+Train Step 50, loss: 0.46219, final_score: 0.96771, time: 60.06645
+```
+*score*  0.9421
+**change** use aux
 ### version 7
 3 epochs, and for aux it is /3
+```
+
+Train Step 2300, loss: 0.51410, final_score: 0.98812, time: 2806.45758
+[RESULT]: Train. Epoch: 2, loss: 0.51399, final_score: 0.98818, time: 2852.04364
+[RESULT]: Validation. Epoch: 2, loss: 0.65034, final_score: 0.95346, time: 66.14816
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.09183
+Train Step 50, loss: 0.53016, final_score: 0.94703, time: 59.50609
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.09470
+Train Step 50, loss: 0.50945, final_score: 0.96875, time: 60.62506
+
+```
+
+*score* 0.9431
+*change* 3 epochs, aux /3
 
 ## compare logs
 as we trained on validation set, it will always get better.
 train loss less(longer) and the final test result is better
 
+### version 8
+error for providing test datasets
+
 ### version 9
 save the model after using more data augmentation
 ### Version 10
 test dummy submission
+**score** 0.8897
+### Version 11
+*change* more data augmentation
+might be over-fit or some other problem
+3 epochs
+```
+[RESULT]: Train. Epoch: 2, loss: 0.50794, final_score: 0.98926, time: 2459.93479
+[RESULT]: Validation. Epoch: 2, loss: 0.73969, final_score: 0.94894, time: 28.61954
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.10969
+Train Step 25, loss: 0.53102, final_score: 0.97023, time: 89.43301
+Train Step 50, loss: 0.52637, final_score: 0.97381, time: 115.44825
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.10646
+Train Step 25, loss: 0.50914, final_score: 0.98519, time: 26.09558
+Train Step 50, loss: 0.50297, final_score: 0.98700, time: 52.20791
+```
+**score** 0.9310
