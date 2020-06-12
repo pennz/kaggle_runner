@@ -5,9 +5,6 @@
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
 # Have a good day!
 
-# + {"colab": {}, "colab_type": "code", "id": "ppiQVOL5vW96", "outputId": "3cc1df75-ff0f-4e61-97fa-0525459d3b78"}
-# !python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
-
 # + {"colab": {"base_uri": "https://localhost:8080/", "height": 86}, "colab_type": "code", "id": "_43yMxyEvW-q", "outputId": "5975062a-6192-4c9e-b83e-6353ab9df3ec"}
 # !echo $HOSTNAME
 # !echo $TPU_NAME
@@ -19,6 +16,7 @@
 
 # + {"colab": {}, "colab_type": "code", "id": "n6uGvKL3epio"}
 import subprocess
+from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 
 subprocess.run('[ -f setup.py ] || (git clone https://github.com/pennz/kaggle_runner; '
 'git submodule update --init --recursive; '
@@ -654,25 +652,35 @@ class ExcludeUrlsTransform(NLPTransform):
 # + {"colab": {}, "colab_type": "code", "id": "uFB3UeyAsYCp"}
 from kaggle_runner import may_debug
 
+def get_open_subtitles():
+    df_ot = get_obj_or_dump("ot.pkl")
+
+    if df_ot is None:
+        df_ot = pd.read_csv(f'{ROOT_PATH}/input/open-subtitles-toxic-pseudo-labeling/open-subtitles-synthesic.csv', index_col='id')[['comment_text', 'toxic', 'lang']]
+        df_ot = df_ot[~df_ot['comment_text'].isna()]
+        df_ot['comment_text'] = df_ot.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+        df_ot = df_ot.drop_duplicates(subset='comment_text')
+        df_ot['toxic'] = df_ot['toxic'].round().astype(np.int)
+        get_obj_or_dump("ot.pkl", default=df_ot)
+
+    return df_ot
+
+
 class SynthesicOpenSubtitlesTransform(NLPTransform):
     def __init__(self, always_apply=False, supliment_toxic=None, p=0.5, mix=False):
         super(SynthesicOpenSubtitlesTransform, self).__init__(always_apply, p)
-        df = pd.read_csv(f'{ROOT_PATH}/input/open-subtitles-toxic-pseudo-labeling/open-subtitles-synthesic.csv', index_col='id')[['comment_text', 'toxic', 'lang']]
-        df = df[~df['comment_text'].isna()]
-        df['comment_text'] = df.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
-        df = df.drop_duplicates(subset='comment_text')
-        df['toxic'] = df['toxic'].round().astype(np.int)
 
+        df = get_open_subtitles()
         self.synthesic_toxic = df[df['toxic'] == 1].comment_text.values
         self.synthesic_non_toxic = df[df['toxic'] == 0].comment_text.values
 
         if supliment_toxic is not None:
-            #may_debug(True)
             self.synthesic_toxic = np.concatenate((self.synthesic_toxic, supliment_toxic))
         self.mix = mix
 
         del df
         gc.collect();
+
 
     def _mix_both(self, texts):
         for i in range(random.randint(0,2)):
@@ -724,8 +732,13 @@ def get_toxic_comments(df):
 
         return df[df['toxic'] == 1].comment_text.values
 
-df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
-df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+df_train = get_obj_or_dump("train.pkl")
+
+if df_train is None:
+    df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
+    df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+    get_obj_or_dump("train.pkl", default=df_train)
+
 supliment_toxic = get_toxic_comments(df_train)
 
 train_transforms = get_train_transforms();
@@ -834,9 +847,12 @@ class DatasetRetriever(Dataset):
 # + {"colab": {}, "colab_type": "code", "id": "3DVkkUVMu9Ka"}
 # %%time
 
+df_train = get_obj_or_dump("train.pkl")
+
 if df_train is None:
     df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
-
+    df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+    get_obj_or_dump("train.pkl", default=df_train)
 
 train_dataset = DatasetRetriever(
     labels_or_ids=df_train['toxic'].values,
@@ -864,7 +880,12 @@ print(attention_masks.shape)
 np.unique(train_dataset.get_labels())
 
 # + {"colab": {}, "colab_type": "code", "id": "bW4dEWaYu9NF"}
-df_val = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/validation.csv', index_col='id')
+df_val = get_obj_or_dump("val.pkl")
+
+if df_val is None:
+    df_val = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/validation.csv', index_col='id')
+    df_val['comment_text'] = df_val.parallel_apply(lambda x: clean_text(x['content'], x['lang']), axis=1)
+    get_obj_or_dump("val.pkl", default=df_val)
 
 validation_tune_dataset = DatasetRetriever(
     labels_or_ids=df_val['toxic'].values,
@@ -873,7 +894,13 @@ validation_tune_dataset = DatasetRetriever(
     use_train_transforms=True,
 )
 
-df_val['comment_text'] = df_val.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+df_val_unclean = df_val
+df_val = get_obj_or_dump("val_cleaned.pkl")
+
+if df_val is None:
+    df_val = df_val_unclean
+    df_val['comment_text'] = df_val_unclean.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+    get_obj_or_dump("val_cleaned.pkl", default=df_val)
 
 validation_dataset = DatasetRetriever(
     labels_or_ids=df_val['toxic'].values,
@@ -883,6 +910,7 @@ validation_dataset = DatasetRetriever(
 )
 
 del df_val
+del df_val_unclean
 gc.collect();
 
 for targets, tokens, attention_masks in validation_dataset:
@@ -893,8 +921,12 @@ print(tokens.shape)
 print(attention_masks.shape)
 
 # + {"colab": {}, "colab_type": "code", "id": "zNdADp28v3av"}
-df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/test.csv', index_col='id')
-df_test['comment_text'] = df_test.parallel_apply(lambda x: clean_text(x['content'], x['lang']), axis=1)
+df_test = get_obj_or_dump("test.pkl")
+
+if df_test is None:
+    df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/test.csv', index_col='id')
+    #df_test['comment_text'] = df_test.parallel_apply(lambda x: clean_text(x['content'], x['lang']), axis=1)
+    get_obj_or_dump("test.pkl", default=df_test)
 
 test_dataset = DatasetRetriever(
     labels_or_ids=df_test.index.values, ## here different!!!
