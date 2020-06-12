@@ -174,8 +174,13 @@ class TrainGlobalConfig:
     criterion = LabelSmoothing()
     # -------------------
 ### version 7
-3 epoches, and for aux it is /3
+3 epochs, and for aux it is /3
 
 ## compare logs
 as we trained on validation set, it will always get better.
 train loss less(longer) and the final test result is better
+
+### version 9
+save the model after using more data augmentation
+### Version 10
+test dummy submission
