@@ -241,3 +241,10 @@ Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.11701
 Train Step 25, loss: 0.51453, final_score: 0.96150, time: 26.66932
 Train Step 50, loss: 0.51703, final_score: 0.95678, time: 52.89321
 ```
+
+## version 13
+
+test 1 epoch, data aug no mix
+
+*score* 0.9411
+
