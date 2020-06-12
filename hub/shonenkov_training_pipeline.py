@@ -714,7 +714,7 @@ def get_train_transforms():
         ExcludeDuplicateSentencesTransform(p=0.95),
     ], p=1.0)
 
-def get_synthesic_transforms(supliment_toxic, p=0.5, mix=True):
+def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
     return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
 
 def get_toxic_comments(df):
