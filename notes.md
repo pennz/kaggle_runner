@@ -281,7 +281,17 @@ Train Step 50, loss: 0.50309, final_score: 0.97200, time: 52.56680
 pickle data
 
 ## Version 16
-aux_loss/1
+aux_loss/1,3 epochs
 
-**score** ??
+```
+[RESULT]: Train. Epoch: 2, loss: 0.76647, final_score: 0.99029, time: 2454.93416
+[RESULT]: Validation. Epoch: 2, loss: 0.95294, final_score: 0.95030, time: 28.61084
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.09192
+Train Step 25, loss: 0.73516, final_score: 0.95130, time: 89.40943
+Train Step 50, loss: 0.73148, final_score: 0.96084, time: 115.37684
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.09284
+Train Step 25, loss: 0.71062, final_score: 0.98202, time: 25.92905
+Train Step 50, loss: 0.71711, final_score: 0.97655, time: 51.97299
+```
+**score** 0.9393
 
