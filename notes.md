@@ -331,4 +331,16 @@ Train Step 50, loss: 0.49980, final_score: 0.97090, mc_score: 0.78187, time: 53.
 ## Version 19
 
 aux\_loss/3, 2 epochs
-not _low syn to data. And reduce label smooth
+not \_low syn to data. And reduce label smooth
+
+```
+[RESULT]: Train. Epoch: 1, loss: 0.38311, final_score: 0.98706, mc_score: 0.89245, time: 2484.84076
+[RESULT]: Validation. Epoch: 1, loss: 0.49391, final_score: 0.95422, mc_score: 0.61094, time: 29.02337
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.09500
+Train Step 25, loss: 0.39242, final_score: 0.95024, mc_score: 0.67116, time: 91.17837
+Train Step 50, loss: 0.40027, final_score: 0.94823, mc_score: 0.66167, time: 117.53904
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.09492
+Train Step 25, loss: 0.35906, final_score: 0.97616, mc_score: 0.72517, time: 26.31303
+Train Step 50, loss: 0.36391, final_score: 0.96935, mc_score: 0.75350, time: 52.64425
+```
+**score** 0.9393
