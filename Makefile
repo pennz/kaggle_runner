@@ -32,11 +32,13 @@ export SED := $(SED)
 SERVER := $(SERVER)
 CHECK_PORT := $(CHECK_PORT)
 ifeq ($(SERVER),)
-	SERVER := pengyuzhou.com
+	SERVER := vtool.duckdns.org
 endif
 ifeq ($(CHECK_PORT),)
 	CHECK_PORT := 23455
 endif
+
+export SERVER
 export CHECK_PORT
 
 URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth"
@@ -316,14 +318,15 @@ t: pccnct m
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
 sshR:
-	-ssh -fNR 10000:$(KIP):9000 -p $(SSH_PORT) v@vtool.duckdns.org
-	-ssh -fNR 10000:$(KIP):8888 -p $(SSH_PORT) v@vtool.duckdns.org
-	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
+	-ssh -fNR 10000:$(KIP):9000 -p $(SSH_PORT) v@$(SERVER)
+	-ssh -fNR 10000:$(KIP):8888 -p $(SSH_PORT) v@$(SERVER)
+	scp -P $(SSH_PORT) v@$(SERVER):~/.ssh/* ~/.ssh
+
 sshRj:
 	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
 	($(PY) -m jupyter lab --ip="$(KIP)" --port=9001 || $(PY) -m jupyter lab --ip="$(KIP)" --port=9001 --allow-root) &
-	ssh -fNR 10001:$(KIP):9001 -p $(SSH_PORT) v@vtool.duckdns.org
-	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
+	ssh -fNR 10001:$(KIP):9001 -p $(SSH_PORT) v@$(SERVER)
+	scp -P $(SSH_PORT) v@$(SERVER):~/.ssh/* ~/.ssh
 
 githooks:
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
