@@ -1456,9 +1456,6 @@ def _test_model_fn():
             losses, final_scores = self.train_one_epoch(validation_tune_loader)
             run_inference(net, device, TrainGlobalConfig, validation_loader)
 
-    if rank == 0:
-        time.sleep(1)
-
     may_debug(True)
     fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
     from types import MethodType
