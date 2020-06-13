@@ -2,6 +2,7 @@
 # trap ctrl-c and call ctrl_c()
 PS4='L${LINENO}: '
 
+echo "$PAHT" check
 type firewall-cmd >/dev/null 2>&1 && sudo firewall-cmd --add-port ${CHECK_PORT:-23455}/tcp
 mosh=
 phase=
@@ -46,7 +47,8 @@ mosh_connect() {
     pgrep -f "ncat.*p $newPort" >/dev/null && return 1 # port used
     #~/bin/upnp-add-port $newPort UDP >/dev/null 2>&1   # port forward, rvs will connect to this port
     # type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/udp --permanent && sudo firewall-cmd --reload >/dev/null 2>&1;
-    type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/udp >/dev/null 2>&1;
+    type -f firewall-cmd >/dev/null 2>&1 && {
+        sudo firewall-cmd --add-port $newPort/udp >/dev/null 2>&1
         ret=$?
     } || ret=0
 
@@ -57,11 +59,13 @@ mosh_connect() {
 
     (
         sleep 1
-        bash -x pcc $newPort >/dev/null 2>&1
+        pcc $newPort >&2 # for logging/debugging
+        echo >&2 "TEST LOG: $newPort"
     ) &
 
+    echo "\"$NC -ulp $newPort\" used to connect" >>pcc_log # need to put first, net ncat will run at front
     # echo "" # blank message, to activate? will make it fail?
-    $NC -ulp $newPort
+    $NC -vulp $newPort 2>>pcc_log # the real connection, udp for mosh
 
     ${SED:-sed} -i "/^$newPort\$/d" $2 1>/dev/null 2>&1 # ncat exit, then we delete in the booking
     return $ret
@@ -74,7 +78,8 @@ connect() {
     pgrep -f "ncat.*p $newPort" >/dev/null && return 1 # port used
     #~/bin/upnp-add-port $newPort                  # port forward, rvs will connect to this port
     # type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/tcp --permanent && sudo firewall-cmd --reload >/dev/null 2>&1;
-    type -f firewall-cmd >/dev/null 2>&1 && { sudo firewall-cmd --add-port $newPort/tcp >/dev/null 2>&1;
+    type -f firewall-cmd >/dev/null 2>&1 && {
+        sudo firewall-cmd --add-port $newPort/tcp >/dev/null 2>&1
         ret=$?
     } || ret=0
     #ret=0 # just pass it

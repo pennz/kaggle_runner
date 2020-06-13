@@ -1063,7 +1063,7 @@ class TPUFitter:
             self.log(f'[RESULT]: Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
 
             if self.config.validation_scheduler:
-                self.scheduler.step(metrics=final_scores.avg)
+                self.scheduler.step(metrics=final_scores.mc_avg)
 
             self.epoch += 1
 
@@ -1286,7 +1286,7 @@ net = ToxicSimpleNNModel()
 
 
 # + colab={} colab_type="code" id="InecI_CbxXA_"
-def _test_model_fn(device=xm.xla_device()):
+def _test_model_fn(device=torch.device("cpu")):
     "test with CPU, easier to debug"
     from kaggle_runner import logger
     net.to(device)
@@ -1476,7 +1476,6 @@ def _test_model_fn(device=xm.xla_device()):
 
 # + colab={} colab_type="code" id="INecI_CbxXA_"
 #_test_model_fn()
-
 def _mp_fn(rank, flags):
     device = xm.xla_device()
     net.to(device)
@@ -1549,7 +1548,8 @@ def _mp_fn(rank, flags):
 # + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="aKuUULH7l5W1" outputId="691c8002-095f-4722-c403-e177f94b7504"
 FLAGS={}
 xmp.spawn(_mp_fn, args=(FLAGS,), nprocs=8, start_method='fork')
-from datetime import date; today = date.today(); output_model_file='bert_tpu_trained.bin'
+from datetime import date; today = date.today()
+output_model_file='XLMRobertaModel_tpu_trained.bin'
 torch.save(net.state_dict(), f"{today}_{output_model_file}")
 
 # + colab={} colab_type="code" id="Wu0VhhZAFuYs"

@@ -1,5 +1,5 @@
 #export LD_LIBRARY_PATH := $(PWD)/lib:$(LD_LIBRARY_PATH)
-export PATH := $(PWD)/bin:$(PWD)/reversShells:$(PATH)
+export PATH := $(PWD)/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
@@ -48,10 +48,6 @@ PY=python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
 
-RUN_PC=cnt=$$(pgrep -f "50001.*addNew" | wc -l); echo $$cnt; [ $$cnt -lt 3 ] && \
-( echo "start mosh connector"; \
-$(UNBUFFER) ncat -uklp 50001 -c "echo $$(date): New Incoming >>mosh_log; bash -x reversShells/addNewNode.sh mosh"; \
-echo "connection done." )
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
@@ -81,10 +77,10 @@ pc:
 	./pcc
 	make connect
 
-mosh:
+m:
 	while true; do (setup_mosh_server 2>&1 | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT)) & sleep $$((60*25)); done
 
-m:
+mosh:
 	( while true; do bash -x setup_mosh_server& [ -f /tmp/mexit ] && exit 0; sleep 600; done 2>&1 | $(UNBUFFERP) tee -a ms_connect_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT) ) &
 	#@sleep 1
 	#tail ms_connect_log
@@ -94,8 +90,11 @@ rvs_session:
 	-tmux set-option -t rvsConnector renumber-windows on
 
 _pccnct:
-	bash -xc '$(RUN_PC)' &  # for mosh, start listen instances, use 50001/udp and 9xxx/udp
-	echo "pccnct has been put to backgound"
+	-pkill -f "50001.*addNew"
+	echo "start mosh connector";
+	$(UNBUFFER) ncat -uklp 50001 -c "bash -c 'echo $$(date): New Incoming >>mosh_log'; echo; addNewNode.sh mosh" &
+	echo "connection listener setup done."
+	echo "pccnct has been put to backgound."
 	
 pccnct: rvs_session _pccnct
 	make log_receiver & # will output to current process
@@ -162,7 +161,7 @@ test_coor: update_code $(SRC)
 
 clean:
 	#-bash -c 'currentPpid=$$(pstree -spa $$$$ | $(SED) -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | $(SED) "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
-	-ps aux | grep "vlp" | grep -v "while" | grep -v "grep" | tee /dev/tty | awk '{print $$2} ' | xargs -I{} kill -9 {}
+	-ps aux | grep "ncat .*lp" | grep -v "while" | grep -v "50001" | grep -v "grep" | tee /dev/tty | awk '{print $$2} ' | xargs -I{} kill -9 {}
 	-rm -rf __pycache__ mylogs dist/* build/*
 
 
