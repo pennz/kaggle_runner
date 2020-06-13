@@ -652,15 +652,22 @@ class ExcludeUrlsTransform(NLPTransform):
         return text, lang
 
 # + colab_type="code" id="KFCrVc5nCRlw" colab={}
-# !cp /kaggle/input/bert-for-toxic-classfication-trained/*.pkl .
+from kaggle_runner.utils.kernel_utils import get_obj_or_dump
+def get_pickled_data(file_path):
+    obj = get_obj_or_dump(file_path)
+
+    if obj is None:
+        return get_obj_or_dump(f"{ROOT_PATH}/input/bert-for-toxic-classfication-trained/{file_path}")
+
+    return obj
+
 
 
 # + colab_type="code" id="uFB3UeyAsYCp" colab={}
 from kaggle_runner import may_debug
-from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 
 def get_open_subtitles():
-    df_ot = get_obj_or_dump("ot.pkl")
+    df_ot = get_pickled_data("ot.pkl")
 
     if df_ot is None:
         df_ot = pd.read_csv(f'{ROOT_PATH}/input/open-subtitles-toxic-pseudo-labeling/open-subtitles-synthesic.csv', index_col='id')[['comment_text', 'toxic', 'lang']]
@@ -739,7 +746,7 @@ def get_toxic_comments(df):
 
         return df[df['toxic'] == 1].comment_text.values
 
-df_train = get_obj_or_dump("train.pkl")
+df_train = get_pickled_data("train.pkl")
 
 if df_train is None:
     df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
@@ -854,7 +861,7 @@ class DatasetRetriever(Dataset):
 # + colab_type="code" id="3DVkkUVMu9Ka" outputId="d0cda48a-4f0b-451a-c55e-f3bb861191c7" colab={"base_uri": "https://localhost:8080/", "height": 169}
 # %%time
 
-df_train = get_obj_or_dump("train.pkl")
+df_train = get_pickled_data("train.pkl")
 
 if df_train is None:
     df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
@@ -887,7 +894,7 @@ print(attention_masks.shape)
 np.unique(train_dataset.get_labels())
 
 # + colab_type="code" id="bW4dEWaYu9NF" outputId="250e8f53-03e3-477f-c30d-35e4ba262cd9" colab={"base_uri": "https://localhost:8080/", "height": 118}
-df_val = get_obj_or_dump("val.pkl")
+df_val = get_pickled_data("val.pkl")
 
 if df_val is None:
     df_val = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/validation.csv', index_col='id')
@@ -902,7 +909,7 @@ validation_tune_dataset = DatasetRetriever(
 )
 
 #df_val_unclean = df_val
-#df_val = get_obj_or_dump("val_cleaned.pkl")
+#df_val = get_pickled_data("val_cleaned.pkl")
 
 #if df_val is None:
 #    df_val = df_val_unclean
@@ -928,7 +935,7 @@ print(tokens.shape)
 print(attention_masks.shape)
 
 # + colab_type="code" id="zNdADp28v3av" outputId="0aeefb7a-1f4a-4e93-fe6d-ae34fd4013c2" colab={"base_uri": "https://localhost:8080/", "height": 118}
-df_test = get_obj_or_dump("test.pkl")
+df_test = get_pickled_data("test.pkl")
 
 if df_test is None:
     df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/test.csv', index_col='id')
