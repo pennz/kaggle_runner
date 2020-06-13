@@ -962,6 +962,7 @@ class RocAucMeter(object):
 
     def reset(self):
         self.y_true = np.array([])
+        self.y_true_float = np.array([], dtype=np.float)
         self.y_pred = np.array([])
         self.score = 0
         self.mc_score = 0
@@ -969,11 +970,14 @@ class RocAucMeter(object):
 
     def update(self, y_true, y_pred, aux_part=0):
         y_true = y_true[:,:2].cpu().numpy().argmax(axis=1)
+        y_true_float = y_true[:,:2].cpu().numpy().argmax(axis=1).astype(np.float)
         y_pred = nn.functional.softmax(y_pred[:,:2], dim=1).data.cpu().numpy()[:,1]
         self.y_true = np.hstack((self.y_true, y_true))
+        self.y_true_float = np.hstack((self.y_true_float, y_true_float))
         self.y_pred = np.hstack((self.y_pred, y_pred))
+
         self.score = sklearn.metrics.roc_auc_score(self.y_true, self.y_pred, labels=np.array([0, 1]))
-        self.mc_score = matthews_correlation(self.y_true, self.y_pred)
+        self.mc_score = matthews_correlation(self.y_true_float, self.y_pred)
         self.aux_part = aux_part
 
     @property
@@ -1463,8 +1467,8 @@ def _test_model_fn(device=xm.xla_device()):
 
     #fitter.run_tuning_and_inference(test_loader, validation_tune_loader)  # error happens here
 
-    #losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
-    #logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
+    losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
+    logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
 
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
