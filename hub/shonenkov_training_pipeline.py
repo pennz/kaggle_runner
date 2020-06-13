@@ -1048,13 +1048,13 @@ class TPUFitter:
             para_loader = pl.ParallelLoader(train_loader, [self.device])
             losses, final_scores = self.train_one_epoch(para_loader.per_device_loader(self.device))
 
-            self.log(f'[RESULT]: Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+            self.log(f'[RESULT]: Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
 
             t = time.time()
             para_loader = pl.ParallelLoader(validation_loader, [self.device])
             losses, final_scores = self.validation(para_loader.per_device_loader(self.device))
 
-            self.log(f'[RESULT]: Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+            self.log(f'[RESULT]: Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
 
             if self.config.validation_scheduler:
                 self.scheduler.step(metrics=final_scores.avg)
@@ -1081,7 +1081,7 @@ class TPUFitter:
                 if step % self.config.verbose_step == 0:
                     xm.master_print(
                         f'Valid Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
             with torch.no_grad():
@@ -1111,7 +1111,7 @@ class TPUFitter:
                 if step % self.config.verbose_step == 0:
                     self.log(
                         f'Train Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
@@ -1313,7 +1313,7 @@ def _test_model_fn():
                 if step % config.verbose_step == 0:
                     logger.info(
                         f'Valid Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
             with torch.no_grad():
@@ -1419,7 +1419,7 @@ def _test_model_fn():
                 if step % self.config.verbose_step == 0:
                     self.log(
                         f'Train Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_score.mc_avg:.5f}, ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
