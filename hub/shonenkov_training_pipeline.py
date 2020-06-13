@@ -1262,7 +1262,7 @@ class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs
-    n_epochs = 3  # количество эпох для обучения
+    n_epochs = 2  # количество эпох для обучения
     lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
     fold_number = 0  # номер фолда для обучения
 
@@ -1303,12 +1303,6 @@ def _test_model_fn(device=torch.device("cpu")):
     from kaggle_runner import logger
     net.to(device)
 
-    #test_sampler = torch.utils.data.distributed.DistributedSampler(
-    #    test_dataset,
-    #    num_replicas=xm.xrt_world_size(),
-    #    rank=xm.get_ordinal(),
-    #    shuffle=False
-    #)
     test_loader = torch.utils.data.DataLoader(
         test_dataset,
         batch_size=TrainGlobalConfig.batch_size,
@@ -1366,12 +1360,6 @@ def _test_model_fn(device=torch.device("cpu")):
             result['toxic'].extend(toxics)
 
         return result
-    #validation_sampler = torch.utils.data.distributed.DistributedSampler(
-    #    validation_dataset,
-    #    num_replicas=xm.xrt_world_size(),
-    #    rank=xm.get_ordinal(),
-    #    shuffle=False
-    #)
     validation_loader = torch.utils.data.DataLoader(
         validation_dataset,
         batch_size=TrainGlobalConfig.batch_size,
@@ -1485,13 +1473,7 @@ def _test_model_fn(device=torch.device("cpu")):
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
 
-
-# + id="Tp0DdaRQyW2U" colab_type="code" colab={}
-device=torch.device("cpu")
-
 # + colab_type="code" id="INecI_CbxXA_" colab={}
-_test_model_fn(device)
-
 def _mp_fn(rank, flags):
     device = xm.xla_device()
     net.to(device)
