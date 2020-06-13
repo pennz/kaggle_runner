@@ -30,7 +30,7 @@ from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 # + colab={} colab_type="code" id="wV017Cj1CRlg"
 with open("runner.sh", "w") as f:
     f.write(
-r"""#!/bin/bash -x
+r"""#!/bin/bash
 export PS4='Line ${LINENO}: ' # for debug
 NC=ncat
 
@@ -86,7 +86,7 @@ if [ "x${ENABLE_RVS}" = x1 ]; then
     if [ -z $(pgrep -f 'jupyter-notebook') ]; then
         bash ./rvs.sh $SERVER $PORT 2>&1 &
     else
-        screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
+        screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
     fi
 fi &
 
@@ -970,7 +970,7 @@ class RocAucMeter(object):
 
     def update(self, y_true, y_pred, aux_part=0):
         y_true = y_true[:,:2].cpu().numpy().argmax(axis=1)
-        y_true_float = y_true[:,:2].cpu().numpy().argmax(axis=1).astype(np.float)
+        y_true_float = y_true.astype(np.float)
         y_pred = nn.functional.softmax(y_pred[:,:2], dim=1).data.cpu().numpy()[:,1]
         self.y_true = np.hstack((self.y_true, y_true))
         self.y_true_float = np.hstack((self.y_true_float, y_true_float))
