@@ -365,3 +365,6 @@ cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 # PROJECT_ID = 'your-google-cloud-project'
 # from google.cloud import storage
 # storage_client = storage.Client(project=PROJECT_ID)
+
+d:
+	git diff; git diff --cached

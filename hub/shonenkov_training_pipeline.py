@@ -955,13 +955,14 @@ print(attention_masks.shape)
 
 
 # + colab={} colab_type="code" id="I2bN_NySwU6c"
+from kaggle_runner.metrics.metrics import matthews_correlation
 class RocAucMeter(object):
     def __init__(self):
         self.reset()
 
     def reset(self):
-        self.y_true = np.array([0,1])
-        self.y_pred = np.array([0.5,0.5])
+        self.y_true = np.array([])
+        self.y_pred = np.array([])
         self.score = 0
         self.mc_score = 0
         self.aux_part = 0
