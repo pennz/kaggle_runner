@@ -3,7 +3,7 @@ export PATH := $(PWD)/bin:$(PWD)/reversShells:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
-JUPYTER_PARAMS='--NotebookApp.base_url=/k/36137599/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwidHlwIjoiSldUIn0..fHvY1Y98W1-rO3peofuhDg.FpXaYI423XfZnUMXNyF6hSddgoGS2__cs9cGsXpf_HaG4zW5DQSrwDJukkFtmyEMCLvdk3c1LvdElyBXguwmViWuF6GFlv8jwD-Z0rekOig.u8GPnAbUM6rRGYBWytVb2g/proxy/ --NotebookApp.token= --NotebookApp.notebook_dir=/kaggle/working --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10000000000 --NotebookApp.open_browser=False --allow-root'
+JUPYTER_PARAMS=--NotebookApp.base_url=/k/36137599/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwidHlwIjoiSldUIn0..fHvY1Y98W1-rO3peofuhDg.FpXaYI423XfZnUMXNyF6hSddgoGS2__cs9cGsXpf_HaG4zW5DQSrwDJukkFtmyEMCLvdk3c1LvdElyBXguwmViWuF6GFlv8jwD-Z0rekOig.u8GPnAbUM6rRGYBWytVb2g/proxy/ --NotebookApp.token= --NotebookApp.notebook_dir=/kaggle/working --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10000000000 --NotebookApp.open_browser=False --allow-root
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
