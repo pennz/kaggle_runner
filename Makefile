@@ -20,6 +20,8 @@ ifneq ($(UNBUFFER),)
 endif
 
 KAGGLE_USER_NAME=$(shell jq -r '.username' ~/.kaggle/kaggle.json)
+KIP=$(shell ip addr show dev eth0 | grep inet | sed 's/inet \([^\/]*\).*/\1/')
+
 
 SED := $(shell type -p gsed)
 ifeq ($(SED),)
@@ -314,12 +316,12 @@ t: pccnct m
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
 sshR:
-	ssh -fNR 10000:172.28.0.2:9000 -p $(SSH_PORT) v@vtool.duckdns.org
+	ssh -fNR 10000:$(KIP):9000 -p $(SSH_PORT) v@vtool.duckdns.org
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 sshRj:
 	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
-	$(PY) -m jupyter lab --ip="172.28.0.2" --port=9001 &
-	ssh -fNR 10001:172.28.0.2:9001 -p $(SSH_PORT) v@vtool.duckdns.org
+	($(PY) -m jupyter lab --ip="$(KIP)" --port=9001 || $(PY) -m jupyter lab --ip="172.19.2.2" --port=9001) &
+	ssh -fNR 10001:$(KIP):9001 -p $(SSH_PORT) v@vtool.duckdns.org
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 
 githooks:
@@ -333,7 +335,7 @@ distclean: clean
 	rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
 
 ks:
-	curl -sSLG 172.28.0.2:9000/api/sessions
+	curl -sSLG $(KIP):9000/api/sessions
 
 push_code:
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .gitmodules
@@ -351,3 +353,7 @@ cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 
 .PHONY: clean connect inner_lstm pc mbd_log
 
+# Set your own project id here
+# PROJECT_ID = 'your-google-cloud-project'
+# from google.cloud import storage
+# storage_client = storage.Client(project=PROJECT_ID)
