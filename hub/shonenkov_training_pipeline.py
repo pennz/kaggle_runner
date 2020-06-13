@@ -442,14 +442,14 @@ logger.debug("Logger loaded. Will run entry.sh.")
 # + [markdown] colab_type="text" id="IklWPKSwNsXN"
 # # NOW kernel code
 
-# + colab_type="code" id="HsZb7QICuRIe" colab={"base_uri": "https://localhost:8080/", "height": 1000} outputId="4f068da7-6305-4596-fbfa-e4dec7bde0ea"
+# + colab={} colab_type="code" id="mC6qgI68BASH" magic_args="" language="bash"
 # #!python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 # #!python -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
-# !curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null
-# !python pytorch-xla-env-setup.py --version 20200420 --apt-packages libomp5 libopenblas-dev
-# !python3 -m pip install transformers==2.5.1 > /dev/null
-# !python3 -m pip install pandarallel > /dev/null
-# !python3 -m pip install catalyst==20.4.2 > /dev/null
+# python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
+# python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev;
+# python3 -m pip install transformers==2.5.1 > /dev/null;
+# python3 -m pip install pandarallel > /dev/null;
+# python3 -m pip install catalyst==20.4.2 > /dev/null;)
 
 # + colab_type="code" id="KFZrVc5nCRlw" outputId="bea9d14c-7174-49cf-eb16-26733d847679" colab={"base_uri": "https://localhost:8080/", "height": 219}
 import numpy as np
