@@ -281,7 +281,7 @@ Train Step 50, loss: 0.50309, final_score: 0.97200, time: 52.56680
 pickle data
 
 ## Version 16
-aux_loss/1,3 epochs
+aux_loss/1, 3 epochs
 
 ```
 [RESULT]: Train. Epoch: 2, loss: 0.76647, final_score: 0.99029, time: 2454.93416
@@ -295,3 +295,23 @@ Train Step 50, loss: 0.71711, final_score: 0.97655, time: 51.97299
 ```
 **score** 0.9393
 
+Analyze: maybe the toxic data too much, easier to over-fit
+
+## Version 17
+
+aux_loss/3, 3 epochs
+
+```
+[RESULT]: Train. Epoch: 2, loss: 0.51123, final_score: 0.98982, time: 2457.49771
+[RESULT]: Validation. Epoch: 2, loss: 0.62919, final_score: 0.95049, time: 28.64095
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.10021
+Train Step 25, loss: 0.51969, final_score: 0.95565, time: 89.48005
+Train Step 50, loss: 0.51586, final_score: 0.95909, time: 115.79362
+Train Step 0, loss: 0.00000, final_score: 0.00000, time: 0.09716
+Train Step 25, loss: 0.48781, final_score: 0.98629, time: 26.15233
+Train Step 50, loss: 0.49199, final_score: 0.98348, time: 52.17845
+```
+**score** 0.9409
+
+## Version 18
+aux_loss/3, 3 epochs, no toxic data to synthesizer
