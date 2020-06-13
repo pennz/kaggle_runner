@@ -963,6 +963,7 @@ class RocAucMeter(object):
         self.y_true = np.array([0,1])
         self.y_pred = np.array([0.5,0.5])
         self.score = 0
+        self.mc_score = 0
         self.aux_part = 0
 
     def update(self, y_true, y_pred, aux_part=0):
