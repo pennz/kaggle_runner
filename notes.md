@@ -35,7 +35,7 @@ python run_classifier.py \
   --vocab_file=$BERT_BASE_DIR/vocab.txt \
   --bert_config_file=$BERT_BASE_DIR/bert_config.json \
   --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt \
-  --max_seq_length=128 \
+  --max\_seq_length=128 \
   --train_batch_size=32 \
   --learning_rate=5e-5 \
   --num_train_epochs=0.1 \
@@ -87,7 +87,7 @@ cd bert && python run_classifier.py \
   --vocab_file=$BERT_BASE_DIR/vocab.txt \
   --bert_config_file=$BERT_BASE_DIR/bert_config.json \
   --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt \
-  --max_seq_length=128 \
+  --max\_seq_length=128 \
   --train_batch_size=32 \
   --learning_rate=5e-5 \
   --num_train_epochs=0.1 \
@@ -120,7 +120,7 @@ class LabelSmoothing(nn.Module):
             aux=x[:, 2:]
 
             toxic_target = target[:,:2]
-            aux_target = target[:, 2:]
+            aux\_target = target[:, 2:]
             with torch.no_grad():
                 # true_dist = pred.data.clone()
                 true_dist = torch.zeros_like(pred)
@@ -129,13 +129,13 @@ class LabelSmoothing(nn.Module):
                 # true_dist.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
 
                 # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
-                smooth_aux = torch.zeros_like(aux_target)
+                smooth_aux = torch.zeros_like(aux\_target)
                 smooth_aux.fill_(self.smoothing) # only for binary cross entropy
-                smooth_aux += (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+                smooth_aux += (1-self.smoothing*2)*aux\_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
 
-            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
+            aux\_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
 
-            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux_loss/5
+            return torch.mean(torch.sum(-true_dist * pred, dim=self.dim)) + aux\_loss/5
         else:
             return torch.nn.functional.binary_cross_entropy_with_logits(x[:,:2], target[:,:2])
 
@@ -185,7 +185,7 @@ Train Step 50, loss: 0.46219, final_score: 0.96771, time: 60.06645
 **score**  0.9421
 **change** use aux
 
-### version 7
+### Version 7
 3 epochs, and for aux it is /3
 ```
 
@@ -202,7 +202,7 @@ Train Step 50, loss: 0.50945, final_score: 0.96875, time: 60.62506
 *change* 3 epochs, aux /3
 **score** 0.9431
 
-## compare logs
+#### compare logs
 as we trained on validation set, it will always get better.
 train loss less(longer) and the final test result is better
 
@@ -281,7 +281,7 @@ Train Step 50, loss: 0.50309, final_score: 0.97200, time: 52.56680
 pickle data
 
 ## Version 16
-aux_loss/1, 3 epochs
+aux\_loss/1, 3 epochs
 
 ```
 [RESULT]: Train. Epoch: 2, loss: 0.76647, final_score: 0.99029, time: 2454.93416
@@ -299,7 +299,7 @@ Analyze: maybe the toxic data too much, easier to over-fit
 
 ## Version 17
 
-aux_loss/3, 3 epochs
+aux\_loss/3, 3 epochs
 
 ```
 [RESULT]: Train. Epoch: 2, loss: 0.51123, final_score: 0.98982, time: 2457.49771
@@ -314,4 +314,21 @@ Train Step 50, loss: 0.49199, final_score: 0.98348, time: 52.17845
 **score** 0.9409
 
 ## Version 18
-aux_loss/3, 3 epochs, no toxic data to synthesizer
+aux\_loss/3, 3 epochs, no toxic data to synthesizer, but merge more data with synthe
+```
+[RESULT]: Train. Epoch: 2, loss: 0.51623, final_score: 0.98815, mc_score: 0.89592, time: 2479.38604
+[RESULT]: Validation. Epoch: 2, loss: 0.67237, final_score: 0.95114, mc_score: 0.56823, time: 28.99195
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.11007
+Train Step 25, loss: 0.52273, final_score: 0.94748, mc_score: 0.72564, time: 89.66919
+Train Step 50, loss: 0.52945, final_score: 0.94235, mc_score: 0.69355, time: 116.05590
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.10153
+Train Step 25, loss: 0.49320, final_score: 0.98264, mc_score: 0.77971, time: 26.53590
+Train Step 50, loss: 0.49980, final_score: 0.97090, mc_score: 0.78187, time: 53.01024
+```
+
+**score** 0.9386
+
+## Version 19
+
+aux\_loss/3, 2 epochs
+not _low syn to data. And reduce label smooth
