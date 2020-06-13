@@ -1576,6 +1576,3 @@ submission.to_csv(f'{ROOT_PATH}/submission.csv')
 #PROJECT_ID = 'go-2-learn'
 #from google.cloud import storage
 #storage_client = storage.Client(project=PROJECT_ID)
-
-
-# + id="ZnoK6ZExUwCo" colab_type="code" colab={}
