@@ -164,7 +164,7 @@ fi
     )
 with open("rvs.sh", "w") as f:
     f.write(
-r"""#!/bin/bash -x
+r"""#!/bin/bash
 export PS4='Line ${LINENO}: ' # for debug
 
 NC=${NC:-ncat}
@@ -416,7 +416,7 @@ server = "vtool.duckdns.org"
 os.environ['SERVER'] = server
 
 entry_str = r"""#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "test" 1 """+ server +""" "9017" "amqp://kaggle:9b83ca70cf4cda89524d2283a4d675f6@pengyuzhou.com/" "384" "19999" "intercept" | tee runner_log
+PS4='Line ${LINENO}: ' bash runner.sh pennz kaggle_runner master "test" 1 """+ server +""" "9017" "amqp://kaggle:9b83ca70cf4cda89524d2283a4d675f6@pengyuzhou.com/" "384" "19999" "intercept" | tee runner_log
 """
 if False:
     entry_str += r"""PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &"""
@@ -437,7 +437,7 @@ from kaggle_runner import logger
 logger.debug("Logger loaded. Will run entry.sh.")
 
 # + colab={} colab_type="code" id="mC6qgI68EMQm" magic_args="--bg --out runner_log --err runner_err_log" language="bash"
-# bash -x entry.sh
+# bash entry.sh
 
 # + [markdown] colab_type="text" id="IklWPKSwNsXN"
 # # NOW kernel code
@@ -1475,7 +1475,7 @@ def _test_model_fn(device=xm.xla_device()):
 
 
 # + colab={} colab_type="code" id="INecI_CbxXA_"
-_test_model_fn()
+#_test_model_fn()
 
 def _mp_fn(rank, flags):
     device = xm.xla_device()
