@@ -1282,10 +1282,9 @@ net = ToxicSimpleNNModel()
 
 
 # + colab={} colab_type="code" id="InecI_CbxXA_"
-def _test_model_fn():
+def _test_model_fn(device=xm.xla_device()):
     "test with CPU, easier to debug"
     from kaggle_runner import logger
-    device = torch.device('cpu')
     net.to(device)
 
     #test_sampler = torch.utils.data.distributed.DistributedSampler(
@@ -1457,24 +1456,23 @@ def _test_model_fn():
             losses, final_scores = self.train_one_epoch(validation_tune_loader)
             run_inference(net, device, TrainGlobalConfig, validation_loader)
 
-    may_debug(True)
-    fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
-    from types import MethodType
-    fitter.train_one_epoch = MethodType(train_one_epoch, fitter)
-    fitter.run_tuning_and_inference = MethodType(run_tuning_and_inference, fitter)
+    #fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
+    #from types import MethodType
+    #fitter.train_one_epoch = MethodType(train_one_epoch, fitter)
+    #fitter.run_tuning_and_inference = MethodType(run_tuning_and_inference, fitter)
 
-    fitter.run_tuning_and_inference(test_loader, validation_tune_loader)  # error happens here
+    #fitter.run_tuning_and_inference(test_loader, validation_tune_loader)  # error happens here
 
     #losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
     #logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
 
-    #results = run_inference(net, device, TrainGlobalConfig, validation_loader)
-    #logger.info(f"Test done, result len %d", len(results))
-
-
+    results = run_inference(net, device, TrainGlobalConfig, validation_loader)
+    logger.info(f"Test done, result len %d", len(results))
 
 
 # + colab={} colab_type="code" id="INecI_CbxXA_"
+_test_model_fn()
+
 def _mp_fn(rank, flags):
     device = xm.xla_device()
     net.to(device)
