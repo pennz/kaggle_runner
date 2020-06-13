@@ -20,7 +20,7 @@ ifneq ($(UNBUFFER),)
 endif
 
 KAGGLE_USER_NAME=$(shell jq -r '.username' ~/.kaggle/kaggle.json)
-KIP=$(shell ip addr show dev eth0 | grep inet | sed 's/inet \([^\/]*\).*/\1/')
+KIP=$(shell ip addr show dev eth0 | grep inet | sed 's/.*inet \([^\/]*\).*/\1/')
 
 
 SED := $(shell type -p gsed)
