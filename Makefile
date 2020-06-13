@@ -121,7 +121,7 @@ push: rvs_session $(SRC)
 	sed -i 's/\(id": "\)\(.*\)\//\1$(KAGGLE_USER_NAME)\//' kaggle_runner/runner_template/kernel-metadata.json
 	title=$$(git show --no-patch --oneline | tr " " "_"); sed -i 's/title\(.*\)|.*"/title\1| '$$title\"/ kaggle_runner/runner_template/kernel-metadata.json
 	git add kaggle_runner/runner_template/kernel-metadata.json && git commit -sm "Update metadata when push to server" --no-gpg && git push &
-	./run_coordinator $(PHASE) # source only works in specific shell: bash or ...
+	run_coordinator $(PHASE) # source only works in specific shell: bash or ...
 
 connect:
 	tmux select-window -t rvsConnector:{end}
