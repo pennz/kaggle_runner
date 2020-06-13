@@ -967,8 +967,8 @@ class RocAucMeter(object):
         self.aux_part = 0
 
     def update(self, y_true, y_pred, aux_part=0):
-        y_true = y_true[:,2].cpu().numpy().argmax(axis=1)
-        y_pred = nn.functional.softmax(y_pred[:,2], dim=1).data.cpu().numpy()[:,1]
+        y_true = y_true[:,:2].cpu().numpy().argmax(axis=1)
+        y_pred = nn.functional.softmax(y_pred[:,:2], dim=1).data.cpu().numpy()[:,1]
         self.y_true = np.hstack((self.y_true, y_true))
         self.y_pred = np.hstack((self.y_pred, y_pred))
         self.score = sklearn.metrics.roc_auc_score(self.y_true, self.y_pred, labels=np.array([0, 1]))
