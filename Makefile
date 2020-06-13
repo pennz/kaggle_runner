@@ -316,7 +316,8 @@ t: pccnct m
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
 sshR:
-	ssh -fNR 10000:$(KIP):9000 -p $(SSH_PORT) v@vtool.duckdns.org
+	-ssh -fNR 10000:$(KIP):9000 -p $(SSH_PORT) v@vtool.duckdns.org
+	-ssh -fNR 10000:$(KIP):8888 -p $(SSH_PORT) v@vtool.duckdns.org
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 sshRj:
 	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
