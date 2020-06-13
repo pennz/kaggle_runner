@@ -5,6 +5,7 @@ export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
+"k1gaggle/bert-for-toxic-classfication-trained",
 "k1gaggle/jigsaw-toxicity-train-data-with-aux",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
 "shonenkov/jigsaw-public-baseline-train-data",
@@ -251,6 +252,7 @@ cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}'
 
 kaggle: /root/.kaggle/kaggle.json
+	-xclip ~/.kaggle/kaggle.json -selection clipboard
 
 update_sh_ipynb:
 	jupytext --sync hub/shonenkov_training_pipeline.ipynb || jupytext --set-formats ipynb,py hub/shonenkov_training_pipeline.ipynb

@@ -657,6 +657,7 @@ class ExcludeUrlsTransform(NLPTransform):
 
 # + colab={} colab_type="code" id="uFB3UeyAsYCp"
 from kaggle_runner import may_debug
+from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 
 def get_open_subtitles():
     df_ot = get_obj_or_dump("ot.pkl")
