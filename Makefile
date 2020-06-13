@@ -320,7 +320,7 @@ sshR:
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 sshRj:
 	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
-	($(PY) -m jupyter lab --ip="$(KIP)" --port=9001 || $(PY) -m jupyter lab --ip="172.19.2.2" --port=9001) &
+	($(PY) -m jupyter lab --ip="$(KIP)" --port=9001 || $(PY) -m jupyter lab --ip="$(KIP)" --port=9001 --allow-root) &
 	ssh -fNR 10001:$(KIP):9001 -p $(SSH_PORT) v@vtool.duckdns.org
 	scp -P $(SSH_PORT) v@vtool.duckdns.org:~/.ssh/* ~/.ssh
 
