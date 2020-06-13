@@ -442,7 +442,7 @@ logger.debug("Logger loaded. Will run entry.sh.")
 # + [markdown] colab_type="text" id="IklWPKSwNsXN"
 # # NOW kernel code
 
-# + colab={} colab_type="code" id="mC6qgI68BASH" magic_args="" language="bash"
+# + colab={} colab_type="code" id="mC6qgI68BASH" language="bash"
 # #!python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 # #!python -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 # python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
@@ -1472,6 +1472,7 @@ def _test_model_fn(device=torch.device("cpu")):
 
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
+
 
 # + colab_type="code" id="INecI_CbxXA_" colab={}
 def _mp_fn(rank, flags):
