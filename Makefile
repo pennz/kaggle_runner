@@ -180,7 +180,7 @@ gsed -i 's/version=.*/version=\"$(TAG)\",/' setup.py || \
 $(SED) -i 's/version=.*/version=\"$(TAG)\",/' setup.py ;\
 git add setup.py && \
 (git tag -d "v$(TAG)"; git push --delete origin "v$(TAG)" || true) && \
-git commit -sm "setup.py: v$(TAG)" && git tag -s "v$(TAG)" && git push --tags; \
+git commit -sm "setup.py: v$(TAG)" && (git tag -s "v$(TAG)" || true) && git push --tags; \
 fi
 	$(PY) setup.py sdist bdist_wheel
 	$(PY) -m twine upload dist/*
