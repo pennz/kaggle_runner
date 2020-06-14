@@ -357,7 +357,7 @@ data = ImageDataBunch.from_folder(
 
 # Let's perform normalization to make the CNN converge faster. fast.ai already defined the variable mnist_stats, that we can use to normalize our data. Alternatively, we can call normalize() without any paramters. In this case fast.ai simply calculates the exact stats needed for the dataset at hand.
 
-mnist_stats
+print(mnist_stats)
 
 # + _kg_hide-output=true
 data.normalize(mnist_stats)

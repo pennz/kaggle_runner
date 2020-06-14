@@ -65,7 +65,7 @@ else ./wt $(PY) -m pdb tests/test_bert_torch.py </dev/tty ; fi
 pytest:
 	$(PY) -m pip show pytest | grep "Version: 5." &>/dev/null || ($(PY) -m pip install --upgrade pytest && $(PY) -m pip install --upgrade pytest-cov)
 
-log_receiver:
+check_log_receiver:
 	@echo "$@" will use tcp to receive logs
 	-pkill -f "$(CHECK_PORT)"
 	-$(IS_CENTOS) && (pgrep -f firewalld >/dev/null || sudo systemctl start firewalld)
@@ -74,7 +74,7 @@ log_receiver:
 	ncat -vkl --recv-only  -p $(CHECK_PORT) -o logs_check & sleep 1; tail -f logs_check # logs_check will be used by pcc to get mosh-client connect authentication info
 
 pc:
-	./pcc
+	pcc
 	make connect
 
 m:
@@ -97,7 +97,7 @@ _pccnct:
 	echo "pccnct has been put to backgound."
 	
 pccnct: rvs_session _pccnct
-	make log_receiver & # will output to current process
+	make check_log_receiver & # will output to current process
 	-$(IS_CENTOS) && sudo service rabbitmq-server start # For AMQP log, our server 
 	@echo "pc connector started now"
 
@@ -345,6 +345,7 @@ ks:
 	curl -sSLG $(KIP):9000/api/sessions
 
 push_code:
+	git fetch --unshallow
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .gitmodules
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .git/config
 	git push
