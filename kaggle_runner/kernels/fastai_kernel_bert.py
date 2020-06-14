@@ -409,7 +409,7 @@ class Shonenkov(FastAIKernel):
             train_transforms = get_train_transforms();
             synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
             synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
-            tokenizer = tokenizer
+            #tokenizer = tokenizer
             shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
             self.transformers = {'train_transforms': train_transforms,
