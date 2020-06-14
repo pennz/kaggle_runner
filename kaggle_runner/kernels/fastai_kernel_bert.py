@@ -321,7 +321,6 @@ class DatasetRetriever(Dataset):
         self.aux = None
         assert transformers is not None
         self.transformers = transformers
-        may_debug(True)
         self.vocab = vocab
 
         if use_aux:
@@ -506,6 +505,7 @@ class Shonenkov(FastAIKernel):
 
     def peek_data(self):
         if self.data is not None:
+            may_debug(True)
             o = self.data.one_batch()
             print(o)
 
@@ -536,7 +536,6 @@ class RocAucMeter(object):
         self.y_true = np.hstack((self.y_true, y_true))
         self.y_true_float = np.hstack((self.y_true_float, y_true_float))
         self.y_pred = np.hstack((self.y_pred, y_pred))
-        #may_debug(True)
         try:
             self.score = sklearn.metrics.roc_auc_score(self.y_true, self.y_pred, labels=np.array([0, 1]))
         except Exception:
@@ -842,6 +841,8 @@ def test_model_fn(device=torch.device("cpu")):
     k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
     #k.run(dump_flag=True) # it seems it cannot save right
     k.run(dump_flag=False)
+    k.learner.lr_find()
+
     k.peek_data()
 
     self = k
