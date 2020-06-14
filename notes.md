@@ -375,10 +375,9 @@ Train Step 50, loss: 0.51551, final_score: 0.96593, mc_score: 0.76808, time: 63.
 **score** 0.9408
 
 ## Version 22
+smooth to 0.05
 just test one batch (with out merging others), data normal with \_low
 synthesizer
-smooth to 0.05, check data-retriever
-
 ```
 [RESULT]: Train. Epoch: 0, loss: 0.42999, final_score: 0.97412, mc_score: 0.85195, time: 3204.96820
 [RESULT]: Validation. Epoch: 0, loss: 0.50314, final_score: 0.95609, mc_score: 0.59917, time: 28.97322
@@ -389,6 +388,7 @@ Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.08
 Train Step 25, loss: 0.38891, final_score: 0.95604, mc_score: 0.74218, time: 31.40544
 Train Step 50, loss: 0.39375, final_score: 0.95146, mc_score: 0.73824, time: 63.41240
 ```
+**score** 0.9360
 
 # Merging just makes it better
 
