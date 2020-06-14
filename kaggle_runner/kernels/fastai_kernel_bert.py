@@ -60,10 +60,9 @@ def get_pickled_data(file_path):
     return obj
 vocab = get_pickled_data("vocab.pkl")
 
-if vocab is None:
-    vocab = [tokenizer.convert_ids_to_tokens(i) for i in range(tokenizer.vocab_size)]
-    get_obj_or_dump("vocab.pkl", default=vocab)
-# ROOT_PATH = f'..'
+#if vocab is None: # vocab file read~~
+#    vocab = [tokenizer.convert_ids_to_tokens(i) for i in range(tokenizer.vocab_size)]
+#    get_obj_or_dump("vocab.pkl", default=vocab)
 
 
 def seed_everything(seed):
