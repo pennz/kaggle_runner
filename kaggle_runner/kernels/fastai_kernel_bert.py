@@ -477,7 +477,8 @@ class Shonenkov(FastAIKernel):
             comment_texts=df_test['comment_text'].values,
             langs=df_test['lang'].values,
             use_train_transforms=False,
-            test=True
+            test=True,
+            transformers=self.transformers
         )
 
         del df_test
