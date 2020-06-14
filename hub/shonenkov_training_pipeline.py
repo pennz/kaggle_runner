@@ -5,7 +5,7 @@
 # Author: [Alex Shonenkov](https://www.kaggle.com/shonenkov) //  shonenkov@phystech.edu
 # Have a good day!
 
-# + colab_type="code" id="_43yMxyEvW-q" colab={"base_uri": "https://localhost:8080/", "height": 138} outputId="efad717e-4fae-4509-efb2-59ac0e9ef971"
+# + colab_type="code" id="_43yMxyEvW-q" outputId="964324e2-4bb1-43aa-e6da-63768844f901" colab={"base_uri": "https://localhost:8080/", "height": 106}
 # !echo $HOSTNAME
 # !echo $TPU_NAME
 # !nvidia-smi
@@ -14,7 +14,7 @@
 # %load_ext autoreload
 # %autoreload 2
 
-# + colab_type="code" id="n6uGvKL3epio" colab={"base_uri": "https://localhost:8080/", "height": 62} outputId="4698e84c-27c8-4301-c073-1c4b034a3653"
+# + colab_type="code" id="n6uGvKL3epio" outputId="358b3a30-8c1e-4ee9-d157-44676d0125a8" colab={"base_uri": "https://localhost:8080/", "height": 54}
 import subprocess
 
 subprocess.run('[ -f setup.py ] || (git clone https://github.com/pennz/kaggle_runner; '
@@ -424,7 +424,7 @@ if False:
 with open("entry.sh", "w") as f:
     f.write(entry_str)
 
-# + colab_type="code" id="UAC8442XCRlq" colab={"base_uri": "https://localhost:8080/", "height": 42} outputId="9a6eab8a-a437-401a-d0ca-1efc8d0bf519"
+# + colab_type="code" id="UAC8442XCRlq" outputId="89732ab3-b23c-4158-ee5f-97599ac522a6" colab={"base_uri": "https://localhost:8080/", "height": 34}
 import os
 import sys
 sys.path.append(os.getcwd())
@@ -436,13 +436,13 @@ import_module('kaggle_runner')
 from kaggle_runner import logger
 logger.debug("Logger loaded. Will run entry.sh.")
 
-# + colab={} colab_type="code" id="mC6qgI68EMQm" magic_args="--bg --out runner_log --err runner_err_log" language="bash"
+# + colab_type="code" id="mC6qgI68EMQm" colab={"base_uri": "https://localhost:8080/", "height": 34} outputId="07b40b65-9d84-40cc-e8c5-6d317e1fff9a" magic_args="--bg --out runner_log --err runner_err_log" language="bash"
 # bash entry.sh
 
 # + [markdown] colab_type="text" id="IklWPKSwNsXN"
 # # NOW kernel code
 
-# + colab={} colab_type="code" id="mC6qgI68BASH" language="bash"
+# + colab_type="code" id="mC6qgI68BASH" colab={"base_uri": "https://localhost:8080/", "height": 1000} outputId="181fc14b-b7aa-4e5e-b6ca-59336320925c" language="bash"
 # #!python3 -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 # #!python -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 # python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
@@ -451,7 +451,7 @@ logger.debug("Logger loaded. Will run entry.sh.")
 # python3 -m pip install pandarallel > /dev/null;
 # python3 -m pip install catalyst==20.4.2 > /dev/null;)
 
-# + colab_type="code" id="KFZrVc5nCRlw" outputId="bea9d14c-7174-49cf-eb16-26733d847679" colab={"base_uri": "https://localhost:8080/", "height": 219}
+# + colab_type="code" id="KFZrVc5nCRlw" outputId="66c3e88d-577d-4261-e779-02bd5ec0c9d2" colab={"base_uri": "https://localhost:8080/", "height": 156}
 import numpy as np
 import pandas as pd
 
@@ -511,7 +511,7 @@ def seed_everything(seed):
 
 seed_everything(SEED)
 
-# + colab_type="code" id="63ceMzcxu9GS" colab={"base_uri": "https://localhost:8080/", "height": 118} outputId="9a020727-fcf8-4ce9-fa1a-7978ae11d8a2"
+# + colab_type="code" id="63ceMzcxu9GS" outputId="fcbaffae-6c3b-4397-9416-286a8996de24" colab={"base_uri": "https://localhost:8080/", "height": 86}
 from nltk import sent_tokenize
 from random import shuffle
 import random
@@ -726,7 +726,7 @@ class SynthesicOpenSubtitlesTransform(NLPTransform):
         return text, toxic
 
 
-# + colab_type="code" id="K5BdJ9HWvnLW" outputId="d4c6b816-694c-40c5-df81-2b03901e8c6a" colab={"base_uri": "https://localhost:8080/", "height": 93}
+# + colab_type="code" id="K5BdJ9HWvnLW" outputId="c4c0d782-7d73-462a-e3cc-018de2f15b24" colab={"base_uri": "https://localhost:8080/", "height": 86}
 def get_train_transforms():
     return albumentations.Compose([
         ExcludeUsersMentionedTransform(p=0.95),
@@ -832,7 +832,8 @@ class DatasetRetriever(Dataset):
             elif token_length < 60:
                 text, label = synthesic_transforms_often(data=(text, label))['data']
             else: # will not need to use transforms
-                text, label = synthesic_transforms_low(data=(text, label))['data']
+                #text, label = synthesic_transforms_low(data=(text, label))['data']
+                pass
 
         # TODO add language detection and shuffle
         # https://pypi.org/project/langdetect/
@@ -858,7 +859,7 @@ class DatasetRetriever(Dataset):
     def get_labels(self):
         return list(np.char.add(self.labels_or_ids.astype(str), self.langs))
 
-# + colab_type="code" id="3DVkkUVMu9Ka" outputId="d0cda48a-4f0b-451a-c55e-f3bb861191c7" colab={"base_uri": "https://localhost:8080/", "height": 169}
+# + colab_type="code" id="3DVkkUVMu9Ka" colab={}
 # %%time
 
 df_train = get_pickled_data("train.pkl")
@@ -890,10 +891,10 @@ print(targets)
 print(tokens.shape)
 print(attention_masks.shape)
 
-# + colab_type="code" id="PlcGdUdSYewm" outputId="9e74abc4-d0b2-4e26-dd59-934680ddac68" colab={"base_uri": "https://localhost:8080/", "height": 68}
+# + colab_type="code" id="PlcGdUdSYewm" colab={}
 np.unique(train_dataset.get_labels())
 
-# + colab_type="code" id="bW4dEWaYu9NF" outputId="250e8f53-03e3-477f-c30d-35e4ba262cd9" colab={"base_uri": "https://localhost:8080/", "height": 118}
+# + colab_type="code" id="bW4dEWaYu9NF" colab={}
 df_val = get_pickled_data("val.pkl")
 
 if df_val is None:
@@ -934,7 +935,7 @@ print(targets)
 print(tokens.shape)
 print(attention_masks.shape)
 
-# + colab_type="code" id="zNdADp28v3av" outputId="0aeefb7a-1f4a-4e93-fe6d-ae34fd4013c2" colab={"base_uri": "https://localhost:8080/", "height": 118}
+# + colab_type="code" id="zNdADp28v3av" colab={}
 df_test = get_pickled_data("test.pkl")
 
 if df_test is None:
@@ -1018,6 +1019,189 @@ class AverageMeter(object):
 
 
 # + colab_type="code" id="Ow13PTlFwbiH" colab={}
+import warnings
+
+warnings.filterwarnings("ignore")
+
+import torch_xla
+import torch_xla.core.xla_model as xm
+import torch_xla.distributed.parallel_loader as pl
+import torch_xla.distributed.xla_multiprocessing as xmp
+
+from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
+
+class TPUFitter:
+
+    def __init__(self, model, device, config):
+        if not os.path.exists('node_submissions'):
+            os.makedirs('node_submissions')
+
+        self.config = config
+        self.epoch = 0
+        self.log_path = 'log.txt'
+
+        self.model = model
+        self.device = device
+
+        param_optimizer = list(self.model.named_parameters())
+        no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+        optimizer_grouped_parameters = [
+            {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
+            {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+        ]
+
+        self.optimizer = AdamW(optimizer_grouped_parameters, lr=config.lr*xm.xrt_world_size())
+        self.scheduler = config.SchedulerClass(self.optimizer, **config.scheduler_params)
+
+        self.criterion = config.criterion
+        xm.master_print(f'Fitter prepared. Device is {self.device}')
+
+    def fit(self, train_loader, validation_loader):
+        for e in range(self.config.n_epochs):
+            if self.config.verbose:
+                lr = self.optimizer.param_groups[0]['lr']
+                timestamp = datetime.utcnow().isoformat()
+                self.log(f'\n{timestamp}\nLR: {lr}')
+
+            t = time.time()
+            para_loader = pl.ParallelLoader(train_loader, [self.device])
+            losses, final_scores = self.train_one_epoch(para_loader.per_device_loader(self.device))
+
+            self.log(f'[RESULT]: Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+
+            t = time.time()
+            para_loader = pl.ParallelLoader(validation_loader, [self.device])
+            losses, final_scores = self.validation(para_loader.per_device_loader(self.device))
+
+            self.log(f'[RESULT]: Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+
+            if self.config.validation_scheduler:
+                self.scheduler.step(metrics=final_scores.mc_avg)
+
+            self.epoch += 1
+
+    def run_tuning_and_inference(self, test_loader, validation_tune_loader, validation_loader):
+        for e in range(2):
+            self.optimizer.param_groups[0]['lr'] = self.config.lr*xm.xrt_world_size()
+
+            t = time.time()
+            para_loader = pl.ParallelLoader(validation_tune_loader, [self.device])
+            losses, final_scores = self.train_one_epoch(para_loader.per_device_loader(self.device))
+            self.log(f'[RESULT]: Tune Train. Epoch: {e}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+
+            t = time.time()
+            para_loader = pl.ParallelLoader(validation_loader, [self.device])
+            losses, final_scores = self.validation(para_loader.per_device_loader(self.device))
+            self.log(f'[RESULT]: Tune Validation. Epoch: {e}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+
+            para_loader = pl.ParallelLoader(test_loader, [self.device])
+            self.run_inference(para_loader.per_device_loader(self.device))
+
+    def validation(self, val_loader):
+        self.model.eval()
+        losses = AverageMeter()
+        final_scores = RocAucMeter()
+
+        t = time.time()
+
+        for step, (targets, inputs, attention_masks) in enumerate(val_loader):
+            if self.config.verbose:
+                if step % self.config.verbose_step == 0:
+                    xm.master_print(
+                        f'Valid Step {step}, loss: ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
+                        f'time: {(time.time() - t):.5f}'
+                    )
+            with torch.no_grad():
+                inputs = inputs.to(self.device, dtype=torch.long)
+                attention_masks = attention_masks.to(self.device, dtype=torch.long)
+                targets = targets.to(self.device, dtype=torch.float)
+
+                outputs = self.model(inputs, attention_masks)
+                loss = self.criterion(outputs, targets)
+
+                batch_size = inputs.size(0)
+
+                final_scores.update(targets, outputs)
+                losses.update(loss.detach().item(), batch_size)
+
+        return losses, final_scores
+
+    def train_one_epoch(self, train_loader):
+        self.model.train()
+
+        losses = AverageMeter()
+        final_scores = RocAucMeter()
+        t = time.time()
+
+        for step, (targets, inputs, attention_masks) in enumerate(train_loader):
+            if self.config.verbose:
+                if step % self.config.verbose_step == 0:
+                    self.log(
+                        f'Train Step {step}, loss: ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
+                        f'time: {(time.time() - t):.5f}'
+                    )
+
+            inputs = inputs.to(self.device, dtype=torch.long)
+            attention_masks = attention_masks.to(self.device, dtype=torch.long)
+            targets = targets.to(self.device, dtype=torch.float)
+
+            self.optimizer.zero_grad()
+
+            outputs = self.model(inputs, attention_masks)
+            loss = self.criterion(outputs, targets)
+
+            batch_size = inputs.size(0)
+
+            final_scores.update(targets, outputs)
+
+            losses.update(loss.detach().item(), batch_size)
+
+            loss.backward()
+            xm.optimizer_step(self.optimizer)
+
+            if self.config.step_scheduler:
+                self.scheduler.step()
+
+        self.model.eval()
+        self.save('last-checkpoint.bin')
+
+        return losses, final_scores
+
+    def run_inference(self, test_loader):
+        self.model.eval()
+        result = {'id': [], 'toxic': []}
+        t = time.time()
+
+        for step, (ids, inputs, attention_masks) in enumerate(test_loader):
+            if self.config.verbose:
+                if step % self.config.verbose_step == 0:
+                    xm.master_print(f'Prediction Step {step}, time: {(time.time() - t):.5f}')
+
+            with torch.no_grad():
+                inputs = inputs.to(self.device, dtype=torch.long)
+                attention_masks = attention_masks.to(self.device, dtype=torch.long)
+                outputs = self.model(inputs, attention_masks)
+                toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
+
+            result['id'].extend(ids.cpu().numpy())
+            result['toxic'].extend(toxics)
+
+        result = pd.DataFrame(result)
+        node_count = len(glob('node_submissions/*.csv'))
+        result.to_csv(f'node_submissions/submission_{node_count}_{datetime.utcnow().microsecond}_{random.random()}.csv', index=False)
+
+    def save(self, path):
+        xm.save(self.model.state_dict(), path)
+
+    def log(self, message):
+        if self.config.verbose:
+            xm.master_print(message)
+        with open(self.log_path, 'a+') as logger:
+            xm.master_print(f'{message}', logger)
+
+
 # + colab_type="code" id="kO9ovGhdwb7W" colab={}
 from transformers import XLMRobertaModel
 
@@ -1078,7 +1262,7 @@ class LabelSmoothing(nn.Module):
 
             aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
 
-            return torch.mean(torch.sum(-smooth_toxic * pred, dim=self.dim)) + aux_loss/3
+            return torch.mean(torch.sum(-smooth_toxic * pred, dim=self.dim)) + aux_loss/5
         else:
             return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
 
@@ -1115,7 +1299,7 @@ class TrainGlobalConfig:
     # --------------------
 
     # -------------------
-    criterion = LabelSmoothing()
+    criterion = LabelSmoothing(0.1)
     # -------------------
 
 
@@ -1367,10 +1551,16 @@ def _mp_fn(rank, flags):
 
     fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
     fitter.fit(train_loader, validation_loader)
-    fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
+    fitter.run_tuning_and_inference(test_loader, validation_tune_loader, validation_loader)
 
 
-# + colab_type="code" id="aKuUULH7l5W1" outputId="5c7f42e6-5ff1-486a-f527-ee861b3da71f" colab={"base_uri": "https://localhost:8080/", "height": 447}
+# + id="TeYAqCci4UHx" colab_type="code" colab={}
+# !wc -l node_submissions/*  /kaggle/input/jigsaw-multilingual-toxic-comment-classification/test.csv
+
+# + id="O3BwLS905HDf" colab_type="code" colab={}
+# #!mv node_submissions/ node_sub_v21
+
+# + colab_type="code" id="aKuUULH7l5W1" colab={}
 FLAGS={}
 xmp.spawn(_mp_fn, args=(FLAGS,), nprocs=8, start_method='fork')
 from datetime import date; today = date.today()
@@ -1381,6 +1571,15 @@ torch.save(net.state_dict(), f"{today}_{output_model_file}")
 submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
 submission['toxic'].hist(bins=100)
 
+# + id="aJBWiUTEIJCg" colab_type="code" colab={}
+# !wc -l node_submissions/*  /kaggle/input/jigsaw-multilingual-toxic-comment-classification/test.csv
+
+# + id="wuBW_w_yJ0z0" colab_type="code" colab={}
+# DatasetRetriever.__getitem__??
+
+# + id="zZgopANNKhsJ" colab_type="code" colab={}
+# LabelSmoothing.forward??
+
 # + colab_type="code" id="RRr-yzJ_yVTW" colab={}
 submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
@@ -1388,7 +1587,7 @@ submission.to_csv(f'{ROOT_PATH}/submission.csv')
 # # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
 # !make push_dataset
 
-# + id="qjzo_wu8UqiL" colab_type="code" colab={}
+# + colab_type="code" id="qjzo_wu8UqiL" colab={}
 #PROJECT_ID = 'go-2-learn'
 #from google.cloud import storage
 #storage_client = storage.Client(project=PROJECT_ID)
