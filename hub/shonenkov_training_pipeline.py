@@ -17,19 +17,20 @@
 # %load_ext autoreload
 # %autoreload 2
 
-# %%bash
-# git clone https://github.com/pennz/kaggle_runner
-# python3 -m pip install -e kaggle_runner
-# export PATH=$PWD/kaggle_runner/bin:$PATH
-# entry.sh
+# + language="bash"
+# # git clone https://github.com/pennz/kaggle_runner
+# # python3 -m pip install -e kaggle_runner
+# # export PATH=$PWD/kaggle_runner/bin:$PATH
+# # entry.sh
 
 
-# %%bash
-# python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
-#                                   python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev;
-#                                   python3 -m pip install transformers==2.5.1 > /dev/null;
-#                                   python3 -m pip install pandarallel > /dev/null;
-#                                   python3 -m pip install catalyst==20.4.2 > /dev/null;)
+# + language="bash"
+# # python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
+# #                                   python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev;
+# #                                   python3 -m pip install transformers==2.5.1 > /dev/null;
+# #                                   python3 -m pip install pandarallel > /dev/null;
+# #                                   python3 -m pip install catalyst==20.4.2 > /dev/null;)
+# -
 
 import numpy as np
 import pandas as pd
