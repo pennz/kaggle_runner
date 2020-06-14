@@ -410,9 +410,9 @@ class Shonenkov(FastAIKernel):
                                  shuffle_transforms}
 
     def prepare_train_dev_data(self):
-        df_train = get_pickled_data("train.pkl")
-
-        if df_train is None:
+        try:
+            df_train = get_pickled_data("train.pkl")
+        except:
             df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
             df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
             get_obj_or_dump("train.pkl", default=df_train)
