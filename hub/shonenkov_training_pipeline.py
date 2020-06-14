@@ -51,8 +51,7 @@ import gc
 import re
 
 # # !python3 -m pip install nltk > /dev/null
-import nltk
-nltk.download('punkt')
+import nltk nltk.download('punkt')
 
 from nltk import sent_tokenize
 
@@ -1141,7 +1140,7 @@ def train_loop(index):
   #        .databunch(bs=32, num_workers=0)
   #        .normalize(imagenet_stats))
   #learn = cnn_learner(data, models.resnet152, metrics=accuracy).to_tpu_distributed()
-  learn = k.setup_learner(loss_func=LabelSmoothing()).to_tpu_distributed().to_fp16()
+  learn = k.setup_learner(loss_func=LabelSmoothing()).to_tpu_distributed()
   print('hello')
   #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
   #earn.recorder.plot()
