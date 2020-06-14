@@ -48,6 +48,14 @@ BACKBONE_PATH = 'xlm-roberta-large'
 
 tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
 
+from kaggle_runner.utils.kernel_utils import get_obj_or_dump
+def get_pickled_data(file_path):
+    obj = get_obj_or_dump(file_path)
+
+    if obj is None:
+        return get_obj_or_dump(f"{ROOT_PATH}/input/clean-pickle-for-jigsaw-toxicity/{file_path}")
+
+    return obj
 vocab = get_pickled_data("vocab.pkl")
 
 if vocab is None:
@@ -205,14 +213,6 @@ class ExcludeUrlsTransform(NLPTransform):
 
         return text, lang
 
-from kaggle_runner.utils.kernel_utils import get_obj_or_dump
-def get_pickled_data(file_path):
-    obj = get_obj_or_dump(file_path)
-
-    if obj is None:
-        return get_obj_or_dump(f"{ROOT_PATH}/input/clean-pickle-for-jigsaw-toxicity/{file_path}")
-
-    return obj
 
 def get_open_subtitles():
     df_ot = get_pickled_data("ot.pkl")
