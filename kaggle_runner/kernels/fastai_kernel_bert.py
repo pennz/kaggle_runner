@@ -842,7 +842,7 @@ def test_model_fn(device=torch.device("cpu")):
     k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
     #k.run(dump_flag=True) # it seems it cannot save right
     k.run(dump_flag=False)
-    k.learner.lr_find()
+    Learner(k.learner).lr_find()
 
     k.peek_data()
 
