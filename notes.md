@@ -395,7 +395,9 @@ Train Step 50, loss: 0.39375, final_score: 0.95146, mc_score: 0.73824, time: 63.
 V22+V21-> 0.9393
 
 ## Version 23
+
 data normal no synthesizer (merge with previous results)
+and aux\_loss /5
 ```
 [RESULT]: Train. Epoch: 1, loss: 0.49240, final_score: 0.97706, mc_score: 0.87177, time: 3006.81131
 [RESULT]: Validation. Epoch: 1, loss: 0.59272, final_score: 0.95454, mc_score: 0.60239, time: 28.31951

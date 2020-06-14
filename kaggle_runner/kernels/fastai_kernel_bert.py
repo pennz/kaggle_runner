@@ -800,14 +800,16 @@ def test_model_fn(device=torch.device("cpu")):
     "test with CPU, easier to debug"
     from kaggle_runner import logger
     k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
-    k.build_and_set_model()
+    k.run()
+    self = k
+    #k.build_and_set_model()
 
     net = k.model
     assert net is not None
     net.to(device)
 
     validation_loader = torch.utils.data.DataLoader(
-        validation_dataset,
+        self.validation_dataset,
         batch_size=TrainGlobalConfig.batch_size,
     #    sampler=validation_sampler,
         pin_memory=False,
@@ -815,7 +817,7 @@ def test_model_fn(device=torch.device("cpu")):
         num_workers=TrainGlobalConfig.num_workers
     )
     test_loader = torch.utils.data.DataLoader(
-        test_dataset,
+        self.test_dataset,
         batch_size=TrainGlobalConfig.batch_size,
     #    sampler=test_sampler,
         pin_memory=False,
@@ -823,7 +825,7 @@ def test_model_fn(device=torch.device("cpu")):
         num_workers=TrainGlobalConfig.num_workers
     )
     validation_tune_loader = torch.utils.data.DataLoader(
-        validation_tune_dataset,
+        self.validation_tune_dataset,
         batch_size=TrainGlobalConfig.batch_size,
         #sampler=validation_tune_sampler,
         pin_memory=False,
