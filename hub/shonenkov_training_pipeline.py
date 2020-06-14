@@ -11,6 +11,7 @@
 #       jupytext_version: 1.4.2
 #   kernelspec:
 #     display_name: Python 3
+#     language: python
 #     name: python3
 # ---
 
@@ -33,11 +34,10 @@
 # -
 
 
-import numpy as np
-import pandas as pd
-
 # ls
 
+import numpy as np
+import pandas as pd
 import os
 os.environ['XLA_USE_BF16'] = "1"
 
@@ -1052,7 +1052,6 @@ def test_model_fn(device=torch.device("cpu")):
 #k.learner.recorder.plot()
 
 # +
-
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -1138,8 +1137,9 @@ def _to_tpu_distributed(learn:Learner) -> Learner:
 
 Learner.to_tpu_distributed = _to_tpu_distributed
 
+def setup_food():
+    path = untar_data(URLs.FOOD)
 
-path = untar_data(URLs.FOOD)
 def filelist2df(path):
     df = pd.read_csv(path, delimiter='/', header=None, names=['label', 'name'])
     df['name'] =  df['label'].astype(str) + "/" + df['name'].astype(str) + ".jpg"
@@ -1163,6 +1163,8 @@ def train_loop(index):
   #earn.recorder.plot()
   learn.fit_one_cycle(2, max_lr=5e-6)
 
+
+# -
 
 def _mp_fn(rank, flags, k=k):
     device = xm.xla_device()
@@ -1233,6 +1235,7 @@ def _mp_fn(rank, flags, k=k):
     fitter.fit(train_loader, validation_loader)
     fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
 
+
 if __name__ == "__main__":
     FLAGS={}
     xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
@@ -1242,13 +1245,13 @@ today = date.today()
 output_model_file='XLMRobertaModel_tpu_trained.bin'
 torch.save(k.model.state_dict(), f"{today}_{output_model_file}")
 
-# + colab_type="code" id="Wu0VhhZAFuYs" colab={}
+# + colab={} colab_type="code" id="Wu0VhhZAFuYs"
 submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
 submission['toxic'].hist(bins=100)
 
-# + colab_type="code" id="RRr-yzJ_yVTW" colab={}
+# + colab={} colab_type="code" id="RRr-yzJ_yVTW"
 submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
-# + colab_type="code" id="ARz9TllfyVVa" colab={}
+# + colab={} colab_type="code" id="ARz9TllfyVVa"
 # # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
 # !make push_dataset
