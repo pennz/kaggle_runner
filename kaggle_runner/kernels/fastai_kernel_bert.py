@@ -297,7 +297,7 @@ def onehot(size, target, aux=None):
 class DatasetRetriever(Dataset):
     def __init__(self, labels_or_ids, comment_texts, langs,
                  severe_toxic=None, obscene=None, threat=None, insult=None, identity_hate=None,
-                 use_train_transforms=False, test=False, use_aux=True):
+                 use_train_transforms=False, test=False, use_aux=True, transformers=None):
         self.test = test
         self.labels_or_ids = labels_or_ids
         self.comment_texts = comment_texts
@@ -309,12 +309,14 @@ class DatasetRetriever(Dataset):
         self.identity_hate = identity_hate
         self.use_train_transforms = use_train_transforms
         self.aux = None
+        assert transformers is not None
+        self.transformers = transformers
 
         if use_aux:
             self.aux = [self.severe_toxic, self.obscene, self.threat, self.insult, self.identity_hate]
 
     def get_tokens(self, text):
-        encoded = tokenizer.encode_plus(
+        encoded = self.transformers['tokenizer'].encode_plus(
             text,
             add_special_tokens=True,
             max_length=MAX_LENGTH,
@@ -339,14 +341,14 @@ class DatasetRetriever(Dataset):
         label = self.labels_or_ids[idx]
 
         if self.use_train_transforms and (not self.test):
-            text, _ = train_transforms(data=(text, lang))['data']
+            text, _ = self.transformers['train_transforms'](data=(text, lang))['data']
             tokens, attention_mask = self.get_tokens(str(text))
             token_length = sum(attention_mask)
 
             if token_length > 0.8*MAX_LENGTH:
-                text, _ = shuffle_transforms(data=(text, lang))['data']
+                text, _ = self.transformers['shuffle_transforms'](data=(text, lang))['data']
             elif token_length < 60:
-                text, label = synthesic_transforms_often(data=(text, label))['data']
+                text, label = self.transformers['synthesic_transforms_often'](data=(text, label))['data']
             else: # will not need to use transforms
                 #text, label = synthesic_transforms_low(data=(text, label))['data']
                 pass
@@ -379,12 +381,28 @@ class DatasetRetriever(Dataset):
 class Shonenkov(FastAIKernel):
     def __init__(self, **kargs):
         super(Shonenkov, self).__init__(**kargs)
+        self.transformers = None
 
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModel()
 
     def set_random_seed(self):
         seed_everything(SEED)
+
+    def setup_transformers(self):
+        if self.transformers is None:
+        supliment_toxic = None # avoid overfit
+        train_transforms = get_train_transforms();
+        synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
+        synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
+        tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
+        shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
+
+        self.transformers = {'train_transforms': train_transforms,
+                             'synthesic_transforms_often': synthesic_transforms_often,
+                             'synthesic_transforms_low': synthesic_transforms_low,
+                             'tokenizer': tokenizer, 'shuffle_transforms':
+                             shuffle_transforms}
 
     def prepare_train_dev_data(self):
         df_train = get_pickled_data("train.pkl")
@@ -394,21 +412,7 @@ class Shonenkov(FastAIKernel):
             df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
             get_obj_or_dump("train.pkl", default=df_train)
 
-        supliment_toxic = get_toxic_comments(df_train)
-        supliment_toxic = None # avoid overfit
-        train_transforms = get_train_transforms();
-        synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
-        synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
-        tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
-        shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
-
-        df_train = get_pickled_data("train.pkl")
-
-        if df_train is None:
-            df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
-            df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
-            get_obj_or_dump("train.pkl", default=df_train)
-
+        #supliment_toxic = get_toxic_comments(df_train)
         self.train_dataset = DatasetRetriever(
             labels_or_ids=df_train['toxic'].values,
             comment_texts=df_train['comment_text'].values,
@@ -419,6 +423,7 @@ class Shonenkov(FastAIKernel):
             insult=df_train['insult'].values,
             identity_hate=df_train['identity_hate'].values,
             use_train_transforms=True,
+            transformers=self.transformers
         )
         df_val = get_pickled_data("val.pkl")
 
@@ -432,6 +437,7 @@ class Shonenkov(FastAIKernel):
             comment_texts=df_val['comment_text'].values,
             langs=df_val['lang'].values,
             use_train_transforms=True,
+            transformers=self.transformers
         )
 
 #df_val_unclean = df_val
@@ -447,6 +453,7 @@ class Shonenkov(FastAIKernel):
             comment_texts=df_val['comment_text'].values,
             langs=df_val['lang'].values,
             use_train_transforms=False,
+            transformers=self.transformers
         )
 
         del df_val
