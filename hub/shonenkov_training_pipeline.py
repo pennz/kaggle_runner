@@ -857,10 +857,8 @@ def test_init():
     l = Shonenkov(loss_func=None, metrics=None)
     assert l is not None
 
-# +
 k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
 k.run(dump_flag=False)
-# -
 
 def test_model_fn(device=torch.device("cpu")):
     "test with CPU, easier to debug"
