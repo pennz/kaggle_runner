@@ -19,7 +19,6 @@ from datetime import datetime
 from tqdm import tqdm
 tqdm.pandas()
 
-from transformers import BertModel, BertTokenizer
 from transformers import XLMRobertaModel, XLMRobertaTokenizer
 from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_schedule
 from fastai.text.transform import Vocab
@@ -46,6 +45,14 @@ SEED = 142
 
 MAX_LENGTH = 224
 BACKBONE_PATH = 'xlm-roberta-large'
+
+tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
+
+vocab = get_pickled_data("vocab.pkl")
+
+if vocab is None:
+    vocab = [tokenizer.convert_ids_to_tokens(i) for i in range(tokenizer.vocab_size)]
+    get_obj_or_dump("vocab.pkl", default=vocab)
 # ROOT_PATH = f'..'
 ROOT_PATH = f'/kaggle' # for colab
 
@@ -314,7 +321,7 @@ class DatasetRetriever(Dataset):
         assert transformers is not None
         self.transformers = transformers
         may_debug(True)
-        self.vocab = Vocab(self.transformers['tokenizer'].get_vocab())
+        self.vocab = vocab
 
         if use_aux:
             self.aux = [self.severe_toxic, self.obscene, self.threat, self.insult, self.identity_hate]
@@ -402,7 +409,7 @@ class Shonenkov(FastAIKernel):
             train_transforms = get_train_transforms();
             synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
             synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
-            tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
+            tokenizer = tokenizer
             shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
             self.transformers = {'train_transforms': train_transforms,
@@ -412,9 +419,9 @@ class Shonenkov(FastAIKernel):
                                  shuffle_transforms}
 
     def prepare_train_dev_data(self):
-        try:
-            df_train = get_pickled_data("train.pkl")
-        except:
+        df_train = get_pickled_data("train.pkl")
+
+        if df_train is None:
             df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
             df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
             get_obj_or_dump("train.pkl", default=df_train)
