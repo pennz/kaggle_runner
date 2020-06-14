@@ -25,7 +25,7 @@ else
     #tmux select-pane -t rvsConnector -m
     #tmux select-window -t rvsConnector:$
     echo >&2 "$pcomm used to connect"
-    echo "\"$pcomm\" used to connect" >>pcc_log
     tmux new-window -d -t rvsConnector -n "m.$hn.$(git show --no-patch --oneline | tr " " "_")" sh -c "LC_ALL=en_US.UTF-8 $pcomm"
+    [ $? -eq 0 ] || echo >&2 "tmux command problem, command used:" tmux new-window -d -t rvsConnector -n "m.$hn.$(git show --no-patch --oneline | tr " " "_")" sh -c "LC_ALL=en_US.UTF-8 $pcomm"
     #tmux last-window -t rvsConnector
 fi

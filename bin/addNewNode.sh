@@ -60,10 +60,9 @@ mosh_connect() {
     (
         sleep 1
         pcc $newPort >&2 # for logging/debugging
-        echo >&2 "TEST LOG: $newPort"
+        echo >&2 "\"pcc $newPort\" now"
+        echo >&2 "\"$NC -ulp $newPort\" used to connect" # need to put first, net ncat will run at front
     ) &
-
-    echo "\"$NC -ulp $newPort\" used to connect" >>pcc_log # need to put first, net ncat will run at front
     # echo "" # blank message, to activate? will make it fail?
     $NC -vulp $newPort 2>>pcc_log # the real connection, udp for mosh
 
