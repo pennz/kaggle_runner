@@ -396,12 +396,12 @@ class DatasetRetriever(Dataset):
         tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
 
         if self.test:  # for test, return id TODO TTA
-            return self.labels_or_ids[idx], tokens, attention_mask
+            return [tokens, attention_mask], self.labels_or_ids[idx]
 
         # label might be changed
         target = onehot(2, label, aux=aux)
 
-        return target, tokens, attention_mask
+        return [tokens, attention_mask], target
 
     def get_labels(self):
         return list(np.char.add(self.labels_or_ids.astype(str), self.langs))
@@ -595,7 +595,9 @@ class ToxicSimpleNNModel(nn.Module):
             out_features=2+aux_len,
         )
 
-    def forward(self, input_ids, attention_masks):
+    def forward(self, input_ids_and_attention_masks):
+        input_ids = input_ids[0]
+        attention_masks = input_ids[1]
         bs, seq_length = input_ids.shape
         seq_x, _ = self.backbone(input_ids=input_ids, attention_mask=attention_masks)
         apool = torch.mean(seq_x, 1)
@@ -681,7 +683,10 @@ class TPUFitter:
 
         t = time.time()
 
-        for step, (targets, inputs, attention_masks) in enumerate(val_loader):
+        for step, (inputs_masks, targets) in enumerate(val_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
                     xm.master_print(
@@ -711,7 +716,10 @@ class TPUFitter:
         final_scores = RocAucMeter()
         t = time.time()
 
-        for step, (targets, inputs, attention_masks) in enumerate(train_loader):
+        for step, (inputs_masks, targets) in enumerate(train_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
                     self.log(
@@ -751,7 +759,10 @@ class TPUFitter:
         result = {'id': [], 'toxic': []}
         t = time.time()
 
-        for step, (ids, inputs, attention_masks) in enumerate(test_loader):
+        for step, (inputs_masks, ids) in enumerate(test_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
                     xm.master_print(f'Prediction Step {step}, time: {(time.time() - t):.5f}')
@@ -902,7 +913,10 @@ def test_model_fn(device=torch.device("cpu")):
 
         t = time.time()
 
-        for step, (targets, inputs, attention_masks) in enumerate(val_loader):
+        for step, (inputs_masks, targets) in enumerate(val_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
             if config.verbose:
                 if step % config.verbose_step == 0:
                     logger.info(
@@ -928,7 +942,10 @@ def test_model_fn(device=torch.device("cpu")):
         result = {'id': [], 'toxic': []}
         t = time.time()
 
-        for step, (ids, inputs, attention_masks) in enumerate(test_loader):
+        for step, (inputs_masks, targets) in enumerate(test_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
             if config.verbose:
                 if step % config.verbose_step == 0:
                     logger.info(f'Prediction Step {step}, time: {(time.time() - t):.5f}')
@@ -951,7 +968,10 @@ def test_model_fn(device=torch.device("cpu")):
         final_scores = RocAucMeter()
         t = time.time()
 
-        for step, (targets, inputs, attention_masks) in enumerate(train_loader):
+        for step, (inputs_masks, targets) in enumerate(train_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
                     self.log(
