@@ -684,8 +684,6 @@ class TPUFitter:
         t = time.time()
 
         for step, (inputs_masks, targets) in enumerate(val_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
 
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
@@ -699,7 +697,7 @@ class TPUFitter:
                 attention_masks = attention_masks.to(self.device, dtype=torch.long)
                 targets = targets.to(self.device, dtype=torch.float)
 
-                outputs = self.model(inputs, attention_masks)
+                outputs = self.model(inputs_masks)
                 loss = self.criterion(outputs, targets)
 
                 batch_size = inputs.size(0)
@@ -717,8 +715,6 @@ class TPUFitter:
         t = time.time()
 
         for step, (inputs_masks, targets) in enumerate(train_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
 
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
@@ -734,7 +730,7 @@ class TPUFitter:
 
             self.optimizer.zero_grad()
 
-            outputs = self.model(inputs, attention_masks)
+            outputs = self.model(inputs_masks)
             loss = self.criterion(outputs, targets)
 
             batch_size = inputs.size(0)
@@ -760,8 +756,6 @@ class TPUFitter:
         t = time.time()
 
         for step, (inputs_masks, ids) in enumerate(test_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
 
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
@@ -770,7 +764,7 @@ class TPUFitter:
             with torch.no_grad():
                 inputs = inputs.to(self.device, dtype=torch.long)
                 attention_masks = attention_masks.to(self.device, dtype=torch.long)
-                outputs = self.model(inputs, attention_masks)
+                outputs = self.model(inputs_masks)
                 toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
 
             result['id'].extend(ids.cpu().numpy())
@@ -912,8 +906,6 @@ def test_model_fn(device=torch.device("cpu")):
         t = time.time()
 
         for step, (inputs_masks, targets) in enumerate(val_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
 
             if config.verbose:
                 if step % config.verbose_step == 0:
@@ -927,7 +919,7 @@ def test_model_fn(device=torch.device("cpu")):
                 attention_masks = attention_masks.to(device, dtype=torch.long)
                 targets = targets.to(device, dtype=torch.float)
 
-                outputs = model(inputs, attention_masks)
+                outputs = model(inputs_masks)
                 loss = criterion(outputs, targets)
 
                 batch_size = inputs.size(0)
@@ -941,8 +933,6 @@ def test_model_fn(device=torch.device("cpu")):
         t = time.time()
 
         for step, (inputs_masks, targets) in enumerate(test_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
 
             if config.verbose:
                 if step % config.verbose_step == 0:
@@ -951,7 +941,7 @@ def test_model_fn(device=torch.device("cpu")):
             with torch.no_grad():
                 inputs = inputs.to(device, dtype=torch.long)
                 attention_masks = attention_masks.to(device, dtype=torch.long)
-                outputs = model(inputs, attention_masks)
+                outputs = model(inputs_masks)
                 toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
 
             result['id'].extend(ids.cpu().numpy())
@@ -967,8 +957,6 @@ def test_model_fn(device=torch.device("cpu")):
         t = time.time()
 
         for step, (inputs_masks, targets) in enumerate(train_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
 
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
@@ -984,7 +972,7 @@ def test_model_fn(device=torch.device("cpu")):
 
             self.optimizer.zero_grad()
 
-            outputs = self.model(inputs, attention_masks)
+            outputs = self.model(inputs_masks)
             loss = self.criterion(outputs, targets)
 
             batch_size = inputs.size(0)
