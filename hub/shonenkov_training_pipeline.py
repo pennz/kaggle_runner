@@ -2,7 +2,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     cell_metadata_filter: -all
+#     cell_metadata_filter: id,colab_type,colab,-all
 #     formats: ipynb,py
 #     text_representation:
 #       extension: .py
@@ -32,6 +32,7 @@
 # #                                   python3 -m pip install catalyst==20.4.2 > /dev/null;)
 # -
 
+
 import numpy as np
 import pandas as pd
 
@@ -41,6 +42,7 @@ import os
 os.environ['XLA_USE_BF16'] = "1"
 
 from glob import glob
+
 
 import torch
 import torch.nn as nn
@@ -250,7 +252,6 @@ class ExcludeUrlsTransform(NLPTransform):
 
         return text, lang
 
-
 def get_open_subtitles():
     df_ot = get_pickled_data("ot.pkl")
 
@@ -263,6 +264,7 @@ def get_open_subtitles():
         get_obj_or_dump("ot.pkl", default=df_ot)
 
     return df_ot
+
 
 class SynthesicOpenSubtitlesTransform(NLPTransform):
     def __init__(self, always_apply=False, supliment_toxic=None, p=0.5, mix=False):
@@ -876,6 +878,7 @@ def test_init():
 k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
 k.run(dump_flag=False)
 
+
 def test_model_fn(device=torch.device("cpu")):
     "test with CPU, easier to debug"
     from kaggle_runner import logger
@@ -1160,5 +1163,92 @@ def train_loop(index):
   #earn.recorder.plot()
   learn.fit_one_cycle(2, max_lr=5e-6)
 
+
+def _mp_fn(rank, flags, k=k):
+    device = xm.xla_device()
+    net = k.model
+    net.to(device)
+
+    train_sampler = DistributedSamplerWrapper(
+        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=True
+    )
+    train_loader = torch.utils.data.DataLoader(
+        k.train_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=train_sampler,
+        pin_memory=False,
+        drop_last=True,
+        num_workers=TrainGlobalConfig.num_workers,
+    )
+    validation_sampler = torch.utils.data.distributed.DistributedSampler(
+        k.validation_dataset,
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=False
+    )
+    validation_loader = torch.utils.data.DataLoader(
+        k.validation_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=validation_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+    validation_tune_sampler = torch.utils.data.distributed.DistributedSampler(
+        k.validation_tune_dataset,
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=True
+    )
+    validation_tune_loader = torch.utils.data.DataLoader(
+        k.validation_tune_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=validation_tune_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+    test_sampler = torch.utils.data.distributed.DistributedSampler(
+        k.test_dataset,
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=False
+    )
+    test_loader = torch.utils.data.DataLoader(
+        k.test_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=test_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+
+    if rank == 0:
+        time.sleep(1)
+
+    fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
+    fitter.fit(train_loader, validation_loader)
+    fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
+
 if __name__ == "__main__":
-  xmp.spawn(train_loop,args=(),  nprocs=8, start_method='fork')
+    FLAGS={}
+    xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
+
+from datetime import date
+today = date.today()
+output_model_file='XLMRobertaModel_tpu_trained.bin'
+torch.save(k.model.state_dict(), f"{today}_{output_model_file}")
+
+# + colab_type="code" id="Wu0VhhZAFuYs" colab={}
+submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
+submission['toxic'].hist(bins=100)
+
+# + colab_type="code" id="RRr-yzJ_yVTW" colab={}
+submission.to_csv(f'{ROOT_PATH}/submission.csv')
+
+# + colab_type="code" id="ARz9TllfyVVa" colab={}
+# # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
+# !make push_dataset
