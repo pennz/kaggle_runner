@@ -39,6 +39,7 @@ from pandarallel import pandarallel
 pandarallel.initialize(nb_workers=4, progress_bar=False)
 
 from .fastai_kernel import FastAIKernel
+from kaggle_runner import may_debug
 
 
 SEED = 142
@@ -312,6 +313,7 @@ class DatasetRetriever(Dataset):
         self.aux = None
         assert transformers is not None
         self.transformers = transformers
+        may_debug(True)
         self.vocab = Vocab(self.transformers['tokenizer'].get_vocab())
 
         if use_aux:
@@ -410,12 +412,12 @@ class Shonenkov(FastAIKernel):
                                  shuffle_transforms}
 
     def prepare_train_dev_data(self):
-        #try:
-        #    df_train = get_pickled_data("train.pkl")
-        #except:
-        df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
-        df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
-        get_obj_or_dump("train.pkl", default=df_train)
+        try:
+            df_train = get_pickled_data("train.pkl")
+        except:
+            df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
+            df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+            get_obj_or_dump("train.pkl", default=df_train)
 
         #supliment_toxic = get_toxic_comments(df_train)
         self.train_dataset = DatasetRetriever(
