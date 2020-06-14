@@ -1148,4 +1148,4 @@ def train_loop(index):
   learn.fit_one_cycle(2, max_lr=5e-6)
 
 if __name__ == "__main__":
-  xmp.spawn(train_loop,args=(),  nprocs=1, start_method='fork')
+  xmp.spawn(train_loop,args=(),  nprocs=8, start_method='fork')
