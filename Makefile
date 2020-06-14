@@ -365,6 +365,8 @@ cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 # PROJECT_ID = 'your-google-cloud-project'
 # from google.cloud import storage
 # storage_client = storage.Client(project=PROJECT_ID)
+sync_result:
+	while true; do git commit -asm "Good game" --no-edit; git pull; git push; sleep 10; done
 
 d:
 	git diff; git diff --cached
