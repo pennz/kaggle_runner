@@ -11,6 +11,26 @@ from .. import logger
 
 
 class FastAIKernel(KaggleKernel):
+    """Can't instantiate abstract class FastAIKernel with abstract methods
+    build_and_set_model, check_predict_details, peek_data, set_loss,
+    set_metrics
+    """
+
+    def build_and_set_model(self):
+        self.model = None
+
+    def check_predict_details(self):
+        assert False
+
+    def peek_data(self):
+        assert False
+
+    def set_loss(self, loss_func):
+        self.model_loss = loss_func
+
+    def set_metrics(self, metrics):
+        self.model_metrics = metrics
+
     def __init__(self, **kargs):
         super(FastAIKernel, self).__init__(logger=logger)
         self.developing = True
