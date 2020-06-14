@@ -386,6 +386,7 @@ class Shonenkov(FastAIKernel):
 
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModel()
+        self.setup_learner()
 
     def set_random_seed(self):
         seed_everything(SEED)
@@ -812,7 +813,7 @@ def test_model_fn(device=torch.device("cpu")):
     k.run()
     self = k
     assert self.validation_dataset is not None
-    #k.build_and_set_model()
+    assert self.learner is not None
 
     net = k.model
     assert net is not None
