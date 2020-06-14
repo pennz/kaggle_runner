@@ -382,6 +382,7 @@ class Shonenkov(FastAIKernel):
     def __init__(self, **kargs):
         super(Shonenkov, self).__init__(**kargs)
         self.transformers = None
+        self.setup_transformers()
 
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModel()
@@ -391,18 +392,18 @@ class Shonenkov(FastAIKernel):
 
     def setup_transformers(self):
         if self.transformers is None:
-        supliment_toxic = None # avoid overfit
-        train_transforms = get_train_transforms();
-        synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
-        synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
-        tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
-        shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
+            supliment_toxic = None # avoid overfit
+            train_transforms = get_train_transforms();
+            synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
+            synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
+            tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
+            shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
-        self.transformers = {'train_transforms': train_transforms,
-                             'synthesic_transforms_often': synthesic_transforms_often,
-                             'synthesic_transforms_low': synthesic_transforms_low,
-                             'tokenizer': tokenizer, 'shuffle_transforms':
-                             shuffle_transforms}
+            self.transformers = {'train_transforms': train_transforms,
+                                 'synthesic_transforms_often': synthesic_transforms_often,
+                                 'synthesic_transforms_low': synthesic_transforms_low,
+                                 'tokenizer': tokenizer, 'shuffle_transforms':
+                                 shuffle_transforms}
 
     def prepare_train_dev_data(self):
         df_train = get_pickled_data("train.pkl")
