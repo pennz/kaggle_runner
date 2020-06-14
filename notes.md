@@ -393,3 +393,6 @@ Train Step 50, loss: 0.39375, final_score: 0.95146, mc_score: 0.73824, time: 63.
 # Merging just makes it better
 
 V22+V21-> 0.9393
+
+## Version 23
+data normal no synthesizer

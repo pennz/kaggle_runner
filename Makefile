@@ -7,7 +7,7 @@ JUPYTER_PARAMS= --NotebookApp.token=--NotebookApp.notebook_dir=/kaggle/working -
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
-"k1gaggle/bert-for-toxic-classfication-trained",
+"k1gaggle/clean-pickle-for-jigsaw-toxicity",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
 "k1gaggle/jigsaw-toxicity-train-data-with-aux",
 "shonenkov/jigsaw-public-baseline-train-data",
@@ -267,7 +267,7 @@ dmetadata: kaggle
 	kaggle datasets metadata -p datas/ k1gaggle/bert-for-toxic-classfication-trained
 
 push_dataset: dmetadata
-	cp datas/dataset-metadata.json datas/dm.json
+	-cp datas/dataset-metadata.json datas/dm.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	-cp node_submissions/* log.txt /kaggle/submission.csv datas
 	kaggle datasets version -p datas/ -m "$$(git show --no-patch --oneline) $$(date)"
