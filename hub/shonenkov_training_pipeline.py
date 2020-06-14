@@ -51,7 +51,8 @@ import gc
 import re
 
 # # !python3 -m pip install nltk > /dev/null
-import nltk nltk.download('punkt')
+import nltk
+nltk.download('punkt')
 
 from nltk import sent_tokenize
 
