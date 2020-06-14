@@ -383,6 +383,7 @@ class DatasetRetriever(Dataset):
 class Shonenkov(FastAIKernel):
     def __init__(self, **kargs):
         super(Shonenkov, self).__init__(**kargs)
+        self.data = None
         self.transformers = None
         self.setup_transformers()
 
@@ -488,6 +489,21 @@ class Shonenkov(FastAIKernel):
         gc.collect();
     def after_prepare_data_hook(self):
         """Put to databunch here"""
+        self.data = DataBunch.create(self.train_dataset,
+                                     self.validation_dataset,
+                                     bs=TrainGlobalConfig.batch_size,
+                                     num_workers=TrainGlobalConfig.num_workers)
+
+    def peek_data(self):
+        if self.data is not None:
+            o = self.data.one_batch()
+            print(o)
+
+            return o
+        else:
+            if self.logger is not None:
+                self.logger.error("peek_data failed, DataBunch is None.")
+
 
 from kaggle_runner.metrics.metrics import matthews_correlation
 class RocAucMeter(object):
@@ -815,6 +831,8 @@ def test_model_fn(device=torch.device("cpu")):
     from kaggle_runner import logger
     k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
     k.run(dump_flag=True)
+    k.peek_data()
+
     self = k
     assert self.validation_dataset is not None
     assert self.learner is not None
