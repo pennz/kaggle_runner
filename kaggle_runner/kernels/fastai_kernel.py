@@ -6,7 +6,7 @@ from fastai.callbacks import CSVLogger
 from fastai.core import *
 from fastai.torch_core import *
 
-from . import KaggleKernel
+from .kernel import KaggleKernel
 from .. import logger
 
 

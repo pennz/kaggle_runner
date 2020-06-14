@@ -344,3 +344,22 @@ Train Step 25, loss: 0.35906, final_score: 0.97616, mc_score: 0.72517, time: 26.
 Train Step 50, loss: 0.36391, final_score: 0.96935, mc_score: 0.75350, time: 52.64425
 ```
 **score** 0.9393
+
+## Version 20
+
+one more epoch(or just one epoch?)-> just one epoch, but result combined with more?
+
+```
+[RESULT]: Train. Epoch: 0, loss: 0.55424, final_score: 0.97425, mc_score: 0.83946, time: 2483.88474
+[RESULT]: Validation. Epoch: 0, loss: 0.61969, final_score: 0.95411, mc_score: 0.58527, time: 29.85189
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.09249
+Train Step 25, loss: 0.53078, final_score: 0.94804, mc_score: 0.66260, time: 26.12033
+Train Step 50, loss: 0.52883, final_score: 0.94932, mc_score: 0.71221, time: 52.60766
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.10790
+Train Step 25, loss: 0.51930, final_score: 0.96550, mc_score: 0.65855, time: 26.18452
+Train Step 50, loss: 0.51625, final_score: 0.96210, mc_score: 0.72319, time: 52.60593
+```
+
+**score** 0.9418
+
+## Version 21, back to smooth 0.1
