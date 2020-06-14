@@ -14,6 +14,9 @@
 #     name: python3
 # ---
 
+# %loadext auto_reload
+# $auto_reload 2
+
 import numpy as np
 import pandas as pd
 
@@ -595,9 +598,7 @@ class ToxicSimpleNNModel(nn.Module):
             out_features=2+aux_len,
         )
 
-    def forward(self, inputs_masks):
-        input_ids = inputs_masks[0]
-        attention_masks = inputs_masks[1]
+    def forward(self, input_ids, attention_masks):
         bs, seq_length = input_ids.shape
         seq_x, _ = self.backbone(input_ids=input_ids, attention_mask=attention_masks)
         apool = torch.mean(seq_x, 1)
@@ -699,7 +700,7 @@ class TPUFitter:
                 attention_masks = attention_masks.to(self.device, dtype=torch.long)
                 targets = targets.to(self.device, dtype=torch.float)
 
-                outputs = self.model([inputs, attention_masks])
+                outputs = self.model(inputs, attention_masks)
                 loss = self.criterion(outputs, targets)
 
                 batch_size = inputs.size(0)
@@ -734,7 +735,7 @@ class TPUFitter:
 
             self.optimizer.zero_grad()
 
-            outputs = self.model([inputs, attention_masks])
+            outputs = self.model(inputs, attention_masks)
             loss = self.criterion(outputs, targets)
 
             batch_size = inputs.size(0)
@@ -770,7 +771,7 @@ class TPUFitter:
             with torch.no_grad():
                 inputs = inputs.to(self.device, dtype=torch.long)
                 attention_masks = attention_masks.to(self.device, dtype=torch.long)
-                outputs = self.model([inputs, attention_masks])
+                outputs = self.model(inputs, attention_masks)
                 toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
 
             result['id'].extend(ids.cpu().numpy())
@@ -927,7 +928,7 @@ def test_model_fn(device=torch.device("cpu")):
                 attention_masks = attention_masks.to(device, dtype=torch.long)
                 targets = targets.to(device, dtype=torch.float)
 
-                outputs = model([inputs, attention_masks])
+                outputs = model(inputs, attention_masks)
                 loss = criterion(outputs, targets)
 
                 batch_size = inputs.size(0)
@@ -951,7 +952,7 @@ def test_model_fn(device=torch.device("cpu")):
             with torch.no_grad():
                 inputs = inputs.to(device, dtype=torch.long)
                 attention_masks = attention_masks.to(device, dtype=torch.long)
-                outputs = model([inputs, attention_masks])
+                outputs = model(inputs, attention_masks)
                 toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
 
             result['id'].extend(ids.cpu().numpy())
@@ -984,7 +985,7 @@ def test_model_fn(device=torch.device("cpu")):
 
             self.optimizer.zero_grad()
 
-            outputs = self.model([inputs, attention_masks])
+            outputs = self.model(inputs, attention_masks)
             loss = self.criterion(outputs, targets)
 
             batch_size = inputs.size(0)
