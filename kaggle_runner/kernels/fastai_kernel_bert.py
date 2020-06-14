@@ -386,7 +386,7 @@ class Shonenkov(FastAIKernel):
     def set_random_seed(self):
         seed_everything(SEED)
 
-    def prepare_train_dev_data():
+    def prepare_train_dev_data(self):
         df_train = get_pickled_data("train.pkl")
 
         if df_train is None:
@@ -456,7 +456,7 @@ class Shonenkov(FastAIKernel):
         del df_train
         gc.collect();
 
-    def prepare_test_data():
+    def prepare_test_data(self):
         df_test = get_pickled_data("test.pkl")
 
         if df_test is None:
@@ -802,6 +802,7 @@ def test_model_fn(device=torch.device("cpu")):
     k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
     k.run()
     self = k
+    assert self.validation_dataset is not None
     #k.build_and_set_model()
 
     net = k.model
@@ -937,13 +938,6 @@ def test_model_fn(device=torch.device("cpu")):
             self.log(f'[RESULT]: Tune_Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
 
             run_inference(net, device, TrainGlobalConfig, validation_loader)
-
-    #fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
-    #from types import MethodType
-    #fitter.train_one_epoch = MethodType(train_one_epoch, fitter)
-    #fitter.run_tuning_and_inference = MethodType(run_tuning_and_inference, fitter)
-
-    #fitter.run_tuning_and_inference(test_loader, validation_tune_loader)  # error happens here
 
     losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
     logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
