@@ -150,6 +150,7 @@ class KaggleKernel(metaclass=ABCMeta):
         end_stage=KernelRunningState.SAVE_SUBMISSION_DONE,
         dump_flag=False,
     ):
+        self.set_random_seed()
         self.logger.debug(
             "%s -> %s", start_stage, end_stage,
         )

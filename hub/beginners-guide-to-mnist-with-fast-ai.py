@@ -2,6 +2,7 @@ import warnings
 warnings.simplefilter('ignore')
 
 from fastai import *
+from fastai.vision import *
 from fastai.vision import get_transforms
 
 import os
