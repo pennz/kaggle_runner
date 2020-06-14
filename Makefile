@@ -266,8 +266,8 @@ dmetadata: kaggle
 	[ -d datas ] || mkdir datas
 	kaggle datasets metadata -p datas/ k1gaggle/bert-for-toxic-classfication-trained
 
-push_dataset: dmetadata
-	cp datas/dataset-metadata.json datas/dm.json
+push_dataset:
+	-cp datas/dataset-metadata.json datas/dm.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	-cp node_submissions/* log.txt /kaggle/submission.csv datas
 	kaggle datasets version -p datas/ -m "$$(git show --no-patch --oneline) $$(date)"
