@@ -395,4 +395,16 @@ Train Step 50, loss: 0.39375, final_score: 0.95146, mc_score: 0.73824, time: 63.
 V22+V21-> 0.9393
 
 ## Version 23
-data normal no synthesizer
+data normal no synthesizer (merge with previous results)
+```
+[RESULT]: Train. Epoch: 1, loss: 0.49240, final_score: 0.97706, mc_score: 0.87177, time: 3006.81131
+[RESULT]: Validation. Epoch: 1, loss: 0.59272, final_score: 0.95454, mc_score: 0.60239, time: 28.31951
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.08864
+Train Step 25, loss: 0.49711, final_score: 0.93300, mc_score: 0.69818, time: 32.03840
+Train Step 50, loss: 0.50258, final_score: 0.92377, mc_score: 0.69327, time: 64.11194
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.08858
+Train Step 25, loss: 0.47227, final_score: 0.95919, mc_score: 0.74816, time: 31.59596
+Train Step 50, loss: 0.48590, final_score: 0.94189, mc_score: 0.71498, time: 63.50205
+```
+
+**score** 0.9429

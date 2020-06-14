@@ -925,7 +925,15 @@ def test_model_fn(device=torch.device("cpu")):
     def run_tuning_and_inference(self, test_loader, validation_tune_loader):
         for e in range(1):
             self.optimizer.param_groups[0]['lr'] = self.config.lr*8
+
             losses, final_scores = self.train_one_epoch(validation_tune_loader)
+            self.log(f'[RESULT]: Tune_Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+
+            t = time.time()
+            para_loader = pl.ParallelLoader(validation_loader, [self.device])
+            losses, final_scores = self.validation(para_loader.per_device_loader(self.device))
+            self.log(f'[RESULT]: Tune_Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+
             run_inference(net, device, TrainGlobalConfig, validation_loader)
 
     #fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
