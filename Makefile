@@ -8,8 +8,8 @@ JUPYTER_PARAMS= --NotebookApp.token=--NotebookApp.notebook_dir=/kaggle/working -
 define _write_dataset_list
 cat >.datasets <<'EOF'
 "k1gaggle/bert-for-toxic-classfication-trained",
-"k1gaggle/jigsaw-toxicity-train-data-with-aux",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
+"k1gaggle/jigsaw-toxicity-train-data-with-aux",
 "shonenkov/jigsaw-public-baseline-train-data",
 "shonenkov/jigsaw-public-baseline-results"
 EOF

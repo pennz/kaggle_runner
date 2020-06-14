@@ -200,7 +200,7 @@ Train Step 50, loss: 0.50945, final_score: 0.96875, time: 60.62506
 ```
 
 *change* 3 epochs, aux /3
-**score** 0.9431
+**score** 0.9431 (merge with version 6 results so better)
 
 #### compare logs
 as we trained on validation set, it will always get better.
@@ -244,7 +244,7 @@ Train Step 25, loss: 0.51453, final_score: 0.96150, time: 26.66932
 Train Step 50, loss: 0.51703, final_score: 0.95678, time: 52.89321
 ```
 
-## version 13
+## **Version 13**
 
 test 1 epoch, data aug no mix
 ```
@@ -331,4 +331,64 @@ Train Step 50, loss: 0.49980, final_score: 0.97090, mc_score: 0.78187, time: 53.
 ## Version 19
 
 aux\_loss/3, 2 epochs
-not _low syn to data. And reduce label smooth
+not \_low syn to data. And reduce label smooth
+
+```
+[RESULT]: Train. Epoch: 1, loss: 0.38311, final_score: 0.98706, mc_score: 0.89245, time: 2484.84076
+[RESULT]: Validation. Epoch: 1, loss: 0.49391, final_score: 0.95422, mc_score: 0.61094, time: 29.02337
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.09500
+Train Step 25, loss: 0.39242, final_score: 0.95024, mc_score: 0.67116, time: 91.17837
+Train Step 50, loss: 0.40027, final_score: 0.94823, mc_score: 0.66167, time: 117.53904
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.09492
+Train Step 25, loss: 0.35906, final_score: 0.97616, mc_score: 0.72517, time: 26.31303
+Train Step 50, loss: 0.36391, final_score: 0.96935, mc_score: 0.75350, time: 52.64425
+```
+**score** 0.9393
+
+## Version 20
+
+one more epoch(or just one epoch?)-> just one epoch, but result combined with more?
+
+```
+[RESULT]: Train. Epoch: 0, loss: 0.55424, final_score: 0.97425, mc_score: 0.83946, time: 2483.88474
+[RESULT]: Validation. Epoch: 0, loss: 0.61969, final_score: 0.95411, mc_score: 0.58527, time: 29.85189
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.09249
+Train Step 25, loss: 0.53078, final_score: 0.94804, mc_score: 0.66260, time: 26.12033
+Train Step 50, loss: 0.52883, final_score: 0.94932, mc_score: 0.71221, time: 52.60766
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.10790
+Train Step 25, loss: 0.51930, final_score: 0.96550, mc_score: 0.65855, time: 26.18452
+Train Step 50, loss: 0.51625, final_score: 0.96210, mc_score: 0.72319, time: 52.60593
+```
+**score** 0.9418
+
+## Version 21, back to smooth 0.1
+```
+[RESULT]: Train. Epoch: 2, loss: 0.53283, final_score: 0.98131, mc_score: 0.89359, time: 2993.50178
+[RESULT]: Validation. Epoch: 2, loss: 0.63669, final_score: 0.94887, mc_score: 0.58527, time: 28.16652
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.08968
+Train Step 25, loss: 0.52883, final_score: 0.95406, mc_score: 0.72143, time: 117.51615
+Train Step 50, loss: 0.53277, final_score: 0.94861, mc_score: 0.70394, time: 149.42057
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.09337
+Train Step 25, loss: 0.51328, final_score: 0.96808, mc_score: 0.77331, time: 31.67108
+Train Step 50, loss: 0.51551, final_score: 0.96593, mc_score: 0.76808, time: 63.67104
+```
+**score** 0.9408
+
+## Version 22
+smooth to 0.05
+just test one batch (with out merging others), data normal with \_low
+synthesizer
+```
+[RESULT]: Train. Epoch: 0, loss: 0.42999, final_score: 0.97412, mc_score: 0.85195, time: 3204.96820
+[RESULT]: Validation. Epoch: 0, loss: 0.50314, final_score: 0.95609, mc_score: 0.59917, time: 28.97322
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.09731
+Train Step 25, loss: 0.39695, final_score: 0.95353, mc_score: 0.72228, time: 31.38654
+Train Step 50, loss: 0.40520, final_score: 0.94530, mc_score: 0.69190, time: 63.66373
+Train Step 0, loss: 0.00000, final_score: 0.00000, mc_score: 0.00000, time: 0.08831
+Train Step 25, loss: 0.38891, final_score: 0.95604, mc_score: 0.74218, time: 31.40544
+Train Step 50, loss: 0.39375, final_score: 0.95146, mc_score: 0.73824, time: 63.41240
+```
+**score** 0.9360
+
+# Merging just makes it better
+
