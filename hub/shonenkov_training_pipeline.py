@@ -14,8 +14,8 @@
 #     name: python3
 # ---
 
-# %loadext auto_reload
-# $auto_reload 2
+# %load_ext autoreload
+# %autoreload 2
 
 import numpy as np
 import pandas as pd
@@ -417,6 +417,7 @@ class Shonenkov(FastAIKernel):
         super(Shonenkov, self).__init__(**kargs)
         self.data = None
         self.transformers = None
+        self.model_loss = LabelSmoothing()
         self.setup_transformers()
 
     def build_and_set_model(self):
@@ -1027,3 +1028,15 @@ def test_model_fn(device=torch.device("cpu")):
 
 
 test_model_fn()
+
+def train_loop(index):
+  #data = (ImageList.from_df(df=train_df, path=path/'images', cols=1)
+  #        .random_split_by_pct(0.2)
+  #        .label_from_df(cols=0)
+  #        .transform(get_transforms(), size=224)
+  #        .databunch(bs=32, num_workers=0)
+  #        .normalize(imagenet_stats))
+  #learn = cnn_learner(data, models.resnet152, metrics=accuracy).to_tpu_distributed()
+  learn = k.setup_learner(loss_func=LabelSmoothing()).to_tpu_distributed()
+  print('hello')
+  learn.fit(2)

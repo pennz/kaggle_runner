@@ -87,6 +87,8 @@ class FastAIKernel(KaggleKernel):
 
         self.learner = Learner(data, model, opt_func, loss_func, metrics, bn_wd=False)
 
+        return self.learner
+
 
 def test_learner_init():
     l = FastAIKernel(loss_func=None, metrics=None)
