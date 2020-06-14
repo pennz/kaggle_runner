@@ -48,6 +48,8 @@ BACKBONE_PATH = 'xlm-roberta-large'
 
 tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
 
+ROOT_PATH = f'/kaggle' # for colab
+
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 def get_pickled_data(file_path):
     obj = get_obj_or_dump(file_path)
@@ -62,7 +64,6 @@ if vocab is None:
     vocab = [tokenizer.convert_ids_to_tokens(i) for i in range(tokenizer.vocab_size)]
     get_obj_or_dump("vocab.pkl", default=vocab)
 # ROOT_PATH = f'..'
-ROOT_PATH = f'/kaggle' # for colab
 
 
 def seed_everything(seed):
