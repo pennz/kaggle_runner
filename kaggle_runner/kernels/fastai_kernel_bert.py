@@ -37,6 +37,7 @@ from pandarallel import pandarallel
 
 pandarallel.initialize(nb_workers=4, progress_bar=False)
 
+from fastai.basic_data import DataBunch
 from .fastai_kernel import FastAIKernel
 from kaggle_runner import may_debug
 
