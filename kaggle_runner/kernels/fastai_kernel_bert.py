@@ -381,9 +381,7 @@ class Shonenkov(FastAIKernel):
         super(Shonenkov, self).__init__(**kargs)
 
     def build_and_set_model(self):
-        net = ToxicSimpleNNModel()
-        self.model = net
-
+        self.model = ToxicSimpleNNModel()
 
     def set_random_seed(self):
         seed_everything(SEED)
@@ -801,9 +799,11 @@ def test_init():
 def test_model_fn(device=torch.device("cpu")):
     "test with CPU, easier to debug"
     from kaggle_runner import logger
-    k = Shonenkov()
+    k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
+    k.build_and_set_model()
 
     net = k.model
+    assert net is not None
     net.to(device)
 
     validation_loader = torch.utils.data.DataLoader(
