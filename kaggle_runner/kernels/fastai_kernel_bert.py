@@ -22,6 +22,7 @@ tqdm.pandas()
 from transformers import BertModel, BertTokenizer
 from transformers import XLMRobertaModel, XLMRobertaTokenizer
 from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_schedule
+from fastai.text.transform import Vocab
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 
 import gc
@@ -311,6 +312,7 @@ class DatasetRetriever(Dataset):
         self.aux = None
         assert transformers is not None
         self.transformers = transformers
+        self.vocab = Vocab(self.transformers['tokenizer'].get_vocab())
 
         if use_aux:
             self.aux = [self.severe_toxic, self.obscene, self.threat, self.insult, self.identity_hate]
@@ -484,6 +486,8 @@ class Shonenkov(FastAIKernel):
 
         del df_test
         gc.collect();
+    def after_prepare_data_hook(self):
+        """Put to databunch here"""
 
 from kaggle_runner.metrics.metrics import matthews_correlation
 class RocAucMeter(object):
@@ -810,7 +814,7 @@ def test_model_fn(device=torch.device("cpu")):
     "test with CPU, easier to debug"
     from kaggle_runner import logger
     k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
-    k.run()
+    k.run(dump_flag=True)
     self = k
     assert self.validation_dataset is not None
     assert self.learner is not None

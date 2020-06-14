@@ -75,6 +75,7 @@ class FastAIKernel(KaggleKernel):
     def setup_learner(self, data=None, model=None, opt_func=None, loss_func=None, metrics=None):
         data = self.data if hasattr(
             self, 'data') and self.data is not None else data
+        assert data is not None
         model = self.model if hasattr(
             self, 'model') and self.model is not None else model
         opt_func = self.opt_func if hasattr(
