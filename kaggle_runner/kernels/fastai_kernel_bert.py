@@ -464,7 +464,7 @@ class Shonenkov(FastAIKernel):
             df_test['comment_text'] = df_test.parallel_apply(lambda x: clean_text(x['content'], x['lang']), axis=1)
             get_obj_or_dump("test.pkl", default=df_test)
 
-        test_dataset = DatasetRetriever(
+        self.test_dataset = DatasetRetriever(
             labels_or_ids=df_test.index.values, ## here different!!!
             comment_texts=df_test['comment_text'].values,
             langs=df_test['lang'].values,
