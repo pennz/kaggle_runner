@@ -26,11 +26,11 @@
 
 
 # + language="bash"
-# # python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
-# #                                   python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev;
-# #                                   python3 -m pip install transformers==2.5.1 > /dev/null;
-# #                                   python3 -m pip install pandarallel > /dev/null;
-# #                                   python3 -m pip install catalyst==20.4.2 > /dev/null;)
+# python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
+#                                    python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev;
+#                                    python3 -m pip install transformers==2.5.1 > /dev/null;
+#                                    python3 -m pip install pandarallel > /dev/null;
+#                                    python3 -m pip install catalyst==20.4.2 > /dev/null;)
 # -
 
 
@@ -94,6 +94,8 @@ def get_pickled_data(file_path):
     obj = get_obj_or_dump(file_path)
 
     if obj is None:
+        #may_debug(True)
+
         return get_obj_or_dump(f"{ROOT_PATH}/input/clean-pickle-for-jigsaw-toxicity/{file_path}")
 
     return obj
@@ -448,7 +450,6 @@ class Shonenkov(FastAIKernel):
             supliment_toxic = None # avoid overfit
             train_transforms = get_train_transforms();
             synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
-            #synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
             synthesic_transforms_low = None
             #tokenizer = tokenizer
             shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
@@ -1070,70 +1071,73 @@ from fastai.core import *
 from fastai.torch_core import *
 from fastai.vision import *
 from fastai.basic_train import *
+from kaggle_runner import logger
 
 def len_parallelloader(self):
-  return len(self._loader._loader)
+    return len(self._loader._loader)
 pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
 class TPUDistributed(LearnerCallback):
-  def __init__(self, learn:Learner):
-    super().__init__(learn)
-    self.device = xm.xla_device()
-    self.learn.model = self.learn.model.to(self.device)
-
-  def _change_dl(self,dl, shuffle):
-    old_dl = dl
-    sampler = torch.utils.data.distributed.DistributedSampler(
-      dl.dataset,
-      num_replicas=xm.xrt_world_size(),
-      rank=xm.get_ordinal(),
-      shuffle=shuffle
-    )
-    new_dl = dl.new(shuffle=False, sampler=sampler)
-
-    return old_dl,new_dl,sampler
+    def __init__(self, learn:Learner):
+        super().__init__(learn)
+        self.device = xm.xla_device(devkind='TPU')
+        logger.debug("%s used for xla_device" % self.device)
 
 
-  def on_train_begin(self, **kwargs:Any)->None:
-    self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
+    def _change_dl(self,dl, shuffle):
+        old_dl = dl
+        sampler = torch.utils.data.distributed.DistributedSampler(
+            dl.dataset,
+            num_replicas=xm.xrt_world_size(),
+            rank=xm.get_ordinal(),
+            shuffle=shuffle
+        )
+        new_dl = dl.new(shuffle=False, sampler=sampler)
 
-    shuffle = self.data.train_dl.init_kwargs['shuffle'] if hasattr(self.data.train_dl, 'init_kwargs') else True
-    self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = self._change_dl(self.data.train_dl, shuffle)
+        return old_dl,new_dl,sampler
 
-    if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
-      self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = self._change_dl(self.data.valid_dl, shuffle)
-  def on_epoch_begin(self,**kwargs:Any)->None:
-    self.old_train_dl = self.data.train_dl
-    self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
-    self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
 
-    if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
-      self.old_valid_dl = self.learn.data.valid_dl
-      self.learn.data.valid_dl = pl.ParallelLoader(self.old_valid_dl, [self.device]).per_device_loader(self.device)
+    def on_train_begin(self, **kwargs:Any)->None:
+        self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
+        self.learn.model = self.learn.model.to(self.device)
+        logger.debug("%s used for xla_device, to device done" % self.device)
+        shuffle = self.data.train_dl.init_kwargs['shuffle'] if hasattr(self.data.train_dl, 'init_kwargs') else True
+        self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = self._change_dl(self.data.train_dl, shuffle)
 
-      self.learn.data.valid_dl.dataset = self.old_valid_dl.dataset
-      self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
+        if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
+            self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = self._change_dl(self.data.valid_dl, shuffle)
+    def on_epoch_begin(self,**kwargs:Any)->None:
+        self.old_train_dl = self.data.train_dl
+        self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
+        self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
 
-  def on_backward_end(self, **kwargs:Any)->None:
-    xm.optimizer_step(self.learn.opt)
+        if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
+            self.old_valid_dl = self.learn.data.valid_dl
+            self.learn.data.valid_dl = pl.ParallelLoader(self.old_valid_dl, [self.device]).per_device_loader(self.device)
 
-    return {'skip_step': True}
+            self.learn.data.valid_dl.dataset = self.old_valid_dl.dataset
+            self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
-  def on_epoch_end(self,**kwargs:Any)->None:
-    self.learn.data.train_dl = self.old_train_dl
-    self.learn.data.valid_dl = self.old_valid_dl
+    def on_backward_end(self, **kwargs:Any)->None:
+        xm.optimizer_step(self.learn.opt)
 
-  def on_train_end(self,**kwargs:Any)->None:
-    self.learn.data.train_dl = self.old_sampler_train_dl
-    self.learn.data.valid_dl = self.old_sampler_valid_dl
+        return {'skip_step': True}
+
+    def on_epoch_end(self,**kwargs:Any)->None:
+        self.learn.data.train_dl = self.old_train_dl
+        self.learn.data.valid_dl = self.old_valid_dl
+
+    def on_train_end(self,**kwargs:Any)->None:
+        self.learn.data.train_dl = self.old_sampler_train_dl
+        self.learn.data.valid_dl = self.old_sampler_valid_dl
 
 
 def _to_tpu_distributed(learn:Learner) -> Learner:
   #Learner.fit = _fit_tpu
-  learn.callback_fns.append(TPUDistributed)
+    learn.callback_fns.append(TPUDistributed)
 
-  return learn
+    return learn
 
 
 Learner.to_tpu_distributed = _to_tpu_distributed
@@ -1147,10 +1151,10 @@ def filelist2df(path):
 
     return df
 
-train_path = path/'train.txt'
-test_path = path/'test.txt'
+#train_path = path/'train.txt'
+#test_path = path/'test.txt'
 
-def train_loop(index):
+def train_loop(index, *args):
   #data = (ImageList.from_df(df=train_df, path=path/'images', cols=1)
   #        .random_split_by_pct(0.2)
   #        .label_from_df(cols=0)
@@ -1158,19 +1162,25 @@ def train_loop(index):
   #        .databunch(bs=32, num_workers=0)
   #        .normalize(imagenet_stats))
   #learn = cnn_learner(data, models.resnet152, metrics=accuracy).to_tpu_distributed()
-  learn = k.setup_learner(loss_func=LabelSmoothing()).to_tpu_distributed()
-  print('hello')
-  #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
-  #earn.recorder.plot()
-  learn.fit_one_cycle(2, max_lr=5e-6)
+    logger.debug("rank: %d", index)
+
+    if index == 0:
+        time.sleep(1)
+    learn = k.setup_learner(loss_func=LabelSmoothing()).to_tpu_distributed()
+    print('hello')
+    learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    learn.recorder.plot()
+  #learn.fit_one_cycle(2, max_lr=5e-6)
 
 
 # -
 
 def _mp_fn(rank, flags, k=k):
-    device = xm.xla_device()
+    device = xm.xla_device(devkind='TPU')
+    logger.debug("%s used for xla_device" % device)
     net = k.model
     net.to(device)
+    logger.debug("%s used for xla_device, to device done" % device)
 
     train_sampler = DistributedSamplerWrapper(
         sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
@@ -1229,6 +1239,8 @@ def _mp_fn(rank, flags, k=k):
         num_workers=TrainGlobalConfig.num_workers
     )
 
+    logger.debug("rank: %d", rank)
+
     if rank == 0:
         time.sleep(1)
 
@@ -1237,9 +1249,17 @@ def _mp_fn(rank, flags, k=k):
     fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
 
 
+# %%time
+
 if __name__ == "__main__":
     FLAGS={}
-    xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
+    xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
+
+# %%time
+
+if __name__ == "__main__":
+    FLAGS={}
+    #xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 from datetime import date
 today = date.today()
