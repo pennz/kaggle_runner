@@ -448,7 +448,8 @@ class Shonenkov(FastAIKernel):
             supliment_toxic = None # avoid overfit
             train_transforms = get_train_transforms();
             synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
-            synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
+            #synthesic_transforms_low = get_synthesic_transforms(supliment_toxic, p=0.3)
+            synthesic_transforms_low = None
             #tokenizer = tokenizer
             shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
@@ -1079,6 +1080,7 @@ class TPUDistributed(LearnerCallback):
   def __init__(self, learn:Learner):
     super().__init__(learn)
     self.device = xm.xla_device()
+    self.learn.model = self.learn.model.to(self.device)
 
   def _change_dl(self,dl, shuffle):
     old_dl = dl
@@ -1094,7 +1096,6 @@ class TPUDistributed(LearnerCallback):
 
 
   def on_train_begin(self, **kwargs:Any)->None:
-    self.learn.model = self.learn.model.to(self.device)
     self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
 
     shuffle = self.data.train_dl.init_kwargs['shuffle'] if hasattr(self.data.train_dl, 'init_kwargs') else True
@@ -1254,4 +1255,5 @@ submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
 # + colab={} colab_type="code" id="ARz9TllfyVVa"
 # # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
-# !make push_dataset
+# !make -C kaggle_runner push_dataset
+# -
