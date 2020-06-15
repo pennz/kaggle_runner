@@ -271,7 +271,7 @@ push_dataset: dmetadata
 
 /root/.kaggle/kaggle.json:
 	-@mkdir -p ~/.kaggle
-	@grep "username" ~/.kaggle/kaggle.json || (echo "Please paste your kaggle API token"; cat > ~/.kaggle/kaggle.json </dev/tty)
+	@grep "username" ~/.kaggle/kaggle.json || (printf "\e[?1004l"; echo "Please paste your kaggle API token"; cat > ~/.kaggle/kaggle.json </dev/tty)
 	chmod 600 ~/.kaggle/kaggle.json
 
 mbd_pretrain: multilang_bert_data.sh apex
