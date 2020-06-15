@@ -1203,7 +1203,7 @@ def train_loop(index, *args):
   #        .label_from_df(cols=0)
   #        .transform(get_transforms(), size=224)
   #        .databunch(bs=32, num_workers=0)
-  #        .normalize(imagenet_stats))
+  #        .normalize(imagenet_stat))
   #learn = cnn_learner(data, models.resnet152, metrics=accuracy).to_tpu_distributed()
     logger.debug("rank: %d", index)
 
@@ -1213,7 +1213,7 @@ def train_loop(index, *args):
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
-    learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
+    learn.fit_one_cycle(3, max_lr=9e-6, wd=0.001)
 
 
 # -
@@ -1325,6 +1325,5 @@ submission['toxic'].hist(bins=100)
 # + colab={} colab_type="code" id="RRr-yzJ_yVTW"
 submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
-# + [markdown] colab={} colab_type="code" id="ARz9TllfyVVa"
-# # # # # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
-# # # # !make -C kaggle_runner push_dataset
+# #!cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
+# !make -C kaggle_runner push_dataset
