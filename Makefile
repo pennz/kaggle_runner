@@ -342,7 +342,6 @@ ks:
 	curl -sSLG $(KIP):9000/api/sessions
 
 push_code:
-	git fetch --unshallow
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .gitmodules
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .git/config
 	git push
