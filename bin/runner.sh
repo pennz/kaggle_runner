@@ -27,7 +27,7 @@ apt update && apt install -y netcat nmap screen time locales >/dev/null 2>&1
 apt install -y mosh iproute2 fish tig ctags htop tree pv tmux psmisc >/dev/null 2>&1 &
 
 conda init bash
-cat >> ~/.bashrc << EOF
+cat >>~/.bashrc <<EOF
 conda activate base # as my dotfiles will fiddle with conda
 export SERVER=$SERVER
 export CHECK_PORT=$CHECK_PORT
@@ -52,9 +52,9 @@ export NC
 
 if [ "x${ENABLE_RVS}" = x1 ]; then
     if [ -z $(pgrep -f 'jupyter-notebook') ]; then
-        bash ./rvs.sh $SERVER $PORT 2>&1 &
+        bash rvs.sh $SERVER $PORT 2>&1 &
     else
-        screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
+        screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
     fi
 fi &
 
@@ -84,9 +84,9 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
     if [ ! -d ${REPO} ]; then
         git clone --single-branch --branch ${BRANCH} --depth=1 \
             https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
-        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
-        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
-        git submodule update --init --recursive
+            sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
+            sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
+            git submodule update --init --recursive
         find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
         find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
         popd
@@ -109,30 +109,35 @@ if [ x"${PHASE}" = x"dev" ]; then
         make mosh
     ) &
 
-    make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi &
+    make toxic | if [ x$USE_AMQP = x"true" ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi &
     wait # not exit, when dev
 fi
 
 if [ x"${PHASE}" = x"data" ]; then
-    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
     make dataset
 fi
 
 if [ x"${PHASE}" = x"test" ]; then
-    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
     make test
 fi
 
 if [ x"${PHASE}" = x"pretrain" ]; then
-    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
     make mbd_pretrain
 fi
 
 if [ x"${PHASE}" = x"run" ]; then
     #pip install kaggle_runner
-    bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
-    make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
+    rvs.sh $SERVER $PORT >/dev/null &
+    make m & # just keep one rvs incase
+    make toxic | if [ x"$USE_AMQP" = xtrue ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
     # basically the reverse of the calling path
-    pkill make & pkill -f "mosh" & pkill sleep & pkill -f "rvs.sh" & pkill ncat &
+    pkill make &
+    pkill -f "mosh" &
+    pkill sleep &
+    pkill -f "rvs.sh" &
+    pkill ncat &
     # python main.py "$@"
 fi
