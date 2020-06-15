@@ -61,7 +61,7 @@ class FastAIKernel(KaggleKernel):
         self.developing = True
         self.learner = None
 
-        for required in ['loss_func', 'metrics']:
+        for required in ['opt_func', 'loss_func', 'metrics']:
             assert required in kargs
 
         def _map(name):
@@ -72,20 +72,20 @@ class FastAIKernel(KaggleKernel):
         for k, v in kargs.items():
             setattr(self, _map(k), v)
 
-    def setup_learner(self, data=None, model=None, opt_func=None, loss_func=None, metrics=None):
+    def setup_learner(self, data=None, model=None, opt_func='Adam', loss_func=None, metrics=None, **kargs):
         data = self.data if hasattr(
             self, 'data') and self.data is not None else data
         assert data is not None
         model = self.model if hasattr(
             self, 'model') and self.model is not None else model
         opt_func = self.opt_func if hasattr(
-            self, 'opt_func') and self.opt_func is not None else AdamW
+            self, 'opt_func') and self.opt_func is not None else opt_func
         loss_func = self.model_loss if hasattr(
             self, 'model_loss') and self.model_loss is not None else loss_func
         metrics = self.model_metrics if hasattr(
             self, 'model_metrics') and self.model_metrics is not None else metrics
 
-        self.learner = Learner(data, model, opt_func, loss_func, metrics, bn_wd=False)
+        self.learner = Learner(data, model, opt_func, loss_func, metrics, bn_wd=False, **kargs)
 
         return self.learner
 

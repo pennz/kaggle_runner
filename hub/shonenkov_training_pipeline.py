@@ -1133,6 +1133,7 @@ class TPUDistributed(LearnerCallback):
 
         if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
             self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = self._change_dl_val(self.data.valid_dl, shuffle)
+
     def on_epoch_begin(self,**kwargs:Any)->None:
         self.old_train_dl = self.data.train_dl
         self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
@@ -1146,6 +1147,7 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
+        may_debug()
         xm.optimizer_step(self.learn.opt)
 
         return {'skip_step': True}
@@ -1179,6 +1181,21 @@ def filelist2df(path):
 
 #train_path = path/'train.txt'
 #test_path = path/'test.txt'
+def debug_train():
+    from kaggle_runner.defaults import DEBUG
+    _DEBUG = DEBUG
+    DEBUG = True
+
+
+    learn = k.setup_learner(loss_func=LabelSmoothing(),
+                            opt_func=AdamW(lr=TrainGlobalConfig.lr*xm.xrt_world_size()),
+                            bn_wd=False,
+                            wd=0.01).to_tpu_distributed()
+    #print('hello')
+    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    #learn.recorder.plot()
+    learn.fit_one_cycle(1, max_lr=5e-5)
+    DEBUG = _DEBUG
 
 def train_loop(index, *args):
   #data = (ImageList.from_df(df=train_df, path=path/'images', cols=1)
@@ -1196,7 +1213,7 @@ def train_loop(index, *args):
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
-    learn.fit_one_cycle(2, max_lr=5e-6)
+    learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
 
 
 # -
@@ -1278,6 +1295,9 @@ def _mp_fn(rank, flags, k=k):
     fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
 
 
+import gc
+gc.collect()
+
 # +
 # %%time
 
@@ -1305,6 +1325,6 @@ submission['toxic'].hist(bins=100)
 # + colab={} colab_type="code" id="RRr-yzJ_yVTW"
 submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
-# + colab={} colab_type="code" id="ARz9TllfyVVa"
-# # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
-# !make -C kaggle_runner push_dataset
+# + [markdown] colab={} colab_type="code" id="ARz9TllfyVVa"
+# # # # # !cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
+# # # # !make -C kaggle_runner push_dataset
