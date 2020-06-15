@@ -60,7 +60,7 @@ test: test_bert_torch
 
 test_bert_torch: pytest
 	if [ -z $$DEBUG ]; then $(PY) tests/test_bert_torch.py 2>&1 | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); \
-else gwt $(PY) -m pdb tests/test_bert_torch.py </dev/tty ; fi
+else wt $(PY) -m pdb tests/test_bert_torch.py </dev/tty ; fi
 
 pytest:
 	$(PY) -m pip show pytest | grep "Version: 5." &>/dev/null || ($(PY) -m pip install --upgrade pytest && $(PY) -m pip install --upgrade pytest-cov)
@@ -103,12 +103,12 @@ pccnct: rvs_session _pccnct
 
 all: $(SRC)
 	-git push
-	[ -f gcc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-	chmod +x gcc-test-reporter
-	gcc-test-reporter before-build
+	[ -f cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > cc-test-reporter
+	chmod +x cc-test-reporter
+	cc-test-reporter before-build
 	-coverage run -m pytest .
 	coverage xml
-	gcc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
+	cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
 get_submission:
 	kaggle datasets download --file submission.csv --unzip k1gaggle/bert-for-toxic-classfication-trained
@@ -153,7 +153,7 @@ toxic: wt check
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
-	if [ -z $$DEBUG ]; then $(UNBUFFER) $(PY) tests/test_distilbert_model.py 2>&1 | $(UNBUFFERP) tee -a toxic_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); else gwt '$(PY) -m ipdb tests/test_distilbert_model.py'; fi
+	if [ -z $$DEBUG ]; then $(UNBUFFER) $(PY) tests/test_distilbert_model.py 2>&1 | $(UNBUFFERP) tee -a toxic_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); else wt '$(PY) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
 test_coor: update_code $(SRC)
@@ -222,7 +222,7 @@ mq:
 
 amqp_log:
 	-$(IS_CENTOS) && sudo systemctl restart rabbitmq-server.service
-	$(UNBUFFER) greceive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n 's/^.*\[x\] \(.*\)/\1/p'  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
+	$(UNBUFFER) receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n 's/^.*\[x\] \(.*\)/\1/p'  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | $(SED) -n "s/\(.*\)\[x.*/\1/p"
 
 mlocal:
@@ -295,7 +295,7 @@ xlmr:
 
 apex:
 	-$(PY) -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && \
-$(PY) -m pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .ginput/nvidiaapex/repository/NVIDIA-apex-39e153a)
+$(PY) -m pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .input/nvidiaapex/repository/NVIDIA-apex-39e153a)
 	$(PY) -c "from apex import amp"
 
 mbd:
