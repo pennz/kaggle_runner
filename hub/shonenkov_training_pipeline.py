@@ -1181,15 +1181,22 @@ def filelist2df(path):
 
 #train_path = path/'train.txt'
 #test_path = path/'test.txt'
+import functools
+
 def debug_train():
     from kaggle_runner.defaults import DEBUG
     _DEBUG = DEBUG
     DEBUG = True
 
+    param_optimizer = list(k.model.named_parameters())
+    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+    ]
 
     learn = k.setup_learner(loss_func=LabelSmoothing(),
-                            opt_func=AdamW(lr=TrainGlobalConfig.lr*xm.xrt_world_size()),
-                            bn_wd=False,
+                            opt_func=functools.partial(AdamW, optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*xm.xrt_world_size()),
                             wd=0.01).to_tpu_distributed()
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
