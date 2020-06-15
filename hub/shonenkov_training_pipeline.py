@@ -1087,16 +1087,42 @@ class TPUDistributed(LearnerCallback):
 
     def _change_dl(self,dl, shuffle):
         old_dl = dl
-        sampler = torch.utils.data.distributed.DistributedSampler(
-            dl.dataset,
+        train_sampler = DistributedSamplerWrapper(
+            sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
             num_replicas=xm.xrt_world_size(),
             rank=xm.get_ordinal(),
-            shuffle=shuffle
+            shuffle=True
         )
-        new_dl = dl.new(shuffle=False, sampler=sampler)
+        train_loader = torch.utils.data.DataLoader(
+            k.train_dataset,
+            batch_size=TrainGlobalConfig.batch_size,
+            sampler=train_sampler,
+            pin_memory=False,
+            drop_last=True,
+            num_workers=TrainGlobalConfig.num_workers,
+        )
+        new_dl = train_loader
 
-        return old_dl,new_dl,sampler
+        return old_dl,new_dl,train_sampler
 
+    def _change_dl_val(self,dl, shuffle):
+        old_dl = dl
+        validation_sampler = torch.utils.data.distributed.DistributedSampler(
+            k.validation_dataset,
+            num_replicas=xm.xrt_world_size(),
+            rank=xm.get_ordinal(),
+            shuffle=False
+        )
+        validation_loader = torch.utils.data.DataLoader(
+            k.validation_dataset,
+            batch_size=TrainGlobalConfig.batch_size,
+            sampler=validation_sampler,
+            pin_memory=False,
+            drop_last=False,
+            num_workers=TrainGlobalConfig.num_workers
+        )
+
+        return old_dl,validation_loader,validation_sampler
 
     def on_train_begin(self, **kwargs:Any)->None:
         self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
@@ -1106,7 +1132,7 @@ class TPUDistributed(LearnerCallback):
         self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = self._change_dl(self.data.train_dl, shuffle)
 
         if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
-            self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = self._change_dl(self.data.valid_dl, shuffle)
+            self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = self._change_dl_val(self.data.valid_dl, shuffle)
     def on_epoch_begin(self,**kwargs:Any)->None:
         self.old_train_dl = self.data.train_dl
         self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
@@ -1167,13 +1193,16 @@ def train_loop(index, *args):
     if index == 0:
         time.sleep(1)
     learn = k.setup_learner(loss_func=LabelSmoothing()).to_tpu_distributed()
-    print('hello')
-    learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
-    learn.recorder.plot()
-  #learn.fit_one_cycle(2, max_lr=5e-6)
+    #print('hello')
+    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    #learn.recorder.plot()
+    learn.fit_one_cycle(2, max_lr=5e-6)
 
 
 # -
+
+k.learner.data.train_dl.dl.batch_size
+
 
 def _mp_fn(rank, flags, k=k):
     device = xm.xla_device(devkind='TPU')
@@ -1249,17 +1278,20 @@ def _mp_fn(rank, flags, k=k):
     fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
 
 
+# +
 # %%time
 
 if __name__ == "__main__":
     FLAGS={}
     xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
+# +
 # %%time
 
 if __name__ == "__main__":
     FLAGS={}
     #xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
+# -
 
 from datetime import date
 today = date.today()
