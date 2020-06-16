@@ -70,30 +70,29 @@ cd ${SRC_WORK_FOLDER}
 if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
 
 # get code
-{
-    mvdir() {
-        [[ "$2"/"$1" -ef "${PWD}" ]] || {
-            rm -rf "$2"/"$1" &&
-                mkdir "$2"/"$1"
-        }
 
-        bash -c "mv ""$1""/*"" $2""/""$1"
+mvdir() {
+    [[ "$2"/"$1" -ef "${PWD}" ]] || {
+        rm -rf "$2"/"$1" &&
+            mkdir "$2"/"$1"
     }
-    export -f mvdir
 
-    if [ ! -d ${REPO} ]; then
-        git clone --single-branch --branch ${BRANCH} --depth=1 \
-            https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
-            sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
-            sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
-            git submodule update --init --recursive
-        #find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
-        #find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
-        popd
-        dp=$(mktemp)
-        mkdir $dp && mv ${REPO} $dp && mv $dp/${REPO}/* mv $dp/${REPO}/.* .
-    fi
+    bash -c "mv ""$1""/*"" $2""/""$1"
 }
+export -f mvdir
+
+if [ ! -d ${REPO} ]; then
+    git clone --single-branch --branch ${BRANCH} --depth=1 \
+        https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
+        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
+        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
+        git submodule update --init --recursive
+    #find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
+    #find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
+    popd
+    dp=$(mktemp)
+    mkdir $dp && mv ${REPO} $dp && mv $dp/${REPO}/* mv $dp/${REPO}/.* .
+fi
 
 make install_dep >/dev/null &
 
