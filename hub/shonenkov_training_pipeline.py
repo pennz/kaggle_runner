@@ -1197,7 +1197,7 @@ def debug_train():
     ]
 
     learn = k.setup_learner(loss_func=LabelSmoothing(),
-                            wd=0.01).distributed()
+                            wd=0.01).to_tpu_distributed()
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
