@@ -215,7 +215,9 @@ rpdbc:
 
 mq:
 	make amqp_log &
-	id -u rabbitmq &>/dev/null && while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do sleep 60; ps aux | grep "amqp" | tee /dev/tty |  grep -v -e "sh" -e "grep" | awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs; done
+	id -u rabbitmq &>/dev/null; if [ $? -eq 0 ]; then while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do \
+sleep 60; ps aux | grep "amqp" | tee /dev/tty | grep -v -e "sh" -e "grep" | \
+awk '{print $$2} ' | xargs -I{} kill {}; make amqp_log &; jobs; done; fi
 
 amqp_log:
 	-$(IS_CENTOS) && sudo systemctl restart rabbitmq-server.service
