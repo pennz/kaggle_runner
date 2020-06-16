@@ -86,7 +86,7 @@ class FastAIKernel(KaggleKernel):
         metrics = self.model_metrics if hasattr(
             self, 'model_metrics') and self.model_metrics is not None else metrics
 
-        self.learner = Learner(data, model, loss_func, metrics, bn_wd=False, **kargs)
+        self.learner = Learner(data, model, loss_func=loss_func, metrics=metrics, bn_wd=False, **kargs) # opt_func postitional parameter is before loss_func
         #self.learner = Learner(data, model, opt_func, loss_func, metrics, bn_wd=False, **kargs)
 
         return self.learner
