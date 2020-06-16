@@ -1147,6 +1147,7 @@ class TPUDistributed(LearnerCallback):
 
     def on_backward_end(self, **kwargs:Any)->None:
         xm.optimizer_step(self.learn.opt)  # let optimizer change learning rate
+        may_debug(True)
 
         return {'skip_step': True}
 
@@ -1198,7 +1199,8 @@ def debug_train():
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
-    learn.fit_one_cycle(1, max_lr=5e-5)
+    #learn.fit_one_cycle(1, max_lr=5e-5)
+    learn.fit(1, lr=5e-5) # original 0.5*e-5*8=4*e-5
     DEBUG = _DEBUG
 
 def train_loop(index, *args):

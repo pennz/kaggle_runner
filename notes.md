@@ -410,3 +410,8 @@ Train Step 50, loss: 0.48590, final_score: 0.94189, mc_score: 0.71498, time: 63.
 ```
 
 **score** 0.9429
+
+[Train hooks](https://github.com/fastai/fastai/blob/54a9e3cf4fd0fa11fc2453a5389cc9263f6f0d77/fastai/basic_train.py#L85)
+[backend callback](https://github.com/fastai/fastai/blob/54a9e3cf4fd0fa11fc2453a5389cc9263f6f0d77/fastai/callback.py#L297)
+[Step Update parameters](https://github.com/fastai/fastai/blob/54a9e3cf4fd0fa11fc2453a5389cc9263f6f0d77/fastai/general_optimizer.py#L97)
+So we can step on self.learn.opt.on_step to check the grad.data check if it is almost the same range/abs
