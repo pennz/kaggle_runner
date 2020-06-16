@@ -820,8 +820,6 @@ class LabelSmoothing(nn.Module):
         self.dim = dim
 
     def forward(self, x, target):
-        may_debug(True)
-
         if self.training:
             pred = x[:,:2].log_softmax(dim=self.dim)
             aux=x[:, 2:]
@@ -1148,7 +1146,6 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        may_debug(True)
         xm.optimizer_step(self.learn.opt)  # let optimizer change learning rate
 
         return {'skip_step': True}
@@ -1226,7 +1223,7 @@ def train_loop(index, *args):
 # -
 
 k.learner.data.train_dl.dl.batch_size
-debug_train()
+#debug_train()
 
 
 def _mp_fn(rank, flags, k=k):
