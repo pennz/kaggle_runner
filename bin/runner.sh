@@ -87,9 +87,11 @@ if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
             sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
             sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
             git submodule update --init --recursive
-        find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
-        find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
+        #find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
+        #find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
         popd
+        dp=$(mktemp)
+        mkdir $dp && mv ${REPO} $dp && mv $dp/${REPO}/* mv $dp/${REPO}/.* .
     fi
 }
 
@@ -101,6 +103,9 @@ export USE_AMQP
 conda init bash
 source ~/.bashrc
 conda activate base
+
+export PATH=$PWD/kaggle_runner/bin:$PATH
+rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
 
 if [ x"${PHASE}" = x"dev" ]; then
     export PS4='[Remote]: Line ${LINENO}: '
@@ -114,23 +119,19 @@ if [ x"${PHASE}" = x"dev" ]; then
 fi
 
 if [ x"${PHASE}" = x"data" ]; then
-    rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
     make dataset
 fi
 
 if [ x"${PHASE}" = x"test" ]; then
-    rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
     make test
 fi
 
 if [ x"${PHASE}" = x"pretrain" ]; then
-    rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
     make mbd_pretrain
 fi
 
 if [ x"${PHASE}" = x"run" ]; then
     #pip install kaggle_runner
-    rvs.sh $SERVER $PORT >/dev/null &
     make m & # just keep one rvs incase
     make toxic | if [ x"$USE_AMQP" = xtrue ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
     # basically the reverse of the calling path
