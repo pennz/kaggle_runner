@@ -1147,7 +1147,7 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        may_debug()
+        may_debug(True)
         xm.optimizer_step(self.learn.opt)
 
         return {'skip_step': True}
@@ -1197,7 +1197,7 @@ def debug_train():
 
     learn = k.setup_learner(loss_func=LabelSmoothing(),
                             opt_func=functools.partial(AdamW, optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*xm.xrt_world_size()),
-                            wd=0.01).to_tpu_distributed()
+                            wd=0.01).distributed()
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
