@@ -1147,6 +1147,7 @@ class TPUDistributed(LearnerCallback):
 
     def on_backward_end(self, **kwargs:Any)->None:
         xm.optimizer_step(self.learn.opt)  # let optimizer change learning rate
+        may_debug(True)
 
         return {'skip_step': True}
 

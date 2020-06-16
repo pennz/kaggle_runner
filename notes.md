@@ -410,3 +410,5 @@ Train Step 50, loss: 0.48590, final_score: 0.94189, mc_score: 0.71498, time: 63.
 ```
 
 **score** 0.9429
+
+[Train hooks](https://github.com/fastai/fastai/blob/54a9e3cf4fd0fa11fc2453a5389cc9263f6f0d77/fastai/basic_train.py#L85)
