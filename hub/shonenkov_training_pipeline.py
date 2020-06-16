@@ -820,6 +820,8 @@ class LabelSmoothing(nn.Module):
         self.dim = dim
 
     def forward(self, x, target):
+        may_debug(True)
+
         if self.training:
             pred = x[:,:2].log_softmax(dim=self.dim)
             aux=x[:, 2:]
@@ -877,7 +879,7 @@ def test_init():
     l = Shonenkov(loss_func=None, metrics=None)
     assert l is not None
 
-k = Shonenkov(metrics=None, loss_func=LabelSmoothing())
+k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=AdamW)
 k.run(dump_flag=False)
 
 
@@ -1084,7 +1086,6 @@ class TPUDistributed(LearnerCallback):
         self.device = xm.xla_device(devkind='TPU')
         logger.debug("%s used for xla_device" % self.device)
 
-
     def _change_dl(self,dl, shuffle):
         old_dl = dl
         train_sampler = DistributedSamplerWrapper(
@@ -1148,7 +1149,7 @@ class TPUDistributed(LearnerCallback):
 
     def on_backward_end(self, **kwargs:Any)->None:
         may_debug(True)
-        xm.optimizer_step(self.learn.opt)
+        xm.optimizer_step(self.learn.opt)  # let optimizer change learning rate
 
         return {'skip_step': True}
 
@@ -1196,7 +1197,6 @@ def debug_train():
     ]
 
     learn = k.setup_learner(loss_func=LabelSmoothing(),
-                            opt_func=functools.partial(AdamW, optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*xm.xrt_world_size()),
                             wd=0.01).distributed()
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
@@ -1226,6 +1226,7 @@ def train_loop(index, *args):
 # -
 
 k.learner.data.train_dl.dl.batch_size
+debug_train()
 
 
 def _mp_fn(rank, flags, k=k):
