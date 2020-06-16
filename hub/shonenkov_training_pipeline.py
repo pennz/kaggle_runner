@@ -877,6 +877,9 @@ def test_init():
     l = Shonenkov(loss_func=None, metrics=None)
     assert l is not None
 
+# !cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
+
+
 k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=AdamW)
 k.run(dump_flag=False)
 
@@ -1078,6 +1081,19 @@ def len_parallelloader(self):
 pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
+# +
+class CheckGrad(LearnerCallback):
+    def __init__(self, learn:Learner, skip_loss_step=False):
+        super().__init__(learn)
+        self.skip_loss_step = skip_loss_step
+        logger.debug("skip_loss_step: " +str(self.skip_loss_step))
+
+    def on_backward_end(self, **kwargs:Any)->None:
+        may_debug()
+        logger.debug("grad info: "+self.learn.opt)
+
+        return {'skip_step': self.skip_loss_step}
+
 class TPUDistributed(LearnerCallback):
     def __init__(self, learn:Learner):
         super().__init__(learn)
@@ -1180,8 +1196,9 @@ def filelist2df(path):
 
 #train_path = path/'train.txt'
 #test_path = path/'test.txt'
-import functools
 
+
+# +
 def debug_train():
     from kaggle_runner.defaults import DEBUG
     _DEBUG = DEBUG
@@ -1195,7 +1212,7 @@ def debug_train():
     ]
 
     learn = k.setup_learner(loss_func=LabelSmoothing(),
-                            wd=0.01).to_tpu_distributed()
+                            wd=0.01)
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
@@ -1225,7 +1242,8 @@ def train_loop(index, *args):
 # -
 
 k.learner.data.train_dl.dl.batch_size
-#debug_train()
+print(f"data device: {k.learner.data.device)")
+debug_train()
 
 
 def _mp_fn(rank, flags, k=k):
