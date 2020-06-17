@@ -13,7 +13,7 @@ from fastai.torch_core import *
 from fastai.vision import *
 
 from .kernel import KaggleKernel
-from .. import logger
+from .. import logger, may_debug
 
 
 class FastAIKernel(KaggleKernel):
