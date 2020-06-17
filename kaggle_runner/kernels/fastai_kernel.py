@@ -79,15 +79,15 @@ class FastAIKernel(KaggleKernel):
         assert data is not None
         model = self.model if hasattr(
             self, 'model') and self.model is not None else model
-        #opt_func = self.opt_func if hasattr(
-        #    self, 'opt_func') and self.opt_func is not None else opt_func
+        opt_func = self.opt_func if hasattr(
+            self, 'opt_func') and self.opt_func is not None else opt_func
         loss_func = self.model_loss if hasattr(
             self, 'model_loss') and self.model_loss is not None else loss_func
         metrics = self.model_metrics if hasattr(
             self, 'model_metrics') and self.model_metrics is not None else metrics
 
-        self.learner = Learner(data, model, loss_func=loss_func, metrics=metrics, bn_wd=False, **kargs) # opt_func postitional parameter is before loss_func
-        #self.learner = Learner(data, model, opt_func, loss_func, metrics, bn_wd=False, **kargs)
+        may_debug(True)
+        self.learner = Learner(data, model, opt_func, loss_func=loss_func, metrics=metrics, bn_wd=False, **kargs) # opt_func postitional parameter is before loss_func
 
         return self.learner
 

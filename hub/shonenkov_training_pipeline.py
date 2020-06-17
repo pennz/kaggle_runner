@@ -878,7 +878,7 @@ def test_init():
 # !cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
 
 
-k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=AdamW)
+k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
 
@@ -1210,6 +1210,8 @@ def debug_train():
     ]
 
     learn = k.setup_learner(loss_func=LabelSmoothing(),
+                            opt_func=AdamW(optimizer_grouped_parameters,
+                                           lr=TrainGlobalConfig.lr*xm.xrt_world_size()),
                             wd=0.01).to_tpu_distributed()
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
