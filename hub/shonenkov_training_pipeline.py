@@ -1163,9 +1163,8 @@ class TPUDistributed(LearnerCallback):
 
     def on_backward_end(self, **kwargs:Any)->None:
         xm.optimizer_step(self.learn.opt)  # let optimizer change learning rate
-        may_debug(True)
-
-        return {'skip_step': True}
+        #may_debug(True)
+        #return {'skip_step': True}
 
     def on_epoch_end(self,**kwargs:Any)->None:
         self.learn.data.train_dl = self.old_train_dl
@@ -1212,8 +1211,8 @@ def debug_train():
     ]
 
     learn = k.setup_learner(loss_func=LabelSmoothing(),
-                            wd=0.01)
-    learn.callback_fns.append(CheckGrad)
+                            wd=0.01).to_tpu_distributed()
+    #learn.callback_fns.append(CheckGrad)
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
@@ -1243,8 +1242,11 @@ def train_loop(index, *args):
 # -
 
 k.learner.data.train_dl.dl.batch_size
-print(f"data device: {k.learner.data.device)")
+print(f"data device: {k.learner.data.device}")
 debug_train()
+
+
+print(len(k.learner.data.train_dl.dl),k.learner.data.train_dl.dl.batch_size)
 
 
 def _mp_fn(rank, flags, k=k):
