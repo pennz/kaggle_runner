@@ -72,8 +72,7 @@ class FastAIKernel(KaggleKernel):
         for k, v in kargs.items():
             setattr(self, _map(k), v)
 
-    #def setup_learner(self, data=None, model=None, opt_func='Adam', loss_func=None, metrics=None, **kargs):
-    def setup_learner(self, data=None, model=None, loss_func=None, metrics=None, **kargs):
+    def setup_learner(self, data=None, model=None, opt_func=None, loss_func=None, metrics=None, **kargs):
         data = self.data if hasattr(
             self, 'data') and self.data is not None else data
         assert data is not None
