@@ -59,7 +59,7 @@ if [ "x${ENABLE_RVS}" = x1 ]; then
     fi
 fi &
 
-python3 -m pip install ipdb ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
+python3 -m pip install ipdb ripdb jupytext pydicom parse pytest-logger python_logging_rabbitmq coverage &
 python3 -m pip install pyvim neovim msgpack==1.0.0 jedi &
 # python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
 
