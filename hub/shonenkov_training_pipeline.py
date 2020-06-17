@@ -34,8 +34,6 @@
 # -
 
 
-# ls
-
 import numpy as np
 import pandas as pd
 import os
@@ -1242,9 +1240,12 @@ def train_loop(index, *args):
 
 # -
 
+# %%time
 k.learner.data.train_dl.dl.batch_size
 print(f"data device: {k.learner.data.device}")
-debug_train()
+#debug_train()
+FLAGS={}
+xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
 print(len(k.learner.data.train_dl.dl),k.learner.data.train_dl.dl.batch_size)
@@ -1326,13 +1327,6 @@ def _mp_fn(rank, flags, k=k):
 
 import gc
 gc.collect()
-
-# +
-# %%time
-
-if __name__ == "__main__":
-    FLAGS={}
-    xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 # +
 # %%time
