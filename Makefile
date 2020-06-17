@@ -255,6 +255,11 @@ kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
 cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}' &
 
+vim:
+	apt install vim -y
+	$(PY) -m pip install pyvim neovim jedi
+	vim -u ~/.vimrc_back +PlugInstall kaggle_runner
+
 kaggle: /root/.kaggle/kaggle.json
 	-xclip ~/.kaggle/kaggle.json -selection clipboard
 
