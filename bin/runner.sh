@@ -22,9 +22,10 @@ ORIG_PORT=23454
 
 CHECK_PORT=$((ORIG_PORT + 1))
 pip install --upgrade pip &
+pip3 install --upgrade pip &
 conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 apt update && apt install -y netcat nmap screen time locales >/dev/null 2>&1
-apt install -y mosh iproute2 fish tig ctags htop tree pv tmux psmisc >/dev/null 2>&1 &
+apt install -y mosh iproute2 vim fish tig ctags htop tree pv tmux psmisc >/dev/null 2>&1 &
 
 conda init bash
 cat >>~/.bashrc <<EOF
@@ -58,8 +59,8 @@ if [ "x${ENABLE_RVS}" = x1 ]; then
     fi
 fi &
 
-pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
-# python3 -m pip install pyvim neovim msgpack==1.0.0 &
+python3 -m pip install ipdb ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
+python3 -m pip install pyvim neovim msgpack==1.0.0 jedi &
 # python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
 
 SRC_WORK_FOLDER=/kaggle/working
