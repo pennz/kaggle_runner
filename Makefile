@@ -247,13 +247,13 @@ mbd_log:
 mbd_interactive: multilang_bert_data.sh
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
 
-data_download: kaggle
+dd: kaggle
 	@ eval "$$write_dataset_list_script"
 	-mkdir -p /kaggle/input
 	(cmp_name="jigsaw-multilingual-toxic-comment-classification"; \
 kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
 cd /kaggle/input/$$cmp_name; unzip '*.zip') &
-	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}'
+	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}' &
 
 kaggle: /root/.kaggle/kaggle.json
 	-xclip ~/.kaggle/kaggle.json -selection clipboard
