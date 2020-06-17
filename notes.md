@@ -415,3 +415,62 @@ Train Step 50, loss: 0.48590, final_score: 0.94189, mc_score: 0.71498, time: 63.
 [backend callback](https://github.com/fastai/fastai/blob/54a9e3cf4fd0fa11fc2453a5389cc9263f6f0d77/fastai/callback.py#L297)
 [Step Update parameters](https://github.com/fastai/fastai/blob/54a9e3cf4fd0fa11fc2453a5389cc9263f6f0d77/fastai/general_optimizer.py#L97)
 So we can step on self.learn.opt.on_step to check the grad.data check if it is almost the same range/abs
+
+
+```
+Train Step 1, loss: 1.10938, final_score: 0.51562, mc_score: 0.37796, time: 113.06641
+Train Step 2, loss: 1.10938, final_score: 0.53137, mc_score: 0.05929, time: 204.88724
+Train Step 3, loss: 1.18490, final_score: 0.46786, mc_score: -0.07559, time: 206.35083
+Train Step 4, loss: 1.16992, final_score: 0.42993, mc_score: -0.17491, time: 207.75350
+Train Step 5, loss: 1.13359, final_score: 0.41672, mc_score: -0.21288, time: 209.00740
+Train Step 6, loss: 1.13086, final_score: 0.39510, mc_score: -0.23869, time: 210.28957
+Train Step 7, loss: 1.10212, final_score: 0.40630, mc_score: -0.20868, time: 211.59308
+Train Step 8, loss: 1.11377, final_score: 0.39846, mc_score: -0.18700, time: 212.86807
+Train Step 9, loss: 1.08507, final_score: 0.44333, mc_score: -0.13420, time: 214.13142
+Train Step 10, loss: 1.06992, final_score: 0.44571, mc_score: -0.11746, time: 215.47282
+Train Step 11, loss: 1.05575, final_score: 0.45519, mc_score: -0.10518, time: 216.76567
+Train Step 12, loss: 1.04167, final_score: 0.46181, mc_score: -0.07926, time: 218.07405
+Train Step 13, loss: 1.03906, final_score: 0.45821, mc_score: -0.08050, time: 219.39437
+Train Step 14, loss: 1.03404, final_score: 0.46011, mc_score: -0.07815, time: 220.69584
+Train Step 15, loss: 1.03385, final_score: 0.45526, mc_score: -0.07927, time: 222.01984
+Train Step 16, loss: 1.02637, final_score: 0.45979, mc_score: -0.07169, time: 223.34185
+Train Step 17, loss: 1.02114, final_score: 0.46996, mc_score: -0.06559, time: 224.66254
+Train Step 18, loss: 1.02344, final_score: 0.45818, mc_score: -0.08446, time: 225.97743
+Train Step 19, loss: 1.01295, final_score: 0.46861, mc_score: -0.06522, time: 227.28586
+Train Step 20, loss: 1.01133, final_score: 0.47783, mc_score: -0.05318, time: 228.60961
+Train Step 21, loss: 0.99851, final_score: 0.50032, mc_score: -0.02070, time: 229.89782
+Train Step 22, loss: 0.99219, final_score: 0.51287, mc_score: 0.00434, time: 231.16871
+Train Step 23, loss: 0.98285, final_score: 0.52255, mc_score: 0.01971, time: 232.47061
+Train Step 24, loss: 0.97461, final_score: 0.53386, mc_score: 0.02858, time: 233.74266
+Train Step 25, loss: 0.96531, final_score: 0.54557, mc_score: 0.04745, time: 235.05073
+Train Step 26, loss: 0.95733, final_score: 0.55457, mc_score: 0.06554, time: 236.32955
+Train Step 27, loss: 0.94589, final_score: 0.57111, mc_score: 0.09263, time: 237.59322
+Train Step 28, loss: 0.93443, final_score: 0.58872, mc_score: 0.11715, time: 238.92549
+Train Step 29, loss: 0.92659, final_score: 0.59963, mc_score: 0.13013, time: 240.18953
+Train Step 30, loss: 0.92201, final_score: 0.60802, mc_score: 0.13284, time: 241.45309
+Train Step 31, loss: 0.91179, final_score: 0.62168, mc_score: 0.14895, time: 242.71853
+Train Step 32, loss: 0.90149, final_score: 0.63606, mc_score: 0.16827, time: 243.98781
+Train Step 33, loss: 0.89607, final_score: 0.64571, mc_score: 0.18317, time: 245.31105
+Train Step 34, loss: 0.89223, final_score: 0.65074, mc_score: 0.18890, time: 246.63058
+Train Step 35, loss: 0.88906, final_score: 0.65847, mc_score: 0.20050, time: 247.88921
+Train Step 36, loss: 0.88411, final_score: 0.67138, mc_score: 0.21973, time: 249.15814
+Train Step 37, loss: 0.87679, final_score: 0.67997, mc_score: 0.23108, time: 250.47610
+Train Step 38, loss: 0.87130, final_score: 0.68700, mc_score: 0.24207, time: 251.79559
+Train Step 39, loss: 0.86729, final_score: 0.69427, mc_score: 0.25179, time: 253.11523
+Train Step 40, loss: 0.86006, final_score: 0.70424, mc_score: 0.26366, time: 254.44200
+Train Step 41, loss: 0.85147, final_score: 0.71584, mc_score: 0.28186, time: 255.70692
+Train Step 42, loss: 0.84756, final_score: 0.72371, mc_score: 0.29279, time: 256.97036
+Train Step 43, loss: 0.84366, final_score: 0.73116, mc_score: 0.30665, time: 258.28103
+Train Step 44, loss: 0.83727, final_score: 0.73851, mc_score: 0.31621, time: 259.53896
+Train Step 45, loss: 0.83472, final_score: 0.74288, mc_score: 0.32581, time: 260.78796
+Train Step 46, loss: 0.83076, final_score: 0.74845, mc_score: 0.33520, time: 262.05888
+Train Step 47, loss: 0.82605, final_score: 0.75570, mc_score: 0.34660, time: 263.32842
+Train Step 48, loss: 0.81925, final_score: 0.76441, mc_score: 0.35966, time: 264.58692
+Train Step 49, loss: 0.81449, final_score: 0.77046, mc_score: 0.36724, time: 265.88840
+Train Step 50, loss: 0.81398, final_score: 0.77245, mc_score: 0.37032, time: 267.18382
+Train Step 51, loss: 0.81005, final_score: 0.77770, mc_score: 0.37730, time: 268.45383
+Train Step 52, loss: 0.80424, final_score: 0.78382, mc_score: 0.38800, time: 269.74650
+Train Step 53, loss: 0.80085, final_score: 0.78749, mc_score: 0.39708, time: 271.11040
+Train Step 54, loss: 0.79615, final_score: 0.79201, mc_score: 0.40578, time: 272.36462
+```
+The first two batches, 100ms each. About 1 second one batch.

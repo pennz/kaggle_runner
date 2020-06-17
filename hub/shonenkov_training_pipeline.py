@@ -1150,6 +1150,7 @@ class TPUDistributed(LearnerCallback):
             self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = self._change_dl_val(self.data.valid_dl, shuffle)
 
     def on_epoch_begin(self,**kwargs:Any)->None:
+        logger.debug("Epoch begins on device %s" % self.device)
         self.old_train_dl = self.data.train_dl
         self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
         self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
@@ -1162,7 +1163,7 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        xm.optimizer_step(self.learn.opt)  # let optimizer change learning rate
+        xm.optimizer_step(self.learn.opt.opt) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
         #may_debug(True)
         #return {'skip_step': True}
 
