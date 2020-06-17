@@ -8,7 +8,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.4.2
+#       jupytext_version: 1.5.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -33,8 +33,6 @@
 #                                    python3 -m pip install catalyst==20.4.2 > /dev/null;)
 # -
 
-
-# ls
 
 import numpy as np
 import pandas as pd
@@ -1162,7 +1160,7 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        xm.optimizer_step(self.learn.opt)  # let optimizer change learning rate
+        xm.optimizer_step(self.learn.opt, barrier=True)  # let optimizer change learning rate
         #may_debug(True)
         #return {'skip_step': True}
 
@@ -1241,9 +1239,12 @@ def train_loop(index, *args):
 
 # -
 
+# %%time
 k.learner.data.train_dl.dl.batch_size
 print(f"data device: {k.learner.data.device}")
-debug_train()
+#debug_train()
+FLAGS={}
+xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
 print(len(k.learner.data.train_dl.dl),k.learner.data.train_dl.dl.batch_size)
@@ -1325,13 +1326,6 @@ def _mp_fn(rank, flags, k=k):
 
 import gc
 gc.collect()
-
-# +
-# %%time
-
-if __name__ == "__main__":
-    FLAGS={}
-    xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 # +
 # %%time
