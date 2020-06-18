@@ -1097,7 +1097,7 @@ class CheckGrad(LearnerCallback):
 
         logger.debug("grad info: %s", self.learn.opt)
         norms = torch.tensor([torch.norm(p) for p in pg0pl])
-        logger.debug("grad info: norm mean(%f) std(%f)", torch.mean(norms), torch.std_var(norms))
+        logger.debug("grad info: norm std(%f) mean(%f)", *torch.std_mean(norms))
 
         return {'skip_step': self.skip_loss_step}
 
