@@ -880,19 +880,10 @@ def test_init():
 
 import ipdb
 
-# !pip3 install ipdb
-
 from kaggle_runner import may_debug
 
 k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
-
-import kaggle_runner
-
-import importlib
-importlib.reload(kaggle_runner)
-
-ipdb.pm()
 
 
 def test_model_fn(device=torch.device("cpu")):
@@ -1214,11 +1205,6 @@ def filelist2df(path):
 import functools
 
 
-
-# +
-# AdamW??
-
-# +
 def debug_train():
     from kaggle_runner import defaults
     _DEBUG = defaults.DEBUG
@@ -1230,12 +1216,12 @@ def debug_train():
         {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
         {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
     ]
-    
+
     def AdamW_with_given_p(p_to_ignore, *args, **kargs):
         kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
+
         return AdamW(optimizer_grouped_parameters, *args, **kargs)
- 
-    #may_debug()
+
     learn = k.setup_learner(loss_func=LabelSmoothing(),
                             opt_func=AdamW_with_given_p,
                             wd=0.01).to_tpu_distributed()
@@ -1255,11 +1241,23 @@ def train_loop(index, *args):
   #        .databunch(bs=32, num_workers=0)
   #        .normalize(imagenet_stat))
   #learn = cnn_learner(data, models.resnet152, metrics=accuracy).to_tpu_distributed()
-    logger.debug("rank: %d", index)
+    logger.debug("rank: %d entered train_loop", index)
+
+    param_optimizer = list(k.model.named_parameters())
+    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
+    ]
+
+    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
+        kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
+
+        return AdamW(optimizer_grouped_parameters, *args, **kargs)
 
     if index == 0:
         time.sleep(1)
-    learn = k.setup_learner(loss_func=LabelSmoothing()).to_tpu_distributed()
+    learn = k.setup_learner(opt_func=AdamW_with_given_p, loss_func=LabelSmoothing(), wd=0.01).to_tpu_distributed()
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
