@@ -399,7 +399,6 @@ class Shonenkov(FastAIKernel):
 
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModel()
-        self.create_learner()
 
     def set_random_seed(self):
         seed_everything(SEED)
