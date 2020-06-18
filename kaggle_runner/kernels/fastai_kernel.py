@@ -17,11 +17,8 @@ from .. import logger, may_debug
 
 
 class FastAIKernel(KaggleKernel):
-    """Can't instantiate abstract class FastAIKernel with abstract methods
-    build_and_set_model, check_predict_details, peek_data, set_loss,
-    set_metrics
+    """fast.ai thing
     """
-
     def build_and_set_model(self):
         self.model = None
 
@@ -72,21 +69,25 @@ class FastAIKernel(KaggleKernel):
         for k, v in kargs.items():
             setattr(self, _map(k), v)
 
-    def create_learner(self, data=None, model=None, opt_func=None, loss_func=None, metrics=None, **kargs):
-        data = self.data if hasattr(
-            self, 'data') and self.data is not None else data
+    @classmethod
+    def create_learner(cls, k=None, data=None, model=None, opt_func=None, loss_func=None, metrics=None, **kargs):
+        """opt_func should pass seprately"""
+
+        if k is not None:
+            data = k.data if hasattr(
+                k, 'data') and k.data is not None else data
+            model = k.model if hasattr(
+                k, 'model') and k.model is not None else model
+            loss_func = k.model_loss if hasattr(
+                k, 'model_loss') and k.model_loss is not None else loss_func
+            metrics = k.model_metrics if hasattr(
+                k, 'model_metrics') and k.model_metrics is not None else metrics
+
         assert data is not None
-        model = self.model if hasattr(
-            self, 'model') and self.model is not None else model
         assert opt_func is not None
-        loss_func = self.model_loss if hasattr(
-            self, 'model_loss') and self.model_loss is not None else loss_func
-        metrics = self.model_metrics if hasattr(
-            self, 'model_metrics') and self.model_metrics is not None else metrics
+        learner = Learner(data, model, opt_func, loss_func=loss_func, metrics=metrics, bn_wd=False, **kargs) # opt_func postitional parameter is before loss_func
 
-        self.learner = Learner(data, model, opt_func, loss_func=loss_func, metrics=metrics, bn_wd=False, **kargs) # opt_func postitional parameter is before loss_func
-
-        return self.learner
+        return learner
 
 
 def test_learner_init():
