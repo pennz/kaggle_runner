@@ -492,3 +492,248 @@ The following CPU, data not downsample
 [DEBUG]2020-06-18 10:38:55,723:utils:Train Step 11, loss: 0.65396, lr: 5e-06 final_score: 0.47917, mc_score: 0.25964, time: 150.72317
 [DEBUG]2020-06-18 10:39:08,344:utils:Train Step 12, loss: 0.64371, lr: 5e-06 final_score: 0.50340, mc_score: 0.26215, time: 163.34438
 ```
+
+```
+Train Step 0, loss: 0.00000, lr: 5e-06 final_score: 0.00000, mc_score: 0.00000, time: 0.01049
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284134)
+grad info pg0: norm std(5.306246) mean(3.284097)
+params info pg1: norm std(10.843104) mean(8.226689)
+grad info pg1: norm std(0.296042) mean(0.221219)
+Train Step 1, loss: 0.82892, lr: 5e-06 final_score: 0.35897, mc_score: 0.00000, time: 12.35283
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284134)
+grad info pg0: norm std(1.390194) mean(0.796119)
+params info pg1: norm std(10.843107) mean(8.226690)
+grad info pg1: norm std(0.038992) mean(0.048181)
+Train Step 2, loss: 0.73110, lr: 5e-06 final_score: 0.57037, mc_score: 0.00000, time: 28.22387
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284134)
+grad info pg0: norm std(0.270485) mean(0.182517)
+params info pg1: norm std(10.843109) mean(8.226691)
+grad info pg1: norm std(0.009722) mean(0.014251)
+Train Step 3, loss: 0.65143, lr: 5e-06 final_score: 0.60465, mc_score: 0.00000, time: 44.68827
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284134)
+grad info pg0: norm std(0.329400) mean(0.266966)
+params info pg1: norm std(10.843109) mean(8.226692)
+grad info pg1: norm std(0.015222) mean(0.019330)
+Train Step 4, loss: 0.60733, lr: 5e-06 final_score: 0.62712, mc_score: 0.00000, time: 59.50831
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284134)
+grad info pg0: norm std(0.934494) mean(0.587859)
+params info pg1: norm std(10.843109) mean(8.226692)
+grad info pg1: norm std(0.057466) mean(0.042114)
+Train Step 5, loss: 0.58537, lr: 5e-06 final_score: 0.62400, mc_score: 0.00000, time: 74.23315
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284134)
+grad info pg0: norm std(0.441422) mean(0.342927)
+params info pg1: norm std(10.843109) mean(8.226693)
+grad info pg1: norm std(0.025181) mean(0.025235)
+Train Step 6, loss: 0.57657, lr: 5e-06 final_score: 0.66667, mc_score: 0.00000, time: 89.13756
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284134)
+grad info pg0: norm std(0.335821) mean(0.317519)
+params info pg1: norm std(10.843109) mean(8.226694)
+grad info pg1: norm std(0.014155) mean(0.023538)
+Train Step 7, loss: 0.57544, lr: 5e-06 final_score: 0.68844, mc_score: 0.00000, time: 103.90428
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284142)
+grad info pg0: norm std(0.589146) mean(0.350190)
+params info pg1: norm std(10.843110) mean(8.226694)
+grad info pg1: norm std(0.020629) mean(0.025898)
+Train Step 8, loss: 0.56693, lr: 5e-06 final_score: 0.67060, mc_score: 0.00000, time: 118.74932
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284142)
+grad info pg0: norm std(0.488801) mean(0.318388)
+params info pg1: norm std(10.843110) mean(8.226694)
+grad info pg1: norm std(0.017937) mean(0.024180)
+Train Step 9, loss: 0.55881, lr: 5e-06 final_score: 0.66215, mc_score: 0.00000, time: 133.70876
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284142)
+grad info pg0: norm std(0.846748) mean(0.341456)
+params info pg1: norm std(10.843110) mean(8.226694)
+grad info pg1: norm std(0.025591) mean(0.026805)
+Train Step 10, loss: 0.55699, lr: 5e-06 final_score: 0.64332, mc_score: -0.01696, time: 148.50977
+grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+params info pg0: norm std(212.603531) mean(76.284142)
+grad info pg0: norm std(0.717754) mean(0.514715)
+params info pg1: norm std(10.843110) mean(8.226694)
+grad info pg1: norm std(0.035379) mean(0.036088)
+Train Step 11, loss: 0.56302, lr: 5e-06 final_score: 0.60565, mc_score: -0.02340, time: 163.13020
+...
+[DEBUG]2020-06-18 10:47:10,491:utils:grad info: AdamW (
+Parameter Group 0
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.001
+
+Parameter Group 1
+    betas: (0.9, 0.999)
+    correct_bias: True
+    eps: 1e-06
+    lr: 5e-06
+    weight_decay: 0.0
+)
+[DEBUG]2020-06-18 10:47:10,591:utils:params info pg0: norm std(212.603546) mean(76.284157)
+[DEBUG]2020-06-18 10:47:10,593:utils:grad info pg0: norm std(0.693694) mean(0.624429)
+[DEBUG]2020-06-18 10:47:10,601:utils:params info pg1: norm std(10.843110) mean(8.226697)
+[DEBUG]2020-06-18 10:47:10,603:utils:grad info pg1: norm std(0.031085) mean(0.045465)
+[DEBUG]2020-06-18 10:47:11,282:utils:Train Step 22, loss: 0.56390, lr: 5e-06 final_score: 0.52226, mc_score: -0.01595, time: 325.95086
+```
