@@ -931,7 +931,8 @@ def test_model_fn(device=torch.device("cpu")):
         {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
         {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
     ]
-    optimizer = AdamW(optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*xm.xrt_world_size())
+    #optimizer = AdamW(optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*xm.xrt_world_size())
+    optimizer = AdamW(optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*8)
 
     train_loader = torch.utils.data.DataLoader(
         self.train_dataset,
@@ -1032,10 +1033,12 @@ def test_model_fn(device=torch.device("cpu")):
             inputs=inputs_masks[0]
             attention_masks=inputs_masks[1]
 
+            batch_size = inputs.size(0)
+
             if config.verbose:
                 if step % config.verbose_step == 0:
                     logger.debug(
-                        f'Train Step {step}, loss: ' + \
+                        f'Train Step {step}, bs: {batch_size}, loss: ' + \
                         f"{losses.avg:.5f}, lr: {optimizer.param_groups[0]['lr']} final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, " + \
                         f'time: {(time.time() - t):.5f}'
                     )
@@ -1049,7 +1052,6 @@ def test_model_fn(device=torch.device("cpu")):
             outputs = model(inputs, attention_masks)
             loss = criterion(outputs, targets)
 
-            batch_size = inputs.size(0)
 
             final_scores.update(targets, outputs)
 
