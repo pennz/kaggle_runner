@@ -8,7 +8,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.4.2
+#       jupytext_version: 1.5.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -19,19 +19,18 @@
 # %autoreload 2
 
 # + language="ash"
-# pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner
-# python3 -m pip install -e kaggle_runner
-# export PATH=$PWD/kaggle_runner/bin:$PATH
-# entry.sh)
-
-
-# + language="bash"
-# python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
-#                                    python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev;
-#                                    python3 -m pip install transformers==2.5.1 > /dev/null;
-#                                    python3 -m pip install pandarallel > /dev/null;
-#                                    python3 -m pip install catalyst==20.4.2 > /dev/null;)
+# !pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner \
+# python3 -m pip install -e kaggle_runner \
+# export PATH=$PWD/kaggle_runner/bin:$PATH \
+# entry.sh &)
 # -
+
+
+# !python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null; \
+#                                    python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
+#                                    python3 -m pip install transformers==2.5.1 > /dev/null; \
+#                                    python3 -m pip install pandarallel > /dev/null; \
+#                                    python3 -m pip install catalyst==20.4.2 > /dev/null;)
 
 
 import numpy as np
@@ -910,7 +909,7 @@ from kaggle_runner import logger
 
 def test_model_fn(device=torch.device("cpu")):
     #device = xm.xla_device(devkind='TPU')
-    #device=torch.device("xla")
+    device=torch.device("xla")
     logger.debug("Device used: %s", device)
 
     #k.run(dump_flag=True) # it seems it cannot save right
@@ -1061,7 +1060,7 @@ def test_model_fn(device=torch.device("cpu")):
 
             loss.backward()
             _check_grad(optimizer)
-            optimizer.step()
+            #optimizer.step()
             xm.optimizer_step(optimizer, barrier=True)
 
         model.eval()
@@ -1096,7 +1095,7 @@ def test_model_fn(device=torch.device("cpu")):
 from kaggle_runner import defaults
 _DEBUG = defaults.DEBUG
 defaults.DEBUG = True
-test_model_fn()
+#test_model_fn()
 defaults.DEBUG = _DEBUG
 
 # +
@@ -1302,7 +1301,7 @@ def debug_train():
     defaults.DEBUG = _DEBUG
 
 # %%time
-debug_train()
+#debug_train()
 
 
 from functools import partial
@@ -1340,10 +1339,7 @@ def train_loop(index, *args):
 
 
 FLAGS={}
-xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
-
-
-print(len(k.learner.data.train_dl.dl),k.learner.data.train_dl.dl.batch_size)
+#xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
 def _mp_fn(rank, flags, k=k):
