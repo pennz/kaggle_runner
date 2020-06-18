@@ -438,7 +438,7 @@ class Shonenkov(FastAIKernel):
 
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModel()
-        self.setup_learner()
+        self.create_learner()
 
     def set_random_seed(self):
         seed_everything(SEED)
@@ -1222,7 +1222,7 @@ def debug_train():
 
         return AdamW(optimizer_grouped_parameters, *args, **kargs)
 
-    learn = k.setup_learner(loss_func=LabelSmoothing(),
+    learn = k.create_learner(loss_func=LabelSmoothing(),
                             opt_func=AdamW_with_given_p,
                             wd=0.01).to_tpu_distributed()
     #learn.callback_fns.append(CheckGrad)
@@ -1257,7 +1257,7 @@ def train_loop(index, *args):
 
     if index == 0:
         time.sleep(1)
-    learn = k.setup_learner(opt_func=AdamW_with_given_p, loss_func=LabelSmoothing(), wd=0.01).to_tpu_distributed()
+    learn = k.create_learner(opt_func=AdamW_with_given_p, loss_func=LabelSmoothing(), wd=0.01).to_tpu_distributed()
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
