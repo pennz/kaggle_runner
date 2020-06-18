@@ -762,15 +762,6 @@ class TPUFitter:
             loss.backward()
             logger.info("step: %d, loss: %f", step, loss)
 
-            pg = self.optimizer.param_groups
-            pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
-            pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
-
-            normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl if p.grad is not None])
-            logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
-            norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl if p.grad is not None])
-            logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
-
             xm.optimizer_step(self.optimizer)
 
             if self.config.step_scheduler:
@@ -1269,9 +1260,6 @@ def filelist2df(path):
 
 # -
 
-import functools
-
-
 from functools import partial
 from fastai.callbacks.misc import StopAfterNBatches
 from fastai.callbacks import *
@@ -1300,6 +1288,7 @@ def debug_train():
                                            partial(CSVLogger, append=True),
                                            partial(CheckGrad, skip_loss_step=False)]
                              ).to_tpu_distributed()
+
     learn.callbacks.append(StopAfterNBatches(n_batches=200))
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
@@ -1310,7 +1299,7 @@ def debug_train():
     defaults.DEBUG = _DEBUG
 
 # %%time
-#debug_train()
+debug_train()
 
 
 from functools import partial
@@ -1341,14 +1330,18 @@ def train_loop(index, *args):
     learn = k.create_learner(k, opt_func=AdamW_with_given_p,
                              loss_func=LabelSmoothing(),
                              wd=0.01,
-                             callback_fns=partial(GradientClipping, clip=0.1)).to_tpu_distributed()
+                             callback_fns=[partial(GradientClipping, clip=0.5),
+                                           ShowGraph,
+                                           partial(CSVLogger, append=True),
+                                           partial(CheckGrad, skip_loss_step=False)]
+                             ).to_tpu_distributed()
     learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     learn.recorder.plot()
     #learn.fit_one_cycle(3, max_lr=9e-6, wd=0.001)
 
 
 FLAGS={}
-#xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
+xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
 def _mp_fn(rank, flags, k=k):
