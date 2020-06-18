@@ -1263,8 +1263,8 @@ def train_loop(index, *args):
     param_optimizer = list(k.model.named_parameters())
     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
     optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 4e-5, 'weight_decay': 0.01},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 4e-5, 'weight_decay': 0.0}
     ]
 
     def AdamW_with_given_p(p_to_ignore, *args, **kargs):
@@ -1275,18 +1275,15 @@ def train_loop(index, *args):
     if index == 0:
         time.sleep(1)
     learn = k.create_learner(k, opt_func=AdamW_with_given_p, loss_func=LabelSmoothing(), wd=0.01).to_tpu_distributed()
-    #print('hello')
-    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
-    #learn.recorder.plot()
-    learn.fit_one_cycle(3, max_lr=9e-6, wd=0.001)
+    learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    learn.recorder.plot()
+    #learn.fit_one_cycle(3, max_lr=9e-6, wd=0.001)
 
 
 # -
 
 # %%time
-k.learner.data.train_dl.dl.batch_size
-print(f"data device: {k.learner.data.device}")
-#debug_train()
+debug_train()
 
 
 FLAGS={}
