@@ -1163,10 +1163,6 @@ class TPUDistributed(LearnerCallback):
     def on_epoch_begin(self,**kwargs:Any)->None:
         logger.debug("Epoch begins on device %s" % self.device)
 
-        if self.debug:
-            self.learn.data.valid_dl.to(self.device)
-
-            return
         self.old_train_dl = self.data.train_dl
         self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
         self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
