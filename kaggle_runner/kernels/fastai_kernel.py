@@ -72,14 +72,13 @@ class FastAIKernel(KaggleKernel):
         for k, v in kargs.items():
             setattr(self, _map(k), v)
 
-    def setup_learner(self, data=None, model=None, opt_func=None, loss_func=None, metrics=None, **kargs):
+    def create_learner(self, data=None, model=None, opt_func=None, loss_func=None, metrics=None, **kargs):
         data = self.data if hasattr(
             self, 'data') and self.data is not None else data
         assert data is not None
         model = self.model if hasattr(
             self, 'model') and self.model is not None else model
-        opt_func = self.opt_func if hasattr(
-            self, 'opt_func') and self.opt_func is not None else opt_func
+        assert opt_func is not None
         loss_func = self.model_loss if hasattr(
             self, 'model_loss') and self.model_loss is not None else loss_func
         metrics = self.model_metrics if hasattr(
@@ -292,7 +291,7 @@ def test_learner_fit():
 
     k = FastAIKernel(loss_func=None, metrics=accuracy) # loss_func will be given a default one
     #k.setup_learner(data=data, model=models.resnet18, metrics=None)
-    k.setup_learner(data=data, model=CNN(), metrics=None)
+    k.create_learner(data=data, model=CNN(), metrics=None)
     assert k.learner
 
     k.learner.lr_find()

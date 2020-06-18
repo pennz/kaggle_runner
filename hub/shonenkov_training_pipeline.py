@@ -878,8 +878,21 @@ def test_init():
 # !cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
 
 
+import ipdb
+
+# !pip3 install ipdb
+
+from kaggle_runner import may_debug
+
 k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
+
+import kaggle_runner
+
+import importlib
+importlib.reload(kaggle_runner)
+
+ipdb.pm()
 
 
 def test_model_fn(device=torch.device("cpu")):
@@ -1161,8 +1174,9 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        may_debug() # check grad
-        xm.optimizer_step(self.learn.opt.opt) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
+        xm.optimizer_step(self.learn.opt.opt,barrier=True) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
+        #may_debug(True)
+        #return {'skip_step': True}
 
     def on_epoch_end(self,**kwargs:Any)->None:
         self.learn.data.train_dl = self.old_train_dl
@@ -1195,6 +1209,15 @@ def filelist2df(path):
 #test_path = path/'test.txt'
 
 
+# -
+
+import functools
+
+
+
+# +
+# AdamW??
+
 # +
 def debug_train():
     from kaggle_runner import defaults
@@ -1204,13 +1227,17 @@ def debug_train():
     param_optimizer = list(k.model.named_parameters())
     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
     optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
     ]
-
+    
+    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
+        kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
+        return AdamW(optimizer_grouped_parameters, *args, **kargs)
+ 
+    #may_debug()
     learn = k.setup_learner(loss_func=LabelSmoothing(),
-                            opt_func=AdamW(optimizer_grouped_parameters,
-                                           lr=TrainGlobalConfig.lr*xm.xrt_world_size()),
+                            opt_func=AdamW_with_given_p,
                             wd=0.01).to_tpu_distributed()
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
@@ -1245,6 +1272,8 @@ def train_loop(index, *args):
 k.learner.data.train_dl.dl.batch_size
 print(f"data device: {k.learner.data.device}")
 #debug_train()
+
+
 FLAGS={}
 xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
