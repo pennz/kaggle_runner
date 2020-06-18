@@ -1241,9 +1241,9 @@ def debug_train():
                              callback_fns=[partial(GradientClipping, clip=0.1),
                                            ShowGraph,
                                            partial(CSVLogger, append=True),
-                                           partial(StopAfterNBatches, 200),
                                            partial(CheckGrad, skip_loss_step=False)]
                              ).to_tpu_distributed()
+    learn.callbacks.append(StopAfterNBatches(n_batches=200))
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
