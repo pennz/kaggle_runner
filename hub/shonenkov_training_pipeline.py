@@ -19,7 +19,7 @@
 # %autoreload 2
 
 # + language="bash"
-# [ -d kaggle_runner ] || ( git clone https://github.com/pennz/kaggle_runner
+# pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner
 # python3 -m pip install -e kaggle_runner
 # export PATH=$PWD/kaggle_runner/bin:$PATH
 # entry.sh)
@@ -921,6 +921,22 @@ def test_model_fn(device=torch.device("cpu")):
     assert net is not None
     net.to(device)
 
+    param_optimizer = list(self.model.named_parameters())
+    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+    ]
+    optimizer = AdamW(optimizer_grouped_parameters, lr=config.lr*xm.xrt_world_size())
+
+    train_loader = torch.utils.data.DataLoader(
+        self.train_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+    #    sampler=train_sampler,
+        pin_memory=False,
+        drop_last=True,
+        num_workers=TrainGlobalConfig.num_workers,
+    )
     validation_loader = torch.utils.data.DataLoader(
         self.validation_dataset,
         batch_size=TrainGlobalConfig.batch_size,
@@ -1001,8 +1017,8 @@ def test_model_fn(device=torch.device("cpu")):
 
         return result
 
-    def train_one_epoch(self, train_loader):
-        self.model.train()
+    def train_one_epoch(model, device, config, train_loader, criterion, optimizer):
+        model.train()
 
         losses = AverageMeter()
         final_scores = RocAucMeter()
@@ -1012,22 +1028,22 @@ def test_model_fn(device=torch.device("cpu")):
             inputs=inputs_masks[0]
             attention_masks=inputs_masks[1]
 
-            if self.config.verbose:
-                if step % self.config.verbose_step == 0:
-                    self.log(
+            if config.verbose:
+                if step % config.verbose_step == 0:
+                    logger.debug(
                         f'Train Step {step}, loss: ' + \
                         f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
-            inputs = inputs.to(self.device, dtype=torch.long)
-            attention_masks = attention_masks.to(self.device, dtype=torch.long)
-            targets = targets.to(self.device, dtype=torch.float)
+            inputs = inputs.to(device, dtype=torch.long)
+            attention_masks = attention_masks.to(device, dtype=torch.long)
+            targets = targets.to(device, dtype=torch.float)
 
-            self.optimizer.zero_grad()
+            optimizer.zero_grad()
 
-            outputs = self.model(inputs, attention_masks)
-            loss = self.criterion(outputs, targets)
+            outputs = model(inputs, attention_masks)
+            loss = criterion(outputs, targets)
 
             batch_size = inputs.size(0)
 
@@ -1036,22 +1052,19 @@ def test_model_fn(device=torch.device("cpu")):
             losses.update(loss.detach().item(), batch_size)
 
             loss.backward()
-            xm.optimizer_step(self.optimizer)
-            _check_grad(self.optimizer)
+            _check_grad(optimizer)
+            xm.optimizer_step(optimizer, barrier=True)
 
-            if self.config.step_scheduler:
-                self.scheduler.step()
-
-        self.model.eval()
+        model.eval()
         #self.save('last-checkpoint.bin')
 
         return losses, final_scores
 
-    def run_tuning_and_inference(self, test_loader, validation_tune_loader):
+    def run_tuning_and_inference(net, device, TrainGlobalConfig, validation_loader, train_loader):
         for e in range(1):
             self.optimizer.param_groups[0]['lr'] = self.config.lr*8
 
-            losses, final_scores = self.train_one_epoch(validation_tune_loader)
+            losses, final_scores = train_one_epoch(net, device, TrainGlobalConfig, train_loader, TrainGlobalConfig.criterion, )
             self.log(f'[RESULT]: Tune_Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
 
             t = time.time()
@@ -1061,6 +1074,7 @@ def test_model_fn(device=torch.device("cpu")):
 
             run_inference(net, device, TrainGlobalConfig, validation_loader)
 
+    train_one_epoch(net, device, TrainGlobalConfig, train_loader, TrainGlobalConfig.criterion, optimizer)
     losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
     logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
 
