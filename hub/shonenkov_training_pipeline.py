@@ -735,10 +735,14 @@ class TPUFitter:
         logger.debug("grad info: %s", self.learn.opt)
 
         norms = torch.tensor([torch.norm(p) for p in pg0pl])
-        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
+        normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl])
+        logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
+        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
 
         norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
-        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
+        norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl])
+        logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
+        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
 
     def train_one_epoch(self, train_loader):
         self.model.train()
