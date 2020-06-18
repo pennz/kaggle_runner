@@ -726,24 +726,6 @@ class TPUFitter:
 
         return losses, final_scores
 
-    def _check_grad(self):
-        raw_opt = self.optimizer
-        pg = raw_opt.param_groups
-        pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
-        pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
-
-        logger.debug("grad info: %s", self.learn.opt)
-
-        norms = torch.tensor([torch.norm(p) for p in pg0pl])
-        normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl])
-        logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
-        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
-
-        norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
-        norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl])
-        logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
-        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
-
     def train_one_epoch(self, train_loader):
         self.model.train()
 
@@ -780,7 +762,7 @@ class TPUFitter:
 
             loss.backward()
             logger.debug("step: %d, loss: %f", step, loss)
-            self._check_grad()
+            _check_grad(self.optimizer)
             xm.optimizer_step(self.optimizer)
 
             if self.config.step_scheduler:
@@ -1103,6 +1085,23 @@ pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
 # +
+def _check_grad(raw_opt):
+    pg = raw_opt.param_groups
+    pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+    pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+
+    logger.debug("grad info: %s", raw_opt)
+
+    norms = torch.tensor([torch.norm(p) for p in pg0pl])
+    normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl if p.grad is not None])
+    logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
+    logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
+
+    norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
+    norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl if p.grad is not None])
+    logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
+    logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
+
 class CheckGrad(LearnerCallback):
     def __init__(self, learn:Learner, skip_loss_step=False):
         super().__init__(learn)
@@ -1111,21 +1110,7 @@ class CheckGrad(LearnerCallback):
 
     def on_backward_end(self, **kwargs:Any)->None:
         raw_opt = self.learn.opt.opt
-        pg = raw_opt.param_groups
-        pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
-        pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
-
-        logger.debug("grad info: %s", self.learn.opt)
-
-        norms = torch.tensor([torch.norm(p) for p in pg0pl])
-        normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl])
-        logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
-        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
-
-        norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
-        norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl])
-        logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
-        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
+        _check_grad(raw_opt)
 
         return {'skip_step': self.skip_loss_step}
 
