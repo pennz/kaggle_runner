@@ -19,10 +19,10 @@
 # %autoreload 2
 
 # + language="bash"
-# # git clone https://github.com/pennz/kaggle_runner
-# # python3 -m pip install -e kaggle_runner
-# # export PATH=$PWD/kaggle_runner/bin:$PATH
-# # entry.sh
+# [ -d kaggle_runner ] || ( git clone https://github.com/pennz/kaggle_runner
+# python3 -m pip install -e kaggle_runner
+# export PATH=$PWD/kaggle_runner/bin:$PATH
+# entry.sh)
 
 
 # + language="bash"
@@ -1151,9 +1151,8 @@ class TPUDistributed(LearnerCallback):
         if self.debug:
             self.learn.opt.lr = self.learn.opt.lr
             logger.debug("opt info: %s, type %s", self.learn.opt, type(self.learn.opt))
-
-            return
-        self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
+        else:
+            self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
         logger.debug("%s used for xla_device, to device done" % self.device)
         shuffle = self.data.train_dl.init_kwargs['shuffle'] if hasattr(self.data.train_dl, 'init_kwargs') else True
         self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = self._change_dl(self.data.train_dl, shuffle)
@@ -1165,6 +1164,8 @@ class TPUDistributed(LearnerCallback):
         logger.debug("Epoch begins on device %s" % self.device)
 
         if self.debug:
+            self.learn.data.valid_dl.to(self.device)
+
             return
         self.old_train_dl = self.data.train_dl
         self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
@@ -1178,19 +1179,15 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        xm.optimizer_step(self.learn.opt.opt,barrier=self.debug) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
+        xm.optimizer_step(self.learn.opt, barrier=self.debug) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
         #may_debug(True)
         #return {'skip_step': True}
 
     def on_epoch_end(self,**kwargs:Any)->None:
-        if self.debug:
-            return
         self.learn.data.train_dl = self.old_train_dl
         self.learn.data.valid_dl = self.old_valid_dl
 
     def on_train_end(self,**kwargs:Any)->None:
-        if self.debug:
-            return
         self.learn.data.train_dl = self.old_sampler_train_dl
         self.learn.data.valid_dl = self.old_sampler_valid_dl
 
