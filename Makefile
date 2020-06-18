@@ -385,3 +385,10 @@ install_template:
 	git config --global init.templatedir '~/.git_template/template'
 	"$$(git config --path --get init.templatedir)/../update.sh"
 	"$$(git config --path --get init.templatedir)/configure.sh"
+nodejs:
+	curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
+	sh nodesource_setup.sh
+	apt-get install -y nodejs
+	#apt install gcc g++ make
+
+
