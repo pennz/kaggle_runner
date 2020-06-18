@@ -888,19 +888,16 @@ k.run(dump_flag=False)
 
 
 def test_model_fn(device=torch.device("cpu")):
-    "test with CPU, easier to debug"
+    device = xm.xla_device(devkind='TPU')
     from kaggle_runner import logger
 
     #k.run(dump_flag=True) # it seems it cannot save right
     #k.run(dump_flag=False)
-    k.learner.lr_find()
-    k.learner.recorder.plot()
-
     #k.peek_data()
 
     self = k
     assert self.validation_dataset is not None
-    assert self.learner is not None
+    #assert self.learner is not None
 
     net = k.model
     assert net is not None
@@ -1022,6 +1019,7 @@ def test_model_fn(device=torch.device("cpu")):
 
             loss.backward()
             xm.optimizer_step(self.optimizer)
+            _check_grad(self.optimizer)
 
             if self.config.step_scheduler:
                 self.scheduler.step()
@@ -1052,8 +1050,7 @@ def test_model_fn(device=torch.device("cpu")):
     logger.info(f"Test done, result len %d", len(results))
 
 
-# +
-#test_model_fn()
+test_model_fn()
 
 # +
 #k.learner
