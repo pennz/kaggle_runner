@@ -8,7 +8,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.4.2
+#       jupytext_version: 1.5.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -1433,7 +1433,7 @@ gc.collect()
 
 if __name__ == "__main__":
     FLAGS={}
-    #xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
+    xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 # -
 
 from datetime import date
