@@ -1087,7 +1087,7 @@ class CheckGrad(LearnerCallback):
     def __init__(self, learn:Learner, skip_loss_step=False):
         super().__init__(learn)
         self.skip_loss_step = skip_loss_step
-        logger.debug("skip_loss_step: " +str(self.skip_loss_step))
+        logger.debug("Callback CheckGrad skip_loss_step: " +str(self.skip_loss_step))
 
     def on_backward_end(self, **kwargs:Any)->None:
         may_debug()
@@ -1215,6 +1215,9 @@ def filelist2df(path):
 import functools
 
 
+from functools import partial
+from fastai.callbacks.misc import StopAfterNBatches
+from fastai.callbacks import *
 def debug_train():
     from kaggle_runner import defaults
     _DEBUG = defaults.DEBUG
@@ -1232,9 +1235,15 @@ def debug_train():
 
         return AdamW(optimizer_grouped_parameters, *args, **kargs)
 
-    learn = k.create_learner(k, loss_func=LabelSmoothing(),
-                            opt_func=AdamW_with_given_p,
-                            wd=0.01).to_tpu_distributed()
+    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
+                             loss_func=LabelSmoothing(),
+                             wd=0.01,
+                             callback_fns=[partial(GradientClipping, clip=0.1),
+                                           ShowGraph,
+                                           partial(CSVLogger, append=True),
+                                           partial(StopAfterNBatches, 200),
+                                           partial(CheckGrad, skip_loss_step=False)]
+                             ).to_tpu_distributed()
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
@@ -1243,6 +1252,11 @@ def debug_train():
     learn.fit(1, lr=5e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
+# %%time
+debug_train()
+
+
+from functools import partial
 def train_loop(index, *args):
   #data = (ImageList.from_df(df=train_df, path=path/'images', cols=1)
   #        .random_split_by_pct(0.2)
@@ -1267,16 +1281,13 @@ def train_loop(index, *args):
 
     if index == 0:
         time.sleep(1)
-    learn = k.create_learner(k, opt_func=AdamW_with_given_p, loss_func=LabelSmoothing(), wd=0.01).to_tpu_distributed()
+    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
+                             loss_func=LabelSmoothing(),
+                             wd=0.01,
+                             callback_fns=partial(GradientClipping, clip=0.1)).to_tpu_distributed()
     learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     learn.recorder.plot()
     #learn.fit_one_cycle(3, max_lr=9e-6, wd=0.001)
-
-
-# -
-
-# %%time
-debug_train()
 
 
 FLAGS={}
