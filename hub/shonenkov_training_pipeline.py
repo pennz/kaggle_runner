@@ -1095,8 +1095,8 @@ class CheckGrad(LearnerCallback):
 
         return {'skip_step': self.skip_loss_step}
 
-class TPUDistributed(LearnerCallback, debug=True):
-    def __init__(self, learn:Learner):
+class TPUDistributed(LearnerCallback):
+    def __init__(self, learn:Learner, debug=True):
         super().__init__(learn)
         self.device = xm.xla_device(devkind='TPU')
         logger.debug("%s used for xla_device for TPUDistributed" % self.device)
