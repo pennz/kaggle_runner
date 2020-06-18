@@ -726,6 +726,20 @@ class TPUFitter:
 
         return losses, final_scores
 
+    def _check_grad(self):
+        raw_opt = self.optimizer
+        pg = raw_opt.param_groups
+        pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+        pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+
+        logger.debug("grad info: %s", self.learn.opt)
+
+        norms = torch.tensor([torch.norm(p) for p in pg0pl])
+        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
+
+        norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
+        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
+
     def train_one_epoch(self, train_loader):
         self.model.train()
 
@@ -761,6 +775,7 @@ class TPUFitter:
             losses.update(loss.detach().item(), batch_size)
 
             loss.backward()
+            self._check_grad()
             xm.optimizer_step(self.optimizer)
 
             if self.config.step_scheduler:
@@ -1090,14 +1105,17 @@ class CheckGrad(LearnerCallback):
         logger.debug("Callback CheckGrad skip_loss_step: " +str(self.skip_loss_step))
 
     def on_backward_end(self, **kwargs:Any)->None:
-        may_debug()
         raw_opt = self.learn.opt.opt
         pg = raw_opt.param_groups
         pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+        pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
 
         logger.debug("grad info: %s", self.learn.opt)
         norms = torch.tensor([torch.norm(p) for p in pg0pl])
-        logger.debug("grad info: norm std(%f) mean(%f)", *torch.std_mean(norms))
+        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
+
+        norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
+        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
 
         return {'skip_step': self.skip_loss_step}
 
@@ -1113,8 +1131,6 @@ class TPUDistributed(LearnerCallback):
         else:
             self.device = xm.xla_device(devkind='TPU')
             logger.debug("%s used for xla_device for TPUDistributed" % self.device)
-
-
 
     def _change_dl(self,dl, shuffle):
         old_dl = dl
