@@ -1091,19 +1091,23 @@ class CheckGrad(LearnerCallback):
 
     def on_backward_end(self, **kwargs:Any)->None:
         may_debug()
-        logger.debug("grad info: "+self.learn.opt)
+        logger.debug("grad info: %s", self.learn.opt)
 
         return {'skip_step': self.skip_loss_step}
 
 class TPUDistributed(LearnerCallback):
     def __init__(self, learn:Learner, debug=True):
         super().__init__(learn)
-        self.device = xm.xla_device(devkind='TPU')
-        logger.debug("%s used for xla_device for TPUDistributed" % self.device)
+
         self.debug = debug
 
         if debug:
-            logger.debug("DEBUG mode")
+            logger.debug("DEBUG mode, use CPU")
+            self.device = xm.xla_device(devkind='CPU')
+        else:
+            self.device = xm.xla_device(devkind='TPU')
+            logger.debug("%s used for xla_device for TPUDistributed" % self.device)
+
 
 
     def _change_dl(self,dl, shuffle):
