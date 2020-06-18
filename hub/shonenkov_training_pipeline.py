@@ -1091,7 +1091,13 @@ class CheckGrad(LearnerCallback):
 
     def on_backward_end(self, **kwargs:Any)->None:
         may_debug()
+        raw_opt = self.learn.opt.opt
+        pg = raw_opt.param_groups
+        pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+
         logger.debug("grad info: %s", self.learn.opt)
+        norms = torch.tensor([torch.norm(p) for p in pg0pl])
+        logger.debug("grad info: norm mean(%f) std(%f)", torch.mean(norms), torch.std_var(norms))
 
         return {'skip_step': self.skip_loss_step}
 
