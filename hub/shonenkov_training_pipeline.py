@@ -535,7 +535,7 @@ class Shonenkov(FastAIKernel):
 
     def peek_data(self):
         if self.data is not None:
-            may_debug(True)
+            may_debug()
             o = self.data.one_batch()
             print(o)
 
@@ -1273,10 +1273,10 @@ def debug_train():
     learn.callbacks.append(StopAfterNBatches(n_batches=200))
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
-    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
-    #learn.fit_one_cycle(1, max_lr=5e-5)
-    learn.fit(1, lr=5e-5) # original 0.5*e-5*8=4*e-5
+    #learn.fit_one_cycle(1, max_lr=4e-5)
+    #learn.fit(1, lr=5e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
 # %%time
