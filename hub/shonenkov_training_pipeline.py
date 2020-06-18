@@ -8,7 +8,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.5.0
+#       jupytext_version: 1.4.2
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -738,7 +738,7 @@ class TPUFitter:
 
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
-                    self.log(
+                    logger.info(
                         f'Train Step {step}, loss: ' + \
                         f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
@@ -760,8 +760,17 @@ class TPUFitter:
             losses.update(loss.detach().item(), batch_size)
 
             loss.backward()
-            logger.debug("step: %d, loss: %f", step, loss)
-            _check_grad(self.optimizer)
+            logger.info("step: %d, loss: %f", step, loss)
+
+            pg = self.optimizer.param_groups
+            pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+            pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+
+            normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl if p.grad is not None])
+            logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
+            norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl if p.grad is not None])
+            logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
+
             xm.optimizer_step(self.optimizer)
 
             if self.config.step_scheduler:
