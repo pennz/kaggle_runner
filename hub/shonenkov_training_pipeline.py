@@ -2,7 +2,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     cell_metadata_filter: id,colab_type,colab,-all
+#     cell_metadata_filter: id,colab_type,colab,language,-all
 #     formats: ipynb,py
 #     text_representation:
 #       extension: .py
@@ -18,7 +18,7 @@
 # %load_ext autoreload
 # %autoreload 2
 
-# + language="bash"
+# + language="ash"
 # pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner
 # python3 -m pip install -e kaggle_runner
 # export PATH=$PWD/kaggle_runner/bin:$PATH
@@ -937,11 +937,13 @@ def test_model_fn(device=torch.device("cpu")):
     train_loader = torch.utils.data.DataLoader(
         self.train_dataset,
         batch_size=TrainGlobalConfig.batch_size,
-    #    sampler=train_sampler,
+        shuffle=False, # sampler is set, so shuffle here should be False
+        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
         pin_memory=False,
         drop_last=True,
         num_workers=TrainGlobalConfig.num_workers,
     )
+    may_debug()
     validation_loader = torch.utils.data.DataLoader(
         self.validation_dataset,
         batch_size=TrainGlobalConfig.batch_size,
@@ -1091,7 +1093,11 @@ def test_model_fn(device=torch.device("cpu")):
 
 # -
 
+from kaggle_runner import defaults
+_DEBUG = defaults.DEBUG
+defaults.DEBUG = True
 test_model_fn()
+defaults.DEBUG = _DEBUG
 
 # +
 #k.learner
@@ -1290,7 +1296,7 @@ def debug_train():
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
     learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
-    #learn.recorder.plot()
+    learn.recorder.plot()
     #learn.fit_one_cycle(1, max_lr=4e-5)
     #learn.fit(1, lr=5e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
