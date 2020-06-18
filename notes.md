@@ -474,3 +474,21 @@ Train Step 53, loss: 0.80085, final_score: 0.78749, mc_score: 0.39708, time: 271
 Train Step 54, loss: 0.79615, final_score: 0.79201, mc_score: 0.40578, time: 272.36462
 ```
 The first two batches, 100ms each. About 1 second one batch.
+
+The following CPU, data not downsample
+```  
+[DEBUG]2020-06-18 10:36:24,981:utils:Device used: cpu
+[DEBUG]2020-06-18 10:36:25,041:utils:Train Step 0, loss: 0.00000, lr: 5e-06 final_score: 0.00000, mc_score: 0.00000, time: 0.04135
+[DEBUG]2020-06-18 10:36:46,579:utils:Train Step 1, loss: 0.95281, lr: 5e-06 final_score: 0.43590, mc_score: 0.17949, time: 21.57958
+[DEBUG]2020-06-18 10:36:59,812:utils:Train Step 2, loss: 0.92699, lr: 5e-06 final_score: 0.29630, mc_score: 0.09759, time: 34.81184
+[DEBUG]2020-06-18 10:37:12,832:utils:Train Step 3, loss: 0.81862, lr: 5e-06 final_score: 0.33023, mc_score: 0.14394, time: 47.83250
+[DEBUG]2020-06-18 10:37:25,925:utils:Train Step 4, loss: 0.76314, lr: 5e-06 final_score: 0.35593, mc_score: 0.13220, time: 60.92473
+[DEBUG]2020-06-18 10:37:38,717:utils:Train Step 5, loss: 0.72612, lr: 5e-06 final_score: 0.38933, mc_score: 0.14667, time: 73.71680
+[DEBUG]2020-06-18 10:37:51,702:utils:Train Step 6, loss: 0.72418, lr: 5e-06 final_score: 0.36111, mc_score: 0.13315, time: 86.70245
+[DEBUG]2020-06-18 10:38:04,516:utils:Train Step 7, loss: 0.71632, lr: 5e-06 final_score: 0.33197, mc_score: 0.12279, time: 99.51615
+[DEBUG]2020-06-18 10:38:17,705:utils:Train Step 8, loss: 0.69501, lr: 5e-06 final_score: 0.34238, mc_score: 0.12886, time: 112.70531
+[DEBUG]2020-06-18 10:38:30,389:utils:Train Step 9, loss: 0.68046, lr: 5e-06 final_score: 0.38373, mc_score: 0.13351, time: 125.38881
+[DEBUG]2020-06-18 10:38:43,086:utils:Train Step 10, loss: 0.66373, lr: 5e-06 final_score: 0.39402, mc_score: 0.13720, time: 138.08598
+[DEBUG]2020-06-18 10:38:55,723:utils:Train Step 11, loss: 0.65396, lr: 5e-06 final_score: 0.47917, mc_score: 0.25964, time: 150.72317
+[DEBUG]2020-06-18 10:39:08,344:utils:Train Step 12, loss: 0.64371, lr: 5e-06 final_score: 0.50340, mc_score: 0.26215, time: 163.34438
+```

@@ -848,7 +848,7 @@ class TrainGlobalConfig:
 
     # -------------------
     verbose = True  # выводить принты
-    verbose_step = 25  # количество шагов для вывода принта
+    verbose_step = 1  # количество шагов для вывода принта
     # -------------------
 
     # --------------------
@@ -892,7 +892,7 @@ def _check_grad(raw_opt):
     pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
     pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
 
-    logger.debug("grad info: %s", raw_opt)
+    #logger.debug("grad info: %s", raw_opt)
 
     norms = torch.tensor([torch.norm(p) for p in pg0pl])
     normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl if p.grad is not None])
@@ -905,9 +905,13 @@ def _check_grad(raw_opt):
     logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
 
 
+# +
+from kaggle_runner import logger
+
 def test_model_fn(device=torch.device("cpu")):
-    device = xm.xla_device(devkind='TPU')
-    from kaggle_runner import logger
+    #device = xm.xla_device(devkind='TPU')
+    #device=torch.device("xla")
+    logger.debug("Device used: %s", device)
 
     #k.run(dump_flag=True) # it seems it cannot save right
     #k.run(dump_flag=False)
@@ -927,7 +931,7 @@ def test_model_fn(device=torch.device("cpu")):
         {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
         {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
     ]
-    optimizer = AdamW(optimizer_grouped_parameters, lr=config.lr*xm.xrt_world_size())
+    optimizer = AdamW(optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*xm.xrt_world_size())
 
     train_loader = torch.utils.data.DataLoader(
         self.train_dataset,
@@ -1032,7 +1036,7 @@ def test_model_fn(device=torch.device("cpu")):
                 if step % config.verbose_step == 0:
                     logger.debug(
                         f'Train Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
+                        f"{losses.avg:.5f}, lr: {optimizer.param_groups[0]['lr']} final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, " + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
@@ -1053,6 +1057,7 @@ def test_model_fn(device=torch.device("cpu")):
 
             loss.backward()
             _check_grad(optimizer)
+            optimizer.step()
             xm.optimizer_step(optimizer, barrier=True)
 
         model.eval()
@@ -1081,6 +1086,8 @@ def test_model_fn(device=torch.device("cpu")):
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
 
+
+# -
 
 test_model_fn()
 
