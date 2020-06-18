@@ -1095,11 +1095,16 @@ class CheckGrad(LearnerCallback):
 
         return {'skip_step': self.skip_loss_step}
 
-class TPUDistributed(LearnerCallback):
+class TPUDistributed(LearnerCallback, debug=True):
     def __init__(self, learn:Learner):
         super().__init__(learn)
         self.device = xm.xla_device(devkind='TPU')
-        logger.debug("%s used for xla_device" % self.device)
+        logger.debug("%s used for xla_device for TPUDistributed" % self.device)
+        self.debug = debug
+
+        if debug:
+            logger.debug("DEBUG mode")
+
 
     def _change_dl(self,dl, shuffle):
         old_dl = dl
@@ -1141,8 +1146,14 @@ class TPUDistributed(LearnerCallback):
         return old_dl,validation_loader,validation_sampler
 
     def on_train_begin(self, **kwargs:Any)->None:
-        self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
         self.learn.model = self.learn.model.to(self.device)
+
+        if self.debug:
+            self.learn.opt.lr = self.learn.opt.lr
+            logger.debug("opt info: %s, type %s", self.learn.opt, type(self.learn.opt))
+
+            return
+        self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
         logger.debug("%s used for xla_device, to device done" % self.device)
         shuffle = self.data.train_dl.init_kwargs['shuffle'] if hasattr(self.data.train_dl, 'init_kwargs') else True
         self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = self._change_dl(self.data.train_dl, shuffle)
@@ -1152,6 +1163,9 @@ class TPUDistributed(LearnerCallback):
 
     def on_epoch_begin(self,**kwargs:Any)->None:
         logger.debug("Epoch begins on device %s" % self.device)
+
+        if self.debug:
+            return
         self.old_train_dl = self.data.train_dl
         self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
         self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
@@ -1164,15 +1178,19 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        xm.optimizer_step(self.learn.opt.opt,barrier=True) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
+        xm.optimizer_step(self.learn.opt.opt,barrier=self.debug) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
         #may_debug(True)
         #return {'skip_step': True}
 
     def on_epoch_end(self,**kwargs:Any)->None:
+        if self.debug:
+            return
         self.learn.data.train_dl = self.old_train_dl
         self.learn.data.valid_dl = self.old_valid_dl
 
     def on_train_end(self,**kwargs:Any)->None:
+        if self.debug:
+            return
         self.learn.data.train_dl = self.old_sampler_train_dl
         self.learn.data.valid_dl = self.old_sampler_valid_dl
 
