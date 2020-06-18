@@ -1126,8 +1126,8 @@ class TPUDistributed(LearnerCallback):
         self.debug = debug
 
         if debug:
-            logger.debug("DEBUG mode, use CPU")
-            self.device = xm.xla_device(devkind='CPU')
+            logger.debug("TPUDistributed in DEBUG mode")
+            #self.device = xm.xla_device(devkind='CPU')
         else:
             self.device = xm.xla_device(devkind='TPU')
             logger.debug("%s used for xla_device for TPUDistributed" % self.device)
