@@ -13,8 +13,8 @@
     # ( sleep 60; nvim -Vnvim_log -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +checkhealth +qa )&
     ln -s .shrc_customised.macos .shrc_customised
     echo "alias gdrive='gdrive  --service-account a.json'" >>~/.bash_aliases
-    echo "unalias vim; alias vim='vim -u .vimrc_back'" >>~/.bash_aliases
-    vim -u .vimrc_back +PlugInstall +qa
+    echo "unalias vim; alias vim='vim -u ~/.vimrc_back'" >>~/.bash_aliases
+    vim -u ~/.vimrc_back +PlugInstall +qa
     popd
 
     cat >>~/.profile <<EOF

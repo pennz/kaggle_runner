@@ -2,7 +2,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     cell_metadata_filter: id,colab_type,colab,-all
+#     cell_metadata_filter: id,colab_type,colab,language,-all
 #     formats: ipynb,py
 #     text_representation:
 #       extension: .py
@@ -18,20 +18,19 @@
 # %load_ext autoreload
 # %autoreload 2
 
-# + language="bash"
-# pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner
-# python3 -m pip install -e kaggle_runner
-# export PATH=$PWD/kaggle_runner/bin:$PATH
-# entry.sh)
-
-
-# + language="bash"
-# python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null;
-#                                    python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev;
-#                                    python3 -m pip install transformers==2.5.1 > /dev/null;
-#                                    python3 -m pip install pandarallel > /dev/null;
-#                                    python3 -m pip install catalyst==20.4.2 > /dev/null;)
+# + language="ash"
+# !pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner \
+# python3 -m pip install -e kaggle_runner \
+# export PATH=$PWD/kaggle_runner/bin:$PATH \
+# entry.sh &)
 # -
+
+
+# !python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null; \
+#                                    python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
+#                                    python3 -m pip install transformers==2.5.1 > /dev/null; \
+#                                    python3 -m pip install pandarallel > /dev/null; \
+#                                    python3 -m pip install catalyst==20.4.2 > /dev/null;)
 
 
 import numpy as np
@@ -739,7 +738,7 @@ class TPUFitter:
 
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
-                    self.log(
+                    logger.info(
                         f'Train Step {step}, loss: ' + \
                         f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
                         f'time: {(time.time() - t):.5f}'
@@ -761,8 +760,8 @@ class TPUFitter:
             losses.update(loss.detach().item(), batch_size)
 
             loss.backward()
-            logger.debug("step: %d, loss: %f", step, loss)
-            _check_grad(self.optimizer)
+            logger.info("step: %d, loss: %f", step, loss)
+
             xm.optimizer_step(self.optimizer)
 
             if self.config.step_scheduler:
@@ -910,7 +909,7 @@ from kaggle_runner import logger
 
 def test_model_fn(device=torch.device("cpu")):
     #device = xm.xla_device(devkind='TPU')
-    #device=torch.device("xla")
+    device=torch.device("xla")
     logger.debug("Device used: %s", device)
 
     #k.run(dump_flag=True) # it seems it cannot save right
@@ -937,11 +936,13 @@ def test_model_fn(device=torch.device("cpu")):
     train_loader = torch.utils.data.DataLoader(
         self.train_dataset,
         batch_size=TrainGlobalConfig.batch_size,
-    #    sampler=train_sampler,
+        shuffle=False, # sampler is set, so shuffle here should be False
+        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
         pin_memory=False,
         drop_last=True,
         num_workers=TrainGlobalConfig.num_workers,
     )
+    may_debug()
     validation_loader = torch.utils.data.DataLoader(
         self.validation_dataset,
         batch_size=TrainGlobalConfig.batch_size,
@@ -1059,7 +1060,7 @@ def test_model_fn(device=torch.device("cpu")):
 
             loss.backward()
             _check_grad(optimizer)
-            optimizer.step()
+            #optimizer.step()
             xm.optimizer_step(optimizer, barrier=True)
 
         model.eval()
@@ -1091,7 +1092,11 @@ def test_model_fn(device=torch.device("cpu")):
 
 # -
 
-test_model_fn()
+from kaggle_runner import defaults
+_DEBUG = defaults.DEBUG
+defaults.DEBUG = True
+#test_model_fn()
+defaults.DEBUG = _DEBUG
 
 # +
 #k.learner
@@ -1255,9 +1260,6 @@ def filelist2df(path):
 
 # -
 
-import functools
-
-
 from functools import partial
 from fastai.callbacks.misc import StopAfterNBatches
 from fastai.callbacks import *
@@ -1286,11 +1288,12 @@ def debug_train():
                                            partial(CSVLogger, append=True),
                                            partial(CheckGrad, skip_loss_step=False)]
                              ).to_tpu_distributed()
+
     learn.callbacks.append(StopAfterNBatches(n_batches=200))
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
     learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
-    #learn.recorder.plot()
+    learn.recorder.plot()
     #learn.fit_one_cycle(1, max_lr=4e-5)
     #learn.fit(1, lr=5e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
@@ -1327,7 +1330,11 @@ def train_loop(index, *args):
     learn = k.create_learner(k, opt_func=AdamW_with_given_p,
                              loss_func=LabelSmoothing(),
                              wd=0.01,
-                             callback_fns=partial(GradientClipping, clip=0.1)).to_tpu_distributed()
+                             callback_fns=[partial(GradientClipping, clip=0.5),
+                                           ShowGraph,
+                                           partial(CSVLogger, append=True),
+                                           partial(CheckGrad, skip_loss_step=False)]
+                             ).to_tpu_distributed()
     learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     learn.recorder.plot()
     #learn.fit_one_cycle(3, max_lr=9e-6, wd=0.001)
@@ -1335,9 +1342,6 @@ def train_loop(index, *args):
 
 FLAGS={}
 xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
-
-
-print(len(k.learner.data.train_dl.dl),k.learner.data.train_dl.dl.batch_size)
 
 
 def _mp_fn(rank, flags, k=k):
@@ -1422,7 +1426,7 @@ gc.collect()
 
 if __name__ == "__main__":
     FLAGS={}
-    #xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
+    xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 # -
 
 from datetime import date

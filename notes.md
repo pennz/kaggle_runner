@@ -737,3 +737,97 @@ Parameter Group 1
 [DEBUG]2020-06-18 10:47:10,603:utils:grad info pg1: norm std(0.031085) mean(0.045465)
 [DEBUG]2020-06-18 10:47:11,282:utils:Train Step 22, loss: 0.56390, lr: 5e-06 final_score: 0.52226, mc_score: -0.01595, time: 325.95086
 ```
+```
+[DEBUG]2020-06-18 12:58:40,633:utils:Train Step 0, bs: 16, loss: 0.00000, lr: 4e-05 final_score: 0.00000, mc_score: 0.00000, time: 0.46691
+[DEBUG]2020-06-18 12:58:54,199:utils:params info pg0: norm std(212.533707) mean(76.280579)
+[DEBUG]2020-06-18 12:58:54,201:utils:grad info pg0: norm std(1.955211) mean(0.262538)
+[DEBUG]2020-06-18 12:58:54,208:utils:params info pg1: norm std(10.842737) mean(8.226854)
+[DEBUG]2020-06-18 12:58:54,210:utils:grad info pg1: norm std(0.047125) mean(0.011311)
+[DEBUG]2020-06-18 12:58:55,653:utils:Train Step 1, bs: 16, loss: 1.37878, lr: 4e-05 final_score: 0.18333, mc_score: 0.00000, time: 15.48734
+[DEBUG]2020-06-18 12:59:11,001:utils:params info pg0: norm std(212.533722) mean(76.280579)
+[DEBUG]2020-06-18 12:59:11,003:utils:grad info pg0: norm std(1.619439) mean(0.206290)
+[DEBUG]2020-06-18 12:59:11,010:utils:params info pg1: norm std(10.842738) mean(8.226848)
+[DEBUG]2020-06-18 12:59:11,012:utils:grad info pg1: norm std(0.034206) mean(0.008209)
+[DEBUG]2020-06-18 12:59:12,198:utils:Train Step 2, bs: 16, loss: 1.13720, lr: 4e-05 final_score: 0.48583, mc_score: 0.21713, time: 32.03194
+[DEBUG]2020-06-18 12:59:27,477:utils:params info pg0: norm std(212.533722) mean(76.280586)
+[DEBUG]2020-06-18 12:59:27,479:utils:grad info pg0: norm std(0.420249) mean(0.062736)
+[DEBUG]2020-06-18 12:59:27,486:utils:params info pg1: norm std(10.842747) mean(8.226842)
+[DEBUG]2020-06-18 12:59:27,488:utils:grad info pg1: norm std(0.010296) mean(0.002830)
+[DEBUG]2020-06-18 12:59:28,672:utils:Train Step 3, bs: 16, loss: 1.02713, lr: 4e-05 final_score: 0.56614, mc_score: 0.23054, time: 48.50635
+[DEBUG]2020-06-18 12:59:44,011:utils:params info pg0: norm std(212.533737) mean(76.280602)
+[DEBUG]2020-06-18 12:59:44,013:utils:grad info pg0: norm std(0.611604) mean(0.111733)
+[DEBUG]2020-06-18 12:59:44,019:utils:params info pg1: norm std(10.842756) mean(8.226837)
+[DEBUG]2020-06-18 12:59:44,021:utils:grad info pg1: norm std(0.031941) mean(0.008205)
+[DEBUG]2020-06-18 12:59:45,226:utils:Train Step 4, bs: 16, loss: 0.99862, lr: 4e-05 final_score: 0.60392, mc_score: 0.24309, time: 65.05992
+[DEBUG]2020-06-18 13:00:00,721:utils:params info pg0: norm std(212.533737) mean(76.280609)
+[DEBUG]2020-06-18 13:00:00,723:utils:grad info pg0: norm std(1.530189) mean(0.219328)
+[DEBUG]2020-06-18 13:00:00,730:utils:params info pg1: norm std(10.842748) mean(8.226829)
+[DEBUG]2020-06-18 13:00:00,731:utils:grad info pg1: norm std(0.043965) mean(0.011104)
+[DEBUG]2020-06-18 13:00:01,939:utils:Train Step 5, bs: 16, loss: 1.00642, lr: 4e-05 final_score: 0.60025, mc_score: 0.19799, time: 81.77277
+[DEBUG]2020-06-18 13:00:17,374:utils:params info pg0: norm std(212.533722) mean(76.280624)
+[DEBUG]2020-06-18 13:00:17,376:utils:grad info pg0: norm std(0.716371) mean(0.096198)
+[DEBUG]2020-06-18 13:00:17,383:utils:params info pg1: norm std(10.842729) mean(8.226818)
+[DEBUG]2020-06-18 13:00:17,385:utils:grad info pg1: norm std(0.018238) mean(0.004255)
+[DEBUG]2020-06-18 13:00:18,581:utils:Train Step 6, bs: 16, loss: 1.01394, lr: 4e-05 final_score: 0.57986, mc_score: 0.16725, time: 98.41493
+[DEBUG]2020-06-18 13:00:33,880:utils:params info pg0: norm std(212.533722) mean(76.280632)
+[DEBUG]2020-06-18 13:00:33,882:utils:grad info pg0: norm std(1.872231) mean(0.251125)
+[DEBUG]2020-06-18 13:00:33,889:utils:params info pg1: norm std(10.842709) mean(8.226810)
+[DEBUG]2020-06-18 13:00:33,890:utils:grad info pg1: norm std(0.049335) mean(0.011875)
+[DEBUG]2020-06-18 13:00:35,080:utils:Train Step 7, bs: 16, loss: 1.05266, lr: 4e-05 final_score: 0.53182, mc_score: 0.11745, time: 114.91363
+[DEBUG]2020-06-18 13:00:50,486:utils:params info pg0: norm std(212.533722) mean(76.280647)
+[DEBUG]2020-06-18 13:00:50,488:utils:grad info pg0: norm std(0.208455) mean(0.035497)
+[DEBUG]2020-06-18 13:00:50,495:utils:params info pg1: norm std(10.842694) mean(8.226801)
+[DEBUG]2020-06-18 13:00:50,496:utils:grad info pg1: norm std(0.007367) mean(0.001841)
+[DEBUG]2020-06-18 13:00:51,679:utils:Train Step 8, bs: 16, loss: 1.01540, lr: 4e-05 final_score: 0.55123, mc_score: 0.14864, time: 131.51252
+[DEBUG]2020-06-18 13:01:07,078:utils:params info pg0: norm std(212.533722) mean(76.280663)
+[DEBUG]2020-06-18 13:01:07,080:utils:grad info pg0: norm std(0.995567) mean(0.118626)
+[DEBUG]2020-06-18 13:01:07,087:utils:params info pg1: norm std(10.842683) mean(8.226792)
+[DEBUG]2020-06-18 13:01:07,088:utils:grad info pg1: norm std(0.021725) mean(0.004558)
+[DEBUG]2020-06-18 13:01:08,308:utils:Train Step 9, bs: 16, loss: 1.01310, lr: 4e-05 final_score: 0.54431, mc_score: 0.11455, time: 148.14178
+[DEBUG]2020-06-18 13:01:23,536:utils:params info pg0: norm std(212.533737) mean(76.280678)
+[DEBUG]2020-06-18 13:01:23,538:utils:grad info pg0: norm std(0.985859) mean(0.130040)
+[DEBUG]2020-06-18 13:01:23,545:utils:params info pg1: norm std(10.842670) mean(8.226786)
+[DEBUG]2020-06-18 13:01:23,546:utils:grad info pg1: norm std(0.019594) mean(0.004934)
+[DEBUG]2020-06-18 13:01:24,716:utils:Train Step 10, bs: 16, loss: 0.99814, lr: 4e-05 final_score: 0.54997, mc_score: 0.12516, time: 164.54980
+[DEBUG]2020-06-18 13:01:40,164:utils:params info pg0: norm std(212.533737) mean(76.280685)
+[DEBUG]2020-06-18 13:01:40,166:utils:grad info pg0: norm std(0.892248) mean(0.126503)
+[DEBUG]2020-06-18 13:01:40,173:utils:params info pg1: norm std(10.842652) mean(8.226779)
+[DEBUG]2020-06-18 13:01:40,174:utils:grad info pg1: norm std(0.026747) mean(0.006088)
+[DEBUG]2020-06-18 13:01:41,354:utils:Train Step 11, bs: 16, loss: 0.98994, lr: 4e-05 final_score: 0.55849, mc_score: 0.13371, time: 181.18776
+[DEBUG]2020-06-18 13:01:56,521:utils:params info pg0: norm std(212.533737) mean(76.280685)
+[DEBUG]2020-06-18 13:01:56,523:utils:grad info pg0: norm std(1.472403) mean(0.185932)
+[DEBUG]2020-06-18 13:01:56,530:utils:params info pg1: norm std(10.842631) mean(8.226772)
+[DEBUG]2020-06-18 13:01:56,531:utils:grad info pg1: norm std(0.036370) mean(0.007857)
+[DEBUG]2020-06-18 13:01:57,731:utils:Train Step 12, bs: 16, loss: 1.00072, lr: 4e-05 final_score: 0.54307, mc_score: 0.11199, time: 197.56456
+[DEBUG]2020-06-18 13:02:13,156:utils:params info pg0: norm std(212.533737) mean(76.280693)
+[DEBUG]2020-06-18 13:02:13,158:utils:grad info pg0: norm std(1.414801) mean(0.165110)
+[DEBUG]2020-06-18 13:02:13,165:utils:params info pg1: norm std(10.842613) mean(8.226766)
+[DEBUG]2020-06-18 13:02:13,166:utils:grad info pg1: norm std(0.031508) mean(0.006507)
+[DEBUG]2020-06-18 13:02:14,373:utils:Train Step 13, bs: 16, loss: 1.00205, lr: 4e-05 final_score: 0.53176, mc_score: 0.08609, time: 214.20676
+[DEBUG]2020-06-18 13:02:29,732:utils:params info pg0: norm std(212.533768) mean(76.280701)
+[DEBUG]2020-06-18 13:02:29,734:utils:grad info pg0: norm std(1.336432) mean(0.158541)
+[DEBUG]2020-06-18 13:02:29,742:utils:params info pg1: norm std(10.842599) mean(8.226758)
+[DEBUG]2020-06-18 13:02:29,743:utils:grad info pg1: norm std(0.028287) mean(0.005830)
+[DEBUG]2020-06-18 13:02:31,018:utils:Train Step 14, bs: 16, loss: 0.99254, lr: 4e-05 final_score: 0.53437, mc_score: 0.08405, time: 230.85220
+[DEBUG]2020-06-18 13:02:46,485:utils:params info pg0: norm std(212.533768) mean(76.280708)
+[DEBUG]2020-06-18 13:02:46,487:utils:grad info pg0: norm std(0.814592) mean(0.110430)
+[DEBUG]2020-06-18 13:02:46,494:utils:params info pg1: norm std(10.842587) mean(8.226753)
+[DEBUG]2020-06-18 13:02:46,495:utils:grad info pg1: norm std(0.021436) mean(0.004854)
+[DEBUG]2020-06-18 13:02:47,744:utils:Train Step 15, bs: 16, loss: 0.99344, lr: 4e-05 final_score: 0.52904, mc_score: 0.08544, time: 247.57823
+```
+RuntimeError: CUDA out of memory. Tried to allocate 14.00 MiB (GPU 0; 15.90 GiB
+total capacity; 14.92 GiB already allocated; 13.88 MiB free; 15.10 GiB reserved
+in total by PyTorch)
+
+TPU xla
+
+```
+step: 0, loss: 1.054688
+step: 0, loss: 1.257812
+step: 0, loss: 1.445312
+step: 0, loss: 0.910156
+step: 0, loss: 1.109375
+step: 0, loss: 1.062500
+step: 0, loss: 1.101562
+step: 0, loss: 1.101562
+```
