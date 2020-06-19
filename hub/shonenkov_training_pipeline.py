@@ -1395,7 +1395,7 @@ def debug_train(use_dist_cb=True):
 
 # + id="VrJUbCYd3bIu" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 1000}
 # %%time
-debug_train(use_dist_cb=False)
+debug_train(use_dist_cb=True)
 
 
 # + id="4MbjVEVm3bIw" colab_type="code" colab={}
