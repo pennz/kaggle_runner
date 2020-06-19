@@ -1401,7 +1401,7 @@ def train_loop(index, *args):
 
 # + id="EQDJ4gsP3bIx" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 573}
 FLAGS={}
-xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
+#xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
 # + id="m-zDM9QL3bIz" colab_type="code" colab={}
