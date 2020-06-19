@@ -1192,6 +1192,10 @@ class CheckGrad(LearnerCallback):
         self.skip_loss_step = skip_loss_step
         logger.debug("Callback CheckGrad skip_loss_step: " +str(self.skip_loss_step))
 
+    @pysnooper.snoop()
+    def on_backward_begin(self, **kwargs:Any)->None:
+        logger.debug("last loss: %f, smooth_loss: %f", self.state_dict['last_loss'], self.state_dict['smooth_loss'])
+
     def on_backward_end(self, **kwargs:Any)->None:
         raw_opt = self.learn.opt.opt
         _check_grad(raw_opt)
@@ -1282,9 +1286,7 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dataset = self.old_valid_dl.dataset
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
-    @pysnooper.snoop()
     def on_backward_end(self, **kwargs:Any)->None:
-        logger.debug("last loss: %f, smooth_loss: %f", self.state_dict['last_loss'], self.state_dict['smooth_loss'])
         xm.optimizer_step(self.learn.opt) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
         #may_debug(True)
         #return {'skip_step': True}
@@ -1369,7 +1371,7 @@ def debug_train(use_dist_cb=True):
 
 # + id="VrJUbCYd3bIu" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 1000}
 # %%time
-debug_train()
+debug_train(use_dist_cb=False)
 
 
 # + id="4MbjVEVm3bIw" colab_type="code" colab={}
