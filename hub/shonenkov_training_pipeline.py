@@ -1210,7 +1210,7 @@ class TPUDistributed(LearnerCallback):
             #self.device = xm.xla_device(devkind='CPU')
         else:
             self.device = xm.xla_device(devkind='TPU')
-            logger.debug("%s used for xla_device for TPUDistributed" % self.device)
+        logger.debug("%s used for xla_device for TPUDistributed" % self.device)
 
     def _change_dl(self,dl, shuffle):
         old_dl = dl
@@ -1320,7 +1320,12 @@ def filelist2df(path):
 from functools import partial
 from fastai.callbacks.misc import StopAfterNBatches
 from fastai.callbacks import *
+
+import pysnooper
+
+@pysnooper.snoop()
 def debug_train():
+    logger.debug("debug train with CPU, seems fine")
     from kaggle_runner import defaults
     _DEBUG = defaults.DEBUG
     defaults.DEBUG = True
@@ -1340,7 +1345,7 @@ def debug_train():
     learn = k.create_learner(k, opt_func=AdamW_with_given_p,
                              loss_func=LabelSmoothing(),
                              wd=0.01,
-                             callback_fns=[partial(GradientClipping, clip=0.1),
+                             callback_fns=[partial(GradientClipping, clip=0.5),
                                            ShowGraph,
                                            partial(CSVLogger, append=True),
                                            partial(CheckGrad, skip_loss_step=False)]
@@ -1357,11 +1362,14 @@ def debug_train():
 
 # + id="VrJUbCYd3bIu" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 1000}
 # %%time
-#debug_train()
+debug_train()
 
 
 # + id="4MbjVEVm3bIw" colab_type="code" colab={}
 from functools import partial
+import pysnooper
+
+@pysnooper.snoop()
 def train_loop(index, *args):
   #data = (ImageList.from_df(df=train_df, path=path/'images', cols=1)
   #        .random_split_by_pct(0.2)

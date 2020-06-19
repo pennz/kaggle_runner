@@ -406,3 +406,4 @@ mv kaggle_runner k && \
 $(PY) -m pip install -e k;\
 export PATH=$PWD/k/bin:$PATH; \
 entry.sh &)
+	$(PY) -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
