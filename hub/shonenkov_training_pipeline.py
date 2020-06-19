@@ -951,16 +951,16 @@ def _check_grad(raw_opt):
     pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
     pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
 
-    #with torch.no_grad():
-    #    #norms = torch.tensor([torch.norm(p) for p in pg0pl])
-    #    normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl if p.grad is not None])
-    #    #logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
-    #    logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
+    with torch.no_grad():
+        #norms = torch.tensor([torch.norm(p) for p in pg0pl])
+        normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl if p.grad is not None])
+        #logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
+        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
 
-    #    #norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
-    #    norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl if p.grad is not None])
-    #    #logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
-    #    logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
+        #norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
+        norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl if p.grad is not None])
+        #logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
+        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
 
 
 # + id="Sul01z663bIf" colab_type="code" colab={}
