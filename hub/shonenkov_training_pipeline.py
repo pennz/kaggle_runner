@@ -1294,10 +1294,9 @@ class TPUDistributed(LearnerCallback):
 
         if self.debug:
             self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
-            pg[0]['lr'] *= xm.xrt_world_size()
-            pg[1]['lr'] *= xm.xrt_world_size()
-
-            logger.debug("opt info: %s, type %s", self.learn.opt, type(self.learn.opt))
+            #pg[0]['lr'] *= xm.xrt_world_size() # will do it twice...
+            #pg[1]['lr'] *= xm.xrt_world_size()
+            logger.debug("opt info: %s\n type: %s", self.learn.opt, type(self.learn.opt))
         else:
             self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
         logger.debug("%s used for xla_device, to device done" % self.device)
@@ -1322,7 +1321,7 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        xm.optimizer_step(self.learn.opt) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
+        xm.optimizer_step(self.learn.opt, barrier=True) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
         #may_debug(True)
 
         return {'skip_step': True}

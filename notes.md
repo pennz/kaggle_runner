@@ -2652,3 +2652,34 @@ Train Step 1, bs: 16, loss: 1.12500, lr: 4e-05 final_score: 0.33333, mc_score: -
 Train Step 1, bs: 16, loss: 1.12500, lr: 4e-05 final_score: 0.43333, mc_score: -0.29277, time: 90.88104
 Train Step 1, bs: 16, loss: 1.13281, lr: 4e-05 final_score: 0.48438, mc_score: 0.37796, time: 130.33304
 ```
+```
+[DEBUG]2020-06-19 09:25:13,427:utils:itr: 214, num_batch: 214, last loss: 1.234375, smooth_loss: 1.201096
+[DEBUG]2020-06-19 09:25:13,417:utils:itr: 228, num_batch: 228, last loss: 1.210938, smooth_loss: 1.145556
+[DEBUG]2020-06-19 09:25:13,675:utils:loss_avg: 1.16315, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.49119, mc_score:-0.01076
+[DEBUG]2020-06-19 09:25:13,680:utils:loss_avg: 1.15451, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.48564, mc_score:-0.00425
+[DEBUG]2020-06-19 09:25:14,201:utils:on_backward_begin lr: 4e-05
+[DEBUG]2020-06-19 09:25:14,205:utils:itr: 217, num_batch: 217, last loss: 1.250000, smooth_loss: 1.172401
+[DEBUG]2020-06-19 09:25:14,259:utils:on_backward_begin lr: 4e-05
+[DEBUG]2020-06-19 09:25:14,294:utils:on_backward_begin lr: 4e-05
+[DEBUG]2020-06-19 09:25:14,262:utils:itr: 217, num_batch: 217, last loss: 1.078125, smooth_loss: 1.184535
+[DEBUG]2020-06-19 09:25:14,297:utils:itr: 234, num_batch: 234, last loss: 1.226562, smooth_loss: 1.191851
+[DEBUG]2020-06-19 09:25:14,336:utils:on_backward_begin lr: 4e-05
+[DEBUG]2020-06-19 09:25:14,338:utils:itr: 219, num_batch: 219, last loss: 1.125000, smooth_loss: 1.149118
+[DEBUG]2020-06-19 09:25:14,410:utils:on_backward_begin lr: 4e-05
+[DEBUG]2020-06-19 09:25:14,435:utils:loss_avg: 1.16326, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.50444, mc_score:-0.00015
+[DEBUG]2020-06-19 09:25:14,412:utils:itr: 229, num_batch: 229, last loss: 1.164062, smooth_loss: 1.168384
+[DEBUG]2020-06-19 09:25:14,495:utils:loss_avg: 1.16399, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.47278, mc_score:-0.03182
+[DEBUG]2020-06-19 09:25:14,531:utils:loss_avg: 1.17188, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.49269, mc_score:-0.01428
+[DEBUG]2020-06-19 09:25:14,567:utils:on_backward_begin lr: 4e-05
+[DEBUG]2020-06-19 09:25:14,571:utils:loss_avg: 1.15680, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.48640, mc_score:-0.02774
+[DEBUG]2020-06-19 09:25:14,574:utils:itr: 212, num_batch: 212, last loss: 1.164062, smooth_loss: 1.163466
+[DEBUG]2020-06-19 09:25:14,645:utils:loss_avg: 1.19237, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.47664, mc_score:-0.01745
+[DEBUG]2020-06-19 09:25:14,791:utils:on_backward_begin lr: 4e-05
+[DEBUG]2020-06-19 09:25:14,811:utils:loss_avg: 1.14809, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.48713, mc_score:0.00096
+[DEBUG]2020-06-19 09:25:14,809:utils:itr: 229, num_batch: 229, last loss: 1.257812, smooth_loss: 1.147823
+[DEBUG]2020-06-19 09:25:14,919:utils:on_backward_begin lr: 4e-05
+[DEBUG]2020-06-19 09:25:14,946:utils:itr: 215, num_batch: 215, last loss: 1.218750, smooth_loss: 1.201453
+[DEBUG]2020-06-19 09:25:15,068:utils:loss_avg: 1.15496, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.48563, mc_score:-0.00238
+[DEBUG]2020-06-19 09:25:15,211:utils:loss_avg: 1.16341, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.49109, mc_score:-0.01159
+[DEBUG]2020-06-19 09:25:16,268:utils:on_backward_begin lr: 4e-05
+```
