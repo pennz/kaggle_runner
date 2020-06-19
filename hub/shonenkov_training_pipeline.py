@@ -1324,8 +1324,8 @@ from fastai.callbacks import *
 import pysnooper
 
 @pysnooper.snoop()
-def debug_train():
-    logger.debug("debug train with CPU, seems fine")
+def debug_train(use_tpu=True):
+    logger.debug(f'debug train with{" " if use_tpu else "OUT"} to_tpu_distributed')
     from kaggle_runner import defaults
     _DEBUG = defaults.DEBUG
     defaults.DEBUG = True
@@ -1349,7 +1349,10 @@ def debug_train():
                                            ShowGraph,
                                            partial(CSVLogger, append=True),
                                            partial(CheckGrad, skip_loss_step=False)]
-                             ).to_tpu_distributed()
+                             )
+
+    if use_tpu:
+        learn = learn.to_tpu_distributed()
 
     learn.callbacks.append(StopAfterNBatches(n_batches=200))
     #learn.callback_fns.append(CheckGrad)
