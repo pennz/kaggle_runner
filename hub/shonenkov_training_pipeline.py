@@ -1321,7 +1321,7 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
     def on_backward_end(self, **kwargs:Any)->None:
-        xm.optimizer_step(self.learn.opt, barrier=True) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
+        xm.optimizer_step(self.learn.opt.opt, barrier=True) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
         #may_debug(True)
 
         return {'skip_step': True}
@@ -1336,7 +1336,7 @@ class TPUDistributed(LearnerCallback):
 
 
 def _to_tpu_distributed(learn:Learner) -> Learner:
-  #Learner.fit = _fit_tpu
+    #Learner.fit = _fit_tpu
     learn.callback_fns.append(TPUDistributed)
 
     return learn

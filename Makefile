@@ -270,7 +270,7 @@ kaggle: /root/.kaggle/kaggle.json
 	-xclip ~/.kaggle/kaggle.json -selection clipboard
 
 update_sh_ipynb:
-	jupytext --sync hub/shonenkov_training_pipeline.ipynb || jupytext --set-formats ipynb,py hub/shonenkov_training_pipeline.ipynb
+	$(PY) -m jupytext --sync hub/shonenkov_training_pipeline.ipynb || $(PY) -m jupytext --set-formats ipynb,py hub/shonenkov_training_pipeline.ipynb
 
 dmetadata: kaggle 
 	[ -d datas ] || mkdir datas
