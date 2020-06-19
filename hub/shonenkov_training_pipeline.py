@@ -1191,7 +1191,7 @@ class CheckGrad(LearnerCallback):
     def __init__(self, learn:Learner, skip_loss_step=False):
         super().__init__(learn)
         self.skip_loss_step = skip_loss_step
-        logger.debug("Callback CheckGrad skip_loss_step: " +str(self.skip_loss_step))
+        logger.debug("Init Callback CheckGrad with skip_loss_step: " +str(self.skip_loss_step))
         self.losses = None
         self.final_scores = None
 
@@ -1289,6 +1289,8 @@ class SingleTPUTraining(LearnerCallback):
 
     self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
     self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
+    self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
+    self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
 
   def on_backward_end(self, **kwargs:Any)->None:
     xm.optimizer_step(self.learn.opt.opt, barrier=True)
