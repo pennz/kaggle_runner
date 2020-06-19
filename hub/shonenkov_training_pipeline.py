@@ -1214,7 +1214,7 @@ class CheckGrad(LearnerCallback):
         self.final_scores.update(kwargs['last_target'], kwargs['last_output'])
         self.losses.update(kwargs['last_loss'].detach().item(), TrainGlobalConfig.batch_size)
         logger.debug(f"loss_avg: {self.losses.avg:.5f}, lr:"
-                     f"{self.optimizer.param_groups[0]['lr']} final_score:"
+                     f"{self.learn.opt.opt.param_groups[0]['lr']} final_score:"
                      f"{self.final_scores.avg:.5f}, mc_score:"
                      f"{self.final_scores.mc_avg:.5f}")
 
