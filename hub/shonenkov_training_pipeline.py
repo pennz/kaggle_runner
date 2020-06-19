@@ -1237,6 +1237,45 @@ def batch_to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor
 
     return [to_device(b[0],device), to_device(b[1],device)]
 
+def _change_dl(dl, shuffle):
+    old_dl = dl
+    train_sampler = DistributedSamplerWrapper(
+        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=True
+    )
+    train_loader = torch.utils.data.DataLoader(
+        k.train_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=train_sampler,
+        pin_memory=False,
+        drop_last=True,
+        num_workers=TrainGlobalConfig.num_workers,
+    )
+    new_dl = train_loader
+
+    return old_dl,new_dl,train_sampler
+
+def _change_dl_val(dl, shuffle):
+    old_dl = dl
+    validation_sampler = torch.utils.data.distributed.DistributedSampler(
+        k.validation_dataset,
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=False
+    )
+    validation_loader = torch.utils.data.DataLoader(
+        k.validation_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=validation_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+
+    return old_dl,validation_loader,validation_sampler
+
 class SingleTPUTraining(LearnerCallback):
   def __init__(self, learn:Learner):
     super().__init__(learn)
@@ -1244,6 +1283,9 @@ class SingleTPUTraining(LearnerCallback):
   def on_train_begin(self, **kwargs:Any)->None:
     self.device = xm.xla_device()
     self.learn.model = self.learn.model.to(self.device)
+    #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+    self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle=True)
+    self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle=False)
     self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
 
   def on_backward_end(self, **kwargs:Any)->None:
@@ -1271,45 +1313,6 @@ class TPUDistributed(LearnerCallback):
             self.device = xm.xla_device(devkind='TPU')
         logger.debug("%s used for xla_device for TPUDistributed" % self.device)
 
-    def _change_dl(self,dl, shuffle):
-        old_dl = dl
-        train_sampler = DistributedSamplerWrapper(
-            sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
-            num_replicas=xm.xrt_world_size(),
-            rank=xm.get_ordinal(),
-            shuffle=True
-        )
-        train_loader = torch.utils.data.DataLoader(
-            k.train_dataset,
-            batch_size=TrainGlobalConfig.batch_size,
-            sampler=train_sampler,
-            pin_memory=False,
-            drop_last=True,
-            num_workers=TrainGlobalConfig.num_workers,
-        )
-        new_dl = train_loader
-
-        return old_dl,new_dl,train_sampler
-
-    def _change_dl_val(self,dl, shuffle):
-        old_dl = dl
-        validation_sampler = torch.utils.data.distributed.DistributedSampler(
-            k.validation_dataset,
-            num_replicas=xm.xrt_world_size(),
-            rank=xm.get_ordinal(),
-            shuffle=False
-        )
-        validation_loader = torch.utils.data.DataLoader(
-            k.validation_dataset,
-            batch_size=TrainGlobalConfig.batch_size,
-            sampler=validation_sampler,
-            pin_memory=False,
-            drop_last=False,
-            num_workers=TrainGlobalConfig.num_workers
-        )
-
-        return old_dl,validation_loader,validation_sampler
-
     def on_train_begin(self, **kwargs:Any)->None:
         self.learn.model = self.learn.model.to(self.device)
 
@@ -1332,10 +1335,10 @@ class TPUDistributed(LearnerCallback):
         logger.debug("%s used for xla_device, to device done" % self.device)
 
         shuffle = self.data.train_dl.init_kwargs['shuffle'] if hasattr(self.data.train_dl, 'init_kwargs') else True
-        self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = self._change_dl(self.data.train_dl, shuffle)
+        self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle)
 
         if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
-            self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = self._change_dl_val(self.data.valid_dl, shuffle)
+            self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle)
 
 
     def on_epoch_begin(self,**kwargs:Any)->None:
