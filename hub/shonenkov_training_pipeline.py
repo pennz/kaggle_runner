@@ -970,7 +970,7 @@ from kaggle_runner import logger
 
 def test_model_fn(device=torch.device("cpu")):
     #device = xm.xla_device(devkind='TPU')
-    device=torch.device("xla")
+    #device=torch.device("xla")
     logger.debug("Device used: %s", device)
 
     #k.run(dump_flag=True) # it seems it cannot save right
@@ -1313,7 +1313,8 @@ class TPUDistributed(LearnerCallback):
     def on_backward_end(self, **kwargs:Any)->None:
         xm.optimizer_step(self.learn.opt) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
         #may_debug(True)
-        #return {'skip_step': True}
+
+        return {'skip_step': True}
 
     def on_epoch_end(self,**kwargs:Any)->None:
         self.learn.data.train_dl = self.old_train_dl
@@ -1395,7 +1396,7 @@ def debug_train(use_dist_cb=True):
 
 # + id="VrJUbCYd3bIu" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 1000}
 # %%time
-debug_train(use_dist_cb=True)
+#debug_train(use_dist_cb=True)
 
 
 # + id="4MbjVEVm3bIw" colab_type="code" colab={}
