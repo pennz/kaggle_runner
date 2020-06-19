@@ -1,3 +1,6 @@
+import os
+import subprocess
+
 FOCAL_LOSS_GAMMA = 0.0
 FOCAL_LOSS_GAMMA_NEG_POS = 0.25
 FOCAL_LOSS_BETA_NEG_POS = 1.0
@@ -17,3 +20,14 @@ DATA_ACTION_NO_NEED_LOAD_EMB_M = "DATA_ACTION_NO_NEED_LOAD_EMB_M"
 
 NEG_RATIO = 1 - 0.05897253769515213
 Data_Folder = '/home/'
+
+RIPDB = os.environ.get("RIPDB") == 'true'
+DEBUG = os.environ.get("DEBUG") == 'true'
+INTERACTIVE = False
+try:
+	__note = subprocess.check_output('pgrep -f "jupyter notebook"', shell=True)
+
+	if __note.strip() != "":
+		INTERACTIVE = True
+except:
+	pass

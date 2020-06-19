@@ -138,3 +138,10 @@ kaggle_runner/node_modules/
 kaggle_runner/package-lock.json
 reversShells/logs_check
 reversShells/serverNodes
+*log
+logs_check
+nbs/
+receive_logs_topic
+run/
+.*
+serverNodes

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 
-from kaggle_runner.runner import Runner
+from kaggle_runner.runners.runner import Runner
 
 if "__main__" == __name__:
     parser = argparse.ArgumentParser(

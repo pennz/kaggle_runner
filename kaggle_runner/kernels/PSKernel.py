@@ -50,6 +50,7 @@ class PS(KaggleKernel):
         Y_train = np.zeros((len(fns), im_height, im_width, 1), dtype=np.uint8)
         print("Getting train images and masks ... ")
         # sys.stdout.flush()
+
         for n, _id in tqdm(enumerate(fns), total=len(fns)):
             dataset = pydicom.read_file(_id)
             _id_keystr = _id.split("/")[-1][:-4]
@@ -69,6 +70,7 @@ class PS(KaggleKernel):
                         )
                     else:
                         Y_train[n] = np.zeros((1024, 1024, 1))
+
                         for x in mask_data:
                             Y_train[n] = Y_train[n] + np.expand_dims(
                                 kernel_utils.rle2mask(x, 1024, 1024).T, axis=2
@@ -99,6 +101,7 @@ class PS(KaggleKernel):
         im_width = 1024
         im_chan = 1
         # Get train images and masks
+
         if not tf:
             return PS._PS_data_preprocess_np(
                 fns, df, TARGET_COLUMN, im_height, im_width, im_chan
@@ -111,6 +114,7 @@ class PS(KaggleKernel):
     @staticmethod
     def _PS_data_preprocess_tf(fns, df, TARGET_COLUMN, im_height, im_width, im_chan):
         tf_data_handler = kaggle_runner.datasets.data_handlers.PS_TF_DataHandler()
+
         return tf_data_handler.to_tf_from_disk(
             fns, df, TARGET_COLUMN, im_height, im_width, im_chan
         )
@@ -120,6 +124,7 @@ class PS(KaggleKernel):
         im_height = 128
         im_width = 128
         imgs = imgs.reshape((-1, im_height, im_width, 1))
+
         return imgs
 
     def prepare_train_dev_data(self):
@@ -130,10 +135,12 @@ class PS(KaggleKernel):
 
     def _get_train_data(self):
         train_data_wildcard = self.DATA_PATH_BASE + "/dicom-images-train/*/*/*.dcm"
+
         if self.developing:
             train_fns = sorted(glob(train_data_wildcard))[:100]
         else:
             train_fns = sorted(glob(train_data_wildcard))
+
         return train_fns
 
     # just prepare train/dev here together
@@ -160,6 +167,7 @@ class PS(KaggleKernel):
         train_fns_splits = []
         idx = 0
         LEN = 1024
+
         for idx in range(len(train_fns) // LEN + 1):
             train_fns_splits.append(train_fns[idx * LEN : idx * LEN + LEN])
 
@@ -255,14 +263,17 @@ class PS(KaggleKernel):
             ]
 
             ds_train = shards_cross[0]
+
             for t in shards_cross[1:]:
                 ds_train = ds.concatenate(t)
+
             return ds, ds.shard(n_splits, split_id)
 
         def mask_to_binary(a, b, threshold=0.5):
             # b = tf.transpose(b, [1,0,2])
             threshold = math_ops.cast(threshold, b.dtype)
             b = math_ops.cast(b > threshold, b.dtype)
+
             return a, b
 
         # TODO ref put ds prepare to right partition
@@ -287,6 +298,7 @@ class PS(KaggleKernel):
 
     def prepare_test_data(self):
         test_data_wildcard = self.DATA_PATH_BASE + "/dicom-images-test/*/*/*.dcm"
+
         if self.developing:
             test_fns = sorted(glob(test_data_wildcard))[:100]
         else:
@@ -420,10 +432,12 @@ class PS(KaggleKernel):
     @staticmethod
     def _check_image_data(ds):
         cnt = 0
+
         for image, mask in ds:
             print(cnt)
             cnt += 1
             m = mask.numpy()
+
             if m.max() <= 0:
                 continue
             m = np.reshape(m, (1024, 1024))
@@ -431,10 +445,9 @@ class PS(KaggleKernel):
             img = np.reshape(img, (1024, 1024))
             # plt.imshow(img)
             plt.imshow(m)
+
             break
 
     def _recover_from_tf(self):
         self.ds = kaggle_runner.datasets.data_handlers.PS_TF_DataHandler.from_tfrecord()
         PS._check_image_data(self.ds)
-
-

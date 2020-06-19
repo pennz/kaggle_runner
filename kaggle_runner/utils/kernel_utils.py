@@ -6,20 +6,16 @@ import pickle
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras.backend as K
+import torch
+import torch.distributed as dist
+import torch.utils.data
 from IPython.core.debugger import set_trace
 from PIL import ImageFile
 from tensorflow.python.ops import math_ops
 
-import torch
-import torch.distributed as dist
-import torch.utils.data
+from .utils import logger
 
 trace_flag = True
-
-
-def my_trace():
-    if trace_flag:
-        set_trace()
 
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -50,8 +46,10 @@ class AMQPURL:
 
     def string(self):
         Vhost = self.Vhost
+
         if self.Vhost == "/":
             Vhost = ""
+
         return f"amqp://{self.username}:{self.passwd}@{self.host}/{Vhost}"
 
 
@@ -60,23 +58,14 @@ BIN_FOLDER = (
         "/content/gdrivedata") else "./"
 )
 
-
-def get_logger(name="utils", level=logging.DEBUG):
-    FORMAT = "[%(levelname)s]%(asctime)s:%(name)s:%(message)s"
-    logging.basicConfig(format=FORMAT)
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    return logger
-
-
-logger = get_logger()
-
+DATASET_BASE_FOLDER = '/kaggle/input'
 
 def dump_obj(obj, filename, fullpath=False, force=False):
     if not fullpath:
         path = BIN_FOLDER + filename
     else:
         path = filename
+
     if not force and os.path.isfile(path):
         logger.debug(f"{path} already existed, not dumping")
     else:
@@ -84,8 +73,15 @@ def dump_obj(obj, filename, fullpath=False, force=False):
         with open(path, "wb") as f:
             pickle.dump(obj, f)
 
+def get_kaggle_dataset_input(filename):
+    filename = os.path.join(DATASET_BASE_FOLDER, filename)
+
+    return get_obj_or_dump(filename, fullpath=True, default=None)
 
 def get_obj_or_dump(filename, fullpath=False, default=None):
+    """get_obj_or_dump will dump default obj to file if file not there, otherwise
+    obj will be unpickled from file. If file not found, default value will returned."""
+
     if not fullpath:
         path = BIN_FOLDER + filename
     else:
@@ -99,6 +95,7 @@ def get_obj_or_dump(filename, fullpath=False, default=None):
         if default is not None:
             logger.debug("dump :" + filename)
             dump_obj(default, filename)
+
         return default
 
 
@@ -107,6 +104,7 @@ def file_exist(filename, fullpath=False):
         path = BIN_FOLDER + filename
     else:
         path = filename
+
     return os.path.isfile(path)
 
 
@@ -125,6 +123,7 @@ def binary_crossentropy_with_focal_seasoned(
     balanced = gamma * logit_pred + beta
     y_pred = math_ops.sigmoid(balanced)
     # only use gamma in this layer, easier to split out factor
+
     return binary_crossentropy_with_focal(
         y_true,
         y_pred,
@@ -139,21 +138,21 @@ def binary_crossentropy_with_focal(
     y_true, y_pred, gamma=1.0, alpha=0.5, custom_weights_in_Y_true=True
 ):
     """
-    https://arxiv.org/pdf/1708.02002.pdf
-
-    $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
-    $$ p_t=p\: if\: y=1$$
-    $$ p_t=1-p\: otherwise$$
-
-    :param y_true:
-    :param y_pred:
+    :param y_true: y_true
+    :param y_pred: y_pred
     :param gamma: make easier ones weights down
     :param alpha: weight for positive classes. default to 1 - (true
         positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha
         for calss -1.   In practice α may be set by inverse class freqency or
         hyperparameter.
     :return: bce
+    Reference: https://arxiv.org/pdf/1708.02002.pdf
+
+    $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
+    $$ p_t=p\: if\: y=1$$
+    $$ p_t=1-p\: otherwise$$
     """
+
     # assert 0 <= alpha <= 1 and gamma >= 0
     # hyper parameters, just use the one for binary?
     # alpha = 1. # maybe smaller one can help, as multi-class will make the
@@ -204,16 +203,22 @@ def binary_crossentropy_with_focal(
 
 def reinitLayers(model):
     session = K.get_session()
+
     for layer in model.layers:
         # if isinstance(layer, keras.engine.topology.Container):
+
         if isinstance(layer, tf.keras.Model):
             reinitLayers(layer)
+
             continue
         print("LAYER::", layer.name)
+
         if layer.trainable is False:
             continue
+
         for v in layer.__dict__:
             v_arg = getattr(layer, v)
+
             if hasattr(v_arg, "initializer"):
                 # not work for layer wrapper, like Bidirectional
                 initializer_method = getattr(v_arg, "initializer")
@@ -233,6 +238,7 @@ def dice_coef(y_true, y_pred, smooth=1, threshold=0.5):
     y_true_b = math_ops.cast(y_true_f > threshold, y_pred.dtype)
 
     intersection = K.sum(y_true_b * y_pred_b)
+
     return (2.0 * intersection + smooth) / (K.sum(y_true_b) + K.sum(y_pred_b) + smooth)
 
 
@@ -246,6 +252,7 @@ def mask2rle(img, width, height):
     for x in range(width):
         for y in range(height):
             currentColor = img[x][y]
+
             if currentColor != lastColor:
                 if currentColor == 255:
                     runStart = currentPixel
@@ -271,6 +278,7 @@ def rle2mask(rle, width, height):
     lengths = array[1::2]
 
     current_position = 0
+
     for index, start in enumerate(starts):
         current_position += start
         mask[current_position: current_position + lengths[index]] = 1
@@ -288,6 +296,7 @@ def all_gather(data):
         list[data]: list of data gathered from each rank
     """
     world_size = get_world_size()
+
     if world_size == 1:
         return [data]
 
@@ -307,9 +316,11 @@ def all_gather(data):
     # we pad the tensor because torch all_gather does not support
     # gathering tensors of different shapes
     tensor_list = []
+
     for _ in size_list:
         tensor_list.append(torch.empty(
             (max_size,), dtype=torch.uint8, device="cuda"))
+
     if local_size != max_size:
         padding = torch.empty(
             size=(max_size - local_size,), dtype=torch.uint8, device="cuda"
@@ -318,6 +329,7 @@ def all_gather(data):
     dist.all_gather(tensor_list, tensor)
 
     data_list = []
+
     for size, tensor in zip(size_list, tensor_list):
         buffer = tensor.cpu().numpy().tobytes()[:size]
         data_list.append(pickle.loads(buffer))
@@ -335,20 +347,24 @@ def reduce_dict(input_dict, average=True):
     input_dict, after reduction.
     """
     world_size = get_world_size()
+
     if world_size < 2:
         return input_dict
     with torch.no_grad():
         names = []
         values = []
         # sort the keys so that they are consistent across processes
+
         for k in sorted(input_dict.keys()):
             names.append(k)
             values.append(input_dict[k])
         values = torch.stack(values, dim=0)
         dist.all_reduce(values)
+
         if average:
             values /= world_size
         reduced_dict = {k: v for k, v in zip(names, values)}
+
     return reduced_dict
 
 
@@ -361,6 +377,7 @@ def warmup_lr_scheduler(optimizer, warmup_iters, warmup_factor):
         if x >= warmup_iters:
             return 1
         alpha = float(x) / warmup_iters
+
         return warmup_factor * (1 - alpha) + alpha
 
     return torch.optim.lr_scheduler.LambdaLR(optimizer, f)
@@ -384,6 +401,7 @@ def setup_for_distributed(is_master):
 
     def print(*args, **kwargs):
         force = kwargs.pop("force", False)
+
         if is_master or force:
             builtin_print(*args, **kwargs)
 
@@ -393,20 +411,24 @@ def setup_for_distributed(is_master):
 def is_dist_avail_and_initialized():
     if not dist.is_available():
         return False
+
     if not dist.is_initialized():
         return False
+
     return True
 
 
 def get_world_size():
     if not is_dist_avail_and_initialized():
         return 1
+
     return dist.get_world_size()
 
 
 def get_rank():
     if not is_dist_avail_and_initialized():
         return 0
+
     return dist.get_rank()
 
 
@@ -430,6 +452,7 @@ def init_distributed_mode(args):
     else:
         print("Not using distributed mode")
         args.distributed = False
+
         return
 
     args.distributed = True
@@ -459,6 +482,7 @@ def mask_to_rle(img, width, height):
     for x in range(width):
         for y in range(height):
             currentColor = img[x][y]
+
             if currentColor != lastColor:
                 if currentColor == 1:
                     runStart = currentPixel
@@ -473,6 +497,7 @@ def mask_to_rle(img, width, height):
                 runLength += 1
             lastColor = currentColor
             currentPixel += 1
+
     return " " + " ".join(rle)
 
 

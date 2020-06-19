@@ -1,0 +1,31 @@
+#!/bin/bash -x
+PHASE=$1
+[ -z $PHASE ] && PHASE='dev'
+PORT=$(addNewNode.sh $PHASE | tail -n 1)
+ret=$?
+[ -z $PORT ] && exit $ret
+
+echo Created new listen instance. TCP port $PORT is used for incomming conection.
+[ -z $PORT ] && PORT=0 # do not need port listen
+echo "$(which python3) is our python executable"
+if [[ x$(which python3) =~ conda ]]; then echo conda env fine; else
+    echo >&2 conda env not set correctly, please check.
+    source ~/.bashrc
+    conda activate pyt
+    echo "$(which python3) is our python executable"
+fi
+PY=$(which python3)
+#push_log=$($PY -m kaggle_runner "$PORT" "$PHASE")
+push_log=$(kaggle kernels push -p kaggle_runner/runner_template/) # just use the template
+
+echo $push_log
+push_ret=$?
+if [ ! $push_ret -eq 0 ]; then
+    echo >&2 Push failed, please check.
+    exit $push_ret
+fi
+kversion=$(echo $push_log | ${SED:-sed} -n "s/.*Kernel version \([0-9]\{,\}\).*/\1/p")
+echo Code pushed. TCP port $PORT - version $kversion. Please wait rvs to connect.
+if [[ -n "$kversion" ]] && [[ $PORT -gt 0 ]]; then
+    tmux rename-window -t rvsConnector:{end} "v$kversion:$PORT:$(git show --no-patch --oneline | tr " " "_")"
+fi

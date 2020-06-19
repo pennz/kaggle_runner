@@ -1,4 +1,5 @@
-__all__ = ["utils"]
-from .utils import AMQPURL, get_logger
+from .utils import AMQPURL, get_logger, logger
 
-logger = get_logger()
+AMQPURL = AMQPURL
+logger = logger
+__all__ = ['AMQPURL', 'logger']

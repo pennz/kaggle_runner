@@ -1,0 +1,4 @@
+type firewall-cmd >/dev/null 2>&1 || sudo firewall-cmd --add-port $(CHECK_PORT)/tcp
+firewall-cmd --add-port 5672/tcp --permanent
+rabbitmqctl add_user 'kaggle' '9b83ca70cf4cda89524d2283a4d675f6'
+rabbitmqctl set_permissions -p "/" "kaggle" ".*" ".*" ".*"

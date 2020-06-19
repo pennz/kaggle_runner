@@ -5,13 +5,35 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from .defaults import (
-    ALPHA,
-    FOCAL_LOSS_BETA_NEG_POS,
-    FOCAL_LOSS_GAMMA,
-    FOCAL_LOSS_GAMMA_NEG_POS,
-)
+from .defaults import (ALPHA, FOCAL_LOSS_BETA_NEG_POS, FOCAL_LOSS_GAMMA,
+                       FOCAL_LOSS_GAMMA_NEG_POS)
 
+
+def toxic_custom_mimic_loss(predictions, labels, subgroups, power=5.0,
+                            score_function=F.binary_cross_entropy_with_logits):
+    """
+    Just reference this
+
+    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/103280
+    """
+
+    subgroup_positive_mask = subgroups & (labels.unsqueeze(-1) >= 0.5)
+    subgroup_negative_mask = subgroups & ~(labels.unsqueeze(-1) >= 0.5)
+    background_positive_mask = ~subgroups & (labels.unsqueeze(-1) >= 0.5)
+    background_negative_mask = ~subgroups & ~(labels.unsqueeze(-1) >= 0.5)
+
+    bpsn_mask = (background_positive_mask | subgroup_negative_mask).float()
+    bnsp_mask = (background_negative_mask | subgroup_positive_mask).float()
+    subgroups = subgroups.float()
+
+    bce = score_function(predictions,labels, reduction="none")
+
+    sb = (bce.unsqueeze(-1) * subgroups).sum(0).div(subgroups.sum(0).clamp(1.)).pow(power).mea().pow(1/power)
+    bpsn = (bce.unsqueeze(-1) * bpsn_mask).sum(0).div(bpsn_mask.sum(0).clamp(1.)).pow(power).mean().pow(1/power)
+    bnsp = (bce.unsqueeze(-1) * bnsp_mask).sum(0).div(bnsp_mask.sum(0).clamp(1.)).pow(power).mean().pow(1/power)
+    loss = (bce.mean() + sb + bpsn + bnsp) /4
+
+    return loss
 
 class FocalLoss(nn.Module):
     def __init__(self, gamma):
@@ -19,7 +41,7 @@ class FocalLoss(nn.Module):
         self.gamma = gamma
 
     def forward(self, input, target):
-        if not (target.size() == input.size()):
+        if not target.size() == input.size():
             raise ValueError(
                 "Target size ({}) must be the same as input size ({})".format(
                     target.size(), input.size()

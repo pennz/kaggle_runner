@@ -1,17 +1,23 @@
 {
-  "id": "k1gaggle/jigsaw-multilingual-toxicity-eda-models",
-  "id_no": 9350196,
-  "title": "Jigsaw Multilingual Toxicity : EDA + Models \ud83e\udd2c",
-  "code_file": "jigsaw-multilingual-toxicity-eda-models.ipynb",
+  "id": "/toxic-bert-plain-vanila",
+  "title": "Toxic  BERT plain vanila",
+  "code_file": "main.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": true,
   "enable_gpu": true,
   "enable_internet": true,
   "keywords": [
-    "tpu"
+    "gpu"
   ],
-  "dataset_sources": [],
+  "dataset_sources": [
+    "maxjeblick/bert-pretrained-models",
+    "matsuik/ppbert",
+    "gabrichy/nvidiaapex",
+    "k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
+    "k1gaggle/jigsaw-toxic-token-ids-for-bert",
+	"k1gaggle/toxic-multilang-trained-torch-model"
+  ],
   "kernel_sources": [],
   "competition_sources": [
     "jigsaw-multilingual-toxic-comment-classification"

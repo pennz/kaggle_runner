@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import sys
 
 import pytest
 
@@ -11,8 +12,8 @@ from kaggle_runner.runners import coordinator
 @pytest.fixture(scope="module")
 def runner_configs():
     return [
-        {"size": 384, "network": "intercept", "AMQPURL": utils.AMQPURL()},
-        {"size": 384, "network": "intercept-resnet", "AMQPURL": utils.AMQPURL()},
+        {"port":23454, "size": 384, "network": "intercept", "AMQPURL": utils.AMQPURL()},
+        {"port":23454, "size": 384, "network": "intercept-resnet", "AMQPURL": utils.AMQPURL()},
     ]
 
 
@@ -50,9 +51,14 @@ class TestCoordinator:
         path = self.coordinator.create_runner(runner_configs[1], 19999, False)
         # ret = self.coordinator.run_local(path)
         # assert ret.returncode == 0
+
         if os.getenv("CI") != "true":
             ret = self.coordinator.push(path)  # just push first
             assert ret.returncode == 0
+
+    def test_push_runner_cmd(self, runner_configs):
+        subprocess.run(f"python -m kaggle_runner "
+                       f"{runner_configs[1]['port']} dev", shell=True, check=True)
 
     @pytest.mark.timeout(10)
     @pytest.mark.skip("runner runs in computation server, no need test local")
@@ -67,6 +73,7 @@ class TestCoordinator:
     def test_create_runners(self, runner_configs):
         """Should just use unit test setup and teardown
         """
+
         for c in runner_configs:
             r = self.coordinator.create_runner(c)  # we need to let it run
         assert r.AMQPURL is not None

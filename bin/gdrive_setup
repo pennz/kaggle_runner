@@ -1,0 +1,33 @@
+#!/bin/bash
+wget https://github.com/gdrive-org/gdrive/releases/download/2.1.0/gdrive-linux-x64
+chmod +x gdrive-linux-x64
+cp gdrive-linux-x64 /bin/gdrive
+
+mkdir ~/.gdrive
+
+# auth file
+cat > ~/.gdrive/a.json << EOF
+NO_PASS
+
+EOF
+
+gdrive --service-account a.json list  # just test
+
+SRC_WORK_FOLDER=/kaggle/input
+[ -d ${SRC_WORK_FOLDER} ] || {
+    mkdir -p ${SRC_WORK_FOLDER}
+    cd ${SRC_WORK_FOLDER}
+    gdrive --service-account a.json download -r 1CHDWIN0M6PD4SQyplbWefBCzNzdPVd-m
+    tar xf siim-train-test.tar.gz -C /kaggle/input
+}
+# cat > tgz_files.sh << EOF
+# #!/bin/bash
+# tgzfile () {
+#   tar cf - $1 -P | pv -s $(du -sb $1 | awk '{print $1}') | gzip > /home/$1.tar.gz
+# }
+# cd /kaggle/input
+# find . -maxdepth 1 -type d -name "??*" | while read -r line; do
+#     echo $line
+#     tgzfile $line
+# done
+# EOF

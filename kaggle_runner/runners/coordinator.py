@@ -1,62 +1,22 @@
+from ..utils import AMQPURL, logger
 import json
 import os
 import re
 import shutil
 import subprocess
+import sys
 from string import Template
+import importlib
 
 import slug
-from kaggle_runner.utils import logger
 
-setup_pty_str = r"""import argparse
-import os
-import pty
-import sys
-import time
-
-parser = argparse.ArgumentParser()
-parser.add_argument('-a', dest='append', action='store_true')
-parser.add_argument('-p', dest='use_python', action='store_true')
-parser.add_argument('filename', nargs='?', default='typescript')
-parser.add_argument('logfilename', nargs='?', default='typescript')
-options = parser.parse_args()
-
-shell = sys.executable if options.use_python else os.environ.get('SHELL', 'sh')
-filename = options.filename
-logfilename = options.logfilename
-mode = 'ab' if options.append else 'wb'
-
-def main():
-    with open(filename, mode) as script:
-        def read(fd):
-            data = os.read(fd, 1024)
-            script.write(data)
-
-            return data
-
-        with open(logfilename, mode) as logscript:
-            def logread(fd):
-                data = os.read(fd, 1024)
-                logscript.write(data)
-
-                return data
-
-            print('Script started, file is', filename)
-            script.write(('Script started on %s\n' % time.asctime()).encode())
-
-            pty.spawn(shell, read, logread)
-
-            script.write(('Script done on %s\n' % time.asctime()).encode())
-            print('Script done, file is', filename)
-
-if __name__ == "__main__":
-     main()
-"""
+importlib.import_module('kaggle_runner')
 
 rvs_str = r"""#!/bin/bash -x
 export PS4='Line ${LINENO}: ' # for debug
-NC=ncat
 
+NC=${NC:-ncat}
+type $NC || ( echo >&2 "$NC cannot be found. Exit."; exit 1;)
 # https://stackoverflow.com/questions/57877451/retrieving-output-and-exit-code-of-a-coprocess
 # coproc { sleep 30 && echo "Output" && exit 3; }
 # Saving the coprocess's PID for later, as COPROC_PID apparently unsets when its finished
@@ -79,11 +39,17 @@ EXIT_FILE_PATH=/tmp/rvs_exit.$BASHPID.pid
 
 test -f $EXIT_FILE_PATH && rm $EXIT_FILE_PATH
 
-SERVER=vtool.duckdns.org
-PORT=23454
-CHECK_PORT=$((PORT + 1))
+SERVER=$1
+shift
+PORT=$1
+shift
+
+ORIG_PORT=23454
+CHECK_PORT=$((ORIG_PORT + 1))
 
 check_exit_status() {
+  [ -f /tmp/rvs_return ] && return 0
+
   if [ -f $EXIT_FILE_PATH ] && [ x"$(cat $EXIT_FILE_PATH)" = x0 ]; then
     return 0
   fi
@@ -95,64 +61,35 @@ check_exit_status() {
 connect_setup() {
   connect_again_flag=1
 
+  sleep_time=5
+
   while [ ${connect_again_flag} -eq 1 ]; do
     check_exit_status && return 0
 
-    # The standard output of COMMAND is connected via a pipe to a file
-    # descriptor in the executing shell, and that file descriptor is assigned
-    # to 'NAME'[0].  The standard input of COMMAND is connected via a pipe to
-    # a file descriptor in the executing shell, and that file descriptor is
-    # assigned to 'NAME'[1].  This pipe is established before any redirections
-    # specified by the command (*note Redirections::).
+    $NC -w ${1}s -i 1800s $SERVER $PORT -c "echo $(date) started connection; echo $HOSTNAME; python -c 'import pty; pty.spawn([\"/bin/bash\", \"-li\"])'"
 
-    # PID_FILE_PATH=$PID_FILE_PATH.$BASHPID
-
-    # coproc connect_to_server $1
-    # exec -l python setup_pty log_master log_log <&${COPROC[0]} >&${COPROC[1]} 2>&1
-    # RSPID=$!
-
-    # COPROC_PID_backup=$COPROC_PID
-    # echo $COPROC_PID_backup > $PID_FILE_PATH
-
-    # wait $RSPID # what about connection loss? need to check heatbeat
-    # RSRET=$?
-
-    # if [ x"$RSRET" = x"0" ] && [ x"$RSPID" != x ]; then  # TODO fix, named pipe, return always 120?
-    #   echo $RSRET > $EXIT_FILE_PATH
-
-    #   return $RSRET
-    # fi
-    # # else part below
-
-    # sleep 15 # wait PID FILE PATH created, 15s should be fine
-    # tail --pid=$(cat $PID_FILE_PATH) -f /dev/null &&
-    # rm $PID_FILE_PATH
-
-    # pkill $RSPID
-    # connect_again_flag=0
-    # # just recursively, sleep in case...
-    # sleep 5 && [ ! $RSRET -eq 120 ] && connect_again_flag=1
-
-    $NC -w ${1}s -i 1800s $SERVER $PORT -c "python setup_pty log_master log_log"
     RSRET=$?
     echo $RSRET > $EXIT_FILE_PATH
-    >&2 echo "$NC return with code $RSRET"
+    (/bin/ss -lpants | grep "ESTAB.*$PORT") || >&2 echo "\"$NC -w ${1}s -i 1800s $SERVER $PORT\" return with code $RSRET"
 
     if [ x"$RSRET" = x"0" ]; then
-      return $RSRET
+      [ -f /tmp/rvs_exit ] && return 0
+
+      return 255 # just do not return
     fi
-    connect_again_flag=0
-    sleep 5 && [ ! $RSRET -eq 0 ] && connect_again_flag=1
+    [ $RSRET -eq 0 ] && connect_again_flag=0
+    [ $RSRET -eq 1 ] && sleep ${sleep_time} && sleep_time=$((sleep_time + sleep_time))
   done
   # exit, will cause rvs script exit, beside, RSRET not 0, mean connection loss
   # thing
+  RSRET=1  # just never exit
   echo $RSRET > $EXIT_FILE_PATH && return $RSRET
 }
 
 connect_again() {
   # pkill -f "nc.*$PORT"  # no need now, our listen server can accept multiple
   # connection now
-  connect_setup $1 & # just put connection to background
+  connect_setup $1
 }
 
 WAIT_LIMIT=2048
@@ -183,7 +120,7 @@ while true; do
       wait_time=$INIT_WAIT
       # previous connection is lost, we wait for longer to setup connection
       check_exit_status || wait_time=15
-      connect_again $wait_time
+      connect_again $wait_time &
     else
       wait_time=$((wait_time + wait_time)) # double wait, network fine
 
@@ -195,18 +132,19 @@ while true; do
       echo "found connection loss, reset wait_time and try to reconnect"
       wait_time=$INIT_WAIT
       check_exit_status || wait_time=15 # previous connection is lost
-      connect_again $wait_time
+      connect_again $wait_time &
     else # no connection all the time? we still try to connect...
       wait_time=$((wait_time + wait_time))
 
       if [ $wait_time -gt ${WAIT_LIMIT} ]; then wait_time=${WAIT_LIMIT}; fi
-      connect_again $wait_time
+      connect_again $wait_time &
     fi
     port_connect_status=0
   fi
   sleep $((wait_time - nc_time)) # check every XX seconds
   echo $hostname $HOSTNAME
 done
+wait  # wait for any background
 
 # https://medium.com/@6c2e6e2e/spawning-interactive-reverse-shells-with-tty-a7e50c44940e
 # In reverse shell
@@ -222,40 +160,31 @@ done
 # $ export SHELL=bash
 # $ export TERM=xterm-256color
 # $ stty rows <num> columns <cols>
-
-while true; do sleep 60; done
 """
 
 rvs_pty_config_str = r"""#!/bin/bash
-cat > test-pt << EOF
-#!/bin/bash
-[[ ! x"$(git pull)" =~ "Already" ]] && pytest test_kernels.py  -k "train_dev" -s -v
-EOF
-
 [ -d ~/.fzf ] || {
-apt install fish -y
 git clone --depth=1 https://github.com/pennz/dotfiles
 rsync -r dotfiles/.* ~
+rsync -r dotfiles/* ~
 pushd ~
 git submodule update --init
 .fzf/install --all
 curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +qa &
-( sleep 60; nvim -Vnvim_log -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +checkhealth +qa )&
+# vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +qa &
+# ( sleep 60; nvim -Vnvim_log -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +checkhealth +qa )&
 ln -s .shrc_customised.macos .shrc_customised
 echo "alias gdrive='gdrive  --service-account a.json'" >> ~/.bash_aliases
 echo "unalias vim" >> ~/.bash_aliases
-echo "alias vim='nvim -u ~/.vimrc_back'" >> ~/.bash_aliases
 popd
 
-cat >> ~/.bashrc << EOF
-reset
-export SHELL=bash
-export TERM=xterm-256color
-stty intr ^\k susp ^\x eof ^\f echo opost
+cat >> ~/.profile << EOF
+export SHELL=/bin/bash
+export TERM=screen-256color
+stty intr ^\c susp ^\x eof ^\f echo opost
 # https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
-unsetopt ZLE # for zsh
+# unsetopt ZLE # for zsh
 # for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p
 
 color_my_prompt () {
@@ -263,63 +192,28 @@ color_my_prompt () {
     local __cur_location="\[\033[01;34m\]\w"
     local __git_branch_color="\[\033[31m\]"
     # local __git_branch="\`ruby -e \"print (%x{git branch 2> /dev/null}.grep(/^\*/).first || '').gsub(/^\* (.+)$/, '(\1) ')\"\`"
-    local __git_branch='`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`'
+    local __git_branch='`git branch 2> /dev/null | grep -e ^* | ${SED:-sed} -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`'
     local __prompt_tail="\[\033[35m\]$"
     local __last_color="\[\033[00m\]"
     export PS1="$__user_and_host $__cur_location $__git_branch_color$__git_branch$__prompt_tail$__last_color "
 }
-color_my_prompt
 
-# CUDNN_VERSION=7.6.5.32
-# LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
-# LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
-LESSCLOSE=/usr/bin/lesspipe %s %s
-LANG=en_US.UTF-8
-# HOSTNAME=8bff88b8a353
-OLDPWD=/
-CLOUDSDK_CONFIG=/content/.config
-GOOGLE_APPLICATION_CREDENTIALS=/content/adc.json
-NVIDIA_VISIBLE_DEVICES=all
-DATALAB_SETTINGS_OVERRIDES={kernelManagerProxyPort:6000,kernelManagerProxyHost:172.28.0.3,jupyterArgs:[--ip="172.28.0.2"]}
 ENV=/root/.bashrc
-PAGER=cat
-NCCL_VERSION=2.4.8
-TF_FORCE_GPU_ALLOW_GROWTH=true
-JPY_PARENT_PID=18
-NO_GCE_CHECK=True
-# PWD=/content
-# HOME=/root
-LAST_FORCED_REBUILD=20200316
-CLICOLOR=1
-DEBIAN_FRONTEND=noninteractive
-LIBRARY_PATH=/usr/local/cuda/lib64/stubs
-GCE_METADATA_TIMEOUT=0
-GLIBCPP_FORCE_NEW=1
-TBE_CREDS_ADDR=172.28.0.1:8008
-SHELL=bash
-TERM=xterm-256color
-GCS_READ_CACHE_BLOCK_SIZE_MB=16
 PYTHONWARNINGS=ignore:::pip._internal.cli.base_command
 MPLBACKEND=module://ipykernel.pylab.backend_inline
-# CUDA_PKG_VERSION=10-1=10.1.243-1
-# CUDA_VERSION=10.1.243
-# NVIDIA_DRIVER_CAPABILITIES=compute,utility
-SHLVL=3
-# PYTHONPATH=/env/python
-# NVIDIA_REQUIRE_CUDA=cuda>=10.1 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411
-# COLAB_GPU=0
-# GLIBCXX_FORCE_NEW=1
-# PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools/node/bin:/tools/google-cloud-sdk/bin:/opt/bin
-# PS1=\[\033[01;32m\]\u@\h \[\033[01;34m\]\w \[\033[31m\]`git branch 2> /dev/null | grep -e ^* | sed -E  s/^\\\\\*\ \(.+\)$/\(\\\\\1\)\ /`\[\033[35m\]$\[\033[00m\]
-PS4='L\#${LINENO}: '
-LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc.so.4
-LESSOPEN=| /usr/bin/lesspipe %s
-GIT_PAGER=cat
-_=/usr/bin/env
 
-echo "#" $(date) started connection
+PS4="$HOSTNAME: "'${LINENO}: '
+_=/usr/bin/env
+PWD=/kaggle/working
+cd $PWD
+OLDPWD=/root
+
+# color_my_prompt
+locale-gen
 echo "#" $(grep 'cpu ' /proc/stat >/dev/null;sleep 0.1;grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}') "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
-echo "#" $hostname $HOSTNAME
+echo "#" TPU_NAME=$TPU_NAME
+nvidia-smi
+conda activate base
 EOF
 }
 """
@@ -359,7 +253,7 @@ SRC_WORK_FOLDER=/kaggle/input
 """
 
 runner_src = r"""#!/bin/bash -x
-export PS4='Line ${LINENO}: '  # for debug
+export PS4='Line ${LINENO}: ' # for debug
 NC=ncat
 
 USER=$1
@@ -373,29 +267,54 @@ shift
 ENABLE_RVS=$1
 shift
 
-SERVER=vtool.duckdns.org
-PORT=23454
-CHECK_PORT=$(( PORT + 1 ))
-apt update && apt install -y netcat nmap screen time
-apt install -y tig ctags htop tree pv tmux psmisc neovim &
+SERVER=$1
+shift
+PORT=$1
+shift
 
-bash rpt
+ORIG_PORT=23454
+
+CHECK_PORT=$((ORIG_PORT + 1))
+pip install --upgrade pip &
+conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
+apt update && apt install -y netcat nmap screen time locales >/dev/null 2>&1
+apt install -y mosh iproute2 fish tig ctags htop tree pv tmux psmisc >/dev/null 2>&1 &
+
+conda init bash
+cat >> ~/.bashrc << EOF
+conda activate base # as my dotfiles will fiddle with conda
+export SERVER=$SERVER
+export CHECK_PORT=$CHECK_PORT
+EOF
+
+source rpt # rvs IDE env setup
+export SERVER=$SERVER
+export CHECK_PORT=$CHECK_PORT
+
 wait_ncat() {
-  wait_for_ncat=$1
+    wait_for_ncat=$1
 
-  while [ $wait_for_ncat -gt 0 ]; do
-    wait_for_ncat=$(( wait_for_ncat - 1))
-    which ncat >/dev/null && return 0
-  done
+    while [ $wait_for_ncat -gt 0 ]; do
+        wait_for_ncat=$((wait_for_ncat - 1))
+        which ncat >/dev/null && return 0
+    done
 }
 wait_ncat 60
 
 which $NC >/dev/null || NC=nc
 export NC
 
+if [ "x${ENABLE_RVS}" = x1 ]; then
+    if [ -z $(pgrep -f 'jupyter-notebook') ]; then
+        bash ./rvs.sh $SERVER $PORT 2>&1 &
+    else
+        screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash -x ./rvs.sh $SERVER $PORT 2>&1; } | $NC --send-only --no-shutdown -w 120s -i $((3600 * 2))s $SERVER $CHECK_PORT"
+    fi
+fi &
+
 pip install ripdb pydicom parse pytest-logger python_logging_rabbitmq coverage &
-python3 -m pip install pyvim neovim msgpack==1.0.0 &&
-python -m pip install pyvim neovim msgpack==1.0.0 &&  # for vim
+# python3 -m pip install pyvim neovim msgpack==1.0.0 &
+# python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
 
 SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
@@ -403,41 +322,74 @@ SRC_WORK_FOLDER=/kaggle/working
 cd ${SRC_WORK_FOLDER}
 
 if [ -d ${REPO} ]; then rm -rf ${REPO}; fi
+
+# get code
 {
-  mvdir () {
-      [[ "$2"/"$1" -ef "${PWD}" ]] || { rm -rf "$2"/"$1" &&
-          mkdir "$2"/"$1"
-      }
+    mvdir() {
+        [[ "$2"/"$1" -ef "${PWD}" ]] || {
+            rm -rf "$2"/"$1" &&
+                mkdir "$2"/"$1"
+        }
 
-      bash -c "mv ""$1""/*"" $2""/""$1"
-  }
-  export -f mvdir
+        bash -c "mv ""$1""/*"" $2""/""$1"
+    }
+    export -f mvdir
 
-  git clone --single-branch --branch ${BRANCH} --depth=1 \
-    https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} && \
-  git submodule update --init --recursive
-  find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
-  find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
-  popd
-  pip install -e .
+    if [ ! -d ${REPO} ]; then
+        git clone --single-branch --branch ${BRANCH} --depth=1 \
+            https://github.com/${USER}/${REPO}.git ${REPO} && pushd ${REPO} &&
+        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .gitmodules &&
+        sed -i 's/git@\(.*\):\(.*\)/https:\/\/\1\/\2/' .git/config &&
+        git submodule update --init --recursive
+        find . -maxdepth 1 -name ".??*" -o -name "??*" -type f | xargs -I{} mv {} $OLDPWD
+        find . -maxdepth 1 -name ".??*" -o -name "??*" -type d | xargs -I{} bash -x -c "mvdir {}  $OLDPWD"
+        popd
+    fi
 }
 
+make install_dep >/dev/null &
+
+USE_AMQP=true
+export USE_AMQP
+
+conda init bash
+source ~/.bashrc
+conda activate base
+
 if [ x"${PHASE}" = x"dev" ]; then
-  export PS4='[Remote]: Line ${LINENO}: '
+    export PS4='[Remote]: Line ${LINENO}: '
+    (
+        echo "MOSHing"
+        make mosh
+    ) &
 
-  if [ "x${ENABLE_RVS}" = x1 ]; then
-    screen -d -m bash -c "{ echo [REMOTE]: rvs log below.; bash ./rvs.sh 2>&1 >/dev/null; } | $NC --send-only --no-shutdown -w 120s -i $(( 3600 * 2 ))s $SERVER $CHECK_PORT";
-  fi
-  make install_dep;
-  make toxic 2>&1 | tee -a lstm_log | $NC --send-only -w 120s -i $(( 60 * 5 ))s $SERVER $CHECK_PORT;
+    make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi &
+    wait # not exit, when dev
 fi
 
-if [ x"${PHASE}" != x"dev" ]; then
-  pip install kaggle_runner
-  python main.py "$@";
+if [ x"${PHASE}" = x"data" ]; then
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    make dataset
 fi
 
-# GRAMMAR: NAME () COMPOUND-COMMAND [ REDIRECTIONS ]
+if [ x"${PHASE}" = x"test" ]; then
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    make test
+fi
+
+if [ x"${PHASE}" = x"pretrain" ]; then
+    bash ./rvs.sh $SERVER $PORT >/dev/null & # just keep one rvs incase
+    make mbd_pretrain
+fi
+
+if [ x"${PHASE}" = x"run" ]; then
+    #pip install kaggle_runner
+    bash ./rvs.sh $SERVER $PORT >/dev/null & make m & # just keep one rvs incase
+    make toxic | if [ $USE_AMQP -eq true ]; then cat -; else $NC --send-only -w 120s -i $((60 * 5))s $SERVER $CHECK_PORT; fi
+    # basically the reverse of the calling path
+    pkill make & pkill -f "mosh" & pkill sleep & pkill -f "rvs.sh" & pkill ncat &
+    # python main.py "$@"
+fi
 """
 
 
@@ -445,7 +397,7 @@ class Coordinator:
     template_path = "kaggle_runner/runner_template/"  # TODO just put it in the code
     """run in controller side, the runners run in dockers with GPUs"""
 
-    def __init__(self, tmp_path, title_prefix):
+    def __init__(self, title_prefix, tmp_path=".r"):
         self.tmp_path = tmp_path
         self.runners = []
         self.title_prefix = title_prefix
@@ -457,9 +409,11 @@ class Coordinator:
     @staticmethod
     def push(runner):
         "Push the code to server/kagger docker"
-        logger.debug(" ".join(["kaggle", "kernels", "push", "-p", runner]))
+        hp = os.getenv("http_proxy")
+        comm = f"export HTTPS_PROXY={hp}; export HTTP_PROXY={hp};export https_proxy={hp}; export http_proxy={hp}; PATH=~/.local/bin:$PATH kaggle kernels push -p {runner}"
+        logger.debug(comm)
 
-        return subprocess.run(["kaggle", "kernels", "push", "-p", runner])
+        return subprocess.run(comm, shell=True)
 
     def push_listen(self):
         self.push_all()
@@ -496,33 +450,19 @@ class Coordinator:
             jf.truncate()
 
     @staticmethod
-    def _change_main_py(path, size, net, AMQPURL, seed, gdrive_enable=False):
+    def _change_main_py(path, size, net, AMQPURL, seed, port, gdrive_enable=False, phase='dev'):
         s = Template(
             """#!/usr/bin/env python3
-import selectors
+import os
 import subprocess
 import sys
 
-subprocess.run('pip install kaggle_runner', shell=True)
-from kaggle_runner.runners import runner
+subprocess.run('[ -f setup.py ] || (git clone https://github.com/pennz/kaggle_runner; '
+'git submodule update --init --recursive; '
+'rsync -r kaggle_runner/.* .; '
+'rsync -r kaggle_runner/* .;); '
+'python3 -m pip install -e .', shell=True, check=True)
 
-log_args = {
-    "size": 384,
-    "network": "intercept",
-    "AMQPURL": "amqp://drdsfaew:QrBHPPxbsd8IuIxKrCnX3-RGoLKaFhYI@termite.rmq.cloudamqp.com/drdsfaew",
-    "seed": 19999,
-}
-r = runner.Runner(
-    log_args["network"],
-    log_args["AMQPURL"],
-    size=log_args["size"],
-    seed=log_args["seed"],
-)
-r._attach_data_collector("")
-LOGGER = r.logger
-
-# runner (gdrive setting the same time) -> rvs.sh (setup reverse connection) ->
-# setup pseudo tty
 with open("runner.sh", "w") as f:
     f.write(
 r\"\"\"${runner_src}\"\"\"
@@ -530,10 +470,6 @@ r\"\"\"${runner_src}\"\"\"
 with open("rvs.sh", "w") as f:
     f.write(
 r\"\"\"${rvs_str}\"\"\"
-    )
-with open("setup_pty", "w") as f:
-    f.write(
-r\"\"\"${setup_pty_str}\"\"\"
     )
 with open("rpt", "w") as f:
     f.write(
@@ -543,21 +479,32 @@ with open("gdrive_setup", "w") as f:
     f.write(
 r\"\"\"${gdrive_str}\"\"\"
     )
+
+server = "${server}"
+os.environ['SERVER'] = server
+
 entry_str = r\"\"\"#!/bin/bash
-PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master dev 1 "$AMQPURL" "$size" "$seed" "$network" >>logrunner
+PS4='Line ${LINENO}: ' bash -x runner.sh pennz kaggle_runner master "$phase" 1 \"\"\"+ server +\"\"\" "$port" "$AMQPURL" "$size" "$seed" "$network" | tee runner_log
 \"\"\"
 if ${gdrive_enable}:
     entry_str += r\"\"\"PS4='Line ${LINENO}: ' bash -x gdrive_setup >>loggdrive &\"\"\"
 
 with open("entry.sh", "w") as f:
-    f.write(
-        entry_str
-    )
+    f.write(entry_str)
 
+import os
+import sys
+sys.path.append(os.getcwd())
+
+import selectors
+import subprocess
+from importlib import reload, import_module
+import_module('kaggle_runner')
+from kaggle_runner import logger
+logger.debug("Logger loaded. Will run entry.sh.")
 
 p = subprocess.Popen(
 'bash -x entry.sh',
-#capture_output=True,
 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 shell=True)
 
@@ -567,50 +514,29 @@ sel.register(p.stderr, selectors.EVENT_READ)
 
 while True:
    for key, _ in sel.select():
-       data = key.fileobj.read1(80).decode()
+       data = key.fileobj.read1(1024).decode()
        if not data:
            exit()
+       data = data.strip()
        if data == "":
            continue
        if key.fileobj is p.stdout:
-           r.logger.debug(data)
+           logger.debug(data)
+           print(data, end="")
        else:
-           r.logger.error(data)
+           logger.error(data)
+           print(data, end="", file=sys.stderr)
 
 # URL:
 # https://stackoverflow.com/questions/31833897/python-read-from-subprocess-stdout-and-stderr-separately-while-pr
 # eserving-order
 # Title: Python read from subprocess stdout and stderr separately while preserving order - Stack Overflow
-#
-# Size: 110088
-# Codepage: Unicode UTF-8
-# SSL Cipher: 128-bit TLSv1.2 ECDHE-RSA-AES128-GCM-SHA256
-# Encoding: gzip
-# Date: Mon, 04 May 2020 23:38:11 GMT
-# Last modified: Mon, 04 May 2020 23:38:11 GMT
-# Time since loading: 13:08
-# Last visit time: Tue May  5 07:41:07 2020
-#
-# Link: https://stackoverflow.com/a/56918582
-# Link title: short permalink to this answer
-
-# just a test problem
-# import sys
-# from time import sleep
-#
-# for i in range(10):
-#     print(f" x{i} ", file=sys.stderr, end="")
-#     sleep(0.1)
-#     print(f" y{i} ", end="")
-#     sleep(0.1)
-# %%
-# #%run /opt/conda/bin/pytest --pdb -s -k "test_pytorch"
-    """
+"""
         )
 
         try:
             gdpass = subprocess.check_output(
-                "pass gd", shell=True).decode("utf-8")
+                "echo NO_PASS", shell=True).decode("utf-8")
         except subprocess.CalledProcessError:
             gdpass = ""
         d = dict(
@@ -619,7 +545,6 @@ while True:
                     "CI") == "true" else gdpass
             ),
             rvs_pty_config_str=rvs_pty_config_str,
-            setup_pty_str=setup_pty_str,
             rvs_str=rvs_str,
             runner_src=runner_src,
             AMQPURL=AMQPURL.string(),
@@ -627,9 +552,11 @@ while True:
             network=net,
             seed=seed,
             gdrive_enable=gdrive_enable,
+            port=port,
+            phase=phase,
+            server=os.environ.get("server", "vtool.duckdns.org"),
         )
         ss = s.safe_substitute(d)
-        print(ss)
 
         with open(os.path.join(path, "main.py"), "w") as jf:
             jf.write(ss)
@@ -645,17 +572,19 @@ while True:
         net = config["network"]
         name = net.replace("_", "-") + "-" + str(size)
         AMQPURL = config["AMQPURL"]
+        port = config["port"]
+        phase = config.get("phase","dev")
 
         path = os.path.join(self.tmp_path, name)
         shutil.copytree(self.template_path, path)
 
         if from_template:
             self._change_kernel_meta_info(path, None, script)
-            self._change_main_py(path, size, net, AMQPURL, seed)
+            self._change_main_py(path, size, net, AMQPURL, seed, port, phase=phase)
         else:
             self._change_kernel_meta_info(
                 path, self.title_prefix + " " + name, script)
-            self._change_main_py(path, size, net, AMQPURL, seed)
+            self._change_main_py(path, size, net, AMQPURL, seed, port, phase=phase)
 
         if not script:
             subprocess.run(
