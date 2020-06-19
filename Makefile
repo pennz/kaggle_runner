@@ -3,7 +3,7 @@ export PATH := $(PWD)/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
-JUPYTER_PARAMS= --NotebookApp.token=greatday --NotebookApp.notebook_dir=/kaggle/working --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10000000000 --NotebookApp.open_browser=False --allow-root
+JUPYTER_PARAMS= --NotebookApp.token=greatday --NotebookApp.notebook_dir=/content/ --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10000000000 --NotebookApp.open_browser=False --allow-root
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
