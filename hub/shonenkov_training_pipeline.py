@@ -8,7 +8,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.5.0
+#       jupytext_version: 1.4.2
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -1227,6 +1227,35 @@ class CheckGrad(LearnerCallback):
         return {'skip_step': self.skip_loss_step}
 
 
+def to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
+    "Recursively map lists of tensors in `b ` to FP16."
+
+    return recurse(lambda x: x.to(device), b)
+
+def batch_to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
+    "Move the input of batch `b` to TPU."
+
+    return [to_device(b[0],device), to_device(b[1],device)]
+
+class SingleTPUTraining(LearnerCallback):
+  def __init__(self, learn:Learner):
+    super().__init__(learn)
+
+  def on_train_begin(self, **kwargs:Any)->None:
+    self.device = xm.xla_device()
+    self.learn.model = self.learn.model.to(self.device)
+    self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+
+  def on_backward_end(self, **kwargs:Any)->None:
+    xm.optimizer_step(self.learn.opt.opt, barrier=True)
+
+def _to_tpu(learn:Learner) -> Learner:
+    learn.callback_fns.append(SingleTPUTraining)
+
+    return learn
+
+Learner.to_tpu = _to_tpu
+
 import pysnooper
 class TPUDistributed(LearnerCallback):
     def __init__(self, learn:Learner, debug=True):
@@ -1299,12 +1328,15 @@ class TPUDistributed(LearnerCallback):
             logger.debug("opt info: %s\n type: %s", self.learn.opt, type(self.learn.opt))
         else:
             self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
+
         logger.debug("%s used for xla_device, to device done" % self.device)
+
         shuffle = self.data.train_dl.init_kwargs['shuffle'] if hasattr(self.data.train_dl, 'init_kwargs') else True
         self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = self._change_dl(self.data.train_dl, shuffle)
 
         if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
             self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = self._change_dl_val(self.data.valid_dl, shuffle)
+
 
     def on_epoch_begin(self,**kwargs:Any)->None:
         logger.debug("Epoch begins on device %s" % self.device)
@@ -1394,6 +1426,8 @@ def debug_train(use_dist_cb=True):
 
     if use_dist_cb:
         learn = learn.to_tpu_distributed()
+	else:
+		learn = learn.to_tpu()
 
     learn.callbacks.append(StopAfterNBatches(n_batches=200))
     #learn.callback_fns.append(CheckGrad)
@@ -1406,7 +1440,7 @@ def debug_train(use_dist_cb=True):
 
 # + id="VrJUbCYd3bIu" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 1000}
 # %%time
-#debug_train(use_dist_cb=True)
+debug_train(use_dist_cb=False)
 
 
 # + id="4MbjVEVm3bIw" colab_type="code" colab={}
