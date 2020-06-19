@@ -1192,11 +1192,31 @@ class CheckGrad(LearnerCallback):
         super().__init__(learn)
         self.skip_loss_step = skip_loss_step
         logger.debug("Callback CheckGrad skip_loss_step: " +str(self.skip_loss_step))
+        self.losses = None
+        self.final_scores = None
+
+    def on_train_begin(self, **kwargs:Any)->None:
+        self.losses = AverageMeter()
+        self.final_scores = RocAucMeter()
 
     @pysnooper.snoop()
     def on_backward_begin(self, **kwargs:Any)->None:
-        print(kwargs.keys())
-        logger.debug("last loss: %f, smooth_loss: %f", kwargs['last_loss'], kwargs['smooth_loss'])
+        #print(kwargs.keys())
+        """dict_keys(['epoch', 'iteration', 'num_batch', 'skip_validate',
+        'n_epochs', 'pbar', 'metrics', 'stop_training', 'last_input',
+        'last_target', 'train', 'stop_epoch', 'skip_step', 'skip_zero',
+        'skip_bwd', 'last_output', 'last_loss', 'smooth_loss'])
+        """
+        logger.debug("itr: %d, num_batch: %d, last loss: %f, smooth_loss: %f",
+                     kwargs['iteration'], kwargs['num_batch'],
+                     kwargs['last_loss'], kwargs['smooth_loss'])
+
+        self.final_scores.update(kwargs['last_target'], kwargs['last_output'])
+        self.losses.update(kwargs['last_loss'].detach().item(), TrainGlobalConfig.batch_size)
+        logger.debug(f"loss_avg: {self.losses.avg:.5f}, lr:"
+                     f"{self.optimizer.param_groups[0]['lr']} final_score:"
+                     f"{self.final_scores.avg:.5f}, mc_score:"
+                     f"{self.final_scores.mc_avg:.5f}")
 
     def on_backward_end(self, **kwargs:Any)->None:
         raw_opt = self.learn.opt.opt
