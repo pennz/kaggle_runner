@@ -393,8 +393,9 @@ nodejs:
 
 
 xla:
-	$(PY) -c 'import torch_xla' || ( curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py; \
+	$(PY) -m pip show torch_xla || ( curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py; \
 $(PY) pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
+$(PY) -m pip install *.whl; \
 $(PY) -m pip install transformers==2.5.1 > /dev/null; \
 $(PY) -m pip install pandarallel > /dev/null; \
 $(PY) -m pip install catalyst==20.4.2 > /dev/null;)
