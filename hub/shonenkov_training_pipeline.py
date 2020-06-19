@@ -1186,6 +1186,7 @@ pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
 # + id="xnvcfuzd3bIp" colab_type="code" colab={}
+import pysnooper
 class CheckGrad(LearnerCallback):
     def __init__(self, learn:Learner, skip_loss_step=False):
         super().__init__(learn)
