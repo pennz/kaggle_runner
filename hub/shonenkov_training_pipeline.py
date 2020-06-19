@@ -1238,7 +1238,7 @@ class TPUDistributed(LearnerCallback):
         self.debug = debug
 
         if debug:
-            self.device = xm.xla_device(devkind='CPU')
+            self.device = xm.xla_device(devkind='TPU')
             logger.debug("TPUDistributed in DEBUG mode")
             #self.device = xm.xla_device(devkind='CPU')
         else:
@@ -1287,8 +1287,19 @@ class TPUDistributed(LearnerCallback):
     def on_train_begin(self, **kwargs:Any)->None:
         self.learn.model = self.learn.model.to(self.device)
 
+		pg = self.learn.opt.opt.param_groups
+		pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+		pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+
+		#logger.debug("grad info: %s", raw_opt)
+		logger.debug(f"pg0 lr: {pg[0]['lr']}")
+		logger.debug(f"pg1 lr: {pg[1]['lr']}")
+
         if self.debug:
-            self.learn.opt.lr = self.learn.opt.lr
+            self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
+			pg[0]['lr'] *= xm.xrt_world_size()
+			pg[1]['lr'] *= xm.xrt_world_size()
+
             logger.debug("opt info: %s, type %s", self.learn.opt, type(self.learn.opt))
         else:
             self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
@@ -1439,14 +1450,14 @@ def train_loop(index, *args):
                                            partial(CSVLogger, append=True),
                                            partial(CheckGrad, skip_loss_step=False)]
                              ).to_tpu_distributed()
-    learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
-    learn.recorder.plot()
-    #learn.fit_one_cycle(3, max_lr=9e-6, wd=0.001)
+    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    #learn.recorder.plot()
+    learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
 
 
 # + id="EQDJ4gsP3bIx" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 573}
 FLAGS={}
-#xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
+xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
 # + id="m-zDM9QL3bIz" colab_type="code" colab={}
