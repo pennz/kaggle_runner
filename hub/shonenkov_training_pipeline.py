@@ -1286,7 +1286,9 @@ class SingleTPUTraining(LearnerCallback):
     #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
     self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle=True)
     self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle=False)
-    self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+
+    self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
+    self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
 
   def on_backward_end(self, **kwargs:Any)->None:
     xm.optimizer_step(self.learn.opt.opt, barrier=True)
@@ -1399,7 +1401,6 @@ from fastai.callbacks import *
 
 import pysnooper
 
-@pysnooper.snoop()
 def debug_train(use_dist_cb=True):
     logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
     from kaggle_runner import defaults
