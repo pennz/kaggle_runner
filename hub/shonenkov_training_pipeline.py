@@ -785,12 +785,13 @@ class TPUFitter:
         for step, (inputs_masks, targets) in enumerate(train_loader):
             inputs=inputs_masks[0]
             attention_masks=inputs_masks[1]
+            batch_size = inputs.size(0)
 
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
                     logger.info(
-                        f'Train Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
+                        f'Train Step {step}, bs: {batch_size}, loss: ' + \
+                        f"{losses.avg:.5f}, lr: {self.optimizer.param_groups[0]['lr']} final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, " + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
@@ -803,7 +804,6 @@ class TPUFitter:
             outputs = self.model(inputs, attention_masks)
             loss = self.criterion(outputs, targets)
 
-            batch_size = inputs.size(0)
 
             final_scores.update(targets, outputs)
 
