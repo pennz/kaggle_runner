@@ -393,8 +393,8 @@ nodejs:
 
 
 xla:
-	$(PY) -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null; \
-python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
+	$(PY) -c 'import torch_xla' || ( curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py; \
+$(PY) pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
 $(PY) -m pip install transformers==2.5.1 > /dev/null; \
 $(PY) -m pip install pandarallel > /dev/null; \
 $(PY) -m pip install catalyst==20.4.2 > /dev/null;)
@@ -402,6 +402,6 @@ $(PY) -m pip install catalyst==20.4.2 > /dev/null;)
 kr:
 	$(PY) -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
-pip3 install -e k;\
+$(PY) -m pip install -e k;\
 export PATH=$PWD/k/bin:$PATH; \
 entry.sh &)
