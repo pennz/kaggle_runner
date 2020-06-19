@@ -1195,7 +1195,8 @@ class CheckGrad(LearnerCallback):
 
     @pysnooper.snoop()
     def on_backward_begin(self, **kwargs:Any)->None:
-        logger.debug("last loss: %f, smooth_loss: %f", self.state_dict['last_loss'], self.state_dict['smooth_loss'])
+        print(kwargs.keys())
+        logger.debug("last loss: %f, smooth_loss: %f", kwargs['last_loss'], kwargs['smooth_loss'])
 
     def on_backward_end(self, **kwargs:Any)->None:
         raw_opt = self.learn.opt.opt
