@@ -29,11 +29,8 @@
 
 
 # + id="Mg3zuCSx3bE9" colab_type="code" colab={}
-# !python3 -c 'import torch_xla' || (curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py > /dev/null; \
-#                                    python pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
-#                                    python3 -m pip install transformers==2.5.1 > /dev/null; \
-#                                    python3 -m pip install pandarallel > /dev/null; \
-#                                    python3 -m pip install catalyst==20.4.2 > /dev/null;)
+# !make xla
+import torch_xla
 from importlib import reload
 import kaggle_runner
 reload(kaggle_runner)
@@ -1288,18 +1285,18 @@ class TPUDistributed(LearnerCallback):
     def on_train_begin(self, **kwargs:Any)->None:
         self.learn.model = self.learn.model.to(self.device)
 
-		pg = self.learn.opt.opt.param_groups
-		pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
-		pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+        pg = self.learn.opt.opt.param_groups
+        pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+        pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
 
-		#logger.debug("grad info: %s", raw_opt)
-		logger.debug(f"pg0 lr: {pg[0]['lr']}")
-		logger.debug(f"pg1 lr: {pg[1]['lr']}")
+        #logger.debug("grad info: %s", raw_opt)
+        logger.debug(f"pg0 lr: {pg[0]['lr']}")
+        logger.debug(f"pg1 lr: {pg[1]['lr']}")
 
         if self.debug:
             self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
-			pg[0]['lr'] *= xm.xrt_world_size()
-			pg[1]['lr'] *= xm.xrt_world_size()
+            pg[0]['lr'] *= xm.xrt_world_size()
+            pg[1]['lr'] *= xm.xrt_world_size()
 
             logger.debug("opt info: %s, type %s", self.learn.opt, type(self.learn.opt))
         else:
