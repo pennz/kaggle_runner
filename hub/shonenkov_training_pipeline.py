@@ -1324,7 +1324,7 @@ from fastai.callbacks import *
 import pysnooper
 
 @pysnooper.snoop()
-def debug_train(use_tpu=True):
+def debug_train(use_tpu=False):
     logger.debug(f'debug train with{" " if use_tpu else "OUT"} to_tpu_distributed')
     from kaggle_runner import defaults
     _DEBUG = defaults.DEBUG
