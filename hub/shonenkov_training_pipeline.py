@@ -33,7 +33,9 @@
 #                                    python3 -m pip install transformers==2.5.1 > /dev/null; \
 #                                    python3 -m pip install pandarallel > /dev/null; \
 #                                    python3 -m pip install catalyst==20.4.2 > /dev/null;)
-
+from importlib import reload
+import kaggle_runner
+reload(kaggle_runner)
 
 # + id="h9Wgilnm3bFE" colab_type="code" colab={}
 import numpy as np
