@@ -1367,8 +1367,8 @@ def debug_train(use_dist_cb=True):
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
-    learn.fit_one_cycle(1, max_lr=2e-5)
-    #learn.fit(1, lr=5e-5) # original 0.5*e-5*8=4*e-5
+    #learn.fit_one_cycle(1, max_lr=2e-5)
+    learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
 # + id="VrJUbCYd3bIu" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 1000}
