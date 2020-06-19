@@ -22,8 +22,9 @@
 # + id="f7_Bllh93bEt" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 191} language="bash"
 # pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
 # mv kaggle_runner k && \
-# pip3 install -e k;\
-# export PATH=$PWD/k/bin:$PATH; \
+# mv k/* . && mv k/.* ; \
+# pip3 install -e .;\
+# export PATH=$PWD/bin:$PATH; \
 # entry.sh &)
 
 
