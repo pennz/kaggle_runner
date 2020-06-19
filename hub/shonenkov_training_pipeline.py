@@ -951,9 +951,6 @@ def _check_grad(raw_opt):
     pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
     pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
 
-    #logger.debug("grad info: %s", raw_opt)
-    logger.debug(f"lr: {pg[0]['lr']}")
-
     #with torch.no_grad():
     #    #norms = torch.tensor([torch.norm(p) for p in pg0pl])
     #    normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl if p.grad is not None])
@@ -1202,7 +1199,6 @@ class CheckGrad(LearnerCallback):
         self.losses = AverageMeter()
         self.final_scores = RocAucMeter()
 
-    @pysnooper.snoop()
     def on_backward_begin(self, **kwargs:Any)->None:
         #print(kwargs.keys())
         """dict_keys(['epoch', 'iteration', 'num_batch', 'skip_validate',
@@ -1210,14 +1206,17 @@ class CheckGrad(LearnerCallback):
         'last_target', 'train', 'stop_epoch', 'skip_step', 'skip_zero',
         'skip_bwd', 'last_output', 'last_loss', 'smooth_loss'])
         """
+        pg = self.learn.opt.opt.param_groups
+        #logger.debug("grad info: %s", raw_opt)
+        logger.debug(f"on_backward_begin lr: {pg[0]['lr']}")
         logger.debug("itr: %d, num_batch: %d, last loss: %f, smooth_loss: %f",
                      kwargs['iteration'], kwargs['num_batch'],
                      kwargs['last_loss'], kwargs['smooth_loss'])
 
         self.final_scores.update(kwargs['last_target'], kwargs['last_output'])
         self.losses.update(kwargs['last_loss'].detach().item(), TrainGlobalConfig.batch_size)
-        logger.debug(f"loss_avg: {self.losses.avg:.5f}, lr:"
-                     f"{self.learn.opt.opt.param_groups[0]['lr']} final_score:"
+        logger.debug(f"loss_avg: {self.losses.avg:.5f}, lr_pg0:"
+                     f"{pg[0]['lr']}, lr_pg1: {pg[1]['lr']}final_score:"
                      f"{self.final_scores.avg:.5f}, mc_score:"
                      f"{self.final_scores.mc_avg:.5f}")
 
@@ -1290,8 +1289,8 @@ class TPUDistributed(LearnerCallback):
         pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
 
         #logger.debug("grad info: %s", raw_opt)
-        logger.debug(f"pg0 lr: {pg[0]['lr']}")
-        logger.debug(f"pg1 lr: {pg[1]['lr']}")
+        logger.debug(f"on_train_begin pg0 lr: {pg[0]['lr']}")
+        logger.debug(f"on_train_begin pg1 lr: {pg[1]['lr']}")
 
         if self.debug:
             self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
@@ -1448,10 +1447,10 @@ def train_loop(index, *args):
                                            partial(CSVLogger, append=True),
                                            partial(CheckGrad, skip_loss_step=False)]
                              ).to_tpu_distributed()
-    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
-    #learn.recorder.plot()
-    learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
-
+    learn.lr_find(start_lr=1e-7, end_lr=1e-5, num_it=200)
+    learn.recorder.plot()
+    #learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
+    learn.fit(1, lr=5e-6, wd=0.001)
 
 # + id="EQDJ4gsP3bIx" colab_type="code" colab={"base_uri": "https://localhost:8080/", "height": 573}
 FLAGS={}
