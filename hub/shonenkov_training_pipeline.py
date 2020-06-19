@@ -1198,6 +1198,8 @@ class CheckGrad(LearnerCallback):
 
         return {'skip_step': self.skip_loss_step}
 
+
+import pysnooper
 class TPUDistributed(LearnerCallback):
     def __init__(self, learn:Learner, debug=True):
         super().__init__(learn)
@@ -1280,8 +1282,10 @@ class TPUDistributed(LearnerCallback):
             self.learn.data.valid_dl.dataset = self.old_valid_dl.dataset
             self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
 
+    @pysnooper.snoop()
     def on_backward_end(self, **kwargs:Any)->None:
-        xm.optimizer_step(self.learn.opt, barrier=self.debug) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
+		logger.debug("last loss: %f, smooth_loss: %f", self.state_dict['last_loss'], self.state_dict['smooth_loss'])
+        xm.optimizer_step(self.learn.opt) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
         #may_debug(True)
         #return {'skip_step': True}
 
