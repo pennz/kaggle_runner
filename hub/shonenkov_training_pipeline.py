@@ -877,12 +877,12 @@ class LabelSmoothing(nn.Module):
 
             toxic_target = target[:,:2]
             aux_target = target[:, 2:]
-            with torch.no_grad():
-                # smooth_toxic = pred.data.clone()
-                smooth_toxic = self.smoothing + (1-self.smoothing*2)*toxic_target
-                # smooth_toxic.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
-                # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
-                smooth_aux = self.smoothing + (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+            #with torch.no_grad():
+            # smooth_toxic = pred.data.clone()
+            smooth_toxic = self.smoothing + (1-self.smoothing*2)*toxic_target
+            # smooth_toxic.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
+            # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
+            smooth_aux = self.smoothing + (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
 
             aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
 
