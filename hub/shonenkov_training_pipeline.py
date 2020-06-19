@@ -1405,6 +1405,9 @@ FLAGS={}
 
 
 # + id="m-zDM9QL3bIz" colab_type="code" colab={}
+import pysnooper
+
+@pysnooper.snoop()
 def _mp_fn(rank, flags, k=k):
     device = xm.xla_device(devkind='TPU')
     logger.debug("%s used for xla_device" % device)
