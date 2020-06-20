@@ -469,14 +469,16 @@ from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 
 # # + colab={} colab_type="code" id="yrGZycwx3bHd"
 class Shonenkov(FastAIKernel):
-    def __init__(self, **kargs):
+    def __init__(self, device, **kargs):
         super(Shonenkov, self).__init__(**kargs)
         self.data = None
         self.transformers = None
         self.setup_transformers()
+        self.device = device
 
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModel()
+        self.model.to(self.device)
 
     def set_random_seed(self):
         seed_everything(SEED)
@@ -540,7 +542,6 @@ class Shonenkov(FastAIKernel):
         )
 
         del df_val
-#del df_val_unclean
         gc.collect();
 
         del df_train
@@ -567,9 +568,11 @@ class Shonenkov(FastAIKernel):
         gc.collect();
     def after_prepare_data_hook(self):
         """Put to databunch here"""
+        logger.debug("kernel use device %s", self.device)
         self.data = DataBunch.create(self.train_dataset,
                                      self.validation_dataset,
                                      bs=TrainGlobalConfig.batch_size,
+                                     device=self.device,
                                      num_workers=TrainGlobalConfig.num_workers)
 
     def peek_data(self):
@@ -714,7 +717,7 @@ class LabelSmoothing(nn.Module):
             return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
 
 # # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
-k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
+k = Shonenkov(torch.device("cuda"), metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
 
