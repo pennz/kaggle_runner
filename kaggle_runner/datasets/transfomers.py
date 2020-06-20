@@ -59,8 +59,17 @@ def get_open_subtitles():
 
     return df_ot
 
+ROOT_PATH = '/kaggle'
+def get_pickled_data(file_path):
+    obj = get_obj_or_dump(file_path)
 
-# # + colab={} colab_type="code" id="3Oyryrcx3bHI"
+    if obj is None:
+        #may_debug(True)
+
+        return get_obj_or_dump(f"{ROOT_PATH}/input/clean-pickle-for-jigsaw-toxicity/{file_path}")
+
+    return obj
+
 class SynthesicOpenSubtitlesTransform(NLPTransform):
     def __init__(self, always_apply=False, supliment_toxic=None, p=0.5, mix=False):
         super(SynthesicOpenSubtitlesTransform, self).__init__(always_apply, p)
