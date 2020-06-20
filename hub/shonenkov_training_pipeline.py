@@ -932,7 +932,7 @@ class CheckGrad(LearnerCallback):
 from functools import partial
 
 from hub.custom_fastai_callbacks.callbacks import GradientAccumulator
-def debug_train(use_dist_cb=True):
+def train_with_gpu(use_dist_cb=True):
     logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
     from kaggle_runner import defaults
     _DEBUG = defaults.DEBUG
@@ -956,10 +956,10 @@ def debug_train(use_dist_cb=True):
                              callback_fns=[partial(GradientClipping, clip=0.5),
                                            partial(CSVLogger, append=True),
                                            partial(GradientAccumulator, num_iterations=4),
+                                           ReduceLROnPlateauCallback,
+                                           SaveModelCallback,
                                            partial(CheckGrad, skip_loss_step=False)]
                              )
-    k.learner = learn
-
     k.learner = learn
 
     if use_dist_cb:
@@ -971,7 +971,7 @@ def debug_train(use_dist_cb=True):
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-2, num_it=200)
     #learn.recorder.plot()
-    learn.fit_one_cycle(2, max_lr=3e-5)
+    learn.fit_one_cycle(2, max_lr=1e-5)
     #learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
@@ -979,7 +979,7 @@ def debug_train(use_dist_cb=True):
 # -
 
 # %%time
-debug_train(use_dist_cb=False)
+train_with_gpu(use_dist_cb=False)
 
 
 # # XLA
@@ -1457,6 +1457,7 @@ def test_model_fn(device=torch.device("cpu")):
 from functools import partial
 from fastai.callbacks.misc import StopAfterNBatches
 from fastai.callbacks import *
+from fastai.callbacks.tracker import *
 
 import pysnooper
 
