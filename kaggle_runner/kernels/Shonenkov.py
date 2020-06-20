@@ -1,6 +1,7 @@
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.datasets.transfomers import *
+from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 import albumentations
 
 def get_train_transforms():
@@ -15,6 +16,20 @@ def get_train_transforms():
 def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
     return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
 
+def get_pickled_data(file_path):
+    obj = get_obj_or_dump(file_path)
+
+    if obj is None:
+        #may_debug(True)
+
+        return get_obj_or_dump(f"{ROOT_PATH}/input/clean-pickle-for-jigsaw-toxicity/{file_path}")
+
+    return obj
+
+vocab = get_pickled_data("vocab.pkl")
+#if vocab is None: # vocab file read~~
+#   vocab = [tokenizer.convert_ids_to_tokens(i) for i in range(tokenizer.vocab_size)]
+#   get_obj_or_dump("vocab.pkl", default=vocab)
 
 class Shonenkov(FastAIKernel):
     def __init__(self, device, **kargs):

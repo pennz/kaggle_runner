@@ -106,23 +106,6 @@ tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
 # # + colab={} colab_type="code" id="ya6Mxv0G3bGO"
 ROOT_PATH = f'/kaggle' # for colab
 
-# # + colab={} colab_type="code" id="sA1Da3DB3bGQ"
-from kaggle_runner.utils.kernel_utils import get_obj_or_dump
-def get_pickled_data(file_path):
-    obj = get_obj_or_dump(file_path)
-
-    if obj is None:
-        #may_debug(True)
-
-        return get_obj_or_dump(f"{ROOT_PATH}/input/clean-pickle-for-jigsaw-toxicity/{file_path}")
-
-    return obj
-
-vocab = get_pickled_data("vocab.pkl")
-#if vocab is None: # vocab file read~~
-#   vocab = [tokenizer.convert_ids_to_tokens(i) for i in range(tokenizer.vocab_size)]
-#   get_obj_or_dump("vocab.pkl", default=vocab)
-
 
 # # + colab={} colab_type="code" id="jAeLvflH3bGV"
 def seed_everything(seed):
