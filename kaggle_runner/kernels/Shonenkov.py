@@ -11,6 +11,10 @@ def get_train_transforms():
         ExcludeDuplicateSentencesTransform(p=0.95),
     ], p=1.0)
 
+def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
+    return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
+
+
 class Shonenkov(FastAIKernel):
     def __init__(self, device, **kargs):
         super(Shonenkov, self).__init__(**kargs)

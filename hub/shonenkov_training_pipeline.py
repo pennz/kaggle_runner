@@ -154,12 +154,6 @@ LANGS = {
 }
 
 
-# # + colab={} colab_type="code" id="IY_VsMfk3bHL"
-
-# # + colab={} colab_type="code" id="4bTYrA1l3bHR"
-def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
-    return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
-
 # # + colab={} colab_type="code" id="NjmhIsAK3bHU"
 def get_toxic_comments(df):
         df = df[~df['comment_text'].isna()]
