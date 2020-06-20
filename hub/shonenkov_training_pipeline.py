@@ -1293,8 +1293,8 @@ class SingleTPUTraining(LearnerCallback):
 
     #self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
     #self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
-    self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
-    self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
+    #self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
+    #self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
 
   def on_backward_end(self, **kwargs:Any)->None:
     xm.optimizer_step(self.learn.opt.opt, barrier=True)
