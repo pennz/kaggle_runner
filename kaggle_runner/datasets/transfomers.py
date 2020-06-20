@@ -3,7 +3,7 @@ import cv2
 import albumentations as A
 from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
                             GridDistortion, HorizontalFlip, IAAEmboss,
-                            MultiplicativeNoise, Normalize, OneOf,
+                            Normalize, OneOf, #MultiplicativeNoise,
                             OpticalDistortion, RandomBrightnessContrast,
                             RandomGamma, RandomRotate90, Resize,
                             ShiftScaleRotate, Transpose, VerticalFlip)
@@ -122,7 +122,7 @@ def get_transforms(phase, size, mean, std):
                     border_mode=cv2.BORDER_CONSTANT,
                 ),
                 GaussNoise(),
-                A.MultiplicativeNoise(multiplier=1.5, p=1),
+                #A.MultiplicativeNoise(multiplier=1.5, p=1),
             ]
         )
     list_transforms.extend(
