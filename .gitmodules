@@ -9,4 +9,4 @@
 	url = https://github.com/akashpalrecha/custom-fastai-callbacks
 [submodule "hub/custom_fastai_callbacks"]
 	path = hub/custom_fastai_callbacks
-	url = https://github.com/akashpalrecha/custom-fastai-callbacks
+	url = git@github.com:pennz/custom-fastai-callbacks
