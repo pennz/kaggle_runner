@@ -40,6 +40,7 @@ from kaggle_runner.kernels.Shonenkov import Shonenkov
 from kaggle_runner.callbacks import CheckGrad,_check_grad
 from kaggle_runner.metrics.meters import AverageMeter, RocAucMeter
 from kaggle_runner.runners.trainer import TPUDistributed,TPUFitter
+from kaggle_runner.losses import LabelSmoothing
 from kaggle_runner.datasets.transfomers import *
 
 
