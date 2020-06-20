@@ -8,7 +8,7 @@ from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
                             RandomGamma, RandomRotate90, Resize,
                             ShiftScaleRotate, Transpose, VerticalFlip)
 from albumentations.pytorch import ToTensor
-
+from albumentations.core.transforms_interface import DualTransform, BasicTransform
 
 class NLPTransform(BasicTransform):
     """ Transform for nlp task."""

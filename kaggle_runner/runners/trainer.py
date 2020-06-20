@@ -8,6 +8,8 @@ from kaggle_runner.losses import MixedLoss
 from kaggle_runner.metrics.meters import Meter
 from kaggle_runner.optimizers import RAdam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from fastai.basic_train import LearnerCallback, Learner
+from fastai.core import Any
 
 
 class Trainer(object):

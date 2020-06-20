@@ -72,7 +72,7 @@ tqdm.pandas()
 from transformers import XLMRobertaTokenizer
 from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_schedule
 from fastai.text.transform import Vocab
-from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
+#from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 
 # # + colab={} colab_type="code" id="m_bxIOBr3bFf"
 import gc
@@ -83,17 +83,11 @@ import re
 import nltk
 nltk.download('punkt')
 
-# # + colab={} colab_type="code" id="Tz4yfcsg3bFq"
 from nltk import sent_tokenize
 
-# # + colab={} colab_type="code" id="krJjgsvu3bFw"
 from pandarallel import pandarallel
-
-# # + colab={"base_uri": "https://localhost:8080/", "height": 52} colab_type="code" id="-dI4yCqa3bF1"
 pandarallel.initialize(nb_workers=4, progress_bar=False)
 
-# # + colab={"base_uri": "https://localhost:8080/", "height": 159} colab_type="code" id="Ja1ioFcG3bF7"
-from fastai.basic_data import DataBunch
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 from kaggle_runner import may_debug
 
@@ -388,7 +382,7 @@ from kaggle_runner import logger
 
 
 # # + colab={} colab_type="code" id="LnDl9J_d3bIF"
-from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
+# from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 
 # # + colab={} colab_type="code" id="qbxKT4Td3bII"
 
@@ -605,13 +599,6 @@ import pysnooper
 
 @pysnooper.snoop()
 def train_loop(index, *args):
-  #data = (ImageList.from_df(df=train_df, path=path/'images', cols=1)
-  #        .random_split_by_pct(0.2)
-  #        .label_from_df(cols=0)
-  #        .transform(get_transforms(), size=224)
-  #        .databunch(bs=32, num_workers=0)
-  #        .normalize(imagenet_stat))
-  #learn = cnn_learner(data, models.resnet152, metrics=accuracy).to_tpu_distributed()
     logger.debug("rank: %d entered train_loop", index)
 
     param_optimizer = list(k.model.named_parameters())
