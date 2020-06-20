@@ -931,7 +931,7 @@ class CheckGrad(LearnerCallback):
 # +
 from functools import partial
 
-from .custom_fastai_callbacks import GradientAccumulator
+from hub.custom_fastai_callbacks.callbacks import GradientAccumulator
 def debug_train(use_dist_cb=True):
     logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
     from kaggle_runner import defaults
@@ -971,7 +971,7 @@ def debug_train(use_dist_cb=True):
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-2, num_it=200)
     #learn.recorder.plot()
-    learn.fit_one_cycle(3, max_lr=1e-4)
+    learn.fit_one_cycle(3, max_lr=5e-5)
     #learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
