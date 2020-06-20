@@ -18,6 +18,7 @@ def get_train_transforms():
 def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
     return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
 
+ROOT_PATH = '/kaggle'
 def get_pickled_data(file_path):
     obj = get_obj_or_dump(file_path)
 
