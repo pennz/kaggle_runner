@@ -34,7 +34,7 @@ export SED := $(SED)
 SERVER := $(SERVER)
 CHECK_PORT := $(CHECK_PORT)
 ifeq ($(SERVER),)
-	SERVER := vtool.duckdns.org
+	SERVER := pengyuzhou.com
 endif
 ifeq ($(CHECK_PORT),)
 	CHECK_PORT := 23455
