@@ -22,7 +22,7 @@
 # + colab={"base_uri": "https://localhost:8080/", "height": 191} colab_type="code" id="f7_Bllh93bEt" language="bash"
 # pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
 # # mv kaggle_runner k && \
-# # mv k/* . && mv k/.* ; \
+# # mv k/* . && mv k/.* .; \
 # # pip3 install -e .;\
 # # export PATH=$PWD/bin:$PATH; \
 # # entry.sh &)
@@ -931,7 +931,7 @@ class CheckGrad(LearnerCallback):
 # +
 from functools import partial
 
-from .custom_fastai_callbacks import GradientAccumulator
+from hub.custom_fastai_callbacks import GradientAccumulator
 def debug_train(use_dist_cb=True):
     logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
     from kaggle_runner import defaults
@@ -969,7 +969,7 @@ def debug_train(use_dist_cb=True):
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
     #learn.recorder.plot()
-    learn.fit_one_cycle(3, max_lr=1e-4)
+    learn.fit_one_cycle(3, max_lr=5e-5)
     #learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
@@ -1503,7 +1503,7 @@ def train_loop(index, *args):
 
 # # + colab={"base_uri": "https://localhost:8080/", "height": 573} colab_type="code" id="EQDJ4gsP3bIx"
 FLAGS={}
-xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
+#xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
 # # + colab={} colab_type="code" id="m-zDM9QL3bIz"
@@ -1593,7 +1593,7 @@ gc.collect()
 
 if __name__ == "__main__":
     FLAGS={}
-    xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
+    #xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 # # + colab={} colab_type="code" id="hTEdrF6n3bJA"
 from datetime import date
