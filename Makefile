@@ -409,9 +409,11 @@ mv kaggle_runner k && \
 $(PY) -m pip install -e k;\
 export PATH=$PWD/k/bin:$PATH; \
 entry.sh &)
+	touch hub/custom_fastai_callbacks/__init__.py
 
 prompt:
 	$(PY) -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 	$(PY) -m pip install ipdb pysnooper
+
 sed:
 	@echo sed used is $(SED)
