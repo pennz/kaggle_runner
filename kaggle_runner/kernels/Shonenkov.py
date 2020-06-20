@@ -1,6 +1,7 @@
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.datasets.transfomers import *
+import albumentations
 
 def get_train_transforms():
     return albumentations.Compose([
