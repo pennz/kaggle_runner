@@ -121,16 +121,6 @@ def seed_everything(seed):
 
 
 # # + colab={} colab_type="code" id="JLdFogcG3bGe"
-LANGS = {
-    'en': 'english',
-    'it': 'italian',
-    'fr': 'french',
-    'es': 'spanish',
-    'tr': 'turkish',
-    'ru': 'russian',
-    'pt': 'portuguese'
-}
-
 
 # # + colab={} colab_type="code" id="NjmhIsAK3bHU"
 def get_toxic_comments(df):

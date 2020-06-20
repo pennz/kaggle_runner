@@ -1,8 +1,8 @@
-import cv2
 import pandas as pd
 import re
 
 import random
+import cv2
 import albumentations as A
 from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
                             GridDistortion, HorizontalFlip, IAAEmboss,
@@ -14,6 +14,16 @@ from albumentations.pytorch import ToTensor
 from albumentations.core.transforms_interface import DualTransform, BasicTransform
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 from nltk import sent_tokenize
+
+LANGS = {
+    'en': 'english',
+    'it': 'italian',
+    'fr': 'french',
+    'es': 'spanish',
+    'tr': 'turkish',
+    'ru': 'russian',
+    'pt': 'portuguese'
+}
 
 class NLPTransform(BasicTransform):
     """ Transform for nlp task."""
