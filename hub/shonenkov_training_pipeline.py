@@ -32,6 +32,7 @@
 from importlib import reload
 import kaggle_runner
 reload(kaggle_runner)
+from kaggle_runner import logger
 
 
 # # + colab={} colab_type="code" id="h9Wgilnm3bFE"
@@ -478,7 +479,7 @@ class Shonenkov(FastAIKernel):
 
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModel()
-        self.model.to(self.device)
+        self.model = self.model.to(self.device)
 
     def set_random_seed(self):
         seed_everything(SEED)
@@ -687,40 +688,6 @@ import ipdb
 # # + colab={} colab_type="code" id="H7bNG49v3bIZ"
 from kaggle_runner import may_debug
 
-# # + colab={} colab_type="code" id="6KQPK1tG3bIO"
-class TrainGlobalConfig:
-    """ Global Config for this notebook """
-    num_workers = 0  # количество воркеров для loaders
-    batch_size = 16  # bs
-    n_epochs = 2  # количество эпох для обучения
-    lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
-    fold_number = 0  # номер фолда для обучения
-
-    # -------------------
-    verbose = True  # выводить принты
-    verbose_step = 1  # количество шагов для вывода принта
-    # -------------------
-
-    # --------------------
-    step_scheduler = False  # выполнять scheduler.step после вызова optimizer.step
-    validation_scheduler = True  # выполнять scheduler.step после валидации loss (например для плато)
-    SchedulerClass = torch.optim.lr_scheduler.ReduceLROnPlateau
-    scheduler_params = dict(
-        mode='max',
-        factor=0.7,
-        patience=0,
-        verbose=False,
-        threshold=0.0001,
-        threshold_mode='abs',
-        cooldown=0,
-        min_lr=1e-8,
-        eps=1e-08
-    )
-    # --------------------
-
-    # -------------------
-    criterion = LabelSmoothing()
-    # -------------------
 
 # # + colab={} colab_type="code" id="yRdMTDq13bIN"
 class LabelSmoothing(nn.Module):
@@ -752,6 +719,41 @@ class LabelSmoothing(nn.Module):
             return torch.mean(torch.sum(-smooth_toxic * pred, dim=self.dim)) + aux_loss/3
         else:
             return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
+
+# # + colab={} colab_type="code" id="6KQPK1tG3bIO"
+class TrainGlobalConfig:
+    """ Global Config for this notebook """
+    num_workers = 0  # количество воркеров для loaders
+    batch_size = 16  # bs , 8 for GPU, 16 for TPU
+    n_epochs = 2  # количество эпох для обучения
+    lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
+    fold_number = 0  # номер фолда для обучения
+
+    # -------------------
+    verbose = True  # выводить принты
+    verbose_step = 1  # количество шагов для вывода принта
+    # -------------------
+
+    # --------------------
+    step_scheduler = False  # выполнять scheduler.step после вызова optimizer.step
+    validation_scheduler = True  # выполнять scheduler.step после валидации loss (например для плато)
+    SchedulerClass = torch.optim.lr_scheduler.ReduceLROnPlateau
+    scheduler_params = dict(
+        mode='max',
+        factor=0.7,
+        patience=0,
+        verbose=False,
+        threshold=0.0001,
+        threshold_mode='abs',
+        cooldown=0,
+        min_lr=1e-8,
+        eps=1e-08
+    )
+    # --------------------
+
+    # -------------------
+    criterion = LabelSmoothing()
+    # -------------------
 
 # # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
 k = Shonenkov(torch.device("cuda"), metrics=None, loss_func=LabelSmoothing(), opt_func=None)
@@ -834,9 +836,15 @@ class SingleTPUTraining(LearnerCallback):
     #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
     self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle=True)
     self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle=False)
+    #self.learn.data = DataBunch.create(self.data.train_dl,
+    #                             self.data.valid_dl,
+    #                             bs=TrainGlobalConfig.batch_size,
+    #                             device=self.device,
+    #                             num_workers=TrainGlobalConfig.num_workers)
 
-    self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
-
+    #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+    self.learn.data.train_dl = DeviceDataLoader(self.data.train_dl, device=self.device)
+    self.learn.data.valid_dl = DeviceDataLoader(self.data.valid_dl, device=self.device)
     #self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
     #self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
     #self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
