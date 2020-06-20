@@ -724,7 +724,7 @@ class LabelSmoothing(nn.Module):
 class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
-    batch_size = 16  # bs , 8 for GPU, 16 for TPU
+    batch_size = 8  # bs , 8 for GPU, 16 for TPU
     n_epochs = 2  # количество эпох для обучения
     lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
     fold_number = 0  # номер фолда для обучения
@@ -934,7 +934,7 @@ def debug_train(use_dist_cb=True):
     logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
     from kaggle_runner import defaults
     _DEBUG = defaults.DEBUG
-    defaults.DEBUG = True
+    #defaults.DEBUG = True
 
     param_optimizer = list(k.model.named_parameters())
     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -952,23 +952,23 @@ def debug_train(use_dist_cb=True):
                              loss_func=LabelSmoothing(),
                              wd=0.01,
                              callback_fns=[partial(GradientClipping, clip=0.5),
-                                           ShowGraph,
                                            partial(CSVLogger, append=True),
                                            partial(CheckGrad, skip_loss_step=False)]
                              )
+
+    k.learner = learn
 
     if use_dist_cb:
         learn = learn.to_tpu_distributed()
     else:
         learn = learn.to_tpu()
 
-    learn.callbacks.append(StopAfterNBatches(n_batches=1000))
-    #learn.callback_fns.append(CheckGrad)
+    #learn.callbacks.append(StopAfterNBatches(n_batches=1000))
     #print('hello')
-    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    #learn.lr_find(start_lr=1e-7, end_lr=1e-2, num_it=200)
     #learn.recorder.plot()
-    #learn.fit_one_cycle(1, max_lr=2e-5)
-    learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
+    learn.fit_one_cycle(3, max_lr=1e-4)
+    #learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
 
@@ -978,7 +978,6 @@ def debug_train(use_dist_cb=True):
 debug_train(use_dist_cb=False)
 
 
-ipdb.pm()
 
 # # XLA
 
