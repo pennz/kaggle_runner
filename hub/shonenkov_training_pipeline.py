@@ -1138,7 +1138,6 @@ class TPUFitter:
             losses.update(loss.detach().item(), batch_size)
 
             loss.backward()
-            _check_grad(self.optimizer)
             logger.info("step: %d, loss: %f", step, loss)
 
             xm.optimizer_step(self.optimizer)
