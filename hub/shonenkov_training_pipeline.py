@@ -1285,19 +1285,19 @@ class SingleTPUTraining(LearnerCallback):
 
   def on_train_begin(self, **kwargs:Any)->None:
     #self.device = xm.xla_device(devkind='CPU')
-    self.device = torch.device("cuda")
+    self.device = torch.device("xla")
     self.learn.model = self.learn.model.to(self.device)
     #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
     self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle=True)
     self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle=False)
 
-    #self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
-    #self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
-    #self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
-    #self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
+    self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
+    self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
+    self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
+    self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
 
   def on_backward_end(self, **kwargs:Any)->None:
-    #xm.optimizer_step(self.learn.opt.opt, barrier=True)
+    xm.optimizer_step(self.learn.opt.opt, barrier=True)
     pass
 
 def _to_tpu(learn:Learner) -> Learner:
@@ -1432,7 +1432,7 @@ def debug_train(use_dist_cb=True):
                              callback_fns=[partial(GradientClipping, clip=0.5),
                                            ShowGraph,
                                            partial(CSVLogger, append=True),
-                                           partial(CheckGrad, skip_loss_step=False)]
+                                           ]
                              )
 
     if use_dist_cb:
