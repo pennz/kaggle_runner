@@ -2683,3 +2683,9 @@ Train Step 1, bs: 16, loss: 1.13281, lr: 4e-05 final_score: 0.48438, mc_score: 0
 [DEBUG]2020-06-19 09:25:15,211:utils:loss_avg: 1.16341, lr_pg0:4e-05, lr_pg1: 4e-05final_score:0.49109, mc_score:-0.01159
 [DEBUG]2020-06-19 09:25:16,268:utils:on_backward_begin lr: 4e-05
 ```
+## test result
+For CPU, if use xla, it still report Grad None
+    self.device = xm.xla_device(devkind='CPU')
+
+For TPU, it will freeze when trying to get Grad
+

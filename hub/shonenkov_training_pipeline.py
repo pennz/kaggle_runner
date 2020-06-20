@@ -7,8 +7,8 @@
 #     text_representation:
 #       extension: .py
 #       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.5.0
+#       format_version: '1.4'
+#       jupytext_version: 1.1.7
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -29,8 +29,6 @@
 
 
 # # + colab={} colab_type="code" id="Mg3zuCSx3bE9"
-# !make xla
-import torch_xla
 from importlib import reload
 import kaggle_runner
 reload(kaggle_runner)
@@ -671,15 +669,147 @@ class ToxicSimpleNNModel(nn.Module):
 
 # # + colab={} colab_type="code" id="Z2NkI1sW3bHs"
 import warnings
-
-# # + colab={} colab_type="code" id="imzd88o33bIB"
 warnings.filterwarnings("ignore")
 
-# # + colab={} colab_type="code" id="fGfbDB5z3bID"
+
+# # + colab={} colab_type="code" id="cQ86CF413bIS"
+# ![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
+
+
+# # + colab={} colab_type="code" id="ROFBN4h33bIV"
+import ipdb
+
+# # + colab={} colab_type="code" id="H7bNG49v3bIZ"
+from kaggle_runner import may_debug
+
+# # + colab={} colab_type="code" id="yRdMTDq13bIN"
+class LabelSmoothing(nn.Module):
+    """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
+
+    def __init__(self, smoothing = 0.1, dim=-1):
+        super(LabelSmoothing, self).__init__()
+        self.cls = 2
+        self.confidence = 1.0 - smoothing
+        self.smoothing = smoothing
+        self.dim = dim
+
+    def forward(self, x, target):
+        if self.training:
+            pred = x[:,:2].log_softmax(dim=self.dim)
+            aux=x[:, 2:]
+
+            toxic_target = target[:,:2]
+            aux_target = target[:, 2:]
+            #with torch.no_grad():
+            # smooth_toxic = pred.data.clone()
+            smooth_toxic = self.smoothing + (1-self.smoothing*2)*toxic_target
+            # smooth_toxic.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
+            # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
+            smooth_aux = self.smoothing + (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+
+            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
+
+            return torch.mean(torch.sum(-smooth_toxic * pred, dim=self.dim)) + aux_loss/3
+        else:
+            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
+
+# # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
+k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
+k.run(dump_flag=False)
+
+
+# # + colab={} colab_type="code" id="j0ienNqm3bId"
+def _check_grad(raw_opt):
+    pg = raw_opt.param_groups
+    pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+    pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+
+    with torch.no_grad():
+        #norms = torch.tensor([torch.norm(p) for p in pg0pl])
+        #may_debug()
+        #logger.debug("%s", pg0pl[0].grad)
+        #logger.debug("%s", pg0pl[0].data)
+        normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl[:10] if p.grad is not None])
+        #logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
+        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
+
+        #norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
+        norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl[:10] if p.grad is not None])
+        #logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
+        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
+
+
+# # + colab={} colab_type="code" id="Sul01z663bIf"
+from kaggle_runner import logger
+from kaggle_runner import defaults
+
+# # + colab={} colab_type="code" id="W-54VVqb3bIn"
+# !make xla
+import warnings
+warnings.filterwarnings('ignore')
+
+def debug_train(use_dist_cb=True):
+    logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
+    from kaggle_runner import defaults
+    _DEBUG = defaults.DEBUG
+    defaults.DEBUG = True
+
+    param_optimizer = list(k.model.named_parameters())
+    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
+    ]
+
+    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
+        kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
+
+        return AdamW(optimizer_grouped_parameters, *args, **kargs)
+
+    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
+                             loss_func=LabelSmoothing(),
+                             wd=0.01,
+                             callback_fns=[partial(GradientClipping, clip=0.5),
+                                           ShowGraph,
+                                           partial(CSVLogger, append=True),
+                                           partial(CheckGrad, skip_loss_step=False)]
+                             )
+
+    if use_dist_cb:
+        learn = learn.to_tpu_distributed()
+    else:
+        learn = learn.to_tpu()
+
+    learn.callbacks.append(StopAfterNBatches(n_batches=1000))
+    #learn.callback_fns.append(CheckGrad)
+    #print('hello')
+    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    #learn.recorder.plot()
+    #learn.fit_one_cycle(1, max_lr=2e-5)
+    learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
+    defaults.DEBUG = _DEBUG
+
+# # + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="VrJUbCYd3bIu"
+# %%time
+debug_train(use_dist_cb=False)
+
+
 import torch_xla
+import torch_xla.distributed.data_parallel as dp
+import torch_xla.utils.utils as xu
 import torch_xla.core.xla_model as xm
 import torch_xla.distributed.parallel_loader as pl
 import torch_xla.distributed.xla_multiprocessing as xmp
+import torch
+
+import fastai
+from fastai import *
+from fastai.core import *
+from fastai.torch_core import *
+from fastai.vision import *
+from fastai.basic_train import *
+from kaggle_runner import logger
+
 
 # # + colab={} colab_type="code" id="LnDl9J_d3bIF"
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
@@ -859,37 +989,6 @@ class TPUFitter:
         with open(self.log_path, 'a+') as logger:
             xm.master_print(f'{message}', logger)
 
-# # + colab={} colab_type="code" id="yRdMTDq13bIN"
-class LabelSmoothing(nn.Module):
-    """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
-
-    def __init__(self, smoothing = 0.1, dim=-1):
-        super(LabelSmoothing, self).__init__()
-        self.cls = 2
-        self.confidence = 1.0 - smoothing
-        self.smoothing = smoothing
-        self.dim = dim
-
-    def forward(self, x, target):
-        if self.training:
-            pred = x[:,:2].log_softmax(dim=self.dim)
-            aux=x[:, 2:]
-
-            toxic_target = target[:,:2]
-            aux_target = target[:, 2:]
-            #with torch.no_grad():
-            # smooth_toxic = pred.data.clone()
-            smooth_toxic = self.smoothing + (1-self.smoothing*2)*toxic_target
-            # smooth_toxic.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
-            # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
-            smooth_aux = self.smoothing + (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
-
-            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
-
-            return torch.mean(torch.sum(-smooth_toxic * pred, dim=self.dim)) + aux_loss/3
-        else:
-            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
-
 # # + colab={} colab_type="code" id="6KQPK1tG3bIO"
 class TrainGlobalConfig:
     """ Global Config for this notebook """
@@ -924,264 +1023,6 @@ class TrainGlobalConfig:
     # -------------------
     criterion = LabelSmoothing()
     # -------------------
-
-# # + colab={} colab_type="code" id="0jRWjZRd3bIQ"
-def test_init():
-    l = Shonenkov(loss_func=None, metrics=None)
-    assert l is not None
-
-# # + colab={} colab_type="code" id="cQ86CF413bIS"
-# !cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
-
-
-# # + colab={} colab_type="code" id="ROFBN4h33bIV"
-import ipdb
-
-# # + colab={} colab_type="code" id="H7bNG49v3bIZ"
-from kaggle_runner import may_debug
-
-# # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
-k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
-k.run(dump_flag=False)
-
-
-# # + colab={} colab_type="code" id="j0ienNqm3bId"
-def _check_grad(raw_opt):
-    pg = raw_opt.param_groups
-    pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
-    pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
-
-    with torch.no_grad():
-        #norms = torch.tensor([torch.norm(p) for p in pg0pl])
-        #may_debug()
-        #logger.debug("%s", pg0pl[0].grad)
-        #logger.debug("%s", pg0pl[0].data)
-        normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl[:10] if p.grad is not None])
-        #logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
-        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
-
-        #norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
-        norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl[:10] if p.grad is not None])
-        #logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
-        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
-
-
-# # + colab={} colab_type="code" id="Sul01z663bIf"
-from kaggle_runner import logger
-
-def test_model_fn(device=torch.device("cpu")):
-    #device = xm.xla_device(devkind='TPU')
-    #device=torch.device("xla")
-    logger.debug("Device used: %s", device)
-
-    #k.run(dump_flag=True) # it seems it cannot save right
-    #k.run(dump_flag=False)
-    #k.peek_data()
-
-    self = k
-    assert self.validation_dataset is not None
-    #assert self.learner is not None
-
-    net = k.model
-    assert net is not None
-    net.to(device)
-
-    param_optimizer = list(self.model.named_parameters())
-    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-    ]
-    #optimizer = AdamW(optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*xm.xrt_world_size())
-    optimizer = AdamW(optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*8)
-
-    train_loader = torch.utils.data.DataLoader(
-        self.train_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        shuffle=False, # sampler is set, so shuffle here should be False
-        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
-        pin_memory=False,
-        drop_last=True,
-        num_workers=TrainGlobalConfig.num_workers,
-    )
-    may_debug()
-    validation_loader = torch.utils.data.DataLoader(
-        self.validation_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-    #    sampler=validation_sampler,
-        pin_memory=False,
-        drop_last=False,
-        num_workers=TrainGlobalConfig.num_workers
-    )
-    test_loader = torch.utils.data.DataLoader(
-        self.test_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-    #    sampler=test_sampler,
-        pin_memory=False,
-        drop_last=False,
-        num_workers=TrainGlobalConfig.num_workers
-    )
-    validation_tune_loader = torch.utils.data.DataLoader(
-        self.validation_tune_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        #sampler=validation_tune_sampler,
-        pin_memory=False,
-        drop_last=False,
-        num_workers=TrainGlobalConfig.num_workers
-    )
-
-    def validation(model, device, config, val_loader, criterion):
-        model.eval()
-        losses = AverageMeter()
-        final_scores = RocAucMeter()
-
-        t = time.time()
-
-        for step, (inputs_masks, targets) in enumerate(val_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
-
-            if config.verbose:
-                if step % config.verbose_step == 0:
-                    logger.info(
-                        f'Valid Step {step}, loss: ' + \
-                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
-                        f'time: {(time.time() - t):.5f}'
-                    )
-            with torch.no_grad():
-                inputs = inputs.to(device, dtype=torch.long)
-                attention_masks = attention_masks.to(device, dtype=torch.long)
-                targets = targets.to(device, dtype=torch.float)
-
-                outputs = model(inputs, attention_masks)
-                loss = criterion(outputs, targets)
-
-                batch_size = inputs.size(0)
-
-                final_scores.update(targets, outputs)
-                losses.update(loss.detach().item(), batch_size)
-
-    def run_inference(model, device, config, test_loader):
-        model.eval()
-        result = {'id': [], 'toxic': []}
-        t = time.time()
-
-        for step, (inputs_masks, targets) in enumerate(test_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
-
-            if config.verbose:
-                if step % config.verbose_step == 0:
-                    logger.info(f'Prediction Step {step}, time: {(time.time() - t):.5f}')
-
-            with torch.no_grad():
-                inputs = inputs.to(device, dtype=torch.long)
-                attention_masks = attention_masks.to(device, dtype=torch.long)
-                outputs = model(inputs, attention_masks)
-                toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
-
-            result['id'].extend(ids.cpu().numpy())
-            result['toxic'].extend(toxics)
-
-        return result
-
-    def train_one_epoch(model, device, config, train_loader, criterion, optimizer):
-        model.train()
-
-        losses = AverageMeter()
-        final_scores = RocAucMeter()
-        t = time.time()
-
-        for step, (inputs_masks, targets) in enumerate(train_loader):
-            inputs=inputs_masks[0]
-            attention_masks=inputs_masks[1]
-
-            batch_size = inputs.size(0)
-
-            if config.verbose:
-                if step % config.verbose_step == 0:
-                    logger.debug(
-                        f'Train Step {step}, bs: {batch_size}, loss: ' + \
-                        f"{losses.avg:.5f}, lr: {optimizer.param_groups[0]['lr']} final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, " + \
-                        f'time: {(time.time() - t):.5f}'
-                    )
-
-            inputs = inputs.to(device, dtype=torch.long)
-            attention_masks = attention_masks.to(device, dtype=torch.long)
-            targets = targets.to(device, dtype=torch.float)
-
-            optimizer.zero_grad()
-
-            outputs = model(inputs, attention_masks)
-            loss = criterion(outputs, targets)
-
-
-            final_scores.update(targets, outputs)
-
-            losses.update(loss.detach().item(), batch_size)
-
-            loss.backward()
-            _check_grad(optimizer)
-            #optimizer.step()
-            xm.optimizer_step(optimizer, barrier=True)
-
-        model.eval()
-        #self.save('last-checkpoint.bin')
-
-        return losses, final_scores
-
-    def run_tuning_and_inference(net, device, TrainGlobalConfig, validation_loader, train_loader):
-        for e in range(1):
-            self.optimizer.param_groups[0]['lr'] = self.config.lr*8
-
-            losses, final_scores = train_one_epoch(net, device, TrainGlobalConfig, train_loader, TrainGlobalConfig.criterion, )
-            self.log(f'[RESULT]: Tune_Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
-
-            t = time.time()
-            para_loader = pl.ParallelLoader(validation_loader, [self.device])
-            losses, final_scores = self.validation(para_loader.per_device_loader(self.device))
-            self.log(f'[RESULT]: Tune_Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
-
-            run_inference(net, device, TrainGlobalConfig, validation_loader)
-
-    train_one_epoch(net, device, TrainGlobalConfig, train_loader, TrainGlobalConfig.criterion, optimizer)
-    losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
-    logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
-
-    results = run_inference(net, device, TrainGlobalConfig, validation_loader)
-    logger.info(f"Test done, result len %d", len(results))
-
-
-# # + colab={} colab_type="code" id="wDtvtHma3bIh"
-from kaggle_runner import defaults
-_DEBUG = defaults.DEBUG
-defaults.DEBUG = True
-#test_model_fn()
-defaults.DEBUG = _DEBUG
-
-# + colab={} colab_type="code" id="kl5LAGTl3bIi"
-# k.learner
-# k.learner.recorder.plot()
-
-# # + colab={} colab_type="code" id="W-54VVqb3bIn"
-import warnings
-warnings.filterwarnings('ignore')
-
-import torch_xla
-import torch_xla.distributed.data_parallel as dp
-import torch_xla.utils.utils as xu
-import torch_xla.core.xla_model as xm
-import torch_xla.distributed.parallel_loader as pl
-import torch_xla.distributed.xla_multiprocessing as xmp
-import torch
-
-import fastai
-from fastai import *
-from fastai.core import *
-from fastai.torch_core import *
-from fastai.vision import *
-from fastai.basic_train import *
-from kaggle_runner import logger
 
 def len_parallelloader(self):
     return len(self._loader._loader)
@@ -1388,17 +1229,187 @@ def _to_tpu_distributed(learn:Learner) -> Learner:
 
 Learner.to_tpu_distributed = _to_tpu_distributed
 
-def setup_food():
-    path = untar_data(URLs.FOOD)
+def test_model_fn(device=torch.device("cpu")):
+    #device = xm.xla_device(devkind='TPU')
+    #device=torch.device("xla")
+    logger.debug("Device used: %s", device)
 
-def filelist2df(path):
-    df = pd.read_csv(path, delimiter='/', header=None, names=['label', 'name'])
-    df['name'] =  df['label'].astype(str) + "/" + df['name'].astype(str) + ".jpg"
+    #k.run(dump_flag=True) # it seems it cannot save right
+    #k.run(dump_flag=False)
+    #k.peek_data()
 
-    return df
+    self = k
+    assert self.validation_dataset is not None
+    #assert self.learner is not None
 
-# train_path = path/'train.txt'
-# test_path = path/'test.txt'
+    net = k.model
+    assert net is not None
+    net.to(device)
+
+    param_optimizer = list(self.model.named_parameters())
+    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+    ]
+    #optimizer = AdamW(optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*xm.xrt_world_size())
+    optimizer = AdamW(optimizer_grouped_parameters, lr=TrainGlobalConfig.lr*8)
+
+    train_loader = torch.utils.data.DataLoader(
+        self.train_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        shuffle=False, # sampler is set, so shuffle here should be False
+        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
+        pin_memory=False,
+        drop_last=True,
+        num_workers=TrainGlobalConfig.num_workers,
+    )
+    may_debug()
+    validation_loader = torch.utils.data.DataLoader(
+        self.validation_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+    #    sampler=validation_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+    test_loader = torch.utils.data.DataLoader(
+        self.test_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+    #    sampler=test_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+    validation_tune_loader = torch.utils.data.DataLoader(
+        self.validation_tune_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        #sampler=validation_tune_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+
+    def validation(model, device, config, val_loader, criterion):
+        model.eval()
+        losses = AverageMeter()
+        final_scores = RocAucMeter()
+
+        t = time.time()
+
+        for step, (inputs_masks, targets) in enumerate(val_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
+            if config.verbose:
+                if step % config.verbose_step == 0:
+                    logger.info(
+                        f'Valid Step {step}, loss: ' + \
+                        f'{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, ' + \
+                        f'time: {(time.time() - t):.5f}'
+                    )
+            with torch.no_grad():
+                inputs = inputs.to(device, dtype=torch.long)
+                attention_masks = attention_masks.to(device, dtype=torch.long)
+                targets = targets.to(device, dtype=torch.float)
+
+                outputs = model(inputs, attention_masks)
+                loss = criterion(outputs, targets)
+
+                batch_size = inputs.size(0)
+
+                final_scores.update(targets, outputs)
+                losses.update(loss.detach().item(), batch_size)
+
+    def run_inference(model, device, config, test_loader):
+        model.eval()
+        result = {'id': [], 'toxic': []}
+        t = time.time()
+
+        for step, (inputs_masks, targets) in enumerate(test_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
+            if config.verbose:
+                if step % config.verbose_step == 0:
+                    logger.info(f'Prediction Step {step}, time: {(time.time() - t):.5f}')
+
+            with torch.no_grad():
+                inputs = inputs.to(device, dtype=torch.long)
+                attention_masks = attention_masks.to(device, dtype=torch.long)
+                outputs = model(inputs, attention_masks)
+                toxics = nn.functional.softmax(outputs, dim=1).data.cpu().numpy()[:,1]
+
+            result['id'].extend(ids.cpu().numpy())
+            result['toxic'].extend(toxics)
+
+        return result
+
+    def train_one_epoch(model, device, config, train_loader, criterion, optimizer):
+        model.train()
+
+        losses = AverageMeter()
+        final_scores = RocAucMeter()
+        t = time.time()
+
+        for step, (inputs_masks, targets) in enumerate(train_loader):
+            inputs=inputs_masks[0]
+            attention_masks=inputs_masks[1]
+
+            batch_size = inputs.size(0)
+
+            if config.verbose:
+                if step % config.verbose_step == 0:
+                    logger.debug(
+                        f'Train Step {step}, bs: {batch_size}, loss: ' + \
+                        f"{losses.avg:.5f}, lr: {optimizer.param_groups[0]['lr']} final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, " + \
+                        f'time: {(time.time() - t):.5f}'
+                    )
+
+            inputs = inputs.to(device, dtype=torch.long)
+            attention_masks = attention_masks.to(device, dtype=torch.long)
+            targets = targets.to(device, dtype=torch.float)
+
+            optimizer.zero_grad()
+
+            outputs = model(inputs, attention_masks)
+            loss = criterion(outputs, targets)
+
+
+            final_scores.update(targets, outputs)
+
+            losses.update(loss.detach().item(), batch_size)
+
+            loss.backward()
+            _check_grad(optimizer)
+            #optimizer.step()
+            xm.optimizer_step(optimizer, barrier=True)
+
+        model.eval()
+        #self.save('last-checkpoint.bin')
+
+        return losses, final_scores
+
+    def run_tuning_and_inference(net, device, TrainGlobalConfig, validation_loader, train_loader):
+        for e in range(1):
+            self.optimizer.param_groups[0]['lr'] = self.config.lr*8
+
+            losses, final_scores = train_one_epoch(net, device, TrainGlobalConfig, train_loader, TrainGlobalConfig.criterion, )
+            self.log(f'[RESULT]: Tune_Train. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+
+            t = time.time()
+            para_loader = pl.ParallelLoader(validation_loader, [self.device])
+            losses, final_scores = self.validation(para_loader.per_device_loader(self.device))
+            self.log(f'[RESULT]: Tune_Validation. Epoch: {self.epoch}, loss: {losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, time: {(time.time() - t):.5f}')
+
+            run_inference(net, device, TrainGlobalConfig, validation_loader)
+
+    train_one_epoch(net, device, TrainGlobalConfig, train_loader, TrainGlobalConfig.criterion, optimizer)
+    losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
+    logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
+
+    results = run_inference(net, device, TrainGlobalConfig, validation_loader)
+    logger.info(f"Test done, result len %d", len(results))
 
 
 # # + colab={} colab_type="code" id="n7z7QKwF3bIr"
@@ -1407,51 +1418,6 @@ from fastai.callbacks.misc import StopAfterNBatches
 from fastai.callbacks import *
 
 import pysnooper
-
-def debug_train(use_dist_cb=True):
-    logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
-    from kaggle_runner import defaults
-    _DEBUG = defaults.DEBUG
-    defaults.DEBUG = True
-
-    param_optimizer = list(k.model.named_parameters())
-    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
-    ]
-
-    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
-        kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
-
-        return AdamW(optimizer_grouped_parameters, *args, **kargs)
-
-    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
-                             loss_func=LabelSmoothing(),
-                             wd=0.01,
-                             callback_fns=[partial(GradientClipping, clip=0.5),
-                                           ShowGraph,
-                                           partial(CSVLogger, append=True),
-                                           partial(CheckGrad, skip_loss_step=False)]
-                             )
-
-    if use_dist_cb:
-        learn = learn.to_tpu_distributed()
-    else:
-        learn = learn.to_tpu()
-
-    learn.callbacks.append(StopAfterNBatches(n_batches=1000))
-    #learn.callback_fns.append(CheckGrad)
-    #print('hello')
-    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
-    #learn.recorder.plot()
-    #learn.fit_one_cycle(1, max_lr=2e-5)
-    learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
-    defaults.DEBUG = _DEBUG
-
-# # + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="VrJUbCYd3bIu"
-# %%time
-debug_train(use_dist_cb=False)
 
 
 # # + colab={} colab_type="code" id="4MbjVEVm3bIw"
