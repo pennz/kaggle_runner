@@ -686,7 +686,6 @@ warnings.filterwarnings("ignore")
 # !pip3 install pysnooper ipdb
 
 # # + colab={} colab_type="code" id="ROFBN4h33bIV"
-import ipdb
 
 # # + colab={} colab_type="code" id="H7bNG49v3bIZ"
 from kaggle_runner import may_debug
