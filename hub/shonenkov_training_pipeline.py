@@ -676,14 +676,51 @@ warnings.filterwarnings("ignore")
 
 
 # # + colab={} colab_type="code" id="cQ86CF413bIS"
-# ![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
+![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
 
+
+# !pip3 install pysnooper ipdb
 
 # # + colab={} colab_type="code" id="ROFBN4h33bIV"
 import ipdb
 
 # # + colab={} colab_type="code" id="H7bNG49v3bIZ"
 from kaggle_runner import may_debug
+
+# # + colab={} colab_type="code" id="6KQPK1tG3bIO"
+class TrainGlobalConfig:
+    """ Global Config for this notebook """
+    num_workers = 0  # количество воркеров для loaders
+    batch_size = 16  # bs
+    n_epochs = 2  # количество эпох для обучения
+    lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
+    fold_number = 0  # номер фолда для обучения
+
+    # -------------------
+    verbose = True  # выводить принты
+    verbose_step = 1  # количество шагов для вывода принта
+    # -------------------
+
+    # --------------------
+    step_scheduler = False  # выполнять scheduler.step после вызова optimizer.step
+    validation_scheduler = True  # выполнять scheduler.step после валидации loss (например для плато)
+    SchedulerClass = torch.optim.lr_scheduler.ReduceLROnPlateau
+    scheduler_params = dict(
+        mode='max',
+        factor=0.7,
+        patience=0,
+        verbose=False,
+        threshold=0.0001,
+        threshold_mode='abs',
+        cooldown=0,
+        min_lr=1e-8,
+        eps=1e-08
+    )
+    # --------------------
+
+    # -------------------
+    criterion = LabelSmoothing()
+    # -------------------
 
 # # + colab={} colab_type="code" id="yRdMTDq13bIN"
 class LabelSmoothing(nn.Module):
@@ -720,6 +757,104 @@ class LabelSmoothing(nn.Module):
 k = Shonenkov(torch.device("cuda"), metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
+# # + colab={} colab_type="code" id="Sul01z663bIf"
+from kaggle_runner import logger
+from kaggle_runner import defaults
+
+import fastai
+from fastai import *
+from fastai.core import *
+from fastai.torch_core import *
+from fastai.vision import *
+from fastai.basic_train import *
+from fastai.callbacks.misc import StopAfterNBatches
+from fastai.callbacks import *
+
+# +
+def _change_dl(dl, shuffle):
+    old_dl = dl
+    train_sampler = DistributedSamplerWrapper(
+        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
+        num_replicas=8, #xm.xrt_world_size(),
+        rank=0, #xm.get_ordinal(),
+        shuffle=True
+    )
+    train_loader = torch.utils.data.DataLoader(
+        k.train_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=train_sampler,
+        pin_memory=True,
+        drop_last=True,
+        num_workers=TrainGlobalConfig.num_workers,
+    )
+    new_dl = train_loader
+
+    return old_dl,new_dl,train_sampler
+
+def _change_dl_val(dl, shuffle):
+    old_dl = dl
+    validation_sampler = torch.utils.data.distributed.DistributedSampler(
+        k.validation_dataset,
+        num_replicas=8, #xm.xrt_world_size(),
+        rank=0, #xm.get_ordinal(),
+        shuffle=False
+    )
+    validation_loader = torch.utils.data.DataLoader(
+        k.validation_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=validation_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+
+    return old_dl,validation_loader,validation_sampler
+
+
+# +
+def to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
+    "Recursively map lists of tensors in `b ` to FP16."
+
+    return recurse(lambda x: x.to(device), b)
+
+def batch_to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
+    "Move the input of batch `b` to TPU."
+
+    return [to_device(b[0],device), to_device(b[1],device)]
+
+# +
+class SingleTPUTraining(LearnerCallback):
+  def __init__(self, learn:Learner):
+    super().__init__(learn)
+
+  def on_train_begin(self, **kwargs:Any)->None:
+    #self.device = xm.xla_device(devkind='CPU')
+    self.device = torch.device("cuda")
+    self.learn.model = self.learn.model.to(self.device)
+    #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+    self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle=True)
+    self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle=False)
+
+    self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+    
+    #self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
+    #self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
+    #self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
+    #self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
+
+  def on_backward_end(self, **kwargs:Any)->None:
+    #xm.optimizer_step(self.learn.opt.opt, barrier=True)
+    pass
+
+def _to_tpu(learn:Learner) -> Learner:
+    learn.callback_fns.append(SingleTPUTraining)
+
+    return learn
+
+Learner.to_tpu = _to_tpu
+
+
+# -
 
 # # + colab={} colab_type="code" id="j0ienNqm3bId"
 def _check_grad(raw_opt):
@@ -742,14 +877,50 @@ def _check_grad(raw_opt):
         logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
 
 
-# # + colab={} colab_type="code" id="Sul01z663bIf"
-from kaggle_runner import logger
-from kaggle_runner import defaults
+# # + colab={} colab_type="code" id="xnvcfuzd3bIp"
+import pysnooper
+class CheckGrad(LearnerCallback):
+    def __init__(self, learn:Learner, skip_loss_step=False):
+        super().__init__(learn)
+        self.skip_loss_step = skip_loss_step
+        logger.debug("Init Callback CheckGrad with skip_loss_step: " +str(self.skip_loss_step))
+        self.losses = None
+        self.final_scores = None
 
-# # + colab={} colab_type="code" id="W-54VVqb3bIn"
-# !make xla
-import warnings
-warnings.filterwarnings('ignore')
+    def on_train_begin(self, **kwargs:Any)->None:
+        self.losses = AverageMeter()
+        self.final_scores = RocAucMeter()
+
+    def on_backward_begin(self, **kwargs:Any)->None:
+        #print(kwargs.keys())
+        """dict_keys(['epoch', 'iteration', 'num_batch', 'skip_validate',
+        'n_epochs', 'pbar', 'metrics', 'stop_training', 'last_input',
+        'last_target', 'train', 'stop_epoch', 'skip_step', 'skip_zero',
+        'skip_bwd', 'last_output', 'last_loss', 'smooth_loss'])
+        """
+        pg = self.learn.opt.opt.param_groups
+        #logger.debug("grad info: %s", raw_opt)
+        logger.debug(f"on_backward_begin lr: {pg[0]['lr']}")
+        logger.debug("itr: %d, num_batch: %d, last loss: %f, smooth_loss: %f",
+                     kwargs['iteration'], kwargs['num_batch'],
+                     kwargs['last_loss'], kwargs['smooth_loss'])
+
+        self.final_scores.update(kwargs['last_target'], kwargs['last_output'])
+        self.losses.update(kwargs['last_loss'].detach().item(), TrainGlobalConfig.batch_size)
+        logger.debug(f"loss_avg: {self.losses.avg:.5f}, lr_pg0:"
+                     f"{pg[0]['lr']}, lr_pg1: {pg[1]['lr']}final_score:"
+                     f"{self.final_scores.avg:.5f}, mc_score:"
+                     f"{self.final_scores.mc_avg:.5f}")
+
+    def on_backward_end(self, **kwargs:Any)->None:
+        raw_opt = self.learn.opt.opt
+        _check_grad(raw_opt)
+
+        return {'skip_step': self.skip_loss_step}
+
+
+# +
+from functools import partial
 
 def debug_train(use_dist_cb=True):
     logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
@@ -765,7 +936,7 @@ def debug_train(use_dist_cb=True):
     ]
 
     def AdamW_with_given_p(p_to_ignore, *args, **kargs):
-        kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
+        kargs['lr']=TrainGlobalConfig.lr*8 #xm.xrt_world_size()
 
         return AdamW(optimizer_grouped_parameters, *args, **kargs)
 
@@ -792,10 +963,21 @@ def debug_train(use_dist_cb=True):
     learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
-# # + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="VrJUbCYd3bIu"
+
+# -
+
 # %%time
 debug_train(use_dist_cb=False)
 
+
+ipdb.pm()
+
+# # XLA
+
+# # + colab={} colab_type="code" id="W-54VVqb3bIn"
+# !make xla
+import warnings
+warnings.filterwarnings('ignore')
 
 import torch_xla
 import torch_xla.distributed.data_parallel as dp
@@ -992,164 +1174,10 @@ class TPUFitter:
         with open(self.log_path, 'a+') as logger:
             xm.master_print(f'{message}', logger)
 
-# # + colab={} colab_type="code" id="6KQPK1tG3bIO"
-class TrainGlobalConfig:
-    """ Global Config for this notebook """
-    num_workers = 0  # количество воркеров для loaders
-    batch_size = 16  # bs
-    n_epochs = 2  # количество эпох для обучения
-    lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
-    fold_number = 0  # номер фолда для обучения
-
-    # -------------------
-    verbose = True  # выводить принты
-    verbose_step = 1  # количество шагов для вывода принта
-    # -------------------
-
-    # --------------------
-    step_scheduler = False  # выполнять scheduler.step после вызова optimizer.step
-    validation_scheduler = True  # выполнять scheduler.step после валидации loss (например для плато)
-    SchedulerClass = torch.optim.lr_scheduler.ReduceLROnPlateau
-    scheduler_params = dict(
-        mode='max',
-        factor=0.7,
-        patience=0,
-        verbose=False,
-        threshold=0.0001,
-        threshold_mode='abs',
-        cooldown=0,
-        min_lr=1e-8,
-        eps=1e-08
-    )
-    # --------------------
-
-    # -------------------
-    criterion = LabelSmoothing()
-    # -------------------
-
 def len_parallelloader(self):
     return len(self._loader._loader)
 pl.PerDeviceLoader.__len__ = len_parallelloader
 
-
-# # + colab={} colab_type="code" id="xnvcfuzd3bIp"
-import pysnooper
-class CheckGrad(LearnerCallback):
-    def __init__(self, learn:Learner, skip_loss_step=False):
-        super().__init__(learn)
-        self.skip_loss_step = skip_loss_step
-        logger.debug("Init Callback CheckGrad with skip_loss_step: " +str(self.skip_loss_step))
-        self.losses = None
-        self.final_scores = None
-
-    def on_train_begin(self, **kwargs:Any)->None:
-        self.losses = AverageMeter()
-        self.final_scores = RocAucMeter()
-
-    def on_backward_begin(self, **kwargs:Any)->None:
-        #print(kwargs.keys())
-        """dict_keys(['epoch', 'iteration', 'num_batch', 'skip_validate',
-        'n_epochs', 'pbar', 'metrics', 'stop_training', 'last_input',
-        'last_target', 'train', 'stop_epoch', 'skip_step', 'skip_zero',
-        'skip_bwd', 'last_output', 'last_loss', 'smooth_loss'])
-        """
-        pg = self.learn.opt.opt.param_groups
-        #logger.debug("grad info: %s", raw_opt)
-        logger.debug(f"on_backward_begin lr: {pg[0]['lr']}")
-        logger.debug("itr: %d, num_batch: %d, last loss: %f, smooth_loss: %f",
-                     kwargs['iteration'], kwargs['num_batch'],
-                     kwargs['last_loss'], kwargs['smooth_loss'])
-
-        self.final_scores.update(kwargs['last_target'], kwargs['last_output'])
-        self.losses.update(kwargs['last_loss'].detach().item(), TrainGlobalConfig.batch_size)
-        logger.debug(f"loss_avg: {self.losses.avg:.5f}, lr_pg0:"
-                     f"{pg[0]['lr']}, lr_pg1: {pg[1]['lr']}final_score:"
-                     f"{self.final_scores.avg:.5f}, mc_score:"
-                     f"{self.final_scores.mc_avg:.5f}")
-
-    def on_backward_end(self, **kwargs:Any)->None:
-        raw_opt = self.learn.opt.opt
-        _check_grad(raw_opt)
-
-        return {'skip_step': self.skip_loss_step}
-
-
-def to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
-    "Recursively map lists of tensors in `b ` to FP16."
-
-    return recurse(lambda x: x.to(device), b)
-
-def batch_to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
-    "Move the input of batch `b` to TPU."
-
-    return [to_device(b[0],device), to_device(b[1],device)]
-
-def _change_dl(dl, shuffle):
-    old_dl = dl
-    train_sampler = DistributedSamplerWrapper(
-        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
-        num_replicas=xm.xrt_world_size(),
-        rank=xm.get_ordinal(),
-        shuffle=True
-    )
-    train_loader = torch.utils.data.DataLoader(
-        k.train_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        sampler=train_sampler,
-        pin_memory=False,
-        drop_last=True,
-        num_workers=TrainGlobalConfig.num_workers,
-    )
-    new_dl = train_loader
-
-    return old_dl,new_dl,train_sampler
-
-def _change_dl_val(dl, shuffle):
-    old_dl = dl
-    validation_sampler = torch.utils.data.distributed.DistributedSampler(
-        k.validation_dataset,
-        num_replicas=xm.xrt_world_size(),
-        rank=xm.get_ordinal(),
-        shuffle=False
-    )
-    validation_loader = torch.utils.data.DataLoader(
-        k.validation_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        sampler=validation_sampler,
-        pin_memory=False,
-        drop_last=False,
-        num_workers=TrainGlobalConfig.num_workers
-    )
-
-    return old_dl,validation_loader,validation_sampler
-
-class SingleTPUTraining(LearnerCallback):
-  def __init__(self, learn:Learner):
-    super().__init__(learn)
-
-  def on_train_begin(self, **kwargs:Any)->None:
-    #self.device = xm.xla_device(devkind='CPU')
-    self.device = torch.device("cuda")
-    self.learn.model = self.learn.model.to(self.device)
-    #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
-    self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle=True)
-    self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle=False)
-
-    #self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
-    #self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
-    #self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
-    #self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
-
-  def on_backward_end(self, **kwargs:Any)->None:
-    #xm.optimizer_step(self.learn.opt.opt, barrier=True)
-    pass
-
-def _to_tpu(learn:Learner) -> Learner:
-    learn.callback_fns.append(SingleTPUTraining)
-
-    return learn
-
-Learner.to_tpu = _to_tpu
 
 import pysnooper
 class TPUDistributed(LearnerCallback):

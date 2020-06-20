@@ -3,7 +3,7 @@ export PATH := $(PWD)/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
-JUPYTER_PARAMS= --NotebookApp.token=greatday --NotebookApp.notebook_dir=/content/ --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10000000000 --NotebookApp.open_browser=False --allow-root
+JUPYTER_PARAMS= --NotebookApp.token=greatday --NotebookApp.notebook_dir=/content/ --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10010000000 --NotebookApp.open_browser=False --allow-root
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
@@ -329,8 +329,8 @@ t: pccnct m
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
 sshR:
-	if [ -d /content ]; then ssh -fNR 10000:$(KIP):9000 -p $(SSH_PORT) v@$(SERVER); \
-else ssh -fNR 10000:$(KIP):8888 -p $(SSH_PORT) v@$(SERVER); fi
+	if [ -d /content ]; then ssh -fNR 10010:$(KIP):9000 -p $(SSH_PORT) v@$(SERVER); \
+else ssh -fNR 10010:$(KIP):8888 -p $(SSH_PORT) v@$(SERVER); fi
 	-scp -P $(SSH_PORT) v@$(SERVER):~/.ssh/* ~/.ssh
 
 
@@ -338,7 +338,7 @@ else ssh -fNR 10000:$(KIP):8888 -p $(SSH_PORT) v@$(SERVER); fi
 sshRj:
 	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
 	($(PY) -m jupyter lab --ip="$(KIP)" --port=9001 $(JUPYTER_PARAMS) || $(PY) -m jupyter lab --ip="$(KIP)" --port=9001 --allow-root) &
-	ssh -fNR 10001:$(KIP):9001 -p $(SSH_PORT) v@$(SERVER)
+	ssh -fNR 10011:$(KIP):9001 -p $(SSH_PORT) v@$(SERVER)
 	scp -P $(SSH_PORT) v@$(SERVER):~/.ssh/* ~/.ssh
 
 githooks:
@@ -409,5 +409,7 @@ mv kaggle_runner k && \
 $(PY) -m pip install -e k;\
 export PATH=$PWD/k/bin:$PATH; \
 entry.sh &)
+
+prompt:
 	$(PY) -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 	$(PY) -m pip install ipdb pysnooper
