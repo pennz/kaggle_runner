@@ -1285,7 +1285,7 @@ class SingleTPUTraining(LearnerCallback):
 
   def on_train_begin(self, **kwargs:Any)->None:
     #self.device = xm.xla_device(devkind='CPU')
-    self.device = torch.device("cpu")
+    self.device = torch.device("cuda")
     self.learn.model = self.learn.model.to(self.device)
     #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
     self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle=True)
@@ -1297,7 +1297,8 @@ class SingleTPUTraining(LearnerCallback):
     #self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
 
   def on_backward_end(self, **kwargs:Any)->None:
-    xm.optimizer_step(self.learn.opt.opt, barrier=True)
+    #xm.optimizer_step(self.learn.opt.opt, barrier=True)
+    pass
 
 def _to_tpu(learn:Learner) -> Learner:
     learn.callback_fns.append(SingleTPUTraining)
