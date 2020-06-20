@@ -328,17 +328,20 @@ t: pccnct m
 	echo "Please check remote mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
-sshR:
+autossh:
+	apt install autossh -y
+
+sshR: autossh
 	if [ -d /content ]; then ssh -fNR 10010:$(KIP):9000 -p $(SSH_PORT) v@$(SERVER); \
-else ssh -fNR 10010:$(KIP):8888 -p $(SSH_PORT) v@$(SERVER); fi
+else autossh -fNR 10010:$(KIP):8888 -p $(SSH_PORT) v@$(SERVER); fi
 	-scp -P $(SSH_PORT) v@$(SERVER):~/.ssh/* ~/.ssh
 
 
 
-sshRj:
+sshRj: autossh
 	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
 	($(PY) -m jupyter lab --ip="$(KIP)" --port=9001 $(JUPYTER_PARAMS) || $(PY) -m jupyter lab --ip="$(KIP)" --port=9001 --allow-root) &
-	ssh -fNR 10011:$(KIP):9001 -p $(SSH_PORT) v@$(SERVER)
+	autossh -fNR 10011:$(KIP):9001 -p $(SSH_PORT) v@$(SERVER)
 	scp -P $(SSH_PORT) v@$(SERVER):~/.ssh/* ~/.ssh
 
 githooks:
@@ -403,7 +406,7 @@ $(PY) pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
 $(PY) -m pip install *.whl; \
 make transformers; )
 
-kr:
+kr: prompt
 	$(PY) -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
 $(PY) -m pip install -e k;\
