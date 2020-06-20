@@ -476,6 +476,7 @@ class Shonenkov(FastAIKernel):
         self.transformers = None
         self.setup_transformers()
         self.device = device
+        self.learner = None
 
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModel()
@@ -825,7 +826,7 @@ def batch_to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor
     return [to_device(b[0],device), to_device(b[1],device)]
 
 # +
-class SingleTPUTraining(LearnerCallback):
+class GPUTrainer(LearnerCallback):
   def __init__(self, learn:Learner):
     super().__init__(learn)
 
@@ -854,12 +855,12 @@ class SingleTPUTraining(LearnerCallback):
     #xm.optimizer_step(self.learn.opt.opt, barrier=True)
     pass
 
-def _to_tpu(learn:Learner) -> Learner:
-    learn.callback_fns.append(SingleTPUTraining)
+def _to_gpu(learn:Learner) -> Learner:
+    learn.callback_fns.append(GPUTrainer)
 
     return learn
 
-Learner.to_tpu = _to_tpu
+Learner.to_gpu = _to_gpu
 
 
 # -
@@ -930,6 +931,7 @@ class CheckGrad(LearnerCallback):
 # +
 from functools import partial
 
+from .custom_fastai_callbacks import GradientAccumulator
 def debug_train(use_dist_cb=True):
     logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
     from kaggle_runner import defaults
@@ -953,17 +955,19 @@ def debug_train(use_dist_cb=True):
                              wd=0.01,
                              callback_fns=[partial(GradientClipping, clip=0.5),
                                            partial(CSVLogger, append=True),
+                                           partial(GradientAccumulator, num_iterations=4),
                                            partial(CheckGrad, skip_loss_step=False)]
                              )
+    k.learner = learn
 
     k.learner = learn
 
     if use_dist_cb:
         learn = learn.to_tpu_distributed()
     else:
-        learn = learn.to_tpu()
+        learn = learn.to_gpu()
 
-    #learn.callbacks.append(StopAfterNBatches(n_batches=1000))
+    #learn.callback_fns.append(CheckGrad)
     #print('hello')
     #learn.lr_find(start_lr=1e-7, end_lr=1e-2, num_it=200)
     #learn.recorder.plot()
@@ -976,7 +980,6 @@ def debug_train(use_dist_cb=True):
 
 # %%time
 debug_train(use_dist_cb=False)
-
 
 
 # # XLA
