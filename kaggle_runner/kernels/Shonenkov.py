@@ -4,6 +4,8 @@ from kaggle_runner.datasets.transfomers import *
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 import albumentations
 
+ROOT_PATH = f'/kaggle' # for colab
+
 def get_train_transforms():
     return albumentations.Compose([
         ExcludeUsersMentionedTransform(p=0.95),
