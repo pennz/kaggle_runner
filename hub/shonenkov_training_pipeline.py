@@ -7,8 +7,8 @@
 #     text_representation:
 #       extension: .py
 #       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.5.0
+#       format_version: '1.4'
+#       jupytext_version: 1.1.7
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -29,8 +29,6 @@
 
 
 # # + colab={} colab_type="code" id="Mg3zuCSx3bE9"
-# !make xla
-import torch_xla
 from importlib import reload
 import kaggle_runner
 reload(kaggle_runner)
@@ -671,15 +669,147 @@ class ToxicSimpleNNModel(nn.Module):
 
 # # + colab={} colab_type="code" id="Z2NkI1sW3bHs"
 import warnings
-
-# # + colab={} colab_type="code" id="imzd88o33bIB"
 warnings.filterwarnings("ignore")
 
-# # + colab={} colab_type="code" id="fGfbDB5z3bID"
+
+# # + colab={} colab_type="code" id="cQ86CF413bIS"
+# ![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
+
+
+# # + colab={} colab_type="code" id="ROFBN4h33bIV"
+import ipdb
+
+# # + colab={} colab_type="code" id="H7bNG49v3bIZ"
+from kaggle_runner import may_debug
+
+# # + colab={} colab_type="code" id="yRdMTDq13bIN"
+class LabelSmoothing(nn.Module):
+    """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
+
+    def __init__(self, smoothing = 0.1, dim=-1):
+        super(LabelSmoothing, self).__init__()
+        self.cls = 2
+        self.confidence = 1.0 - smoothing
+        self.smoothing = smoothing
+        self.dim = dim
+
+    def forward(self, x, target):
+        if self.training:
+            pred = x[:,:2].log_softmax(dim=self.dim)
+            aux=x[:, 2:]
+
+            toxic_target = target[:,:2]
+            aux_target = target[:, 2:]
+            #with torch.no_grad():
+            # smooth_toxic = pred.data.clone()
+            smooth_toxic = self.smoothing + (1-self.smoothing*2)*toxic_target
+            # smooth_toxic.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
+            # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
+            smooth_aux = self.smoothing + (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
+
+            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
+
+            return torch.mean(torch.sum(-smooth_toxic * pred, dim=self.dim)) + aux_loss/3
+        else:
+            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
+
+# # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
+k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
+k.run(dump_flag=False)
+
+
+# # + colab={} colab_type="code" id="j0ienNqm3bId"
+def _check_grad(raw_opt):
+    pg = raw_opt.param_groups
+    pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+    pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+
+    with torch.no_grad():
+        #norms = torch.tensor([torch.norm(p) for p in pg0pl])
+        #may_debug()
+        #logger.debug("%s", pg0pl[0].grad)
+        #logger.debug("%s", pg0pl[0].data)
+        normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl[:10] if p.grad is not None])
+        #logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
+        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
+
+        #norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
+        norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl[:10] if p.grad is not None])
+        #logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
+        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
+
+
+# # + colab={} colab_type="code" id="Sul01z663bIf"
+from kaggle_runner import logger
+from kaggle_runner import defaults
+
+# # + colab={} colab_type="code" id="W-54VVqb3bIn"
+# !make xla
+import warnings
+warnings.filterwarnings('ignore')
+
+def debug_train(use_dist_cb=True):
+    logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
+    from kaggle_runner import defaults
+    _DEBUG = defaults.DEBUG
+    defaults.DEBUG = True
+
+    param_optimizer = list(k.model.named_parameters())
+    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
+    ]
+
+    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
+        kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
+
+        return AdamW(optimizer_grouped_parameters, *args, **kargs)
+
+    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
+                             loss_func=LabelSmoothing(),
+                             wd=0.01,
+                             callback_fns=[partial(GradientClipping, clip=0.5),
+                                           ShowGraph,
+                                           partial(CSVLogger, append=True),
+                                           partial(CheckGrad, skip_loss_step=False)]
+                             )
+
+    if use_dist_cb:
+        learn = learn.to_tpu_distributed()
+    else:
+        learn = learn.to_tpu()
+
+    learn.callbacks.append(StopAfterNBatches(n_batches=1000))
+    #learn.callback_fns.append(CheckGrad)
+    #print('hello')
+    #learn.lr_find(start_lr=1e-7, end_lr=1e-4, num_it=200)
+    #learn.recorder.plot()
+    #learn.fit_one_cycle(1, max_lr=2e-5)
+    learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
+    defaults.DEBUG = _DEBUG
+
+# # + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="VrJUbCYd3bIu"
+# %%time
+debug_train(use_dist_cb=False)
+
+
 import torch_xla
+import torch_xla.distributed.data_parallel as dp
+import torch_xla.utils.utils as xu
 import torch_xla.core.xla_model as xm
 import torch_xla.distributed.parallel_loader as pl
 import torch_xla.distributed.xla_multiprocessing as xmp
+import torch
+
+import fastai
+from fastai import *
+from fastai.core import *
+from fastai.torch_core import *
+from fastai.vision import *
+from fastai.basic_train import *
+from kaggle_runner import logger
+
 
 # # + colab={} colab_type="code" id="LnDl9J_d3bIF"
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
@@ -859,37 +989,6 @@ class TPUFitter:
         with open(self.log_path, 'a+') as logger:
             xm.master_print(f'{message}', logger)
 
-# # + colab={} colab_type="code" id="yRdMTDq13bIN"
-class LabelSmoothing(nn.Module):
-    """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
-
-    def __init__(self, smoothing = 0.1, dim=-1):
-        super(LabelSmoothing, self).__init__()
-        self.cls = 2
-        self.confidence = 1.0 - smoothing
-        self.smoothing = smoothing
-        self.dim = dim
-
-    def forward(self, x, target):
-        if self.training:
-            pred = x[:,:2].log_softmax(dim=self.dim)
-            aux=x[:, 2:]
-
-            toxic_target = target[:,:2]
-            aux_target = target[:, 2:]
-            #with torch.no_grad():
-            # smooth_toxic = pred.data.clone()
-            smooth_toxic = self.smoothing + (1-self.smoothing*2)*toxic_target
-            # smooth_toxic.scatter_(1, toxic_target.data.unsqueeze(1), self.confidence) # only for 0 1 label, put confidence to related place
-            # for 0-1, 0 -> 0.1, 1->0.9.(if 1), if zero. 0->0.9, 1->0.1
-            smooth_aux = self.smoothing + (1-self.smoothing*2)*aux_target  # only for binary cross entropy, so for lable, it is (1-smooth)*
-
-            aux_loss = torch.nn.functional.binary_cross_entropy_with_logits(aux, smooth_aux)
-
-            return torch.mean(torch.sum(-smooth_toxic * pred, dim=self.dim)) + aux_loss/3
-        else:
-            return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
-
 # # + colab={} colab_type="code" id="6KQPK1tG3bIO"
 class TrainGlobalConfig:
     """ Global Config for this notebook """
@@ -925,49 +1024,210 @@ class TrainGlobalConfig:
     criterion = LabelSmoothing()
     # -------------------
 
-# # + colab={} colab_type="code" id="0jRWjZRd3bIQ"
-def test_init():
-    l = Shonenkov(loss_func=None, metrics=None)
-    assert l is not None
-
-# # + colab={} colab_type="code" id="cQ86CF413bIS"
-# !cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
+def len_parallelloader(self):
+    return len(self._loader._loader)
+pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
-# # + colab={} colab_type="code" id="ROFBN4h33bIV"
-import ipdb
+# # + colab={} colab_type="code" id="xnvcfuzd3bIp"
+import pysnooper
+class CheckGrad(LearnerCallback):
+    def __init__(self, learn:Learner, skip_loss_step=False):
+        super().__init__(learn)
+        self.skip_loss_step = skip_loss_step
+        logger.debug("Init Callback CheckGrad with skip_loss_step: " +str(self.skip_loss_step))
+        self.losses = None
+        self.final_scores = None
 
-# # + colab={} colab_type="code" id="H7bNG49v3bIZ"
-from kaggle_runner import may_debug
+    def on_train_begin(self, **kwargs:Any)->None:
+        self.losses = AverageMeter()
+        self.final_scores = RocAucMeter()
 
-# # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
-k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
-k.run(dump_flag=False)
+    def on_backward_begin(self, **kwargs:Any)->None:
+        #print(kwargs.keys())
+        """dict_keys(['epoch', 'iteration', 'num_batch', 'skip_validate',
+        'n_epochs', 'pbar', 'metrics', 'stop_training', 'last_input',
+        'last_target', 'train', 'stop_epoch', 'skip_step', 'skip_zero',
+        'skip_bwd', 'last_output', 'last_loss', 'smooth_loss'])
+        """
+        pg = self.learn.opt.opt.param_groups
+        #logger.debug("grad info: %s", raw_opt)
+        logger.debug(f"on_backward_begin lr: {pg[0]['lr']}")
+        logger.debug("itr: %d, num_batch: %d, last loss: %f, smooth_loss: %f",
+                     kwargs['iteration'], kwargs['num_batch'],
+                     kwargs['last_loss'], kwargs['smooth_loss'])
+
+        self.final_scores.update(kwargs['last_target'], kwargs['last_output'])
+        self.losses.update(kwargs['last_loss'].detach().item(), TrainGlobalConfig.batch_size)
+        logger.debug(f"loss_avg: {self.losses.avg:.5f}, lr_pg0:"
+                     f"{pg[0]['lr']}, lr_pg1: {pg[1]['lr']}final_score:"
+                     f"{self.final_scores.avg:.5f}, mc_score:"
+                     f"{self.final_scores.mc_avg:.5f}")
+
+    def on_backward_end(self, **kwargs:Any)->None:
+        raw_opt = self.learn.opt.opt
+        _check_grad(raw_opt)
+
+        return {'skip_step': self.skip_loss_step}
 
 
-# # + colab={} colab_type="code" id="j0ienNqm3bId"
-def _check_grad(raw_opt):
-    pg = raw_opt.param_groups
-    pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
-    pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+def to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
+    "Recursively map lists of tensors in `b ` to FP16."
 
-    with torch.no_grad():
-        #norms = torch.tensor([torch.norm(p) for p in pg0pl])
-        #may_debug()
-        #logger.debug("%s", pg0pl[0].grad)
-        #logger.debug("%s", pg0pl[0].data)
-        normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl[:10] if p.grad is not None])
-        #logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
-        logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
+    return recurse(lambda x: x.to(device), b)
 
-        #norms1 = torch.tensor([torch.norm(p) for p in pg1pl])
-        norms1g = torch.tensor([torch.norm(p.grad) for p in pg1pl[:10] if p.grad is not None])
-        #logger.debug("params info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1))
-        logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
+def batch_to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
+    "Move the input of batch `b` to TPU."
+
+    return [to_device(b[0],device), to_device(b[1],device)]
+
+def _change_dl(dl, shuffle):
+    old_dl = dl
+    train_sampler = DistributedSamplerWrapper(
+        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=True
+    )
+    train_loader = torch.utils.data.DataLoader(
+        k.train_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=train_sampler,
+        pin_memory=False,
+        drop_last=True,
+        num_workers=TrainGlobalConfig.num_workers,
+    )
+    new_dl = train_loader
+
+    return old_dl,new_dl,train_sampler
+
+def _change_dl_val(dl, shuffle):
+    old_dl = dl
+    validation_sampler = torch.utils.data.distributed.DistributedSampler(
+        k.validation_dataset,
+        num_replicas=xm.xrt_world_size(),
+        rank=xm.get_ordinal(),
+        shuffle=False
+    )
+    validation_loader = torch.utils.data.DataLoader(
+        k.validation_dataset,
+        batch_size=TrainGlobalConfig.batch_size,
+        sampler=validation_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=TrainGlobalConfig.num_workers
+    )
+
+    return old_dl,validation_loader,validation_sampler
+
+class SingleTPUTraining(LearnerCallback):
+  def __init__(self, learn:Learner):
+    super().__init__(learn)
+
+  def on_train_begin(self, **kwargs:Any)->None:
+    #self.device = xm.xla_device(devkind='CPU')
+    self.device = torch.device("cuda")
+    self.learn.model = self.learn.model.to(self.device)
+    #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+    self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle=True)
+    self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle=False)
+
+    #self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
+    #self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
+    #self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
+    #self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
+
+  def on_backward_end(self, **kwargs:Any)->None:
+    #xm.optimizer_step(self.learn.opt.opt, barrier=True)
+    pass
+
+def _to_tpu(learn:Learner) -> Learner:
+    learn.callback_fns.append(SingleTPUTraining)
+
+    return learn
+
+Learner.to_tpu = _to_tpu
+
+import pysnooper
+class TPUDistributed(LearnerCallback):
+    def __init__(self, learn:Learner, debug=True):
+        super().__init__(learn)
+
+        self.debug = debug
+
+        if debug:
+            self.device = xm.xla_device(devkind='TPU')
+            logger.debug("TPUDistributed in DEBUG mode")
+            #self.device = xm.xla_device(devkind='CPU')
+        else:
+            self.device = xm.xla_device(devkind='TPU')
+        logger.debug("%s used for xla_device for TPUDistributed" % self.device)
+
+    def on_train_begin(self, **kwargs:Any)->None:
+        self.learn.model = self.learn.model.to(self.device)
+
+        pg = self.learn.opt.opt.param_groups
+        pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
+        pg1pl = pg[1]['params'] # pg0pl[0] is a Parameter
+
+        #logger.debug("grad info: %s", raw_opt)
+        logger.debug(f"on_train_begin pg0 lr: {pg[0]['lr']}")
+        logger.debug(f"on_train_begin pg1 lr: {pg[1]['lr']}")
+
+        if self.debug:
+            self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
+            #pg[0]['lr'] *= xm.xrt_world_size() # will do it twice...
+            #pg[1]['lr'] *= xm.xrt_world_size()
+            logger.debug("opt info: %s\n type: %s", self.learn.opt, type(self.learn.opt))
+        else:
+            self.learn.opt.lr = self.learn.opt.lr*xm.xrt_world_size()
+
+        logger.debug("%s used for xla_device, to device done" % self.device)
+
+        shuffle = self.data.train_dl.init_kwargs['shuffle'] if hasattr(self.data.train_dl, 'init_kwargs') else True
+        self.old_sampler_train_dl,self.data.train_dl,self.train_sampler = _change_dl(self.data.train_dl, shuffle)
+
+        if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
+            self.old_sampler_valid_dl,self.data.valid_dl,self.valid_sampler = _change_dl_val(self.data.valid_dl, shuffle)
 
 
-# # + colab={} colab_type="code" id="Sul01z663bIf"
-from kaggle_runner import logger
+    def on_epoch_begin(self,**kwargs:Any)->None:
+        logger.debug("Epoch begins on device %s" % self.device)
+
+        self.old_train_dl = self.data.train_dl
+        self.learn.data.train_dl = pl.ParallelLoader(self.old_train_dl, [self.device]).per_device_loader(self.device)
+        self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
+
+        if hasattr(self.data, 'valid_dl') and self.data.valid_dl is not None:
+            self.old_valid_dl = self.learn.data.valid_dl
+            self.learn.data.valid_dl = pl.ParallelLoader(self.old_valid_dl, [self.device]).per_device_loader(self.device)
+
+            self.learn.data.valid_dl.dataset = self.old_valid_dl.dataset
+            self.learn.data.valid_dl.dl = self.learn.data.valid_dl._loader._loader
+
+    def on_backward_end(self, **kwargs:Any)->None:
+        xm.optimizer_step(self.learn.opt.opt, barrier=True) # copied from https://github.com/tmabraham/fastai_tpu/blob/8b73018cf705da1a73d9be1f105a8e886051a90c/fastai_v1/tpu_distributed_fastai.py, and needed a fix
+        #may_debug(True)
+
+        return {'skip_step': True}
+
+    def on_epoch_end(self,**kwargs:Any)->None:
+        self.learn.data.train_dl = self.old_train_dl
+        self.learn.data.valid_dl = self.old_valid_dl
+
+    def on_train_end(self,**kwargs:Any)->None:
+        self.learn.data.train_dl = self.old_sampler_train_dl
+        self.learn.data.valid_dl = self.old_sampler_valid_dl
+
+
+def _to_tpu_distributed(learn:Learner) -> Learner:
+  #Learner.fit = _fit_tpu
+    learn.callback_fns.append(TPUDistributed)
+
+    return learn
+
+
+Learner.to_tpu_distributed = _to_tpu_distributed
 
 def test_model_fn(device=torch.device("cpu")):
     #device = xm.xla_device(devkind='TPU')
