@@ -15,18 +15,20 @@
 #     name: python3
 # ---
 
-# # + colab={} colab_type="code" id="bWF5pHpO3bEX"
 # %load_ext autoreload
 # %autoreload 2
 
-# + colab={"base_uri": "https://localhost:8080/", "height": 191} colab_type="code" id="f7_Bllh93bEt" language="bash"
-# pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
-# # mv kaggle_runner k && \
-# # mv k/* . && mv k/.* .; \
-# # pip3 install -e .;\
-# # export PATH=$PWD/bin:$PATH; \
-# # entry.sh &)
+# + {"language": "bash"}
+# # pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
+# mv kaggle_runner k && \
+# mv k/* . && mv k/.* .; \
+# pip3 install -e .;\
+# export PATH=$PWD/bin:$PATH; \
+# entry.sh &)
 
+# + {"language": "bash"}
+# # make transformers
+# -
 
 # # + colab={} colab_type="code" id="Mg3zuCSx3bE9"
 from importlib import reload
