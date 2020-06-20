@@ -2689,3 +2689,1570 @@ For CPU, if use xla, it still report Grad None
 
 For TPU, it will freeze when trying to get Grad
 
+```
+[DEBUG]2020-06-20 05:17:59,092:utils:loss_avg: 1.11405, lr_pg0:8.810488730080142e-07, lr_pg1: 8.810488730080142e-07final_score:0.48852, mc_score:0.03426
+[DEBUG]2020-06-20 05:17:59,459:utils:grad info pg0: norm std(0.006225) mean(0.016256)
+[DEBUG]2020-06-20 05:17:59,462:utils:grad info pg1: norm std(0.000734) mean(0.001428)
+[DEBUG]2020-06-20 05:17:59,769:utils:on_backward_begin lr: 9.120108393559097e-07
+[DEBUG]2020-06-20 05:17:59,771:utils:itr: 64, num_batch: 64, last loss: 1.044795, smooth_loss: 1.086013
+
+[DEBUG]2020-06-20 05:17:59,780:utils:loss_avg: 1.11299, lr_pg0:9.120108393559097e-07, lr_pg1: 9.120108393559097e-07final_score:0.48463, mc_score:0.01871
+[DEBUG]2020-06-20 05:18:00,147:utils:grad info pg0: norm std(0.008121) mean(0.019129)
+[DEBUG]2020-06-20 05:18:00,151:utils:grad info pg1: norm std(0.000909) mean(0.001658)
+[DEBUG]2020-06-20 05:18:00,452:utils:on_backward_begin lr: 9.440608762859234e-07
+[DEBUG]2020-06-20 05:18:00,453:utils:itr: 65, num_batch: 65, last loss: 0.961200, smooth_loss: 1.082623
+[DEBUG]2020-06-20 05:18:00,462:utils:loss_avg: 1.11069, lr_pg0:9.440608762859234e-07, lr_pg1: 9.440608762859234e-07final_score:0.48789, mc_score:0.01841
+[DEBUG]2020-06-20 05:18:00,830:utils:grad info pg0: norm std(0.045156) mean(0.047097)
+[DEBUG]2020-06-20 05:18:00,834:utils:grad info pg1: norm std(0.001272) mean(0.002412)
+[DEBUG]2020-06-20 05:18:01,141:utils:on_backward_begin lr: 9.772372209558109e-07
+[DEBUG]2020-06-20 05:18:01,143:utils:itr: 66, num_batch: 66, last loss: 0.894677, smooth_loss: 1.077555
+[DEBUG]2020-06-20 05:18:01,152:utils:loss_avg: 1.10746, lr_pg0:9.772372209558109e-07, lr_pg1: 9.772372209558109e-07final_score:0.48752, mc_score:0.01298
+[DEBUG]2020-06-20 05:18:01,519:utils:grad info pg0: norm std(0.004740) mean(0.014121)
+[DEBUG]2020-06-20 05:18:01,522:utils:grad info pg1: norm std(0.000732) mean(0.001339)
+[DEBUG]2020-06-20 05:18:01,834:utils:on_backward_begin lr: 1.0115794542598987e-06
+[DEBUG]2020-06-20 05:18:01,836:utils:itr: 67, num_batch: 67, last loss: 1.236936, smooth_loss: 1.081823
+[DEBUG]2020-06-20 05:18:01,849:utils:loss_avg: 1.10937, lr_pg0:1.0115794542598987e-06, lr_pg1: 1.0115794542598987e-06final_score:0.48646, mc_score:0.01334
+[DEBUG]2020-06-20 05:18:02,216:utils:grad info pg0: norm std(0.014892) mean(0.045829)
+[DEBUG]2020-06-20 05:18:02,220:utils:grad info pg1: norm std(0.002039) mean(0.003976)
+[DEBUG]2020-06-20 05:18:02,565:utils:on_backward_begin lr: 1.0471285480508998e-06
+[DEBUG]2020-06-20 05:18:02,567:utils:itr: 68, num_batch: 68, last loss: 1.214348, smooth_loss: 1.085348
+[DEBUG]2020-06-20 05:18:02,578:utils:loss_avg: 1.11089, lr_pg0:1.0471285480508998e-06, lr_pg1: 1.0471285480508998e-06final_score:0.48536, mc_score:0.00680
+[DEBUG]2020-06-20 05:18:02,945:utils:grad info pg0: norm std(0.003312) mean(0.011740)
+[DEBUG]2020-06-20 05:18:02,949:utils:grad info pg1: norm std(0.000496) mean(0.000962)
+[DEBUG]2020-06-20 05:18:03,256:utils:on_backward_begin lr: 1.0839269140212033e-06
+[DEBUG]2020-06-20 05:18:03,259:utils:itr: 69, num_batch: 69, last loss: 1.228556, smooth_loss: 1.089132
+[DEBUG]2020-06-20 05:18:03,268:utils:loss_avg: 1.11257, lr_pg0:1.0839269140212033e-06, lr_pg1: 1.0839269140212033e-06final_score:0.48444, mc_score:0.00040
+[DEBUG]2020-06-20 05:18:03,642:utils:grad info pg0: norm std(0.015379) mean(0.050566)
+[DEBUG]2020-06-20 05:18:03,645:utils:grad info pg1: norm std(0.002332) mean(0.004395)
+[DEBUG]2020-06-20 05:18:03,956:utils:on_backward_begin lr: 1.1220184543019633e-06
+[DEBUG]2020-06-20 05:18:03,957:utils:itr: 70, num_batch: 70, last loss: 0.865338, smooth_loss: 1.083256
+[DEBUG]2020-06-20 05:18:03,967:utils:loss_avg: 1.10909, lr_pg0:1.1220184543019633e-06, lr_pg1: 1.1220184543019633e-06final_score:0.48403, mc_score:0.00420
+[DEBUG]2020-06-20 05:18:04,335:utils:grad info pg0: norm std(0.012972) mean(0.027202)
+[DEBUG]2020-06-20 05:18:04,339:utils:grad info pg1: norm std(0.001284) mean(0.002483)
+[DEBUG]2020-06-20 05:18:04,639:utils:on_backward_begin lr: 1.1614486138403427e-06
+[DEBUG]2020-06-20 05:18:04,641:utils:itr: 71, num_batch: 71, last loss: 0.918486, smooth_loss: 1.078957
+[DEBUG]2020-06-20 05:18:04,651:utils:loss_avg: 1.10644, lr_pg0:1.1614486138403427e-06, lr_pg1: 1.1614486138403427e-06final_score:0.48783, mc_score:0.00637
+[DEBUG]2020-06-20 05:18:05,019:utils:grad info pg0: norm std(0.009374) mean(0.022937)
+[DEBUG]2020-06-20 05:18:05,023:utils:grad info pg1: norm std(0.001052) mean(0.002017)
+[DEBUG]2020-06-20 05:18:05,328:utils:on_backward_begin lr: 1.2022644346174128e-06
+[DEBUG]2020-06-20 05:18:05,329:utils:itr: 72, num_batch: 72, last loss: 0.976821, smooth_loss: 1.076308
+[DEBUG]2020-06-20 05:18:05,340:utils:loss_avg: 1.10466, lr_pg0:1.2022644346174128e-06, lr_pg1: 1.2022644346174128e-06final_score:0.48413, mc_score:-0.00031
+[DEBUG]2020-06-20 05:18:05,708:utils:grad info pg0: norm std(0.004530) mean(0.013096)
+[DEBUG]2020-06-20 05:18:05,711:utils:grad info pg1: norm std(0.000611) mean(0.001148)
+[DEBUG]2020-06-20 05:18:06,026:utils:on_backward_begin lr: 1.244514611771385e-06
+[DEBUG]2020-06-20 05:18:06,028:utils:itr: 73, num_batch: 73, last loss: 1.186439, smooth_loss: 1.079148
+[DEBUG]2020-06-20 05:18:06,037:utils:loss_avg: 1.10577, lr_pg0:1.244514611771385e-06, lr_pg1: 1.244514611771385e-06final_score:0.48452, mc_score:0.00000
+[DEBUG]2020-06-20 05:18:06,405:utils:grad info pg0: norm std(0.018097) mean(0.034213)
+[DEBUG]2020-06-20 05:18:06,408:utils:grad info pg1: norm std(0.001377) mean(0.002549)
+[DEBUG]2020-06-20 05:18:06,708:utils:on_backward_begin lr: 1.288249551693134e-06
+[DEBUG]2020-06-20 05:18:06,710:utils:itr: 74, num_batch: 74, last loss: 1.071715, smooth_loss: 1.078957
+[DEBUG]2020-06-20 05:18:06,719:utils:loss_avg: 1.10532, lr_pg0:1.288249551693134e-06, lr_pg1: 1.288249551693134e-06final_score:0.48502, mc_score:0.00000
+[DEBUG]2020-06-20 05:18:07,087:utils:grad info pg0: norm std(0.073270) mean(0.049054)
+[DEBUG]2020-06-20 05:18:07,090:utils:grad info pg1: norm std(0.000879) mean(0.001807)
+[DEBUG]2020-06-20 05:18:07,390:utils:on_backward_begin lr: 1.333521432163324e-06
+[DEBUG]2020-06-20 05:18:07,392:utils:itr: 75, num_batch: 75, last loss: 0.971945, smooth_loss: 1.076230
+[DEBUG]2020-06-20 05:18:07,401:utils:loss_avg: 1.10356, lr_pg0:1.333521432163324e-06, lr_pg1: 1.333521432163324e-06final_score:0.48457, mc_score:-0.00414
+[DEBUG]2020-06-20 05:18:07,769:utils:grad info pg0: norm std(0.020636) mean(0.063667)
+[DEBUG]2020-06-20 05:18:07,772:utils:grad info pg1: norm std(0.002434) mean(0.004426)
+[DEBUG]2020-06-20 05:18:08,080:utils:on_backward_begin lr: 1.3803842646028848e-06
+[DEBUG]2020-06-20 05:18:08,082:utils:itr: 76, num_batch: 76, last loss: 0.882366, smooth_loss: 1.071315
+[DEBUG]2020-06-20 05:18:08,094:utils:loss_avg: 1.10069, lr_pg0:1.3803842646028848e-06, lr_pg1: 1.3803842646028848e-06final_score:0.48720, mc_score:-0.00022
+[DEBUG]2020-06-20 05:18:08,461:utils:grad info pg0: norm std(0.008227) mean(0.026799)
+[DEBUG]2020-06-20 05:18:08,465:utils:grad info pg1: norm std(0.001107) mean(0.002188)
+[DEBUG]2020-06-20 05:18:08,776:utils:on_backward_begin lr: 1.428893958511103e-06
+[DEBUG]2020-06-20 05:18:08,777:utils:itr: 77, num_batch: 77, last loss: 1.150728, smooth_loss: 1.073317
+[DEBUG]2020-06-20 05:18:08,787:utils:loss_avg: 1.10133, lr_pg0:1.428893958511103e-06, lr_pg1: 1.428893958511103e-06final_score:0.48520, mc_score:-0.00403
+[DEBUG]2020-06-20 05:18:09,156:utils:grad info pg0: norm std(0.006526) mean(0.022343)
+[DEBUG]2020-06-20 05:18:09,159:utils:grad info pg1: norm std(0.001016) mean(0.001956)
+[DEBUG]2020-06-20 05:18:09,460:utils:on_backward_begin lr: 1.4791083881682077e-06
+[DEBUG]2020-06-20 05:18:09,461:utils:itr: 78, num_batch: 78, last loss: 0.967090, smooth_loss: 1.070653
+[DEBUG]2020-06-20 05:18:09,470:utils:loss_avg: 1.09963, lr_pg0:1.4791083881682077e-06, lr_pg1: 1.4791083881682077e-06final_score:0.48659, mc_score:-0.00562
+[DEBUG]2020-06-20 05:18:09,843:utils:grad info pg0: norm std(0.035264) mean(0.037154)
+[DEBUG]2020-06-20 05:18:09,847:utils:grad info pg1: norm std(0.000883) mean(0.001778)
+[DEBUG]2020-06-20 05:18:10,158:utils:on_backward_begin lr: 1.5310874616820303e-06
+[DEBUG]2020-06-20 05:18:10,161:utils:itr: 79, num_batch: 79, last loss: 1.003126, smooth_loss: 1.068967
+[DEBUG]2020-06-20 05:18:10,172:utils:loss_avg: 1.09842, lr_pg0:1.5310874616820303e-06, lr_pg1: 1.5310874616820303e-06final_score:0.48739, mc_score:-0.00728
+[DEBUG]2020-06-20 05:18:10,541:utils:grad info pg0: norm std(0.006061) mean(0.015658)
+[DEBUG]2020-06-20 05:18:10,545:utils:grad info pg1: norm std(0.000683) mean(0.001301)
+[DEBUG]2020-06-20 05:18:10,850:utils:on_backward_begin lr: 1.5848931924611137e-06
+[DEBUG]2020-06-20 05:18:10,852:utils:itr: 80, num_batch: 80, last loss: 0.983854, smooth_loss: 1.066854
+
+[DEBUG]2020-06-20 05:18:10,863:utils:loss_avg: 1.09701, lr_pg0:1.5848931924611137e-06, lr_pg1: 1.5848931924611137e-06final_score:0.48569, mc_score:-0.00731
+[DEBUG]2020-06-20 05:18:11,236:utils:grad info pg0: norm std(0.011225) mean(0.036313)
+[DEBUG]2020-06-20 05:18:11,240:utils:grad info pg1: norm std(0.001475) mean(0.002960)
+[DEBUG]2020-06-20 05:18:11,540:utils:on_backward_begin lr: 1.6405897731995394e-06
+[DEBUG]2020-06-20 05:18:11,542:utils:itr: 81, num_batch: 81, last loss: 1.259587, smooth_loss: 1.071617
+[DEBUG]2020-06-20 05:18:11,551:utils:loss_avg: 1.09899, lr_pg0:1.6405897731995394e-06, lr_pg1: 1.6405897731995394e-06final_score:0.48434, mc_score:-0.01254
+[DEBUG]2020-06-20 05:18:11,920:utils:grad info pg0: norm std(0.029734) mean(0.033607)
+[DEBUG]2020-06-20 05:18:11,923:utils:grad info pg1: norm std(0.000993) mean(0.001952)
+[DEBUG]2020-06-20 05:18:12,224:utils:on_backward_begin lr: 1.698243652461744e-06
+[DEBUG]2020-06-20 05:18:12,226:utils:itr: 82, num_batch: 82, last loss: 1.020243, smooth_loss: 1.070354
+[DEBUG]2020-06-20 05:18:12,237:utils:loss_avg: 1.09804, lr_pg0:1.698243652461744e-06, lr_pg1: 1.698243652461744e-06final_score:0.48612, mc_score:-0.01059
+[DEBUG]2020-06-20 05:18:12,612:utils:grad info pg0: norm std(0.004206) mean(0.012953)
+[DEBUG]2020-06-20 05:18:12,616:utils:grad info pg1: norm std(0.000549) mean(0.001065)
+[DEBUG]2020-06-20 05:18:12,928:utils:on_backward_begin lr: 1.7579236139586924e-06
+[DEBUG]2020-06-20 05:18:12,930:utils:itr: 83, num_batch: 83, last loss: 0.848575, smooth_loss: 1.064923
+[DEBUG]2020-06-20 05:18:12,943:utils:loss_avg: 1.09507, lr_pg0:1.7579236139586924e-06, lr_pg1: 1.7579236139586924e-06final_score:0.49021, mc_score:-0.00864
+[DEBUG]2020-06-20 05:18:13,314:utils:grad info pg0: norm std(0.039244) mean(0.063938)
+[DEBUG]2020-06-20 05:18:13,318:utils:grad info pg1: norm std(0.002087) mean(0.004245)
+[DEBUG]2020-06-20 05:18:13,622:utils:on_backward_begin lr: 1.8197008586099832e-06
+[DEBUG]2020-06-20 05:18:13,623:utils:itr: 84, num_batch: 84, last loss: 1.090404, smooth_loss: 1.065544
+[DEBUG]2020-06-20 05:18:13,633:utils:loss_avg: 1.09502, lr_pg0:1.8197008586099832e-06, lr_pg1: 1.8197008586099832e-06final_score:0.48663, mc_score:-0.00868
+[DEBUG]2020-06-20 05:18:14,006:utils:grad info pg0: norm std(0.039520) mean(0.039945)
+[DEBUG]2020-06-20 05:18:14,009:utils:grad info pg1: norm std(0.001273) mean(0.002360)
+[DEBUG]2020-06-20 05:18:14,308:utils:on_backward_begin lr: 1.8836490894898005e-06
+[DEBUG]2020-06-20 05:18:14,309:utils:itr: 85, num_batch: 85, last loss: 1.024877, smooth_loss: 1.064557
+[DEBUG]2020-06-20 05:18:14,320:utils:loss_avg: 1.09420, lr_pg0:1.8836490894898005e-06, lr_pg1: 1.8836490894898005e-06final_score:0.48780, mc_score:-0.01359
+[DEBUG]2020-06-20 05:18:14,688:utils:grad info pg0: norm std(0.076903) mean(0.068190)
+[DEBUG]2020-06-20 05:18:14,691:utils:grad info pg1: norm std(0.001895) mean(0.003370)
+[DEBUG]2020-06-20 05:18:14,990:utils:on_backward_begin lr: 1.9498445997580454e-06
+[DEBUG]2020-06-20 05:18:14,992:utils:itr: 86, num_batch: 86, last loss: 1.102917, smooth_loss: 1.065484
+[DEBUG]2020-06-20 05:18:15,003:utils:loss_avg: 1.09430, lr_pg0:1.9498445997580454e-06, lr_pg1: 1.9498445997580454e-06final_score:0.48920, mc_score:-0.00996
+[DEBUG]2020-06-20 05:18:15,376:utils:grad info pg0: norm std(0.016545) mean(0.017940)
+[DEBUG]2020-06-20 05:18:15,380:utils:grad info pg1: norm std(0.000580) mean(0.001100)
+[DEBUG]2020-06-20 05:18:15,681:utils:on_backward_begin lr: 2.018366363681561e-06
+[DEBUG]2020-06-20 05:18:15,682:utils:itr: 87, num_batch: 87, last loss: 1.210692, smooth_loss: 1.068979
+[DEBUG]2020-06-20 05:18:15,691:utils:loss_avg: 1.09563, lr_pg0:2.018366363681561e-06, lr_pg1: 2.018366363681561e-06final_score:0.48612, mc_score:-0.01974
+[DEBUG]2020-06-20 05:18:16,065:utils:grad info pg0: norm std(0.010685) mean(0.028040)
+[DEBUG]2020-06-20 05:18:16,068:utils:grad info pg1: norm std(0.001307) mean(0.002437)
+[DEBUG]2020-06-20 05:18:16,368:utils:on_backward_begin lr: 2.0892961308540394e-06
+[DEBUG]2020-06-20 05:18:16,370:utils:itr: 88, num_batch: 88, last loss: 1.041082, smooth_loss: 1.068310
+[DEBUG]2020-06-20 05:18:16,380:utils:loss_avg: 1.09501, lr_pg0:2.0892961308540394e-06, lr_pg1: 2.0892961308540394e-06final_score:0.48758, mc_score:-0.01460
+[DEBUG]2020-06-20 05:18:16,748:utils:grad info pg0: norm std(0.012270) mean(0.046251)
+[DEBUG]2020-06-20 05:18:16,752:utils:grad info pg1: norm std(0.001731) mean(0.003319)
+[DEBUG]2020-06-20 05:18:17,068:utils:on_backward_begin lr: 2.1627185237270203e-06
+[DEBUG]2020-06-20 05:18:17,069:utils:itr: 89, num_batch: 89, last loss: 1.065762, smooth_loss: 1.068249
+[DEBUG]2020-06-20 05:18:17,080:utils:loss_avg: 1.09469, lr_pg0:2.1627185237270203e-06, lr_pg1: 2.1627185237270203e-06final_score:0.48670, mc_score:-0.01443
+[DEBUG]2020-06-20 05:18:17,453:utils:grad info pg0: norm std(0.013809) mean(0.038481)
+[DEBUG]2020-06-20 05:18:17,457:utils:grad info pg1: norm std(0.001498) mean(0.003020)
+[DEBUG]2020-06-20 05:18:17,755:utils:on_backward_begin lr: 2.23872113856834e-06
+[DEBUG]2020-06-20 05:18:17,756:utils:itr: 90, num_batch: 90, last loss: 0.959231, smooth_loss: 1.065657
+[DEBUG]2020-06-20 05:18:17,766:utils:loss_avg: 1.09320, lr_pg0:2.23872113856834e-06, lr_pg1: 2.23872113856834e-06final_score:0.48643, mc_score:-0.01744
+[DEBUG]2020-06-20 05:18:18,135:utils:grad info pg0: norm std(0.098228) mean(0.067119)
+[DEBUG]2020-06-20 05:18:18,139:utils:grad info pg1: norm std(0.001206) mean(0.002397)
+[DEBUG]2020-06-20 05:18:18,456:utils:on_backward_begin lr: 2.317394649968479e-06
+[DEBUG]2020-06-20 05:18:18,457:utils:itr: 91, num_batch: 91, last loss: 0.805971, smooth_loss: 1.059504
+[DEBUG]2020-06-20 05:18:18,467:utils:loss_avg: 1.09008, lr_pg0:2.317394649968479e-06, lr_pg1: 2.317394649968479e-06final_score:0.48935, mc_score:-0.01101
+[DEBUG]2020-06-20 05:18:18,839:utils:grad info pg0: norm std(0.013201) mean(0.041009)
+[DEBUG]2020-06-20 05:18:18,843:utils:grad info pg1: norm std(0.001485) mean(0.002993)
+[DEBUG]2020-06-20 05:18:19,145:utils:on_backward_begin lr: 2.398832919019491e-06
+[DEBUG]2020-06-20 05:18:19,147:utils:itr: 92, num_batch: 92, last loss: 0.885852, smooth_loss: 1.055405
+[DEBUG]2020-06-20 05:18:19,157:utils:loss_avg: 1.08788, lr_pg0:2.398832919019491e-06, lr_pg1: 2.398832919019491e-06final_score:0.49204, mc_score:-0.00634
+[DEBUG]2020-06-20 05:18:19,531:utils:grad info pg0: norm std(0.006949) mean(0.021473)
+[DEBUG]2020-06-20 05:18:19,534:utils:grad info pg1: norm std(0.000949) mean(0.001853)
+[DEBUG]2020-06-20 05:18:19,836:utils:on_backward_begin lr: 2.4831331052955706e-06
+[DEBUG]2020-06-20 05:18:19,837:utils:itr: 93, num_batch: 93, last loss: 1.037075, smooth_loss: 1.054974
+[DEBUG]2020-06-20 05:18:19,849:utils:loss_avg: 1.08734, lr_pg0:2.4831331052955706e-06, lr_pg1: 2.4831331052955706e-06final_score:0.49201, mc_score:-0.00632
+[DEBUG]2020-06-20 05:18:20,217:utils:grad info pg0: norm std(0.011620) mean(0.030598)
+[DEBUG]2020-06-20 05:18:20,221:utils:grad info pg1: norm std(0.001220) mean(0.002434)
+[DEBUG]2020-06-20 05:18:20,540:utils:on_backward_begin lr: 2.5703957827688634e-06
+[DEBUG]2020-06-20 05:18:20,542:utils:itr: 94, num_batch: 94, last loss: 1.079897, smooth_loss: 1.055558
+[DEBUG]2020-06-20 05:18:20,551:utils:loss_avg: 1.08726, lr_pg0:2.5703957827688634e-06, lr_pg1: 2.5703957827688634e-06final_score:0.49236, mc_score:-0.00781
+[DEBUG]2020-06-20 05:18:20,918:utils:grad info pg0: norm std(0.013618) mean(0.047994)
+[DEBUG]2020-06-20 05:18:20,921:utils:grad info pg1: norm std(0.002301) mean(0.004160)
+[DEBUG]2020-06-20 05:18:21,223:utils:on_backward_begin lr: 2.6607250597988094e-06
+[DEBUG]2020-06-20 05:18:21,224:utils:itr: 95, num_batch: 95, last loss: 1.183720, smooth_loss: 1.058552
+[DEBUG]2020-06-20 05:18:21,235:utils:loss_avg: 1.08827, lr_pg0:2.6607250597988094e-06, lr_pg1: 2.6607250597988094e-06final_score:0.49245, mc_score:-0.00781
+[DEBUG]2020-06-20 05:18:21,603:utils:grad info pg0: norm std(0.004136) mean(0.012371)
+[DEBUG]2020-06-20 05:18:21,606:utils:grad info pg1: norm std(0.000564) mean(0.001069)
+[DEBUG]2020-06-20 05:18:21,904:utils:on_backward_begin lr: 2.754228703338166e-06
+[DEBUG]2020-06-20 05:18:21,905:utils:itr: 96, num_batch: 96, last loss: 0.913632, smooth_loss: 1.055178
+
+[DEBUG]2020-06-20 05:18:21,915:utils:loss_avg: 1.08647, lr_pg0:2.754228703338166e-06, lr_pg1: 2.754228703338166e-06final_score:0.49407, mc_score:-0.00348
+[DEBUG]2020-06-20 05:18:22,283:utils:grad info pg0: norm std(0.011153) mean(0.032725)
+[DEBUG]2020-06-20 05:18:22,286:utils:grad info pg1: norm std(0.001390) mean(0.002692)
+[DEBUG]2020-06-20 05:18:22,585:utils:on_backward_begin lr: 2.8510182675039094e-06
+[DEBUG]2020-06-20 05:18:22,586:utils:itr: 97, num_batch: 97, last loss: 0.855278, smooth_loss: 1.050539
+[DEBUG]2020-06-20 05:18:22,595:utils:loss_avg: 1.08411, lr_pg0:2.8510182675039094e-06, lr_pg1: 2.8510182675039094e-06final_score:0.49651, mc_score:0.00058
+[DEBUG]2020-06-20 05:18:22,963:utils:grad info pg0: norm std(0.020514) mean(0.040969)
+[DEBUG]2020-06-20 05:18:22,966:utils:grad info pg1: norm std(0.002207) mean(0.003948)
+[DEBUG]2020-06-20 05:18:23,268:utils:on_backward_begin lr: 2.9512092266663854e-06
+[DEBUG]2020-06-20 05:18:23,270:utils:itr: 98, num_batch: 98, last loss: 1.034990, smooth_loss: 1.050180
+[DEBUG]2020-06-20 05:18:23,280:utils:loss_avg: 1.08361, lr_pg0:2.9512092266663854e-06, lr_pg1: 2.9512092266663854e-06final_score:0.49508, mc_score:-0.00371
+[DEBUG]2020-06-20 05:18:23,653:utils:grad info pg0: norm std(0.008644) mean(0.023338)
+[DEBUG]2020-06-20 05:18:23,657:utils:grad info pg1: norm std(0.001202) mean(0.002184)
+[DEBUG]2020-06-20 05:18:23,970:utils:on_backward_begin lr: 3.054921113215513e-06
+[DEBUG]2020-06-20 05:18:23,971:utils:itr: 99, num_batch: 99, last loss: 0.963697, smooth_loss: 1.048186
+[DEBUG]2020-06-20 05:18:23,983:utils:loss_avg: 1.08241, lr_pg0:3.054921113215513e-06, lr_pg1: 3.054921113215513e-06final_score:0.49341, mc_score:-0.01078
+[DEBUG]2020-06-20 05:18:24,356:utils:grad info pg0: norm std(0.030635) mean(0.035870)
+[DEBUG]2020-06-20 05:18:24,359:utils:grad info pg1: norm std(0.001505) mean(0.002606)
+[DEBUG]2020-06-20 05:18:24,666:utils:on_backward_begin lr: 3.1622776601683796e-06
+[DEBUG]2020-06-20 05:18:24,668:utils:itr: 100, num_batch: 100, last loss: 0.799141, smooth_loss: 1.042461
+[DEBUG]2020-06-20 05:18:24,678:utils:loss_avg: 1.07961, lr_pg0:3.1622776601683796e-06, lr_pg1: 3.1622776601683796e-06final_score:0.49880, mc_score:0.00112
+[DEBUG]2020-06-20 05:18:25,045:utils:grad info pg0: norm std(0.005910) mean(0.017407)
+[DEBUG]2020-06-20 05:18:25,049:utils:grad info pg1: norm std(0.000752) mean(0.001457)
+[DEBUG]2020-06-20 05:18:25,349:utils:on_backward_begin lr: 3.273406948788382e-06
+[DEBUG]2020-06-20 05:18:25,351:utils:itr: 101, num_batch: 101, last loss: 0.952661, smooth_loss: 1.040403
+[DEBUG]2020-06-20 05:18:25,360:utils:loss_avg: 1.07836, lr_pg0:3.273406948788382e-06, lr_pg1: 3.273406948788382e-06final_score:0.49871, mc_score:0.00378
+[DEBUG]2020-06-20 05:18:25,728:utils:grad info pg0: norm std(0.010536) mean(0.027586)
+[DEBUG]2020-06-20 05:18:25,731:utils:grad info pg1: norm std(0.001101) mean(0.002215)
+[DEBUG]2020-06-20 05:18:26,049:utils:on_backward_begin lr: 3.388441561392026e-06
+[DEBUG]2020-06-20 05:18:26,051:utils:itr: 102, num_batch: 102, last loss: 0.765022, smooth_loss: 1.034109
+[DEBUG]2020-06-20 05:18:26,062:utils:loss_avg: 1.07532, lr_pg0:3.388441561392026e-06, lr_pg1: 3.388441561392026e-06final_score:0.50476, mc_score:0.01243
+[DEBUG]2020-06-20 05:18:26,430:utils:grad info pg0: norm std(0.012479) mean(0.030560)
+[DEBUG]2020-06-20 05:18:26,433:utils:grad info pg1: norm std(0.001414) mean(0.002731)
+[DEBUG]2020-06-20 05:18:26,731:utils:on_backward_begin lr: 3.5075187395256803e-06
+[DEBUG]2020-06-20 05:18:26,732:utils:itr: 103, num_batch: 103, last loss: 0.785730, smooth_loss: 1.028449
+[DEBUG]2020-06-20 05:18:26,742:utils:loss_avg: 1.07254, lr_pg0:3.5075187395256803e-06, lr_pg1: 3.5075187395256803e-06final_score:0.50972, mc_score:0.02075
+[DEBUG]2020-06-20 05:18:27,108:utils:grad info pg0: norm std(0.065864) mean(0.061409)
+[DEBUG]2020-06-20 05:18:27,111:utils:grad info pg1: norm std(0.001763) mean(0.003218)
+[DEBUG]2020-06-20 05:18:27,413:utils:on_backward_begin lr: 3.630780547701014e-06
+[DEBUG]2020-06-20 05:18:27,415:utils:itr: 104, num_batch: 104, last loss: 1.167730, smooth_loss: 1.031615
+[DEBUG]2020-06-20 05:18:27,424:utils:loss_avg: 1.07344, lr_pg0:3.630780547701014e-06, lr_pg1: 3.630780547701014e-06final_score:0.50634, mc_score:0.01387
+[DEBUG]2020-06-20 05:18:27,793:utils:grad info pg0: norm std(0.010001) mean(0.024564)
+[DEBUG]2020-06-20 05:18:27,796:utils:grad info pg1: norm std(0.001120) mean(0.002130)
+[DEBUG]2020-06-20 05:18:28,112:utils:on_backward_begin lr: 3.758374042884442e-06
+[DEBUG]2020-06-20 05:18:28,113:utils:itr: 105, num_batch: 105, last loss: 1.096754, smooth_loss: 1.033091
+[DEBUG]2020-06-20 05:18:28,124:utils:loss_avg: 1.07366, lr_pg0:3.758374042884442e-06, lr_pg1: 3.758374042884442e-06final_score:0.50645, mc_score:0.01571
+[DEBUG]2020-06-20 05:18:28,492:utils:grad info pg0: norm std(0.007875) mean(0.016722)
+[DEBUG]2020-06-20 05:18:28,496:utils:grad info pg1: norm std(0.000742) mean(0.001379)
+[DEBUG]2020-06-20 05:18:28,797:utils:on_backward_begin lr: 3.890451449942807e-06
+[DEBUG]2020-06-20 05:18:28,798:utils:itr: 106, num_batch: 106, last loss: 1.021798, smooth_loss: 1.032836
+[DEBUG]2020-06-20 05:18:28,807:utils:loss_avg: 1.07318, lr_pg0:3.890451449942807e-06, lr_pg1: 3.890451449942807e-06final_score:0.50561, mc_score:0.01420
+[DEBUG]2020-06-20 05:18:29,181:utils:grad info pg0: norm std(0.014350) mean(0.043318)
+[DEBUG]2020-06-20 05:18:29,184:utils:grad info pg1: norm std(0.001771) mean(0.003487)
+[DEBUG]2020-06-20 05:18:29,491:utils:on_backward_begin lr: 4.027170343254592e-06
+[DEBUG]2020-06-20 05:18:29,493:utils:itr: 107, num_batch: 107, last loss: 0.911258, smooth_loss: 1.030095
+[DEBUG]2020-06-20 05:18:29,503:utils:loss_avg: 1.07168, lr_pg0:4.027170343254592e-06, lr_pg1: 4.027170343254592e-06final_score:0.50784, mc_score:0.01835
+[DEBUG]2020-06-20 05:18:29,875:utils:grad info pg0: norm std(0.006971) mean(0.023908)
+[DEBUG]2020-06-20 05:18:29,879:utils:grad info pg1: norm std(0.001065) mean(0.002034)
+[DEBUG]2020-06-20 05:18:30,187:utils:on_backward_begin lr: 4.168693834703355e-06
+[DEBUG]2020-06-20 05:18:30,189:utils:itr: 108, num_batch: 108, last loss: 0.952855, smooth_loss: 1.028358
+[DEBUG]2020-06-20 05:18:30,199:utils:loss_avg: 1.07059, lr_pg0:4.168693834703355e-06, lr_pg1: 4.168693834703355e-06final_score:0.51027, mc_score:0.01848
+[DEBUG]2020-06-20 05:18:30,567:utils:grad info pg0: norm std(0.003105) mean(0.008752)
+[DEBUG]2020-06-20 05:18:30,570:utils:grad info pg1: norm std(0.000413) mean(0.000782)
+[DEBUG]2020-06-20 05:18:30,870:utils:on_backward_begin lr: 4.315190768277653e-06
+[DEBUG]2020-06-20 05:18:30,871:utils:itr: 109, num_batch: 109, last loss: 0.897537, smooth_loss: 1.025424
+[DEBUG]2020-06-20 05:18:30,881:utils:loss_avg: 1.06902, lr_pg0:4.315190768277653e-06, lr_pg1: 4.315190768277653e-06final_score:0.51454, mc_score:0.02551
+[DEBUG]2020-06-20 05:18:31,248:utils:grad info pg0: norm std(0.013819) mean(0.024426)
+[DEBUG]2020-06-20 05:18:31,252:utils:grad info pg1: norm std(0.000927) mean(0.001790)
+[DEBUG]2020-06-20 05:18:31,550:utils:on_backward_begin lr: 4.466835921509633e-06
+[DEBUG]2020-06-20 05:18:31,551:utils:itr: 110, num_batch: 110, last loss: 0.760915, smooth_loss: 1.019505
+[DEBUG]2020-06-20 05:18:31,561:utils:loss_avg: 1.06624, lr_pg0:4.466835921509633e-06, lr_pg1: 4.466835921509633e-06final_score:0.51746, mc_score:0.03036
+[DEBUG]2020-06-20 05:18:31,928:utils:grad info pg0: norm std(0.030277) mean(0.045063)
+[DEBUG]2020-06-20 05:18:31,931:utils:grad info pg1: norm std(0.001480) mean(0.002784)
+[DEBUG]2020-06-20 05:18:32,234:utils:on_backward_begin lr: 4.623810213992605e-06
+[DEBUG]2020-06-20 05:18:32,236:utils:itr: 111, num_batch: 111, last loss: 1.084978, smooth_loss: 1.020966
+[DEBUG]2020-06-20 05:18:32,246:utils:loss_avg: 1.06641, lr_pg0:4.623810213992605e-06, lr_pg1: 4.623810213992605e-06final_score:0.51583, mc_score:0.02470
+[DEBUG]2020-06-20 05:18:32,619:utils:grad info pg0: norm std(0.038810) mean(0.068839)
+[DEBUG]2020-06-20 05:18:32,622:utils:grad info pg1: norm std(0.004675) mean(0.006567)
+[DEBUG]2020-06-20 05:18:32,924:utils:on_backward_begin lr: 4.786300923226385e-06
+[DEBUG]2020-06-20 05:18:32,925:utils:itr: 112, num_batch: 112, last loss: 1.209248, smooth_loss: 1.025160
+
+[DEBUG]2020-06-20 05:18:32,935:utils:loss_avg: 1.06767, lr_pg0:4.786300923226385e-06, lr_pg1: 4.786300923226385e-06final_score:0.51297, mc_score:0.01970
+[DEBUG]2020-06-20 05:18:33,301:utils:grad info pg0: norm std(0.018005) mean(0.025912)
+[DEBUG]2020-06-20 05:18:33,305:utils:grad info pg1: norm std(0.000871) mean(0.001725)
+[DEBUG]2020-06-20 05:18:33,605:utils:on_backward_begin lr: 4.954501908047901e-06
+[DEBUG]2020-06-20 05:18:33,606:utils:itr: 113, num_batch: 113, last loss: 1.088954, smooth_loss: 1.026577
+[DEBUG]2020-06-20 05:18:33,617:utils:loss_avg: 1.06786, lr_pg0:4.954501908047901e-06, lr_pg1: 4.954501908047901e-06final_score:0.51226, mc_score:0.01684
+[DEBUG]2020-06-20 05:18:33,984:utils:grad info pg0: norm std(0.075649) mean(0.052738)
+[DEBUG]2020-06-20 05:18:33,987:utils:grad info pg1: norm std(0.001026) mean(0.002036)
+[DEBUG]2020-06-20 05:18:34,283:utils:on_backward_begin lr: 5.128613839913646e-06
+[DEBUG]2020-06-20 05:18:34,285:utils:itr: 114, num_batch: 114, last loss: 0.942617, smooth_loss: 1.024716
+[DEBUG]2020-06-20 05:18:34,294:utils:loss_avg: 1.06677, lr_pg0:5.128613839913646e-06, lr_pg1: 5.128613839913646e-06final_score:0.51361, mc_score:0.01692
+[DEBUG]2020-06-20 05:18:34,662:utils:grad info pg0: norm std(0.006090) mean(0.016332)
+[DEBUG]2020-06-20 05:18:34,665:utils:grad info pg1: norm std(0.000778) mean(0.001451)
+[DEBUG]2020-06-20 05:18:34,984:utils:on_backward_begin lr: 5.308844442309882e-06
+[DEBUG]2020-06-20 05:18:34,985:utils:itr: 115, num_batch: 115, last loss: 0.986301, smooth_loss: 1.023866
+[DEBUG]2020-06-20 05:18:34,994:utils:loss_avg: 1.06608, lr_pg0:5.308844442309882e-06, lr_pg1: 5.308844442309882e-06final_score:0.51295, mc_score:0.01391
+[DEBUG]2020-06-20 05:18:35,368:utils:grad info pg0: norm std(0.004861) mean(0.013325)
+[DEBUG]2020-06-20 05:18:35,373:utils:grad info pg1: norm std(0.000642) mean(0.001192)
+[DEBUG]2020-06-20 05:18:35,687:utils:on_backward_begin lr: 5.495408738576244e-06
+[DEBUG]2020-06-20 05:18:35,688:utils:itr: 116, num_batch: 116, last loss: 1.100381, smooth_loss: 1.025555
+[DEBUG]2020-06-20 05:18:35,699:utils:loss_avg: 1.06637, lr_pg0:5.495408738576244e-06, lr_pg1: 5.495408738576244e-06final_score:0.51010, mc_score:0.01187
+[DEBUG]2020-06-20 05:18:36,066:utils:grad info pg0: norm std(0.013337) mean(0.038984)
+[DEBUG]2020-06-20 05:18:36,069:utils:grad info pg1: norm std(0.001719) mean(0.003218)
+[DEBUG]2020-06-20 05:18:36,368:utils:on_backward_begin lr: 5.688529308438414e-06
+[DEBUG]2020-06-20 05:18:36,369:utils:itr: 117, num_batch: 117, last loss: 0.928204, smooth_loss: 1.023410
+[DEBUG]2020-06-20 05:18:36,379:utils:loss_avg: 1.06520, lr_pg0:5.688529308438414e-06, lr_pg1: 5.688529308438414e-06final_score:0.51131, mc_score:0.01352
+[DEBUG]2020-06-20 05:18:36,747:utils:grad info pg0: norm std(0.012756) mean(0.040475)
+[DEBUG]2020-06-20 05:18:36,750:utils:grad info pg1: norm std(0.001578) mean(0.003083)
+[DEBUG]2020-06-20 05:18:37,048:utils:on_backward_begin lr: 5.888436553555888e-06
+[DEBUG]2020-06-20 05:18:37,050:utils:itr: 118, num_batch: 118, last loss: 1.170437, smooth_loss: 1.026643
+[DEBUG]2020-06-20 05:18:37,060:utils:loss_avg: 1.06608, lr_pg0:5.888436553555888e-06, lr_pg1: 5.888436553555888e-06final_score:0.50931, mc_score:0.01093
+[DEBUG]2020-06-20 05:18:37,433:utils:grad info pg0: norm std(0.012353) mean(0.031940)
+[DEBUG]2020-06-20 05:18:37,436:utils:grad info pg1: norm std(0.001334) mean(0.002599)
+[DEBUG]2020-06-20 05:18:37,742:utils:on_backward_begin lr: 6.095368972401691e-06
+[DEBUG]2020-06-20 05:18:37,743:utils:itr: 119, num_batch: 119, last loss: 0.772449, smooth_loss: 1.021065
+[DEBUG]2020-06-20 05:18:37,755:utils:loss_avg: 1.06363, lr_pg0:6.095368972401691e-06, lr_pg1: 6.095368972401691e-06final_score:0.51265, mc_score:0.01647
+[DEBUG]2020-06-20 05:18:38,124:utils:grad info pg0: norm std(0.013081) mean(0.032738)
+[DEBUG]2020-06-20 05:18:38,128:utils:grad info pg1: norm std(0.001722) mean(0.003149)
+[DEBUG]2020-06-20 05:18:38,427:utils:on_backward_begin lr: 6.309573444801932e-06
+[DEBUG]2020-06-20 05:18:38,429:utils:itr: 120, num_batch: 120, last loss: 1.061813, smooth_loss: 1.021958
+[DEBUG]2020-06-20 05:18:38,439:utils:loss_avg: 1.06362, lr_pg0:6.309573444801932e-06, lr_pg1: 6.309573444801932e-06final_score:0.51198, mc_score:0.01239
+[DEBUG]2020-06-20 05:18:38,806:utils:grad info pg0: norm std(0.010821) mean(0.024853)
+[DEBUG]2020-06-20 05:18:38,810:utils:grad info pg1: norm std(0.001334) mean(0.002477)
+[DEBUG]2020-06-20 05:18:39,135:utils:on_backward_begin lr: 6.531305526474723e-06
+[DEBUG]2020-06-20 05:18:39,137:utils:itr: 121, num_batch: 121, last loss: 0.939076, smooth_loss: 1.020146
+[DEBUG]2020-06-20 05:18:39,148:utils:loss_avg: 1.06260, lr_pg0:6.531305526474723e-06, lr_pg1: 6.531305526474723e-06final_score:0.51104, mc_score:0.01513
+[DEBUG]2020-06-20 05:18:39,521:utils:grad info pg0: norm std(0.011575) mean(0.036283)
+[DEBUG]2020-06-20 05:18:39,525:utils:grad info pg1: norm std(0.002164) mean(0.003518)
+[DEBUG]2020-06-20 05:18:39,823:utils:on_backward_begin lr: 6.760829753919817e-06
+[DEBUG]2020-06-20 05:18:39,824:utils:itr: 122, num_batch: 122, last loss: 1.276448, smooth_loss: 1.025738
+[DEBUG]2020-06-20 05:18:39,835:utils:loss_avg: 1.06434, lr_pg0:6.760829753919817e-06, lr_pg1: 6.760829753919817e-06final_score:0.50680, mc_score:0.00911
+[DEBUG]2020-06-20 05:18:40,244:utils:grad info pg0: norm std(0.005570) mean(0.014793)
+[DEBUG]2020-06-20 05:18:40,247:utils:grad info pg1: norm std(0.000629) mean(0.001210)
+[DEBUG]2020-06-20 05:18:40,546:utils:on_backward_begin lr: 6.998419960022735e-06
+[DEBUG]2020-06-20 05:18:40,547:utils:itr: 123, num_batch: 123, last loss: 0.951081, smooth_loss: 1.024112
+[DEBUG]2020-06-20 05:18:40,557:utils:loss_avg: 1.06342, lr_pg0:6.998419960022735e-06, lr_pg1: 6.998419960022735e-06final_score:0.50700, mc_score:0.00970
+[DEBUG]2020-06-20 05:18:40,930:utils:grad info pg0: norm std(0.024688) mean(0.028875)
+[DEBUG]2020-06-20 05:18:40,934:utils:grad info pg1: norm std(0.000843) mean(0.001641)
+[DEBUG]2020-06-20 05:18:41,234:utils:on_backward_begin lr: 7.244359600749901e-06
+[DEBUG]2020-06-20 05:18:41,235:utils:itr: 124, num_batch: 124, last loss: 1.055055, smooth_loss: 1.024785
+[DEBUG]2020-06-20 05:18:41,246:utils:loss_avg: 1.06336, lr_pg0:7.244359600749901e-06, lr_pg1: 7.244359600749901e-06final_score:0.50569, mc_score:0.00899
+[DEBUG]2020-06-20 05:18:41,614:utils:grad info pg0: norm std(0.045640) mean(0.040656)
+[DEBUG]2020-06-20 05:18:41,617:utils:grad info pg1: norm std(0.000876) mean(0.001791)
+[DEBUG]2020-06-20 05:18:41,920:utils:on_backward_begin lr: 7.498942093324558e-06
+[DEBUG]2020-06-20 05:18:41,921:utils:itr: 125, num_batch: 125, last loss: 0.854247, smooth_loss: 1.021084
+[DEBUG]2020-06-20 05:18:41,933:utils:loss_avg: 1.06170, lr_pg0:7.498942093324558e-06, lr_pg1: 7.498942093324558e-06final_score:0.50669, mc_score:0.01133
+[DEBUG]2020-06-20 05:18:42,307:utils:grad info pg0: norm std(0.004009) mean(0.012379)
+[DEBUG]2020-06-20 05:18:42,311:utils:grad info pg1: norm std(0.000647) mean(0.001189)
+[DEBUG]2020-06-20 05:18:42,621:utils:on_backward_begin lr: 7.762471166286918e-06
+[DEBUG]2020-06-20 05:18:42,623:utils:itr: 126, num_batch: 126, last loss: 0.851377, smooth_loss: 1.017407
+[DEBUG]2020-06-20 05:18:42,632:utils:loss_avg: 1.06004, lr_pg0:7.762471166286918e-06, lr_pg1: 7.762471166286918e-06final_score:0.50831, mc_score:0.01115
+[DEBUG]2020-06-20 05:18:43,000:utils:grad info pg0: norm std(0.005928) mean(0.014068)
+[DEBUG]2020-06-20 05:18:43,003:utils:grad info pg1: norm std(0.000717) mean(0.001312)
+[DEBUG]2020-06-20 05:18:43,301:utils:on_backward_begin lr: 8.035261221856173e-06
+[DEBUG]2020-06-20 05:18:43,303:utils:itr: 127, num_batch: 127, last loss: 0.979158, smooth_loss: 1.016580
+[DEBUG]2020-06-20 05:18:43,312:utils:loss_avg: 1.05941, lr_pg0:8.035261221856173e-06, lr_pg1: 8.035261221856173e-06final_score:0.50832, mc_score:0.00917
+[DEBUG]2020-06-20 05:18:43,680:utils:grad info pg0: norm std(0.007460) mean(0.021053)
+[DEBUG]2020-06-20 05:18:43,683:utils:grad info pg1: norm std(0.000818) mean(0.001548)
+[DEBUG]2020-06-20 05:18:43,985:utils:on_backward_begin lr: 8.317637711026711e-06
+[DEBUG]2020-06-20 05:18:43,987:utils:itr: 128, num_batch: 128, last loss: 0.949209, smooth_loss: 1.015125
+[DEBUG]2020-06-20 05:18:43,998:utils:loss_avg: 1.05856, lr_pg0:8.317637711026711e-06, lr_pg1: 8.317637711026711e-06final_score:0.50884, mc_score:0.00756
+
+[DEBUG]2020-06-20 05:18:44,372:utils:grad info pg0: norm std(0.009352) mean(0.026346)
+[DEBUG]2020-06-20 05:18:44,376:utils:grad info pg1: norm std(0.001102) mean(0.002180)
+[DEBUG]2020-06-20 05:18:44,685:utils:on_backward_begin lr: 8.609937521846008e-06
+[DEBUG]2020-06-20 05:18:44,686:utils:itr: 129, num_batch: 129, last loss: 0.945714, smooth_loss: 1.013629
+[DEBUG]2020-06-20 05:18:44,696:utils:loss_avg: 1.05769, lr_pg0:8.609937521846008e-06, lr_pg1: 8.609937521846008e-06final_score:0.50996, mc_score:0.00790
+[DEBUG]2020-06-20 05:18:45,064:utils:grad info pg0: norm std(0.013981) mean(0.035086)
+[DEBUG]2020-06-20 05:18:45,067:utils:grad info pg1: norm std(0.001494) mean(0.002945)
+[DEBUG]2020-06-20 05:18:45,371:utils:on_backward_begin lr: 8.912509381337458e-06
+[DEBUG]2020-06-20 05:18:45,373:utils:itr: 130, num_batch: 130, last loss: 0.858657, smooth_loss: 1.010293
+[DEBUG]2020-06-20 05:18:45,383:utils:loss_avg: 1.05617, lr_pg0:8.912509381337458e-06, lr_pg1: 8.912509381337458e-06final_score:0.51063, mc_score:0.00726
+[DEBUG]2020-06-20 05:18:45,752:utils:grad info pg0: norm std(0.084953) mean(0.063274)
+[DEBUG]2020-06-20 05:18:45,756:utils:grad info pg1: norm std(0.001641) mean(0.003144)
+[DEBUG]2020-06-20 05:18:46,055:utils:on_backward_begin lr: 9.225714271547633e-06
+[DEBUG]2020-06-20 05:18:46,056:utils:itr: 131, num_batch: 131, last loss: 0.820879, smooth_loss: 1.006222
+[DEBUG]2020-06-20 05:18:46,066:utils:loss_avg: 1.05439, lr_pg0:9.225714271547633e-06, lr_pg1: 9.225714271547633e-06final_score:0.51235, mc_score:0.00982
+[DEBUG]2020-06-20 05:18:46,434:utils:grad info pg0: norm std(0.010035) mean(0.016917)
+[DEBUG]2020-06-20 05:18:46,436:utils:grad info pg1: norm std(0.000594) mean(0.001140)
+[DEBUG]2020-06-20 05:18:46,736:utils:on_backward_begin lr: 9.549925860214362e-06
+[DEBUG]2020-06-20 05:18:46,737:utils:itr: 132, num_batch: 132, last loss: 1.024146, smooth_loss: 1.006606
+[DEBUG]2020-06-20 05:18:46,747:utils:loss_avg: 1.05416, lr_pg0:9.549925860214362e-06, lr_pg1: 9.549925860214362e-06final_score:0.51289, mc_score:0.00954
+[DEBUG]2020-06-20 05:18:47,115:utils:grad info pg0: norm std(0.003841) mean(0.010012)
+[DEBUG]2020-06-20 05:18:47,119:utils:grad info pg1: norm std(0.000565) mean(0.001019)
+[DEBUG]2020-06-20 05:18:47,418:utils:on_backward_begin lr: 9.885530946569392e-06
+[DEBUG]2020-06-20 05:18:47,420:utils:itr: 133, num_batch: 133, last loss: 1.064284, smooth_loss: 1.007843
+[DEBUG]2020-06-20 05:18:47,430:utils:loss_avg: 1.05423, lr_pg0:9.885530946569392e-06, lr_pg1: 9.885530946569392e-06final_score:0.51090, mc_score:0.00500
+[DEBUG]2020-06-20 05:18:47,798:utils:grad info pg0: norm std(0.007621) mean(0.018693)
+[DEBUG]2020-06-20 05:18:47,803:utils:grad info pg1: norm std(0.000879) mean(0.001655)
+[DEBUG]2020-06-20 05:18:48,115:utils:on_backward_begin lr: 1.0232929922807545e-05
+[DEBUG]2020-06-20 05:18:48,116:utils:itr: 134, num_batch: 134, last loss: 0.939606, smooth_loss: 1.006383
+[DEBUG]2020-06-20 05:18:48,125:utils:loss_avg: 1.05338, lr_pg0:1.0232929922807545e-05, lr_pg1: 1.0232929922807545e-05final_score:0.51045, mc_score:0.00423
+[DEBUG]2020-06-20 05:18:48,494:utils:grad info pg0: norm std(0.033146) mean(0.054452)
+[DEBUG]2020-06-20 05:18:48,497:utils:grad info pg1: norm std(0.002336) mean(0.004091)
+[DEBUG]2020-06-20 05:18:48,797:utils:on_backward_begin lr: 1.0592537251772893e-05
+[DEBUG]2020-06-20 05:18:48,799:utils:itr: 135, num_batch: 135, last loss: 0.682270, smooth_loss: 0.999456
+[DEBUG]2020-06-20 05:18:48,808:utils:loss_avg: 1.05066, lr_pg0:1.0592537251772893e-05, lr_pg1: 1.0592537251772893e-05final_score:0.51181, mc_score:0.00840
+[DEBUG]2020-06-20 05:18:49,181:utils:grad info pg0: norm std(0.009144) mean(0.022469)
+[DEBUG]2020-06-20 05:18:49,184:utils:grad info pg1: norm std(0.001315) mean(0.002294)
+[DEBUG]2020-06-20 05:18:49,494:utils:on_backward_begin lr: 1.0964781961431855e-05
+[DEBUG]2020-06-20 05:18:49,496:utils:itr: 136, num_batch: 136, last loss: 0.916210, smooth_loss: 0.997680
+[DEBUG]2020-06-20 05:18:49,509:utils:loss_avg: 1.04967, lr_pg0:1.0964781961431855e-05, lr_pg1: 1.0964781961431855e-05final_score:0.51218, mc_score:0.00704
+[DEBUG]2020-06-20 05:18:49,879:utils:grad info pg0: norm std(0.017625) mean(0.044076)
+[DEBUG]2020-06-20 05:18:49,882:utils:grad info pg1: norm std(0.001962) mean(0.003660)
+[DEBUG]2020-06-20 05:18:50,180:utils:on_backward_begin lr: 1.1350108156723154e-05
+[DEBUG]2020-06-20 05:18:50,181:utils:itr: 137, num_batch: 137, last loss: 0.838465, smooth_loss: 0.994287
+[DEBUG]2020-06-20 05:18:50,193:utils:loss_avg: 1.04814, lr_pg0:1.1350108156723154e-05, lr_pg1: 1.1350108156723154e-05final_score:0.51241, mc_score:0.00644
+[DEBUG]2020-06-20 05:18:50,567:utils:grad info pg0: norm std(0.011786) mean(0.027889)
+[DEBUG]2020-06-20 05:18:50,571:utils:grad info pg1: norm std(0.001447) mean(0.002626)
+[DEBUG]2020-06-20 05:18:50,886:utils:on_backward_begin lr: 1.1748975549395292e-05
+[DEBUG]2020-06-20 05:18:50,887:utils:itr: 138, num_batch: 138, last loss: 0.829175, smooth_loss: 0.990773
+[DEBUG]2020-06-20 05:18:50,898:utils:loss_avg: 1.04657, lr_pg0:1.1748975549395292e-05, lr_pg1: 1.1748975549395292e-05final_score:0.51284, mc_score:0.00537
+[DEBUG]2020-06-20 05:18:51,266:utils:grad info pg0: norm std(0.007312) mean(0.020308)
+[DEBUG]2020-06-20 05:18:51,269:utils:grad info pg1: norm std(0.001042) mean(0.001899)
+[DEBUG]2020-06-20 05:18:51,569:utils:on_backward_begin lr: 1.2161860006463676e-05
+[DEBUG]2020-06-20 05:18:51,571:utils:itr: 139, num_batch: 139, last loss: 0.998915, smooth_loss: 0.990946
+[DEBUG]2020-06-20 05:18:51,580:utils:loss_avg: 1.04623, lr_pg0:1.2161860006463676e-05, lr_pg1: 1.2161860006463676e-05final_score:0.51243, mc_score:0.00468
+[DEBUG]2020-06-20 05:18:51,946:utils:grad info pg0: norm std(0.007638) mean(0.017343)
+[DEBUG]2020-06-20 05:18:51,950:utils:grad info pg1: norm std(0.000751) mean(0.001462)
+[DEBUG]2020-06-20 05:18:52,250:utils:on_backward_begin lr: 1.258925411794167e-05
+[DEBUG]2020-06-20 05:18:52,252:utils:itr: 140, num_batch: 140, last loss: 1.025844, smooth_loss: 0.991687
+[DEBUG]2020-06-20 05:18:52,261:utils:loss_avg: 1.04608, lr_pg0:1.258925411794167e-05, lr_pg1: 1.258925411794167e-05final_score:0.51323, mc_score:0.00429
+[DEBUG]2020-06-20 05:18:52,629:utils:grad info pg0: norm std(0.002421) mean(0.006147)
+[DEBUG]2020-06-20 05:18:52,632:utils:grad info pg1: norm std(0.000320) mean(0.000603)
+[DEBUG]2020-06-20 05:18:52,944:utils:on_backward_begin lr: 1.303166778452299e-05
+[DEBUG]2020-06-20 05:18:52,945:utils:itr: 141, num_batch: 141, last loss: 1.016108, smooth_loss: 0.992204
+[DEBUG]2020-06-20 05:18:52,955:utils:loss_avg: 1.04587, lr_pg0:1.303166778452299e-05, lr_pg1: 1.303166778452299e-05final_score:0.51304, mc_score:0.00287
+[DEBUG]2020-06-20 05:18:53,322:utils:grad info pg0: norm std(0.007883) mean(0.019783)
+[DEBUG]2020-06-20 05:18:53,325:utils:grad info pg1: norm std(0.001016) mean(0.001862)
+[DEBUG]2020-06-20 05:18:53,623:utils:on_backward_begin lr: 1.3489628825916533e-05
+[DEBUG]2020-06-20 05:18:53,625:utils:itr: 142, num_batch: 142, last loss: 0.652056, smooth_loss: 0.985001
+[DEBUG]2020-06-20 05:18:53,634:utils:loss_avg: 1.04312, lr_pg0:1.3489628825916533e-05, lr_pg1: 1.3489628825916533e-05final_score:0.51605, mc_score:0.00786
+[DEBUG]2020-06-20 05:18:54,002:utils:grad info pg0: norm std(0.011817) mean(0.034865)
+[DEBUG]2020-06-20 05:18:54,005:utils:grad info pg1: norm std(0.001380) mean(0.002744)
+[DEBUG]2020-06-20 05:18:54,306:utils:on_backward_begin lr: 1.3963683610559373e-05
+[DEBUG]2020-06-20 05:18:54,307:utils:itr: 143, num_batch: 143, last loss: 0.978122, smooth_loss: 0.984855
+[DEBUG]2020-06-20 05:18:54,316:utils:loss_avg: 1.04267, lr_pg0:1.3963683610559373e-05, lr_pg1: 1.3963683610559373e-05final_score:0.51510, mc_score:0.00599
+[DEBUG]2020-06-20 05:18:54,682:utils:grad info pg0: norm std(0.005765) mean(0.015657)
+[DEBUG]2020-06-20 05:18:54,686:utils:grad info pg1: norm std(0.000834) mean(0.001531)
+[DEBUG]2020-06-20 05:18:54,988:utils:on_backward_begin lr: 1.4454397707459272e-05
+[DEBUG]2020-06-20 05:18:54,990:utils:itr: 144, num_batch: 144, last loss: 0.923076, smooth_loss: 0.983550
+[DEBUG]2020-06-20 05:18:54,999:utils:loss_avg: 1.04184, lr_pg0:1.4454397707459272e-05, lr_pg1: 1.4454397707459272e-05final_score:0.51458, mc_score:0.00729
+
+[DEBUG]2020-06-20 05:18:55,371:utils:grad info pg0: norm std(0.014300) mean(0.033579)
+[DEBUG]2020-06-20 05:18:55,375:utils:grad info pg1: norm std(0.001233) mean(0.002419)
+[DEBUG]2020-06-20 05:18:55,690:utils:on_backward_begin lr: 1.496235656094433e-05
+[DEBUG]2020-06-20 05:18:55,692:utils:itr: 145, num_batch: 145, last loss: 0.918116, smooth_loss: 0.982169
+[DEBUG]2020-06-20 05:18:55,702:utils:loss_avg: 1.04100, lr_pg0:1.496235656094433e-05, lr_pg1: 1.496235656094433e-05final_score:0.51395, mc_score:0.00618
+[DEBUG]2020-06-20 05:18:56,070:utils:grad info pg0: norm std(0.013248) mean(0.025091)
+[DEBUG]2020-06-20 05:18:56,073:utils:grad info pg1: norm std(0.001160) mean(0.002244)
+[DEBUG]2020-06-20 05:18:56,376:utils:on_backward_begin lr: 1.548816618912481e-05
+[DEBUG]2020-06-20 05:18:56,378:utils:itr: 146, num_batch: 146, last loss: 0.887408, smooth_loss: 0.980171
+[DEBUG]2020-06-20 05:18:56,387:utils:loss_avg: 1.03995, lr_pg0:1.548816618912481e-05, lr_pg1: 1.548816618912481e-05final_score:0.51363, mc_score:0.00426
+[DEBUG]2020-06-20 05:18:56,760:utils:grad info pg0: norm std(0.013261) mean(0.034286)
+[DEBUG]2020-06-20 05:18:56,763:utils:grad info pg1: norm std(0.001481) mean(0.002948)
+[DEBUG]2020-06-20 05:18:57,060:utils:on_backward_begin lr: 1.6032453906900413e-05
+[DEBUG]2020-06-20 05:18:57,061:utils:itr: 147, num_batch: 147, last loss: 0.778200, smooth_loss: 0.975918
+[DEBUG]2020-06-20 05:18:57,071:utils:loss_avg: 1.03818, lr_pg0:1.6032453906900413e-05, lr_pg1: 1.6032453906900413e-05final_score:0.51583, mc_score:0.00695
+[DEBUG]2020-06-20 05:18:57,441:utils:grad info pg0: norm std(0.006336) mean(0.016994)
+[DEBUG]2020-06-20 05:18:57,444:utils:grad info pg1: norm std(0.000765) mean(0.001504)
+[DEBUG]2020-06-20 05:18:57,742:utils:on_backward_begin lr: 1.659586907437561e-05
+[DEBUG]2020-06-20 05:18:57,744:utils:itr: 148, num_batch: 148, last loss: 1.021664, smooth_loss: 0.976880
+[DEBUG]2020-06-20 05:18:57,753:utils:loss_avg: 1.03807, lr_pg0:1.659586907437561e-05, lr_pg1: 1.659586907437561e-05final_score:0.51554, mc_score:0.00485
+[DEBUG]2020-06-20 05:18:58,120:utils:grad info pg0: norm std(0.021617) mean(0.046232)
+[DEBUG]2020-06-20 05:18:58,123:utils:grad info pg1: norm std(0.002066) mean(0.003851)
+[DEBUG]2020-06-20 05:18:58,423:utils:on_backward_begin lr: 1.717908387157588e-05
+[DEBUG]2020-06-20 05:18:58,425:utils:itr: 149, num_batch: 149, last loss: 0.857825, smooth_loss: 0.974378
+[DEBUG]2020-06-20 05:18:58,435:utils:loss_avg: 1.03687, lr_pg0:1.717908387157588e-05, lr_pg1: 1.717908387157588e-05final_score:0.51682, mc_score:0.00781
+[DEBUG]2020-06-20 05:18:58,803:utils:grad info pg0: norm std(0.010778) mean(0.030300)
+[DEBUG]2020-06-20 05:18:58,806:utils:grad info pg1: norm std(0.001095) mean(0.002210)
+[DEBUG]2020-06-20 05:18:59,111:utils:on_backward_begin lr: 1.778279410038923e-05
+[DEBUG]2020-06-20 05:18:59,112:utils:itr: 150, num_batch: 150, last loss: 1.186603, smooth_loss: 0.978834
+[DEBUG]2020-06-20 05:18:59,122:utils:loss_avg: 1.03786, lr_pg0:1.778279410038923e-05, lr_pg1: 1.778279410038923e-05final_score:0.51318, mc_score:0.00101
+[DEBUG]2020-06-20 05:18:59,491:utils:grad info pg0: norm std(0.017106) mean(0.032365)
+[DEBUG]2020-06-20 05:18:59,495:utils:grad info pg1: norm std(0.001710) mean(0.003348)
+[DEBUG]2020-06-20 05:18:59,792:utils:on_backward_begin lr: 1.840772001468956e-05
+[DEBUG]2020-06-20 05:18:59,794:utils:itr: 151, num_batch: 151, last loss: 1.011488, smooth_loss: 0.979519
+[DEBUG]2020-06-20 05:18:59,803:utils:loss_avg: 1.03769, lr_pg0:1.840772001468956e-05, lr_pg1: 1.840772001468956e-05final_score:0.51411, mc_score:0.00126
+[DEBUG]2020-06-20 05:19:00,169:utils:grad info pg0: norm std(0.025612) mean(0.043037)
+[DEBUG]2020-06-20 05:19:00,173:utils:grad info pg1: norm std(0.001924) mean(0.003718)
+[DEBUG]2020-06-20 05:19:00,474:utils:on_backward_begin lr: 1.9054607179632474e-05
+[DEBUG]2020-06-20 05:19:00,475:utils:itr: 152, num_batch: 152, last loss: 0.729880, smooth_loss: 0.974288
+[DEBUG]2020-06-20 05:19:00,484:utils:loss_avg: 1.03568, lr_pg0:1.9054607179632474e-05, lr_pg1: 1.9054607179632474e-05final_score:0.51555, mc_score:0.00205
+[DEBUG]2020-06-20 05:19:00,852:utils:grad info pg0: norm std(0.037641) mean(0.084972)
+[DEBUG]2020-06-20 05:19:00,857:utils:grad info pg1: norm std(0.003297) mean(0.006543)
+[DEBUG]2020-06-20 05:19:01,161:utils:on_backward_begin lr: 1.972422736114854e-05
+[DEBUG]2020-06-20 05:19:01,162:utils:itr: 153, num_batch: 153, last loss: 0.990047, smooth_loss: 0.974618
+[DEBUG]2020-06-20 05:19:01,172:utils:loss_avg: 1.03538, lr_pg0:1.972422736114854e-05, lr_pg1: 1.972422736114854e-05final_score:0.51532, mc_score:0.00238
+[DEBUG]2020-06-20 05:19:01,539:utils:grad info pg0: norm std(0.021671) mean(0.042346)
+[DEBUG]2020-06-20 05:19:01,543:utils:grad info pg1: norm std(0.002057) mean(0.003767)
+[DEBUG]2020-06-20 05:19:01,846:utils:on_backward_begin lr: 2.0417379446695298e-05
+[DEBUG]2020-06-20 05:19:01,847:utils:itr: 154, num_batch: 154, last loss: 0.838123, smooth_loss: 0.971763
+[DEBUG]2020-06-20 05:19:01,857:utils:loss_avg: 1.03411, lr_pg0:2.0417379446695298e-05, lr_pg1: 2.0417379446695298e-05final_score:0.51708, mc_score:0.00367
+[DEBUG]2020-06-20 05:19:02,225:utils:grad info pg0: norm std(0.007716) mean(0.020723)
+[DEBUG]2020-06-20 05:19:02,228:utils:grad info pg1: norm std(0.000984) mean(0.001841)
+[DEBUG]2020-06-20 05:19:02,530:utils:on_backward_begin lr: 2.1134890398366472e-05
+[DEBUG]2020-06-20 05:19:02,531:utils:itr: 155, num_batch: 155, last loss: 0.972963, smooth_loss: 0.971789
+[DEBUG]2020-06-20 05:19:02,540:utils:loss_avg: 1.03371, lr_pg0:2.1134890398366472e-05, lr_pg1: 2.1134890398366472e-05final_score:0.51767, mc_score:0.00444
+[DEBUG]2020-06-20 05:19:02,910:utils:grad info pg0: norm std(0.011411) mean(0.030743)
+[DEBUG]2020-06-20 05:19:02,915:utils:grad info pg1: norm std(0.001636) mean(0.003102)
+[DEBUG]2020-06-20 05:19:03,226:utils:on_backward_begin lr: 2.1877616239495533e-05
+[DEBUG]2020-06-20 05:19:03,227:utils:itr: 156, num_batch: 156, last loss: 0.632084, smooth_loss: 0.964697
+[DEBUG]2020-06-20 05:19:03,238:utils:loss_avg: 1.03116, lr_pg0:2.1877616239495533e-05, lr_pg1: 2.1877616239495533e-05final_score:0.52023, mc_score:0.00887
+[DEBUG]2020-06-20 05:19:03,612:utils:grad info pg0: norm std(0.002483) mean(0.007980)
+[DEBUG]2020-06-20 05:19:03,616:utils:grad info pg1: norm std(0.000436) mean(0.000786)
+[DEBUG]2020-06-20 05:19:03,914:utils:on_backward_begin lr: 2.2646443075930603e-05
+[DEBUG]2020-06-20 05:19:03,917:utils:itr: 157, num_batch: 157, last loss: 0.686036, smooth_loss: 0.958885
+[DEBUG]2020-06-20 05:19:03,927:utils:loss_avg: 1.02897, lr_pg0:2.2646443075930603e-05, lr_pg1: 2.2646443075930603e-05final_score:0.52315, mc_score:0.01322
+[DEBUG]2020-06-20 05:19:04,296:utils:grad info pg0: norm std(0.009081) mean(0.022964)
+[DEBUG]2020-06-20 05:19:04,299:utils:grad info pg1: norm std(0.001074) mean(0.002119)
+[DEBUG]2020-06-20 05:19:04,600:utils:on_backward_begin lr: 2.344228815319923e-05
+[DEBUG]2020-06-20 05:19:04,601:utils:itr: 158, num_batch: 158, last loss: 0.721573, smooth_loss: 0.953940
+[DEBUG]2020-06-20 05:19:04,611:utils:loss_avg: 1.02704, lr_pg0:2.344228815319923e-05, lr_pg1: 2.344228815319923e-05final_score:0.52497, mc_score:0.01652
+[DEBUG]2020-06-20 05:19:04,981:utils:grad info pg0: norm std(0.007496) mean(0.022797)
+[DEBUG]2020-06-20 05:19:04,984:utils:grad info pg1: norm std(0.000983) mean(0.001901)
+[DEBUG]2020-06-20 05:19:05,285:utils:on_backward_begin lr: 2.4266100950824165e-05
+[DEBUG]2020-06-20 05:19:05,286:utils:itr: 159, num_batch: 159, last loss: 1.091335, smooth_loss: 0.956801
+[DEBUG]2020-06-20 05:19:05,297:utils:loss_avg: 1.02744, lr_pg0:2.4266100950824165e-05, lr_pg1: 2.4266100950824165e-05final_score:0.52319, mc_score:0.01375
+[DEBUG]2020-06-20 05:19:05,671:utils:grad info pg0: norm std(0.012579) mean(0.033842)
+[DEBUG]2020-06-20 05:19:05,674:utils:grad info pg1: norm std(0.001691) mean(0.003240)
+[DEBUG]2020-06-20 05:19:05,974:utils:on_backward_begin lr: 2.5118864315095812e-05
+[DEBUG]2020-06-20 05:19:05,975:utils:itr: 160, num_batch: 160, last loss: 1.010024, smooth_loss: 0.957908
+[DEBUG]2020-06-20 05:19:05,985:utils:loss_avg: 1.02733, lr_pg0:2.5118864315095812e-05, lr_pg1: 2.5118864315095812e-05final_score:0.52239, mc_score:0.01150
+
+[DEBUG]2020-06-20 05:19:06,354:utils:grad info pg0: norm std(0.006783) mean(0.017282)
+[DEBUG]2020-06-20 05:19:06,357:utils:grad info pg1: norm std(0.000970) mean(0.001757)
+[DEBUG]2020-06-20 05:19:06,656:utils:on_backward_begin lr: 2.600159563165273e-05
+[DEBUG]2020-06-20 05:19:06,657:utils:itr: 161, num_batch: 161, last loss: 0.638181, smooth_loss: 0.951261
+[DEBUG]2020-06-20 05:19:06,668:utils:loss_avg: 1.02493, lr_pg0:2.600159563165273e-05, lr_pg1: 2.600159563165273e-05final_score:0.52473, mc_score:0.01412
+[DEBUG]2020-06-20 05:19:07,040:utils:grad info pg0: norm std(0.007167) mean(0.016302)
+[DEBUG]2020-06-20 05:19:07,043:utils:grad info pg1: norm std(0.000811) mean(0.001534)
+[DEBUG]2020-06-20 05:19:07,341:utils:on_backward_begin lr: 2.6915348039269167e-05
+[DEBUG]2020-06-20 05:19:07,342:utils:itr: 162, num_batch: 162, last loss: 0.920838, smooth_loss: 0.950629
+[DEBUG]2020-06-20 05:19:07,353:utils:loss_avg: 1.02429, lr_pg0:2.6915348039269167e-05, lr_pg1: 2.6915348039269167e-05final_score:0.52699, mc_score:0.01623
+[DEBUG]2020-06-20 05:19:07,721:utils:grad info pg0: norm std(0.010740) mean(0.028570)
+[DEBUG]2020-06-20 05:19:07,724:utils:grad info pg1: norm std(0.001143) mean(0.002337)
+[DEBUG]2020-06-20 05:19:08,024:utils:on_backward_begin lr: 2.7861211686297695e-05
+[DEBUG]2020-06-20 05:19:08,026:utils:itr: 163, num_batch: 163, last loss: 0.604349, smooth_loss: 0.943442
+[DEBUG]2020-06-20 05:19:08,035:utils:loss_avg: 1.02173, lr_pg0:2.7861211686297695e-05, lr_pg1: 2.7861211686297695e-05final_score:0.52963, mc_score:0.02204
+[DEBUG]2020-06-20 05:19:08,403:utils:grad info pg0: norm std(0.019351) mean(0.035507)
+[DEBUG]2020-06-20 05:19:08,406:utils:grad info pg1: norm std(0.001912) mean(0.003487)
+[DEBUG]2020-06-20 05:19:08,703:utils:on_backward_begin lr: 2.884031503126605e-05
+[DEBUG]2020-06-20 05:19:08,705:utils:itr: 164, num_batch: 164, last loss: 0.698248, smooth_loss: 0.938357
+[DEBUG]2020-06-20 05:19:08,714:utils:loss_avg: 1.01977, lr_pg0:2.884031503126605e-05, lr_pg1: 2.884031503126605e-05final_score:0.53296, mc_score:0.02688
+[DEBUG]2020-06-20 05:19:09,081:utils:grad info pg0: norm std(0.003599) mean(0.009713)
+[DEBUG]2020-06-20 05:19:09,085:utils:grad info pg1: norm std(0.000739) mean(0.001148)
+[DEBUG]2020-06-20 05:19:09,386:utils:on_backward_begin lr: 2.985382618917959e-05
+[DEBUG]2020-06-20 05:19:09,388:utils:itr: 165, num_batch: 165, last loss: 0.793642, smooth_loss: 0.935358
+[DEBUG]2020-06-20 05:19:09,398:utils:loss_avg: 1.01841, lr_pg0:2.985382618917959e-05, lr_pg1: 2.985382618917959e-05final_score:0.53432, mc_score:0.02679
+[DEBUG]2020-06-20 05:19:09,765:utils:grad info pg0: norm std(0.016688) mean(0.035164)
+[DEBUG]2020-06-20 05:19:09,769:utils:grad info pg1: norm std(0.001794) mean(0.003249)
+[DEBUG]2020-06-20 05:19:10,261:utils:on_backward_begin lr: 3.0902954325135894e-05
+[DEBUG]2020-06-20 05:19:10,262:utils:itr: 166, num_batch: 166, last loss: 0.798350, smooth_loss: 0.932521
+[DEBUG]2020-06-20 05:19:10,272:utils:loss_avg: 1.01709, lr_pg0:3.0902954325135894e-05, lr_pg1: 3.0902954325135894e-05final_score:0.53504, mc_score:0.02833
+[DEBUG]2020-06-20 05:19:10,645:utils:grad info pg0: norm std(0.021861) mean(0.041719)
+[DEBUG]2020-06-20 05:19:10,648:utils:grad info pg1: norm std(0.001868) mean(0.003504)
+[DEBUG]2020-06-20 05:19:10,950:utils:on_backward_begin lr: 3.1988951096913973e-05
+[DEBUG]2020-06-20 05:19:10,952:utils:itr: 167, num_batch: 167, last loss: 0.891872, smooth_loss: 0.931679
+[DEBUG]2020-06-20 05:19:10,962:utils:loss_avg: 1.01635, lr_pg0:3.1988951096913973e-05, lr_pg1: 3.1988951096913973e-05final_score:0.53725, mc_score:0.03130
+[DEBUG]2020-06-20 05:19:11,335:utils:grad info pg0: norm std(0.007784) mean(0.019917)
+[DEBUG]2020-06-20 05:19:11,339:utils:grad info pg1: norm std(0.001285) mean(0.002132)
+[DEBUG]2020-06-20 05:19:11,652:utils:on_backward_begin lr: 3.3113112148259103e-05
+[DEBUG]2020-06-20 05:19:11,654:utils:itr: 168, num_batch: 168, last loss: 0.915453, smooth_loss: 0.931344
+[DEBUG]2020-06-20 05:19:11,664:utils:loss_avg: 1.01575, lr_pg0:3.3113112148259103e-05, lr_pg1: 3.3113112148259103e-05final_score:0.53949, mc_score:0.03396
+[DEBUG]2020-06-20 05:19:12,035:utils:grad info pg0: norm std(0.004892) mean(0.014320)
+[DEBUG]2020-06-20 05:19:12,039:utils:grad info pg1: norm std(0.000919) mean(0.001620)
+[DEBUG]2020-06-20 05:19:12,355:utils:on_backward_begin lr: 3.427677865464503e-05
+[DEBUG]2020-06-20 05:19:12,357:utils:itr: 169, num_batch: 169, last loss: 0.706289, smooth_loss: 0.926693
+[DEBUG]2020-06-20 05:19:12,367:utils:loss_avg: 1.01393, lr_pg0:3.427677865464503e-05, lr_pg1: 3.427677865464503e-05final_score:0.54282, mc_score:0.03815
+[DEBUG]2020-06-20 05:19:12,740:utils:grad info pg0: norm std(0.007743) mean(0.020586)
+[DEBUG]2020-06-20 05:19:12,744:utils:grad info pg1: norm std(0.001167) mean(0.001992)
+[DEBUG]2020-06-20 05:19:13,045:utils:on_backward_begin lr: 3.548133892335754e-05
+[DEBUG]2020-06-20 05:19:13,046:utils:itr: 170, num_batch: 170, last loss: 0.678658, smooth_loss: 0.921570
+[DEBUG]2020-06-20 05:19:13,056:utils:loss_avg: 1.01197, lr_pg0:3.548133892335754e-05, lr_pg1: 3.548133892335754e-05final_score:0.54523, mc_score:0.04075
+[DEBUG]2020-06-20 05:19:13,424:utils:grad info pg0: norm std(0.004084) mean(0.009973)
+[DEBUG]2020-06-20 05:19:13,428:utils:grad info pg1: norm std(0.000762) mean(0.001244)
+[DEBUG]2020-06-20 05:19:13,726:utils:on_backward_begin lr: 3.6728230049808465e-05
+[DEBUG]2020-06-20 05:19:13,727:utils:itr: 171, num_batch: 171, last loss: 0.510026, smooth_loss: 0.913076
+[DEBUG]2020-06-20 05:19:13,740:utils:loss_avg: 1.00905, lr_pg0:3.6728230049808465e-05, lr_pg1: 3.6728230049808465e-05final_score:0.54892, mc_score:0.04615
+[DEBUG]2020-06-20 05:19:14,107:utils:grad info pg0: norm std(0.028168) mean(0.053495)
+[DEBUG]2020-06-20 05:19:14,110:utils:grad info pg1: norm std(0.002914) mean(0.004550)
+[DEBUG]2020-06-20 05:19:14,410:utils:on_backward_begin lr: 3.801893963205612e-05
+[DEBUG]2020-06-20 05:19:14,412:utils:itr: 172, num_batch: 172, last loss: 0.998470, smooth_loss: 0.914838
+[DEBUG]2020-06-20 05:19:14,422:utils:loss_avg: 1.00899, lr_pg0:3.801893963205612e-05, lr_pg1: 3.801893963205612e-05final_score:0.54983, mc_score:0.04802
+[DEBUG]2020-06-20 05:19:14,797:utils:grad info pg0: norm std(0.006711) mean(0.016397)
+[DEBUG]2020-06-20 05:19:14,801:utils:grad info pg1: norm std(0.001319) mean(0.002161)
+[DEBUG]2020-06-20 05:19:15,102:utils:on_backward_begin lr: 3.935500754557775e-05
+[DEBUG]2020-06-20 05:19:15,104:utils:itr: 173, num_batch: 173, last loss: 0.891770, smooth_loss: 0.914362
+[DEBUG]2020-06-20 05:19:15,114:utils:loss_avg: 1.00831, lr_pg0:3.935500754557775e-05, lr_pg1: 3.935500754557775e-05final_score:0.55150, mc_score:0.04897
+[DEBUG]2020-06-20 05:19:15,483:utils:grad info pg0: norm std(0.007104) mean(0.015175)
+[DEBUG]2020-06-20 05:19:15,487:utils:grad info pg1: norm std(0.000897) mean(0.001595)
+[DEBUG]2020-06-20 05:19:15,783:utils:on_backward_begin lr: 4.0738027780411274e-05
+[DEBUG]2020-06-20 05:19:15,785:utils:itr: 174, num_batch: 174, last loss: 0.533167, smooth_loss: 0.906510
+[DEBUG]2020-06-20 05:19:15,795:utils:loss_avg: 1.00560, lr_pg0:4.0738027780411274e-05, lr_pg1: 4.0738027780411274e-05final_score:0.55638, mc_score:0.05474
+[DEBUG]2020-06-20 05:19:16,162:utils:grad info pg0: norm std(0.005745) mean(0.012969)
+[DEBUG]2020-06-20 05:19:16,166:utils:grad info pg1: norm std(0.000743) mean(0.001359)
+[DEBUG]2020-06-20 05:19:16,465:utils:on_backward_begin lr: 4.216965034285822e-05
+[DEBUG]2020-06-20 05:19:16,467:utils:itr: 175, num_batch: 175, last loss: 0.882636, smooth_loss: 0.906018
+[DEBUG]2020-06-20 05:19:16,476:utils:loss_avg: 1.00490, lr_pg0:4.216965034285822e-05, lr_pg1: 4.216965034285822e-05final_score:0.55793, mc_score:0.05690
+[DEBUG]2020-06-20 05:19:16,846:utils:grad info pg0: norm std(0.011981) mean(0.028810)
+[DEBUG]2020-06-20 05:19:16,850:utils:grad info pg1: norm std(0.001303) mean(0.002450)
+[DEBUG]2020-06-20 05:19:17,150:utils:on_backward_begin lr: 4.36515832240166e-05
+[DEBUG]2020-06-20 05:19:17,151:utils:itr: 176, num_batch: 176, last loss: 0.482069, smooth_loss: 0.897295
+[DEBUG]2020-06-20 05:19:17,161:utils:loss_avg: 1.00195, lr_pg0:4.36515832240166e-05, lr_pg1: 4.36515832240166e-05final_score:0.56265, mc_score:0.06301
+
+[DEBUG]2020-06-20 05:19:17,529:utils:grad info pg0: norm std(0.004777) mean(0.012327)
+[DEBUG]2020-06-20 05:19:17,533:utils:grad info pg1: norm std(0.000612) mean(0.001135)
+[DEBUG]2020-06-20 05:19:17,833:utils:on_backward_begin lr: 4.518559443749224e-05
+[DEBUG]2020-06-20 05:19:17,835:utils:itr: 177, num_batch: 177, last loss: 0.675326, smooth_loss: 0.892730
+[DEBUG]2020-06-20 05:19:17,846:utils:loss_avg: 1.00011, lr_pg0:4.518559443749224e-05, lr_pg1: 4.518559443749224e-05final_score:0.56530, mc_score:0.06705
+[DEBUG]2020-06-20 05:19:18,218:utils:grad info pg0: norm std(0.007148) mean(0.020115)
+[DEBUG]2020-06-20 05:19:18,222:utils:grad info pg1: norm std(0.001141) mean(0.002041)
+[DEBUG]2020-06-20 05:19:18,524:utils:on_backward_begin lr: 4.677351412871983e-05
+[DEBUG]2020-06-20 05:19:18,526:utils:itr: 178, num_batch: 178, last loss: 1.044812, smooth_loss: 0.895856
+[DEBUG]2020-06-20 05:19:18,536:utils:loss_avg: 1.00036, lr_pg0:4.677351412871983e-05, lr_pg1: 4.677351412871983e-05final_score:0.56451, mc_score:0.06567
+[DEBUG]2020-06-20 05:19:18,909:utils:grad info pg0: norm std(0.005447) mean(0.015256)
+[DEBUG]2020-06-20 05:19:18,912:utils:grad info pg1: norm std(0.000763) mean(0.001438)
+[DEBUG]2020-06-20 05:19:19,209:utils:on_backward_begin lr: 4.841723675840994e-05
+[DEBUG]2020-06-20 05:19:19,211:utils:itr: 179, num_batch: 179, last loss: 0.692116, smooth_loss: 0.891671
+[DEBUG]2020-06-20 05:19:19,225:utils:loss_avg: 0.99865, lr_pg0:4.841723675840994e-05, lr_pg1: 4.841723675840994e-05final_score:0.56644, mc_score:0.06673
+[DEBUG]2020-06-20 05:19:19,594:utils:grad info pg0: norm std(0.017083) mean(0.040913)
+[DEBUG]2020-06-20 05:19:19,597:utils:grad info pg1: norm std(0.001920) mean(0.003650)
+[DEBUG]2020-06-20 05:19:19,909:utils:on_backward_begin lr: 5.011872336272724e-05
+[DEBUG]2020-06-20 05:19:19,911:utils:itr: 180, num_batch: 180, last loss: 0.560320, smooth_loss: 0.884868
+[DEBUG]2020-06-20 05:19:19,921:utils:loss_avg: 0.99623, lr_pg0:5.011872336272724e-05, lr_pg1: 5.011872336272724e-05final_score:0.56994, mc_score:0.06994
+[DEBUG]2020-06-20 05:19:20,295:utils:grad info pg0: norm std(0.004962) mean(0.016119)
+[DEBUG]2020-06-20 05:19:20,299:utils:grad info pg1: norm std(0.000797) mean(0.001464)
+[DEBUG]2020-06-20 05:19:20,607:utils:on_backward_begin lr: 5.188000389289612e-05
+[DEBUG]2020-06-20 05:19:20,609:utils:itr: 181, num_batch: 181, last loss: 0.801274, smooth_loss: 0.883153
+[DEBUG]2020-06-20 05:19:20,619:utils:loss_avg: 0.99516, lr_pg0:5.188000389289612e-05, lr_pg1: 5.188000389289612e-05final_score:0.57138, mc_score:0.06975
+[DEBUG]2020-06-20 05:19:20,986:utils:grad info pg0: norm std(0.004084) mean(0.010855)
+[DEBUG]2020-06-20 05:19:20,989:utils:grad info pg1: norm std(0.000633) mean(0.001098)
+[DEBUG]2020-06-20 05:19:21,293:utils:on_backward_begin lr: 5.3703179637025284e-05
+[DEBUG]2020-06-20 05:19:21,295:utils:itr: 182, num_batch: 182, last loss: 1.034991, smooth_loss: 0.886267
+[DEBUG]2020-06-20 05:19:21,305:utils:loss_avg: 0.99537, lr_pg0:5.3703179637025284e-05, lr_pg1: 5.3703179637025284e-05final_score:0.57086, mc_score:0.06957
+[DEBUG]2020-06-20 05:19:21,674:utils:grad info pg0: norm std(0.004400) mean(0.010522)
+[DEBUG]2020-06-20 05:19:21,677:utils:grad info pg1: norm std(0.000672) mean(0.001147)
+[DEBUG]2020-06-20 05:19:21,976:utils:on_backward_begin lr: 5.5590425727040367e-05
+[DEBUG]2020-06-20 05:19:21,977:utils:itr: 183, num_batch: 183, last loss: 0.813029, smooth_loss: 0.884766
+[DEBUG]2020-06-20 05:19:21,987:utils:loss_avg: 0.99438, lr_pg0:5.5590425727040367e-05, lr_pg1: 5.5590425727040367e-05final_score:0.57154, mc_score:0.07192
+[DEBUG]2020-06-20 05:19:22,357:utils:grad info pg0: norm std(0.012186) mean(0.028893)
+[DEBUG]2020-06-20 05:19:22,362:utils:grad info pg1: norm std(0.001739) mean(0.003143)
+[DEBUG]2020-06-20 05:19:22,665:utils:on_backward_begin lr: 5.754399373371572e-05
+[DEBUG]2020-06-20 05:19:22,667:utils:itr: 184, num_batch: 184, last loss: 0.887742, smooth_loss: 0.884827
+[DEBUG]2020-06-20 05:19:22,676:utils:loss_avg: 0.99381, lr_pg0:5.754399373371572e-05, lr_pg1: 5.754399373371572e-05final_score:0.57093, mc_score:0.06836
+[DEBUG]2020-06-20 05:19:23,044:utils:grad info pg0: norm std(0.009569) mean(0.022145)
+[DEBUG]2020-06-20 05:19:23,048:utils:grad info pg1: norm std(0.001594) mean(0.002517)
+[DEBUG]2020-06-20 05:19:23,363:utils:on_backward_begin lr: 5.956621435290106e-05
+[DEBUG]2020-06-20 05:19:23,364:utils:itr: 185, num_batch: 185, last loss: 0.722530, smooth_loss: 0.881503
+[DEBUG]2020-06-20 05:19:23,374:utils:loss_avg: 0.99235, lr_pg0:5.956621435290106e-05, lr_pg1: 5.956621435290106e-05final_score:0.57228, mc_score:0.07092
+[DEBUG]2020-06-20 05:19:23,742:utils:grad info pg0: norm std(0.006383) mean(0.014196)
+[DEBUG]2020-06-20 05:19:23,745:utils:grad info pg1: norm std(0.000790) mean(0.001472)
+[DEBUG]2020-06-20 05:19:24,047:utils:on_backward_begin lr: 6.165950018614824e-05
+[DEBUG]2020-06-20 05:19:24,049:utils:itr: 186, num_batch: 186, last loss: 0.836158, smooth_loss: 0.880575
+[DEBUG]2020-06-20 05:19:24,060:utils:loss_avg: 0.99151, lr_pg0:6.165950018614824e-05, lr_pg1: 6.165950018614824e-05final_score:0.57214, mc_score:0.07145
+[DEBUG]2020-06-20 05:19:24,428:utils:grad info pg0: norm std(0.033421) mean(0.070794)
+[DEBUG]2020-06-20 05:19:24,431:utils:grad info pg1: norm std(0.003766) mean(0.006161)
+[DEBUG]2020-06-20 05:19:24,731:utils:on_backward_begin lr: 6.38263486190549e-05
+[DEBUG]2020-06-20 05:19:24,733:utils:itr: 187, num_batch: 187, last loss: 1.089763, smooth_loss: 0.884855
+[DEBUG]2020-06-20 05:19:24,743:utils:loss_avg: 0.99204, lr_pg0:6.38263486190549e-05, lr_pg1: 6.38263486190549e-05final_score:0.57132, mc_score:0.07079
+[DEBUG]2020-06-20 05:19:25,111:utils:grad info pg0: norm std(0.011630) mean(0.028978)
+[DEBUG]2020-06-20 05:19:25,113:utils:grad info pg1: norm std(0.001291) mean(0.002470)
+[DEBUG]2020-06-20 05:19:25,415:utils:on_backward_begin lr: 6.606934480075958e-05
+[DEBUG]2020-06-20 05:19:25,417:utils:itr: 188, num_batch: 188, last loss: 0.721067, smooth_loss: 0.881506
+[DEBUG]2020-06-20 05:19:25,427:utils:loss_avg: 0.99060, lr_pg0:6.606934480075958e-05, lr_pg1: 6.606934480075958e-05final_score:0.57227, mc_score:0.07317
+[DEBUG]2020-06-20 05:19:25,796:utils:grad info pg0: norm std(0.023369) mean(0.036377)
+[DEBUG]2020-06-20 05:19:25,799:utils:grad info pg1: norm std(0.001864) mean(0.003442)
+[DEBUG]2020-06-20 05:19:26,098:utils:on_backward_begin lr: 6.839116472814291e-05
+[DEBUG]2020-06-20 05:19:26,099:utils:itr: 189, num_batch: 189, last loss: 0.987563, smooth_loss: 0.883673
+[DEBUG]2020-06-20 05:19:26,108:utils:loss_avg: 0.99059, lr_pg0:6.839116472814291e-05, lr_pg1: 6.839116472814291e-05final_score:0.57129, mc_score:0.07274
+[DEBUG]2020-06-20 05:19:26,476:utils:grad info pg0: norm std(0.003224) mean(0.008501)
+[DEBUG]2020-06-20 05:19:26,479:utils:grad info pg1: norm std(0.000394) mean(0.000750)
+[DEBUG]2020-06-20 05:19:26,778:utils:on_backward_begin lr: 7.079457843841379e-05
+[DEBUG]2020-06-20 05:19:26,780:utils:itr: 190, num_batch: 190, last loss: 1.075185, smooth_loss: 0.887586
+[DEBUG]2020-06-20 05:19:26,790:utils:loss_avg: 0.99103, lr_pg0:7.079457843841379e-05, lr_pg1: 7.079457843841379e-05final_score:0.57000, mc_score:0.07061
+[DEBUG]2020-06-20 05:19:27,158:utils:grad info pg0: norm std(0.020153) mean(0.016551)
+[DEBUG]2020-06-20 05:19:27,161:utils:grad info pg1: norm std(0.000615) mean(0.001019)
+[DEBUG]2020-06-20 05:19:27,461:utils:on_backward_begin lr: 7.328245331389039e-05
+[DEBUG]2020-06-20 05:19:27,463:utils:itr: 191, num_batch: 191, last loss: 1.020142, smooth_loss: 0.890293
+[DEBUG]2020-06-20 05:19:27,473:utils:loss_avg: 0.99118, lr_pg0:7.328245331389039e-05, lr_pg1: 7.328245331389039e-05final_score:0.56876, mc_score:0.06852
+[DEBUG]2020-06-20 05:19:27,848:utils:grad info pg0: norm std(0.016640) mean(0.018794)
+[DEBUG]2020-06-20 05:19:27,852:utils:grad info pg1: norm std(0.000671) mean(0.001264)
+[DEBUG]2020-06-20 05:19:28,157:utils:on_backward_begin lr: 7.585775750291836e-05
+[DEBUG]2020-06-20 05:19:28,159:utils:itr: 192, num_batch: 192, last loss: 0.799015, smooth_loss: 0.888430
+[DEBUG]2020-06-20 05:19:28,168:utils:loss_avg: 0.99018, lr_pg0:7.585775750291836e-05, lr_pg1: 7.585775750291836e-05final_score:0.56933, mc_score:0.07194
+
+[DEBUG]2020-06-20 05:19:28,535:utils:grad info pg0: norm std(0.008862) mean(0.018722)
+[DEBUG]2020-06-20 05:19:28,538:utils:grad info pg1: norm std(0.000931) mean(0.001720)
+[DEBUG]2020-06-20 05:19:28,850:utils:on_backward_begin lr: 7.852356346100716e-05
+[DEBUG]2020-06-20 05:19:28,852:utils:itr: 193, num_batch: 193, last loss: 0.891834, smooth_loss: 0.888499
+[DEBUG]2020-06-20 05:19:28,861:utils:loss_avg: 0.98968, lr_pg0:7.852356346100716e-05, lr_pg1: 7.852356346100716e-05final_score:0.56884, mc_score:0.07037
+[DEBUG]2020-06-20 05:19:29,236:utils:grad info pg0: norm std(0.009956) mean(0.023631)
+[DEBUG]2020-06-20 05:19:29,239:utils:grad info pg1: norm std(0.000967) mean(0.001843)
+[DEBUG]2020-06-20 05:19:29,550:utils:on_backward_begin lr: 8.128305161640992e-05
+[DEBUG]2020-06-20 05:19:29,552:utils:itr: 194, num_batch: 194, last loss: 0.871906, smooth_loss: 0.888161
+[DEBUG]2020-06-20 05:19:29,564:utils:loss_avg: 0.98907, lr_pg0:8.128305161640992e-05, lr_pg1: 8.128305161640992e-05final_score:0.56974, mc_score:0.07346
+[DEBUG]2020-06-20 05:19:29,932:utils:grad info pg0: norm std(0.007842) mean(0.019457)
+[DEBUG]2020-06-20 05:19:29,936:utils:grad info pg1: norm std(0.000957) mean(0.001807)
+[DEBUG]2020-06-20 05:19:30,238:utils:on_backward_begin lr: 8.41395141645195e-05
+[DEBUG]2020-06-20 05:19:30,239:utils:itr: 195, num_batch: 195, last loss: 1.084761, smooth_loss: 0.892169
+[DEBUG]2020-06-20 05:19:30,249:utils:loss_avg: 0.98956, lr_pg0:8.41395141645195e-05, lr_pg1: 8.41395141645195e-05final_score:0.57017, mc_score:0.07435
+[DEBUG]2020-06-20 05:19:30,623:utils:grad info pg0: norm std(0.007011) mean(0.014896)
+[DEBUG]2020-06-20 05:19:30,626:utils:grad info pg1: norm std(0.000779) mean(0.001418)
+[DEBUG]2020-06-20 05:19:30,931:utils:on_backward_begin lr: 8.709635899560807e-05
+[DEBUG]2020-06-20 05:19:30,932:utils:itr: 196, num_batch: 196, last loss: 1.119738, smooth_loss: 0.896808
+[DEBUG]2020-06-20 05:19:30,944:utils:loss_avg: 0.99022, lr_pg0:8.709635899560807e-05, lr_pg1: 8.709635899560807e-05final_score:0.56948, mc_score:0.07371
+[DEBUG]2020-06-20 05:19:31,313:utils:grad info pg0: norm std(0.003051) mean(0.008005)
+[DEBUG]2020-06-20 05:19:31,316:utils:grad info pg1: norm std(0.000395) mean(0.000720)
+[DEBUG]2020-06-20 05:19:31,616:utils:on_backward_begin lr: 9.015711376059568e-05
+[DEBUG]2020-06-20 05:19:31,618:utils:itr: 197, num_batch: 197, last loss: 0.761763, smooth_loss: 0.894056
+[DEBUG]2020-06-20 05:19:31,628:utils:loss_avg: 0.98907, lr_pg0:9.015711376059568e-05, lr_pg1: 9.015711376059568e-05final_score:0.57062, mc_score:0.07603
+[DEBUG]2020-06-20 05:19:32,002:utils:grad info pg0: norm std(0.006528) mean(0.016350)
+[DEBUG]2020-06-20 05:19:32,005:utils:grad info pg1: norm std(0.000846) mean(0.001576)
+[DEBUG]2020-06-20 05:19:32,322:utils:on_backward_begin lr: 9.33254300796991e-05
+[DEBUG]2020-06-20 05:19:32,323:utils:itr: 198, num_batch: 198, last loss: 0.822832, smooth_loss: 0.892606
+[DEBUG]2020-06-20 05:19:32,335:utils:loss_avg: 0.98823, lr_pg0:9.33254300796991e-05, lr_pg1: 9.33254300796991e-05final_score:0.57037, mc_score:0.07556
+[DEBUG]2020-06-20 05:19:32,706:utils:grad info pg0: norm std(0.005529) mean(0.013477)
+[DEBUG]2020-06-20 05:19:32,709:utils:grad info pg1: norm std(0.000596) mean(0.001138)
+[DEBUG]2020-06-20 05:19:33,017:utils:on_backward_begin lr: 9.660508789898133e-05
+[DEBUG]2020-06-20 05:19:33,019:utils:itr: 199, num_batch: 199, last loss: 0.748329, smooth_loss: 0.889669
+[DEBUG]2020-06-20 05:19:33,030:utils:loss_avg: 0.98703, lr_pg0:9.660508789898133e-05, lr_pg1: 9.660508789898133e-05final_score:0.57198, mc_score:0.07744
+[DEBUG]2020-06-20 05:19:33,397:utils:grad info pg0: norm std(0.005991) mean(0.015973)
+[DEBUG]2020-06-20 05:19:33,401:utils:grad info pg1: norm std(0.000766) mean(0.001450)
+```
+```
+[DEBUG]2020-06-20 05:28:40,782:utils:on_backward_begin lr: 5.011872336272724e-07
+[DEBUG]2020-06-20 05:28:40,784:utils:itr: 28, num_batch: 28, last loss: 1.000951, smooth_loss: 1.199151
+[DEBUG]2020-06-20 05:28:40,794:utils:loss_avg: 1.19956, lr_pg0:5.011872336272724e-07, lr_pg1: 5.011872336272724e-07final_score:0.46440, mc_score:-0.02447
+[DEBUG]2020-06-20 05:28:41,162:utils:grad info pg0: norm std(0.017333) mean(0.033880)
+[DEBUG]2020-06-20 05:28:41,165:utils:grad info pg1: norm std(0.001440) mean(0.002769)
+[DEBUG]2020-06-20 05:28:41,467:utils:on_backward_begin lr: 5.308844442309882e-07
+[DEBUG]2020-06-20 05:28:41,469:utils:itr: 29, num_batch: 29, last loss: 1.104424, smooth_loss: 1.194983
+[DEBUG]2020-06-20 05:28:41,478:utils:loss_avg: 1.19639, lr_pg0:5.308844442309882e-07, lr_pg1: 5.308844442309882e-07final_score:0.46001, mc_score:-0.01229
+[DEBUG]2020-06-20 05:28:41,853:utils:grad info pg0: norm std(0.009510) mean(0.026434)
+[DEBUG]2020-06-20 05:28:41,857:utils:grad info pg1: norm std(0.001333) mean(0.002532)
+[DEBUG]2020-06-20 05:28:42,159:utils:on_backward_begin lr: 5.62341325190349e-07
+[DEBUG]2020-06-20 05:28:42,161:utils:itr: 30, num_batch: 30, last loss: 1.088287, smooth_loss: 1.190398
+[DEBUG]2020-06-20 05:28:42,171:utils:loss_avg: 1.19290, lr_pg0:5.62341325190349e-07, lr_pg1: 5.62341325190349e-07final_score:0.45804, mc_score:-0.00317
+[DEBUG]2020-06-20 05:28:42,539:utils:grad info pg0: norm std(0.040024) mean(0.049449)
+[DEBUG]2020-06-20 05:28:42,544:utils:grad info pg1: norm std(0.001509) mean(0.002827)
+[DEBUG]2020-06-20 05:28:42,842:utils:on_backward_begin lr: 5.956621435290105e-07
+[DEBUG]2020-06-20 05:28:42,844:utils:itr: 31, num_batch: 31, last loss: 1.027422, smooth_loss: 1.183552
+[DEBUG]2020-06-20 05:28:42,857:utils:loss_avg: 1.18773, lr_pg0:5.956621435290105e-07, lr_pg1: 5.956621435290105e-07final_score:0.46380, mc_score:0.00755
+[DEBUG]2020-06-20 05:28:43,225:utils:grad info pg0: norm std(0.007138) mean(0.021775)
+[DEBUG]2020-06-20 05:28:43,229:utils:grad info pg1: norm std(0.001015) mean(0.001902)
+[DEBUG]2020-06-20 05:28:43,528:utils:on_backward_begin lr: 6.309573444801932e-07
+[DEBUG]2020-06-20 05:28:43,530:utils:itr: 32, num_batch: 32, last loss: 0.939182, smooth_loss: 1.173508
+
+[DEBUG]2020-06-20 05:28:43,539:utils:loss_avg: 1.18020, lr_pg0:6.309573444801932e-07, lr_pg1: 6.309573444801932e-07final_score:0.46462, mc_score:0.01256
+[DEBUG]2020-06-20 05:28:43,907:utils:grad info pg0: norm std(0.005150) mean(0.014589)
+[DEBUG]2020-06-20 05:28:43,910:utils:grad info pg1: norm std(0.000769) mean(0.001417)
+[DEBUG]2020-06-20 05:28:44,212:utils:on_backward_begin lr: 6.683439175686146e-07
+[DEBUG]2020-06-20 05:28:44,213:utils:itr: 33, num_batch: 33, last loss: 1.094394, smooth_loss: 1.170323
+[DEBUG]2020-06-20 05:28:44,225:utils:loss_avg: 1.17768, lr_pg0:6.683439175686146e-07, lr_pg1: 6.683439175686146e-07final_score:0.46571, mc_score:0.00118
+[DEBUG]2020-06-20 05:28:44,594:utils:grad info pg0: norm std(0.008971) mean(0.025737)
+[DEBUG]2020-06-20 05:28:44,597:utils:grad info pg1: norm std(0.001169) mean(0.002260)
+[DEBUG]2020-06-20 05:28:44,901:utils:on_backward_begin lr: 7.07945784384138e-07
+[DEBUG]2020-06-20 05:28:44,903:utils:itr: 34, num_batch: 34, last loss: 1.041066, smooth_loss: 1.165224
+[DEBUG]2020-06-20 05:28:44,912:utils:loss_avg: 1.17377, lr_pg0:7.07945784384138e-07, lr_pg1: 7.07945784384138e-07final_score:0.47329, mc_score:0.01796
+[DEBUG]2020-06-20 05:28:45,280:utils:grad info pg0: norm std(0.011138) mean(0.025985)
+[DEBUG]2020-06-20 05:28:45,283:utils:grad info pg1: norm std(0.001631) mean(0.002718)
+[DEBUG]2020-06-20 05:28:45,585:utils:on_backward_begin lr: 7.498942093324557e-07
+[DEBUG]2020-06-20 05:28:45,587:utils:itr: 35, num_batch: 35, last loss: 1.145607, smooth_loss: 1.164465
+[DEBUG]2020-06-20 05:28:45,597:utils:loss_avg: 1.17299, lr_pg0:7.498942093324557e-07, lr_pg1: 7.498942093324557e-07final_score:0.46363, mc_score:-0.00636
+[DEBUG]2020-06-20 05:28:45,966:utils:grad info pg0: norm std(0.007302) mean(0.020839)
+[DEBUG]2020-06-20 05:28:45,970:utils:grad info pg1: norm std(0.001359) mean(0.002324)
+[DEBUG]2020-06-20 05:28:46,266:utils:on_backward_begin lr: 7.943282347242813e-07
+[DEBUG]2020-06-20 05:28:46,267:utils:itr: 36, num_batch: 36, last loss: 0.960571, smooth_loss: 1.156719
+[DEBUG]2020-06-20 05:28:46,278:utils:loss_avg: 1.16725, lr_pg0:7.943282347242813e-07, lr_pg1: 7.943282347242813e-07final_score:0.46726, mc_score:-0.01072
+[DEBUG]2020-06-20 05:28:46,647:utils:grad info pg0: norm std(0.025377) mean(0.060858)
+[DEBUG]2020-06-20 05:28:46,650:utils:grad info pg1: norm std(0.002154) mean(0.004404)
+[DEBUG]2020-06-20 05:28:46,952:utils:on_backward_begin lr: 8.413951416451951e-07
+[DEBUG]2020-06-20 05:28:46,954:utils:itr: 37, num_batch: 37, last loss: 1.132980, smooth_loss: 1.155833
+[DEBUG]2020-06-20 05:28:46,965:utils:loss_avg: 1.16635, lr_pg0:8.413951416451951e-07, lr_pg1: 8.413951416451951e-07final_score:0.46619, mc_score:-0.01067
+[DEBUG]2020-06-20 05:28:47,332:utils:grad info pg0: norm std(0.090734) mean(0.063926)
+[DEBUG]2020-06-20 05:28:47,335:utils:grad info pg1: norm std(0.001339) mean(0.002620)
+[DEBUG]2020-06-20 05:28:47,635:utils:on_backward_begin lr: 8.912509381337455e-07
+[DEBUG]2020-06-20 05:28:47,636:utils:itr: 38, num_batch: 38, last loss: 0.805448, smooth_loss: 1.142980
+[DEBUG]2020-06-20 05:28:47,645:utils:loss_avg: 1.15709, lr_pg0:8.912509381337455e-07, lr_pg1: 8.912509381337455e-07final_score:0.46328, mc_score:0.00021
+[DEBUG]2020-06-20 05:28:48,019:utils:grad info pg0: norm std(0.006276) mean(0.014231)
+[DEBUG]2020-06-20 05:28:48,023:utils:grad info pg1: norm std(0.000668) mean(0.001304)
+[DEBUG]2020-06-20 05:28:48,331:utils:on_backward_begin lr: 9.440608762859234e-07
+[DEBUG]2020-06-20 05:28:48,333:utils:itr: 39, num_batch: 39, last loss: 0.807610, smooth_loss: 1.130879
+[DEBUG]2020-06-20 05:28:48,343:utils:loss_avg: 1.14836, lr_pg0:9.440608762859234e-07, lr_pg1: 9.440608762859234e-07final_score:0.46703, mc_score:0.01019
+[DEBUG]2020-06-20 05:28:48,717:utils:grad info pg0: norm std(0.009246) mean(0.029380)
+[DEBUG]2020-06-20 05:28:48,721:utils:grad info pg1: norm std(0.001436) mean(0.002699)
+[DEBUG]2020-06-20 05:28:49,027:utils:on_backward_begin lr: 1.0000000000000002e-06
+[DEBUG]2020-06-20 05:28:49,029:utils:itr: 40, num_batch: 40, last loss: 1.305859, smooth_loss: 1.137093
+[DEBUG]2020-06-20 05:28:49,037:utils:loss_avg: 1.15220, lr_pg0:1.0000000000000002e-06, lr_pg1: 1.0000000000000002e-06final_score:0.45477, mc_score:-0.00263
+[DEBUG]2020-06-20 05:28:49,404:utils:grad info pg0: norm std(0.011554) mean(0.031400)
+[DEBUG]2020-06-20 05:28:49,407:utils:grad info pg1: norm std(0.001524) mean(0.002828)
+[DEBUG]2020-06-20 05:28:49,705:utils:on_backward_begin lr: 1.0592537251772886e-06
+[DEBUG]2020-06-20 05:28:49,706:utils:itr: 41, num_batch: 41, last loss: 0.940573, smooth_loss: 1.130221
+[DEBUG]2020-06-20 05:28:49,716:utils:loss_avg: 1.14716, lr_pg0:1.0592537251772886e-06, lr_pg1: 1.0592537251772886e-06final_score:0.46041, mc_score:0.00512
+[DEBUG]2020-06-20 05:28:50,086:utils:grad info pg0: norm std(0.012212) mean(0.032370)
+[DEBUG]2020-06-20 05:28:50,089:utils:grad info pg1: norm std(0.001669) mean(0.002936)
+[DEBUG]2020-06-20 05:28:50,390:utils:on_backward_begin lr: 1.1220184543019633e-06
+[DEBUG]2020-06-20 05:28:50,391:utils:itr: 42, num_batch: 42, last loss: 1.103603, smooth_loss: 1.129304
+[DEBUG]2020-06-20 05:28:50,401:utils:loss_avg: 1.14615, lr_pg0:1.1220184543019633e-06, lr_pg1: 1.1220184543019633e-06final_score:0.46182, mc_score:0.00487
+[DEBUG]2020-06-20 05:28:50,769:utils:grad info pg0: norm std(0.007548) mean(0.024475)
+[DEBUG]2020-06-20 05:28:50,772:utils:grad info pg1: norm std(0.001040) mean(0.001873)
+[DEBUG]2020-06-20 05:28:51,078:utils:on_backward_begin lr: 1.1885022274370185e-06
+[DEBUG]2020-06-20 05:28:51,080:utils:itr: 43, num_batch: 43, last loss: 0.705544, smooth_loss: 1.114912
+[DEBUG]2020-06-20 05:28:51,090:utils:loss_avg: 1.13613, lr_pg0:1.1885022274370185e-06, lr_pg1: 1.1885022274370185e-06final_score:0.46905, mc_score:0.01345
+[DEBUG]2020-06-20 05:28:51,458:utils:grad info pg0: norm std(0.008287) mean(0.022028)
+[DEBUG]2020-06-20 05:28:51,462:utils:grad info pg1: norm std(0.000931) mean(0.001818)
+[DEBUG]2020-06-20 05:28:51,765:utils:on_backward_begin lr: 1.2589254117941672e-06
+[DEBUG]2020-06-20 05:28:51,767:utils:itr: 44, num_batch: 44, last loss: 1.261177, smooth_loss: 1.119811
+[DEBUG]2020-06-20 05:28:51,775:utils:loss_avg: 1.13891, lr_pg0:1.2589254117941672e-06, lr_pg1: 1.2589254117941672e-06final_score:0.46903, mc_score:0.02177
+[DEBUG]2020-06-20 05:28:52,148:utils:grad info pg0: norm std(0.009975) mean(0.029114)
+[DEBUG]2020-06-20 05:28:52,153:utils:grad info pg1: norm std(0.001259) mean(0.002449)
+[DEBUG]2020-06-20 05:28:52,461:utils:on_backward_begin lr: 1.333521432163324e-06
+[DEBUG]2020-06-20 05:28:52,463:utils:itr: 45, num_batch: 45, last loss: 0.943713, smooth_loss: 1.113992
+[DEBUG]2020-06-20 05:28:52,473:utils:loss_avg: 1.13467, lr_pg0:1.333521432163324e-06, lr_pg1: 1.333521432163324e-06final_score:0.46800, mc_score:0.03039
+[DEBUG]2020-06-20 05:28:52,841:utils:grad info pg0: norm std(0.008459) mean(0.022953)
+[DEBUG]2020-06-20 05:28:52,844:utils:grad info pg1: norm std(0.001006) mean(0.001946)
+[DEBUG]2020-06-20 05:28:53,158:utils:on_backward_begin lr: 1.4125375446227544e-06
+[DEBUG]2020-06-20 05:28:53,159:utils:itr: 46, num_batch: 46, last loss: 1.042393, smooth_loss: 1.111656
+[DEBUG]2020-06-20 05:28:53,169:utils:loss_avg: 1.13271, lr_pg0:1.4125375446227544e-06, lr_pg1: 1.4125375446227544e-06final_score:0.46782, mc_score:0.02961
+[DEBUG]2020-06-20 05:28:53,539:utils:grad info pg0: norm std(0.004045) mean(0.011150)
+[DEBUG]2020-06-20 05:28:53,541:utils:grad info pg1: norm std(0.000596) mean(0.001079)
+[DEBUG]2020-06-20 05:28:53,840:utils:on_backward_begin lr: 1.496235656094433e-06
+[DEBUG]2020-06-20 05:28:53,842:utils:itr: 47, num_batch: 47, last loss: 1.127785, smooth_loss: 1.112176
+[DEBUG]2020-06-20 05:28:53,851:utils:loss_avg: 1.13260, lr_pg0:1.496235656094433e-06, lr_pg1: 1.496235656094433e-06final_score:0.46836, mc_score:0.02629
+[DEBUG]2020-06-20 05:28:54,226:utils:grad info pg0: norm std(0.006039) mean(0.013362)
+[DEBUG]2020-06-20 05:28:54,229:utils:grad info pg1: norm std(0.000683) mean(0.001260)
+[DEBUG]2020-06-20 05:28:54,541:utils:on_backward_begin lr: 1.5848931924611132e-06
+[DEBUG]2020-06-20 05:28:54,543:utils:itr: 48, num_batch: 48, last loss: 1.157943, smooth_loss: 1.113632
+[DEBUG]2020-06-20 05:28:54,553:utils:loss_avg: 1.13312, lr_pg0:1.5848931924611132e-06, lr_pg1: 1.5848931924611132e-06final_score:0.46730, mc_score:0.02249
+
+[DEBUG]2020-06-20 05:28:54,922:utils:grad info pg0: norm std(0.009629) mean(0.027957)
+[DEBUG]2020-06-20 05:28:54,925:utils:grad info pg1: norm std(0.001479) mean(0.002665)
+[DEBUG]2020-06-20 05:28:55,221:utils:on_backward_begin lr: 1.6788040181225603e-06
+[DEBUG]2020-06-20 05:28:55,222:utils:itr: 49, num_batch: 49, last loss: 0.995783, smooth_loss: 1.109925
+[DEBUG]2020-06-20 05:28:55,233:utils:loss_avg: 1.13037, lr_pg0:1.6788040181225603e-06, lr_pg1: 1.6788040181225603e-06final_score:0.46654, mc_score:0.01851
+[DEBUG]2020-06-20 05:28:55,601:utils:grad info pg0: norm std(0.005092) mean(0.016397)
+[DEBUG]2020-06-20 05:28:55,604:utils:grad info pg1: norm std(0.000753) mean(0.001445)
+[DEBUG]2020-06-20 05:28:55,915:utils:on_backward_begin lr: 1.7782794100389227e-06
+[DEBUG]2020-06-20 05:28:55,917:utils:itr: 50, num_batch: 50, last loss: 1.147568, smooth_loss: 1.111096
+[DEBUG]2020-06-20 05:28:55,928:utils:loss_avg: 1.13071, lr_pg0:1.7782794100389227e-06, lr_pg1: 1.7782794100389227e-06final_score:0.46481, mc_score:0.00553
+[DEBUG]2020-06-20 05:28:56,295:utils:grad info pg0: norm std(0.082156) mean(0.070343)
+[DEBUG]2020-06-20 05:28:56,299:utils:grad info pg1: norm std(0.002195) mean(0.003346)
+[DEBUG]2020-06-20 05:28:56,609:utils:on_backward_begin lr: 1.8836490894898005e-06
+[DEBUG]2020-06-20 05:28:56,611:utils:itr: 51, num_batch: 51, last loss: 1.017979, smooth_loss: 1.108232
+[DEBUG]2020-06-20 05:28:56,620:utils:loss_avg: 1.12854, lr_pg0:1.8836490894898005e-06, lr_pg1: 1.8836490894898005e-06final_score:0.46307, mc_score:0.00181
+[DEBUG]2020-06-20 05:28:56,989:utils:grad info pg0: norm std(0.010179) mean(0.026564)
+[DEBUG]2020-06-20 05:28:56,992:utils:grad info pg1: norm std(0.001179) mean(0.002333)
+[DEBUG]2020-06-20 05:28:57,318:utils:on_backward_begin lr: 1.9952623149688796e-06
+[DEBUG]2020-06-20 05:28:57,320:utils:itr: 52, num_batch: 52, last loss: 0.936563, smooth_loss: 1.103008
+[DEBUG]2020-06-20 05:28:57,331:utils:loss_avg: 1.12492, lr_pg0:1.9952623149688796e-06, lr_pg1: 1.9952623149688796e-06final_score:0.46454, mc_score:0.00419
+[DEBUG]2020-06-20 05:28:57,699:utils:grad info pg0: norm std(0.007732) mean(0.022311)
+[DEBUG]2020-06-20 05:28:57,703:utils:grad info pg1: norm std(0.000882) mean(0.001773)
+[DEBUG]2020-06-20 05:28:58,001:utils:on_backward_begin lr: 2.113489039836647e-06
+[DEBUG]2020-06-20 05:28:58,002:utils:itr: 53, num_batch: 53, last loss: 0.848185, smooth_loss: 1.095334
+[DEBUG]2020-06-20 05:28:58,011:utils:loss_avg: 1.11980, lr_pg0:2.113489039836647e-06, lr_pg1: 2.113489039836647e-06final_score:0.46668, mc_score:0.00890
+[DEBUG]2020-06-20 05:28:58,382:utils:grad info pg0: norm std(0.019857) mean(0.039674)
+[DEBUG]2020-06-20 05:28:58,386:utils:grad info pg1: norm std(0.002134) mean(0.003945)
+[DEBUG]2020-06-20 05:28:58,687:utils:on_backward_begin lr: 2.23872113856834e-06
+[DEBUG]2020-06-20 05:28:58,688:utils:itr: 54, num_batch: 54, last loss: 0.908940, smooth_loss: 1.089777
+[DEBUG]2020-06-20 05:28:58,698:utils:loss_avg: 1.11596, lr_pg0:2.23872113856834e-06, lr_pg1: 2.23872113856834e-06final_score:0.46607, mc_score:0.01118
+[DEBUG]2020-06-20 05:28:59,068:utils:grad info pg0: norm std(0.008245) mean(0.023828)
+[DEBUG]2020-06-20 05:28:59,071:utils:grad info pg1: norm std(0.001067) mean(0.002064)
+[DEBUG]2020-06-20 05:28:59,372:utils:on_backward_begin lr: 2.3713737056616556e-06
+[DEBUG]2020-06-20 05:28:59,373:utils:itr: 55, num_batch: 55, last loss: 1.001200, smooth_loss: 1.087162
+[DEBUG]2020-06-20 05:28:59,382:utils:loss_avg: 1.11391, lr_pg0:2.3713737056616556e-06, lr_pg1: 2.3713737056616556e-06final_score:0.46840, mc_score:0.00233
+[DEBUG]2020-06-20 05:28:59,749:utils:grad info pg0: norm std(0.011771) mean(0.034092)
+[DEBUG]2020-06-20 05:28:59,752:utils:grad info pg1: norm std(0.001465) mean(0.002761)
+[DEBUG]2020-06-20 05:29:00,066:utils:on_backward_begin lr: 2.511886431509581e-06
+[DEBUG]2020-06-20 05:29:00,067:utils:itr: 56, num_batch: 56, last loss: 0.997324, smooth_loss: 1.084534
+[DEBUG]2020-06-20 05:29:00,078:utils:loss_avg: 1.11187, lr_pg0:2.511886431509581e-06, lr_pg1: 2.511886431509581e-06final_score:0.47008, mc_score:0.00229
+[DEBUG]2020-06-20 05:29:00,448:utils:grad info pg0: norm std(0.003498) mean(0.010627)
+[DEBUG]2020-06-20 05:29:00,451:utils:grad info pg1: norm std(0.000539) mean(0.000994)
+[DEBUG]2020-06-20 05:29:00,749:utils:on_backward_begin lr: 2.6607250597988086e-06
+[DEBUG]2020-06-20 05:29:00,751:utils:itr: 57, num_batch: 57, last loss: 0.933422, smooth_loss: 1.080155
+[DEBUG]2020-06-20 05:29:00,761:utils:loss_avg: 1.10879, lr_pg0:2.6607250597988086e-06, lr_pg1: 2.6607250597988086e-06final_score:0.47572, mc_score:0.01567
+[DEBUG]2020-06-20 05:29:01,129:utils:grad info pg0: norm std(0.010984) mean(0.036549)
+[DEBUG]2020-06-20 05:29:01,133:utils:grad info pg1: norm std(0.001539) mean(0.002950)
+[DEBUG]2020-06-20 05:29:01,430:utils:on_backward_begin lr: 2.818382931264453e-06
+[DEBUG]2020-06-20 05:29:01,431:utils:itr: 58, num_batch: 58, last loss: 0.929185, smooth_loss: 1.075819
+[DEBUG]2020-06-20 05:29:01,441:utils:loss_avg: 1.10575, lr_pg0:2.818382931264453e-06, lr_pg1: 2.818382931264453e-06final_score:0.47999, mc_score:0.01803
+[DEBUG]2020-06-20 05:29:01,810:utils:grad info pg0: norm std(0.007743) mean(0.025288)
+[DEBUG]2020-06-20 05:29:01,813:utils:grad info pg1: norm std(0.001027) mean(0.001940)
+[DEBUG]2020-06-20 05:29:02,113:utils:on_backward_begin lr: 2.985382618917959e-06
+[DEBUG]2020-06-20 05:29:02,115:utils:itr: 59, num_batch: 59, last loss: 0.926494, smooth_loss: 1.071568
+[DEBUG]2020-06-20 05:29:02,124:utils:loss_avg: 1.10276, lr_pg0:2.985382618917959e-06, lr_pg1: 2.985382618917959e-06final_score:0.48664, mc_score:0.02773
+[DEBUG]2020-06-20 05:29:02,491:utils:grad info pg0: norm std(0.005437) mean(0.016130)
+[DEBUG]2020-06-20 05:29:02,494:utils:grad info pg1: norm std(0.000800) mean(0.001471)
+[DEBUG]2020-06-20 05:29:02,791:utils:on_backward_begin lr: 3.1622776601683788e-06
+[DEBUG]2020-06-20 05:29:02,793:utils:itr: 60, num_batch: 60, last loss: 1.101717, smooth_loss: 1.072419
+[DEBUG]2020-06-20 05:29:02,803:utils:loss_avg: 1.10274, lr_pg0:3.1622776601683788e-06, lr_pg1: 3.1622776601683788e-06final_score:0.48133, mc_score:0.02204
+[DEBUG]2020-06-20 05:29:03,171:utils:grad info pg0: norm std(0.009394) mean(0.027456)
+[DEBUG]2020-06-20 05:29:03,174:utils:grad info pg1: norm std(0.001240) mean(0.002380)
+[DEBUG]2020-06-20 05:29:03,473:utils:on_backward_begin lr: 3.3496543915782763e-06
+[DEBUG]2020-06-20 05:29:03,474:utils:itr: 61, num_batch: 61, last loss: 0.865856, smooth_loss: 1.066635
+[DEBUG]2020-06-20 05:29:03,484:utils:loss_avg: 1.09892, lr_pg0:3.3496543915782763e-06, lr_pg1: 3.3496543915782763e-06final_score:0.48789, mc_score:0.03142
+[DEBUG]2020-06-20 05:29:03,852:utils:grad info pg0: norm std(0.010075) mean(0.023569)
+[DEBUG]2020-06-20 05:29:03,856:utils:grad info pg1: norm std(0.000969) mean(0.001929)
+[DEBUG]2020-06-20 05:29:04,162:utils:on_backward_begin lr: 3.5481338923357546e-06
+[DEBUG]2020-06-20 05:29:04,164:utils:itr: 62, num_batch: 62, last loss: 1.032806, smooth_loss: 1.065695
+[DEBUG]2020-06-20 05:29:04,174:utils:loss_avg: 1.09787, lr_pg0:3.5481338923357546e-06, lr_pg1: 3.5481338923357546e-06final_score:0.48890, mc_score:0.02417
+[DEBUG]2020-06-20 05:29:04,541:utils:grad info pg0: norm std(0.012163) mean(0.014261)
+[DEBUG]2020-06-20 05:29:04,544:utils:grad info pg1: norm std(0.000512) mean(0.000941)
+[DEBUG]2020-06-20 05:29:04,858:utils:on_backward_begin lr: 3.7583740428844413e-06
+[DEBUG]2020-06-20 05:29:04,860:utils:itr: 63, num_batch: 63, last loss: 0.995863, smooth_loss: 1.063770
+[DEBUG]2020-06-20 05:29:04,870:utils:loss_avg: 1.09628, lr_pg0:3.7583740428844413e-06, lr_pg1: 3.7583740428844413e-06final_score:0.48685, mc_score:0.01864
+[DEBUG]2020-06-20 05:29:05,238:utils:grad info pg0: norm std(0.004055) mean(0.011154)
+[DEBUG]2020-06-20 05:29:05,241:utils:grad info pg1: norm std(0.000528) mean(0.001003)
+[DEBUG]2020-06-20 05:29:05,544:utils:on_backward_begin lr: 3.9810717055349725e-06
+[DEBUG]2020-06-20 05:29:05,546:utils:itr: 64, num_batch: 64, last loss: 1.127073, smooth_loss: 1.065502
+[DEBUG]2020-06-20 05:29:05,556:utils:loss_avg: 1.09675, lr_pg0:3.9810717055349725e-06, lr_pg1: 3.9810717055349725e-06final_score:0.48234, mc_score:0.00448
+[DEBUG]2020-06-20 05:29:05,923:utils:grad info pg0: norm std(0.005964) mean(0.015514)
+
+[DEBUG]2020-06-20 05:29:05,927:utils:grad info pg1: norm std(0.000889) mean(0.001581)
+[DEBUG]2020-06-20 05:29:06,226:utils:on_backward_begin lr: 4.216965034285823e-06
+[DEBUG]2020-06-20 05:29:06,228:utils:itr: 65, num_batch: 65, last loss: 0.922428, smooth_loss: 1.061616
+[DEBUG]2020-06-20 05:29:06,237:utils:loss_avg: 1.09411, lr_pg0:4.216965034285823e-06, lr_pg1: 4.216965034285823e-06final_score:0.48514, mc_score:0.00875
+[DEBUG]2020-06-20 05:29:06,605:utils:grad info pg0: norm std(0.008722) mean(0.021787)
+[DEBUG]2020-06-20 05:29:06,609:utils:grad info pg1: norm std(0.000969) mean(0.001885)
+[DEBUG]2020-06-20 05:29:06,917:utils:on_backward_begin lr: 4.466835921509631e-06
+[DEBUG]2020-06-20 05:29:06,919:utils:itr: 66, num_batch: 66, last loss: 0.926322, smooth_loss: 1.057968
+[DEBUG]2020-06-20 05:29:06,928:utils:loss_avg: 1.09161, lr_pg0:4.466835921509631e-06, lr_pg1: 4.466835921509631e-06final_score:0.48344, mc_score:0.00863
+[DEBUG]2020-06-20 05:29:07,297:utils:grad info pg0: norm std(0.011074) mean(0.031426)
+[DEBUG]2020-06-20 05:29:07,300:utils:grad info pg1: norm std(0.001614) mean(0.003040)
+[DEBUG]2020-06-20 05:29:07,600:utils:on_backward_begin lr: 4.7315125896148055e-06
+[DEBUG]2020-06-20 05:29:07,601:utils:itr: 67, num_batch: 67, last loss: 1.051260, smooth_loss: 1.057788
+[DEBUG]2020-06-20 05:29:07,611:utils:loss_avg: 1.09101, lr_pg0:4.7315125896148055e-06, lr_pg1: 4.7315125896148055e-06final_score:0.48505, mc_score:0.01259
+[DEBUG]2020-06-20 05:29:07,979:utils:grad info pg0: norm std(0.007279) mean(0.022201)
+[DEBUG]2020-06-20 05:29:07,983:utils:grad info pg1: norm std(0.001161) mean(0.002084)
+[DEBUG]2020-06-20 05:29:08,316:utils:on_backward_begin lr: 5.011872336272724e-06
+[DEBUG]2020-06-20 05:29:08,317:utils:itr: 68, num_batch: 68, last loss: 1.079937, smooth_loss: 1.058377
+[DEBUG]2020-06-20 05:29:08,327:utils:loss_avg: 1.09085, lr_pg0:5.011872336272724e-06, lr_pg1: 5.011872336272724e-06final_score:0.48536, mc_score:0.01019
+[DEBUG]2020-06-20 05:29:08,695:utils:grad info pg0: norm std(0.003668) mean(0.011986)
+[DEBUG]2020-06-20 05:29:08,699:utils:grad info pg1: norm std(0.000566) mean(0.001094)
+[DEBUG]2020-06-20 05:29:09,001:utils:on_backward_begin lr: 5.308844442309882e-06
+[DEBUG]2020-06-20 05:29:09,002:utils:itr: 69, num_batch: 69, last loss: 1.171705, smooth_loss: 1.061372
+[DEBUG]2020-06-20 05:29:09,013:utils:loss_avg: 1.09201, lr_pg0:5.308844442309882e-06, lr_pg1: 5.308844442309882e-06final_score:0.48590, mc_score:0.00773
+[DEBUG]2020-06-20 05:29:09,382:utils:grad info pg0: norm std(0.010765) mean(0.025469)
+[DEBUG]2020-06-20 05:29:09,386:utils:grad info pg1: norm std(0.001531) mean(0.002645)
+[DEBUG]2020-06-20 05:29:09,691:utils:on_backward_begin lr: 5.6234132519034895e-06
+[DEBUG]2020-06-20 05:29:09,693:utils:itr: 70, num_batch: 70, last loss: 0.903222, smooth_loss: 1.057220
+[DEBUG]2020-06-20 05:29:09,701:utils:loss_avg: 1.08935, lr_pg0:5.6234132519034895e-06, lr_pg1: 5.6234132519034895e-06final_score:0.48439, mc_score:0.00000
+[DEBUG]2020-06-20 05:29:10,070:utils:grad info pg0: norm std(0.017063) mean(0.039708)
+[DEBUG]2020-06-20 05:29:10,073:utils:grad info pg1: norm std(0.001692) mean(0.003248)
+[DEBUG]2020-06-20 05:29:10,372:utils:on_backward_begin lr: 5.9566214352901035e-06
+[DEBUG]2020-06-20 05:29:10,374:utils:itr: 71, num_batch: 71, last loss: 0.810684, smooth_loss: 1.050787
+[DEBUG]2020-06-20 05:29:10,383:utils:loss_avg: 1.08548, lr_pg0:5.9566214352901035e-06, lr_pg1: 5.9566214352901035e-06final_score:0.48925, mc_score:0.00938
+[DEBUG]2020-06-20 05:29:10,753:utils:grad info pg0: norm std(0.009699) mean(0.025916)
+[DEBUG]2020-06-20 05:29:10,756:utils:grad info pg1: norm std(0.001164) mean(0.002108)
+[DEBUG]2020-06-20 05:29:11,061:utils:on_backward_begin lr: 6.309573444801931e-06
+[DEBUG]2020-06-20 05:29:11,063:utils:itr: 72, num_batch: 72, last loss: 1.079460, smooth_loss: 1.051531
+[DEBUG]2020-06-20 05:29:11,072:utils:loss_avg: 1.08540, lr_pg0:6.309573444801931e-06, lr_pg1: 6.309573444801931e-06final_score:0.48459, mc_score:0.00812
+[DEBUG]2020-06-20 05:29:11,443:utils:grad info pg0: norm std(0.009475) mean(0.023101)
+[DEBUG]2020-06-20 05:29:11,446:utils:grad info pg1: norm std(0.001144) mean(0.002097)
+[DEBUG]2020-06-20 05:29:11,746:utils:on_backward_begin lr: 6.683439175686145e-06
+[DEBUG]2020-06-20 05:29:11,748:utils:itr: 73, num_batch: 73, last loss: 1.077564, smooth_loss: 1.052202
+[DEBUG]2020-06-20 05:29:11,759:utils:loss_avg: 1.08529, lr_pg0:6.683439175686145e-06, lr_pg1: 6.683439175686145e-06final_score:0.48546, mc_score:0.00747
+[DEBUG]2020-06-20 05:29:12,128:utils:grad info pg0: norm std(0.011062) mean(0.027645)
+[DEBUG]2020-06-20 05:29:12,131:utils:grad info pg1: norm std(0.001261) mean(0.002420)
+[DEBUG]2020-06-20 05:29:12,428:utils:on_backward_begin lr: 7.079457843841379e-06
+[DEBUG]2020-06-20 05:29:12,430:utils:itr: 74, num_batch: 74, last loss: 0.963104, smooth_loss: 1.049918
+[DEBUG]2020-06-20 05:29:12,440:utils:loss_avg: 1.08366, lr_pg0:7.079457843841379e-06, lr_pg1: 7.079457843841379e-06final_score:0.48627, mc_score:0.00737
+[DEBUG]2020-06-20 05:29:12,808:utils:grad info pg0: norm std(0.011621) mean(0.035254)
+[DEBUG]2020-06-20 05:29:12,812:utils:grad info pg1: norm std(0.001608) mean(0.003241)
+[DEBUG]2020-06-20 05:29:13,113:utils:on_backward_begin lr: 7.498942093324558e-06
+[DEBUG]2020-06-20 05:29:13,115:utils:itr: 75, num_batch: 75, last loss: 0.924305, smooth_loss: 1.046716
+[DEBUG]2020-06-20 05:29:13,124:utils:loss_avg: 1.08156, lr_pg0:7.498942093324558e-06, lr_pg1: 7.498942093324558e-06final_score:0.48608, mc_score:0.00782
+[DEBUG]2020-06-20 05:29:13,502:utils:grad info pg0: norm std(0.004703) mean(0.014252)
+[DEBUG]2020-06-20 05:29:13,505:utils:grad info pg1: norm std(0.000716) mean(0.001337)
+[DEBUG]2020-06-20 05:29:13,802:utils:on_backward_begin lr: 7.943282347242815e-06
+[DEBUG]2020-06-20 05:29:13,804:utils:itr: 76, num_batch: 76, last loss: 0.819288, smooth_loss: 1.040951
+[DEBUG]2020-06-20 05:29:13,813:utils:loss_avg: 1.07816, lr_pg0:7.943282347242815e-06, lr_pg1: 7.943282347242815e-06final_score:0.48889, mc_score:0.01131
+[DEBUG]2020-06-20 05:29:14,180:utils:grad info pg0: norm std(0.006420) mean(0.018438)
+[DEBUG]2020-06-20 05:29:14,184:utils:grad info pg1: norm std(0.000827) mean(0.001614)
+[DEBUG]2020-06-20 05:29:14,481:utils:on_backward_begin lr: 8.413951416451952e-06
+[DEBUG]2020-06-20 05:29:14,483:utils:itr: 77, num_batch: 77, last loss: 1.055803, smooth_loss: 1.041325
+[DEBUG]2020-06-20 05:29:14,494:utils:loss_avg: 1.07787, lr_pg0:8.413951416451952e-06, lr_pg1: 8.413951416451952e-06final_score:0.48694, mc_score:0.00763
+[DEBUG]2020-06-20 05:29:14,862:utils:grad info pg0: norm std(0.007655) mean(0.025382)
+[DEBUG]2020-06-20 05:29:14,865:utils:grad info pg1: norm std(0.001293) mean(0.002378)
+[DEBUG]2020-06-20 05:29:15,167:utils:on_backward_begin lr: 8.912509381337456e-06
+[DEBUG]2020-06-20 05:29:15,169:utils:itr: 78, num_batch: 78, last loss: 0.907665, smooth_loss: 1.037973
+[DEBUG]2020-06-20 05:29:15,178:utils:loss_avg: 1.07572, lr_pg0:8.912509381337456e-06, lr_pg1: 8.912509381337456e-06final_score:0.48899, mc_score:0.01243
+[DEBUG]2020-06-20 05:29:15,546:utils:grad info pg0: norm std(0.003828) mean(0.011846)
+[DEBUG]2020-06-20 05:29:15,549:utils:grad info pg1: norm std(0.000610) mean(0.001150)
+[DEBUG]2020-06-20 05:29:15,849:utils:on_backward_begin lr: 9.440608762859235e-06
+[DEBUG]2020-06-20 05:29:15,851:utils:itr: 79, num_batch: 79, last loss: 0.946598, smooth_loss: 1.035692
+[DEBUG]2020-06-20 05:29:15,860:utils:loss_avg: 1.07410, lr_pg0:9.440608762859235e-06, lr_pg1: 9.440608762859235e-06final_score:0.49018, mc_score:0.01360
+[DEBUG]2020-06-20 05:29:16,229:utils:grad info pg0: norm std(0.004853) mean(0.012724)
+[DEBUG]2020-06-20 05:29:16,232:utils:grad info pg1: norm std(0.000636) mean(0.001195)
+[DEBUG]2020-06-20 05:29:16,551:utils:on_backward_begin lr: 1.0000000000000003e-05
+[DEBUG]2020-06-20 05:29:16,553:utils:itr: 80, num_batch: 80, last loss: 0.875893, smooth_loss: 1.031724
+[DEBUG]2020-06-20 05:29:16,563:utils:loss_avg: 1.07166, lr_pg0:1.0000000000000003e-05, lr_pg1: 1.0000000000000003e-05final_score:0.48943, mc_score:0.01414
+[DEBUG]2020-06-20 05:29:16,934:utils:grad info pg0: norm std(0.011364) mean(0.027829)
+[DEBUG]2020-06-20 05:29:16,938:utils:grad info pg1: norm std(0.001496) mean(0.002790)
+
+[DEBUG]2020-06-20 05:29:17,245:utils:on_backward_begin lr: 1.0592537251772892e-05
+[DEBUG]2020-06-20 05:29:17,246:utils:itr: 81, num_batch: 81, last loss: 1.131146, smooth_loss: 1.034181
+[DEBUG]2020-06-20 05:29:17,255:utils:loss_avg: 1.07238, lr_pg0:1.0592537251772892e-05, lr_pg1: 1.0592537251772892e-05final_score:0.48826, mc_score:0.01197
+[DEBUG]2020-06-20 05:29:17,623:utils:grad info pg0: norm std(0.003794) mean(0.011139)
+[DEBUG]2020-06-20 05:29:17,626:utils:grad info pg1: norm std(0.000619) mean(0.001111)
+[DEBUG]2020-06-20 05:29:17,926:utils:on_backward_begin lr: 1.1220184543019632e-05
+[DEBUG]2020-06-20 05:29:17,928:utils:itr: 82, num_batch: 82, last loss: 0.896249, smooth_loss: 1.030788
+[DEBUG]2020-06-20 05:29:17,938:utils:loss_avg: 1.07026, lr_pg0:1.1220184543019632e-05, lr_pg1: 1.1220184543019632e-05final_score:0.49062, mc_score:0.01644
+[DEBUG]2020-06-20 05:29:18,306:utils:grad info pg0: norm std(0.003900) mean(0.011818)
+[DEBUG]2020-06-20 05:29:18,309:utils:grad info pg1: norm std(0.000653) mean(0.001187)
+[DEBUG]2020-06-20 05:29:18,608:utils:on_backward_begin lr: 1.1885022274370181e-05
+[DEBUG]2020-06-20 05:29:18,610:utils:itr: 83, num_batch: 83, last loss: 0.743115, smooth_loss: 1.023744
+[DEBUG]2020-06-20 05:29:18,619:utils:loss_avg: 1.06636, lr_pg0:1.1885022274370181e-05, lr_pg1: 1.1885022274370181e-05final_score:0.49558, mc_score:0.02712
+[DEBUG]2020-06-20 05:29:18,986:utils:grad info pg0: norm std(0.009402) mean(0.031112)
+[DEBUG]2020-06-20 05:29:18,989:utils:grad info pg1: norm std(0.001289) mean(0.002554)
+[DEBUG]2020-06-20 05:29:19,292:utils:on_backward_begin lr: 1.258925411794167e-05
+[DEBUG]2020-06-20 05:29:19,294:utils:itr: 84, num_batch: 84, last loss: 0.944291, smooth_loss: 1.021807
+[DEBUG]2020-06-20 05:29:19,304:utils:loss_avg: 1.06493, lr_pg0:1.258925411794167e-05, lr_pg1: 1.258925411794167e-05final_score:0.49349, mc_score:0.02432
+[DEBUG]2020-06-20 05:29:19,671:utils:grad info pg0: norm std(0.003489) mean(0.010852)
+[DEBUG]2020-06-20 05:29:19,675:utils:grad info pg1: norm std(0.000490) mean(0.000915)
+[DEBUG]2020-06-20 05:29:19,971:utils:on_backward_begin lr: 1.3335214321633239e-05
+[DEBUG]2020-06-20 05:29:19,973:utils:itr: 85, num_batch: 85, last loss: 0.940727, smooth_loss: 1.019839
+[DEBUG]2020-06-20 05:29:19,982:utils:loss_avg: 1.06348, lr_pg0:1.3335214321633239e-05, lr_pg1: 1.3335214321633239e-05final_score:0.49564, mc_score:0.02829
+[DEBUG]2020-06-20 05:29:20,349:utils:grad info pg0: norm std(0.014611) mean(0.036311)
+[DEBUG]2020-06-20 05:29:20,352:utils:grad info pg1: norm std(0.001322) mean(0.002700)
+[DEBUG]2020-06-20 05:29:20,649:utils:on_backward_begin lr: 1.4125375446227541e-05
+[DEBUG]2020-06-20 05:29:20,651:utils:itr: 86, num_batch: 86, last loss: 0.940480, smooth_loss: 1.017921
+[DEBUG]2020-06-20 05:29:20,659:utils:loss_avg: 1.06207, lr_pg0:1.4125375446227541e-05, lr_pg1: 1.4125375446227541e-05final_score:0.49838, mc_score:0.03014
+[DEBUG]2020-06-20 05:29:21,026:utils:grad info pg0: norm std(0.006368) mean(0.017315)
+[DEBUG]2020-06-20 05:29:21,029:utils:grad info pg1: norm std(0.000843) mean(0.001556)
+[DEBUG]2020-06-20 05:29:21,329:utils:on_backward_begin lr: 1.4962356560944334e-05
+[DEBUG]2020-06-20 05:29:21,330:utils:itr: 87, num_batch: 87, last loss: 1.137777, smooth_loss: 1.020806
+[DEBUG]2020-06-20 05:29:21,339:utils:loss_avg: 1.06293, lr_pg0:1.4962356560944334e-05, lr_pg1: 1.4962356560944334e-05final_score:0.49617, mc_score:0.02352
+[DEBUG]2020-06-20 05:29:21,713:utils:grad info pg0: norm std(0.004149) mean(0.009481)
+[DEBUG]2020-06-20 05:29:21,717:utils:grad info pg1: norm std(0.000477) mean(0.000867)
+[DEBUG]2020-06-20 05:29:22,015:utils:on_backward_begin lr: 1.5848931924611134e-05
+[DEBUG]2020-06-20 05:29:22,016:utils:itr: 88, num_batch: 88, last loss: 0.808468, smooth_loss: 1.015716
+[DEBUG]2020-06-20 05:29:22,025:utils:loss_avg: 1.06007, lr_pg0:1.5848931924611134e-05, lr_pg1: 1.5848931924611134e-05final_score:0.49880, mc_score:0.03034
+[DEBUG]2020-06-20 05:29:22,393:utils:grad info pg0: norm std(0.013755) mean(0.034331)
+[DEBUG]2020-06-20 05:29:22,396:utils:grad info pg1: norm std(0.001934) mean(0.003390)
+[DEBUG]2020-06-20 05:29:22,702:utils:on_backward_begin lr: 1.6788040181225605e-05
+[DEBUG]2020-06-20 05:29:22,704:utils:itr: 89, num_batch: 89, last loss: 0.944862, smooth_loss: 1.014025
+[DEBUG]2020-06-20 05:29:22,713:utils:loss_avg: 1.05879, lr_pg0:1.6788040181225605e-05, lr_pg1: 1.6788040181225605e-05final_score:0.49972, mc_score:0.02980
+[DEBUG]2020-06-20 05:29:23,081:utils:grad info pg0: norm std(0.011394) mean(0.033136)
+[DEBUG]2020-06-20 05:29:23,085:utils:grad info pg1: norm std(0.001463) mean(0.002801)
+[DEBUG]2020-06-20 05:29:23,382:utils:on_backward_begin lr: 1.778279410038923e-05
+[DEBUG]2020-06-20 05:29:23,384:utils:itr: 90, num_batch: 90, last loss: 0.996590, smooth_loss: 1.013610
+[DEBUG]2020-06-20 05:29:23,394:utils:loss_avg: 1.05811, lr_pg0:1.778279410038923e-05, lr_pg1: 1.778279410038923e-05final_score:0.49977, mc_score:0.02918
+[DEBUG]2020-06-20 05:29:23,762:utils:grad info pg0: norm std(0.030230) mean(0.032606)
+[DEBUG]2020-06-20 05:29:23,765:utils:grad info pg1: norm std(0.001017) mean(0.001879)
+[DEBUG]2020-06-20 05:29:24,081:utils:on_backward_begin lr: 1.8836490894898008e-05
+[DEBUG]2020-06-20 05:29:24,082:utils:itr: 91, num_batch: 91, last loss: 0.860654, smooth_loss: 1.009986
+[DEBUG]2020-06-20 05:29:24,092:utils:loss_avg: 1.05596, lr_pg0:1.8836490894898008e-05, lr_pg1: 1.8836490894898008e-05final_score:0.50174, mc_score:0.03443
+[DEBUG]2020-06-20 05:29:24,459:utils:grad info pg0: norm std(0.007283) mean(0.020822)
+[DEBUG]2020-06-20 05:29:24,462:utils:grad info pg1: norm std(0.000941) mean(0.001769)
+[DEBUG]2020-06-20 05:29:24,760:utils:on_backward_begin lr: 1.99526231496888e-05
+[DEBUG]2020-06-20 05:29:24,762:utils:itr: 92, num_batch: 92, last loss: 0.779450, smooth_loss: 1.004544
+[DEBUG]2020-06-20 05:29:24,772:utils:loss_avg: 1.05299, lr_pg0:1.99526231496888e-05, lr_pg1: 1.99526231496888e-05final_score:0.50458, mc_score:0.03761
+[DEBUG]2020-06-20 05:29:25,139:utils:grad info pg0: norm std(0.008258) mean(0.018577)
+[DEBUG]2020-06-20 05:29:25,142:utils:grad info pg1: norm std(0.000969) mean(0.001797)
+[DEBUG]2020-06-20 05:29:25,452:utils:on_backward_begin lr: 2.1134890398366472e-05
+[DEBUG]2020-06-20 05:29:25,454:utils:itr: 93, num_batch: 93, last loss: 1.022699, smooth_loss: 1.004971
+[DEBUG]2020-06-20 05:29:25,465:utils:loss_avg: 1.05267, lr_pg0:2.1134890398366472e-05, lr_pg1: 2.1134890398366472e-05final_score:0.50481, mc_score:0.03700
+[DEBUG]2020-06-20 05:29:25,833:utils:grad info pg0: norm std(0.010710) mean(0.027916)
+[DEBUG]2020-06-20 05:29:25,836:utils:grad info pg1: norm std(0.001252) mean(0.002324)
+[DEBUG]2020-06-20 05:29:26,142:utils:on_backward_begin lr: 2.238721138568339e-05
+[DEBUG]2020-06-20 05:29:26,143:utils:itr: 94, num_batch: 94, last loss: 1.054593, smooth_loss: 1.006134
+[DEBUG]2020-06-20 05:29:26,152:utils:loss_avg: 1.05269, lr_pg0:2.238721138568339e-05, lr_pg1: 2.238721138568339e-05final_score:0.50490, mc_score:0.03475
+[DEBUG]2020-06-20 05:29:26,520:utils:grad info pg0: norm std(0.004921) mean(0.014139)
+[DEBUG]2020-06-20 05:29:26,523:utils:grad info pg1: norm std(0.000763) mean(0.001375)
+[DEBUG]2020-06-20 05:29:26,818:utils:on_backward_begin lr: 2.3713737056616544e-05
+[DEBUG]2020-06-20 05:29:26,820:utils:itr: 95, num_batch: 95, last loss: 0.853186, smooth_loss: 1.002562
+[DEBUG]2020-06-20 05:29:26,829:utils:loss_avg: 1.05061, lr_pg0:2.3713737056616544e-05, lr_pg1: 2.3713737056616544e-05final_score:0.50774, mc_score:0.03882
+[DEBUG]2020-06-20 05:29:27,196:utils:grad info pg0: norm std(0.005294) mean(0.016919)
+[DEBUG]2020-06-20 05:29:27,200:utils:grad info pg1: norm std(0.000741) mean(0.001383)
+[DEBUG]2020-06-20 05:29:27,498:utils:on_backward_begin lr: 2.5118864315095795e-05
+[DEBUG]2020-06-20 05:29:27,499:utils:itr: 96, num_batch: 96, last loss: 0.762915, smooth_loss: 0.996983
+[DEBUG]2020-06-20 05:29:27,509:utils:loss_avg: 1.04764, lr_pg0:2.5118864315095795e-05, lr_pg1: 2.5118864315095795e-05final_score:0.51062, mc_score:0.03906
+[DEBUG]2020-06-20 05:29:27,878:utils:grad info pg0: norm std(0.008328) mean(0.029911)
+[DEBUG]2020-06-20 05:29:27,882:utils:grad info pg1: norm std(0.001577) mean(0.002819)
+
+[DEBUG]2020-06-20 05:29:28,181:utils:on_backward_begin lr: 2.660725059798809e-05
+[DEBUG]2020-06-20 05:29:28,182:utils:itr: 97, num_batch: 97, last loss: 0.796255, smooth_loss: 0.992325
+[DEBUG]2020-06-20 05:29:28,191:utils:loss_avg: 1.04508, lr_pg0:2.660725059798809e-05, lr_pg1: 2.660725059798809e-05final_score:0.51350, mc_score:0.04165
+[DEBUG]2020-06-20 05:29:28,559:utils:grad info pg0: norm std(0.003663) mean(0.010791)
+[DEBUG]2020-06-20 05:29:28,563:utils:grad info pg1: norm std(0.000578) mean(0.001047)
+[DEBUG]2020-06-20 05:29:28,867:utils:on_backward_begin lr: 2.8183829312644535e-05
+[DEBUG]2020-06-20 05:29:28,868:utils:itr: 98, num_batch: 98, last loss: 0.996902, smooth_loss: 0.992431
+[DEBUG]2020-06-20 05:29:28,879:utils:loss_avg: 1.04459, lr_pg0:2.8183829312644535e-05, lr_pg1: 2.8183829312644535e-05final_score:0.51232, mc_score:0.03772
+[DEBUG]2020-06-20 05:29:29,247:utils:grad info pg0: norm std(0.011602) mean(0.027296)
+[DEBUG]2020-06-20 05:29:29,250:utils:grad info pg1: norm std(0.001424) mean(0.002714)
+[DEBUG]2020-06-20 05:29:29,557:utils:on_backward_begin lr: 2.9853826189179594e-05
+[DEBUG]2020-06-20 05:29:29,558:utils:itr: 99, num_batch: 99, last loss: 0.788698, smooth_loss: 0.987733
+[DEBUG]2020-06-20 05:29:29,569:utils:loss_avg: 1.04203, lr_pg0:2.9853826189179594e-05, lr_pg1: 2.9853826189179594e-05final_score:0.51318, mc_score:0.03896
+[DEBUG]2020-06-20 05:29:29,936:utils:grad info pg0: norm std(0.005593) mean(0.017566)
+[DEBUG]2020-06-20 05:29:29,939:utils:grad info pg1: norm std(0.000816) mean(0.001483)
+[DEBUG]2020-06-20 05:29:30,236:utils:on_backward_begin lr: 3.1622776601683795e-05
+[DEBUG]2020-06-20 05:29:30,238:utils:itr: 100, num_batch: 100, last loss: 0.661719, smooth_loss: 0.980239
+[DEBUG]2020-06-20 05:29:30,246:utils:loss_avg: 1.03827, lr_pg0:3.1622776601683795e-05, lr_pg1: 3.1622776601683795e-05final_score:0.51834, mc_score:0.04570
+[DEBUG]2020-06-20 05:29:30,613:utils:grad info pg0: norm std(0.003917) mean(0.011920)
+[DEBUG]2020-06-20 05:29:30,616:utils:grad info pg1: norm std(0.000579) mean(0.001057)
+[DEBUG]2020-06-20 05:29:30,911:utils:on_backward_begin lr: 3.349654391578277e-05
+[DEBUG]2020-06-20 05:29:30,913:utils:itr: 101, num_batch: 101, last loss: 0.697016, smooth_loss: 0.973748
+[DEBUG]2020-06-20 05:29:30,922:utils:loss_avg: 1.03492, lr_pg0:3.349654391578277e-05, lr_pg1: 3.349654391578277e-05final_score:0.52256, mc_score:0.05044
+[DEBUG]2020-06-20 05:29:31,289:utils:grad info pg0: norm std(0.004674) mean(0.012856)
+[DEBUG]2020-06-20 05:29:31,293:utils:grad info pg1: norm std(0.000714) mean(0.001284)
+[DEBUG]2020-06-20 05:29:31,604:utils:on_backward_begin lr: 3.548133892335755e-05
+[DEBUG]2020-06-20 05:29:31,605:utils:itr: 102, num_batch: 102, last loss: 0.609142, smooth_loss: 0.965415
+[DEBUG]2020-06-20 05:29:31,615:utils:loss_avg: 1.03079, lr_pg0:3.548133892335755e-05, lr_pg1: 3.548133892335755e-05final_score:0.52919, mc_score:0.06166
+[DEBUG]2020-06-20 05:29:31,983:utils:grad info pg0: norm std(0.002645) mean(0.007443)
+[DEBUG]2020-06-20 05:29:31,987:utils:grad info pg1: norm std(0.000470) mean(0.000807)
+[DEBUG]2020-06-20 05:29:32,284:utils:on_backward_begin lr: 3.7583740428844426e-05
+[DEBUG]2020-06-20 05:29:32,286:utils:itr: 103, num_batch: 103, last loss: 0.577015, smooth_loss: 0.956565
+[DEBUG]2020-06-20 05:29:32,298:utils:loss_avg: 1.02642, lr_pg0:3.7583740428844426e-05, lr_pg1: 3.7583740428844426e-05final_score:0.53554, mc_score:0.06985
+[DEBUG]2020-06-20 05:29:32,667:utils:grad info pg0: norm std(0.007346) mean(0.016093)
+[DEBUG]2020-06-20 05:29:32,670:utils:grad info pg1: norm std(0.001049) mean(0.001869)
+[DEBUG]2020-06-20 05:29:32,968:utils:on_backward_begin lr: 3.981071705534973e-05
+[DEBUG]2020-06-20 05:29:32,969:utils:itr: 104, num_batch: 104, last loss: 1.401299, smooth_loss: 0.966671
+[DEBUG]2020-06-20 05:29:32,979:utils:loss_avg: 1.02999, lr_pg0:3.981071705534973e-05, lr_pg1: 3.981071705534973e-05final_score:0.53309, mc_score:0.06543
+[DEBUG]2020-06-20 05:29:33,348:utils:grad info pg0: norm std(0.004982) mean(0.008689)
+[DEBUG]2020-06-20 05:29:33,351:utils:grad info pg1: norm std(0.000700) mean(0.001120)
+[DEBUG]2020-06-20 05:29:33,664:utils:on_backward_begin lr: 4.216965034285823e-05
+[DEBUG]2020-06-20 05:29:33,666:utils:itr: 105, num_batch: 105, last loss: 0.871520, smooth_loss: 0.964515
+[DEBUG]2020-06-20 05:29:33,676:utils:loss_avg: 1.02850, lr_pg0:4.216965034285823e-05, lr_pg1: 4.216965034285823e-05final_score:0.53642, mc_score:0.07018
+[DEBUG]2020-06-20 05:29:34,043:utils:grad info pg0: norm std(0.006455) mean(0.017108)
+[DEBUG]2020-06-20 05:29:34,046:utils:grad info pg1: norm std(0.000878) mean(0.001621)
+[DEBUG]2020-06-20 05:29:34,342:utils:on_backward_begin lr: 4.466835921509632e-05
+[DEBUG]2020-06-20 05:29:34,343:utils:itr: 106, num_batch: 106, last loss: 0.791408, smooth_loss: 0.960602
+[DEBUG]2020-06-20 05:29:34,353:utils:loss_avg: 1.02628, lr_pg0:4.466835921509632e-05, lr_pg1: 4.466835921509632e-05final_score:0.53729, mc_score:0.07099
+[DEBUG]2020-06-20 05:29:34,721:utils:grad info pg0: norm std(0.004634) mean(0.014234)
+[DEBUG]2020-06-20 05:29:34,725:utils:grad info pg1: norm std(0.000742) mean(0.001379)
+[DEBUG]2020-06-20 05:29:35,021:utils:on_backward_begin lr: 4.731512589614806e-05
+[DEBUG]2020-06-20 05:29:35,023:utils:itr: 107, num_batch: 107, last loss: 1.143250, smooth_loss: 0.964720
+[DEBUG]2020-06-20 05:29:35,033:utils:loss_avg: 1.02737, lr_pg0:4.731512589614806e-05, lr_pg1: 4.731512589614806e-05final_score:0.53574, mc_score:0.06708
+[DEBUG]2020-06-20 05:29:35,401:utils:grad info pg0: norm std(0.003619) mean(0.009609)
+[DEBUG]2020-06-20 05:29:35,404:utils:grad info pg1: norm std(0.000618) mean(0.001063)
+[DEBUG]2020-06-20 05:29:35,708:utils:on_backward_begin lr: 5.0118723362727245e-05
+[DEBUG]2020-06-20 05:29:35,710:utils:itr: 108, num_batch: 108, last loss: 1.511854, smooth_loss: 0.977023
+[DEBUG]2020-06-20 05:29:35,720:utils:loss_avg: 1.03181, lr_pg0:5.0118723362727245e-05, lr_pg1: 5.0118723362727245e-05final_score:0.53265, mc_score:0.06592
+[DEBUG]2020-06-20 05:29:36,088:utils:grad info pg0: norm std(0.002860) mean(0.007668)
+[DEBUG]2020-06-20 05:29:36,091:utils:grad info pg1: norm std(0.000356) mean(0.000641)
+[DEBUG]2020-06-20 05:29:36,390:utils:on_backward_begin lr: 5.308844442309886e-05
+[DEBUG]2020-06-20 05:29:36,392:utils:itr: 109, num_batch: 109, last loss: 1.033669, smooth_loss: 0.978293
+[DEBUG]2020-06-20 05:29:36,403:utils:loss_avg: 1.03183, lr_pg0:5.308844442309886e-05, lr_pg1: 5.308844442309886e-05final_score:0.53241, mc_score:0.06232
+[DEBUG]2020-06-20 05:29:36,772:utils:grad info pg0: norm std(0.002206) mean(0.005599)
+[DEBUG]2020-06-20 05:29:36,775:utils:grad info pg1: norm std(0.000376) mean(0.000638)
+[DEBUG]2020-06-20 05:29:37,070:utils:on_backward_begin lr: 5.6234132519034934e-05
+[DEBUG]2020-06-20 05:29:37,072:utils:itr: 110, num_batch: 110, last loss: 0.753197, smooth_loss: 0.973257
+[DEBUG]2020-06-20 05:29:37,081:utils:loss_avg: 1.02932, lr_pg0:5.6234132519034934e-05, lr_pg1: 5.6234132519034934e-05final_score:0.53455, mc_score:0.06629
+[DEBUG]2020-06-20 05:29:37,449:utils:grad info pg0: norm std(0.003564) mean(0.008525)
+[DEBUG]2020-06-20 05:29:37,452:utils:grad info pg1: norm std(0.000426) mean(0.000826)
+[DEBUG]2020-06-20 05:29:37,751:utils:on_backward_begin lr: 5.9566214352901076e-05
+[DEBUG]2020-06-20 05:29:37,753:utils:itr: 111, num_batch: 111, last loss: 1.171997, smooth_loss: 0.977693
+[DEBUG]2020-06-20 05:29:37,762:utils:loss_avg: 1.03059, lr_pg0:5.9566214352901076e-05, lr_pg1: 5.9566214352901076e-05final_score:0.53309, mc_score:0.06277
+[DEBUG]2020-06-20 05:29:38,136:utils:grad info pg0: norm std(0.014601) mean(0.029192)
+[DEBUG]2020-06-20 05:29:38,140:utils:grad info pg1: norm std(0.001604) mean(0.002689)
+[DEBUG]2020-06-20 05:29:38,451:utils:on_backward_begin lr: 6.309573444801936e-05
+[DEBUG]2020-06-20 05:29:38,452:utils:itr: 112, num_batch: 112, last loss: 1.360550, smooth_loss: 0.986220
+[DEBUG]2020-06-20 05:29:38,463:utils:loss_avg: 1.03351, lr_pg0:6.309573444801936e-05, lr_pg1: 6.309573444801936e-05final_score:0.52924, mc_score:0.05599
+[DEBUG]2020-06-20 05:29:38,831:utils:grad info pg0: norm std(0.002697) mean(0.007250)
+[DEBUG]2020-06-20 05:29:38,835:utils:grad info pg1: norm std(0.000391) mean(0.000702)
+
+[DEBUG]2020-06-20 05:29:39,135:utils:on_backward_begin lr: 6.683439175686141e-05
+[DEBUG]2020-06-20 05:29:39,136:utils:itr: 113, num_batch: 113, last loss: 0.887789, smooth_loss: 0.984033
+[DEBUG]2020-06-20 05:29:39,147:utils:loss_avg: 1.03223, lr_pg0:6.683439175686141e-05, lr_pg1: 6.683439175686141e-05final_score:0.52988, mc_score:0.05538
+[DEBUG]2020-06-20 05:29:39,516:utils:grad info pg0: norm std(0.007396) mean(0.016888)
+[DEBUG]2020-06-20 05:29:39,519:utils:grad info pg1: norm std(0.000830) mean(0.001519)
+[DEBUG]2020-06-20 05:29:39,818:utils:on_backward_begin lr: 7.079457843841374e-05
+[DEBUG]2020-06-20 05:29:39,819:utils:itr: 114, num_batch: 114, last loss: 0.980857, smooth_loss: 0.983962
+[DEBUG]2020-06-20 05:29:39,829:utils:loss_avg: 1.03179, lr_pg0:7.079457843841374e-05, lr_pg1: 7.079457843841374e-05final_score:0.52897, mc_score:0.05330
+[DEBUG]2020-06-20 05:29:40,196:utils:grad info pg0: norm std(0.004894) mean(0.013910)
+[DEBUG]2020-06-20 05:29:40,199:utils:grad info pg1: norm std(0.000781) mean(0.001428)
+[DEBUG]2020-06-20 05:29:40,516:utils:on_backward_begin lr: 7.498942093324554e-05
+[DEBUG]2020-06-20 05:29:40,518:utils:itr: 115, num_batch: 115, last loss: 0.891704, smooth_loss: 0.981921
+[DEBUG]2020-06-20 05:29:40,528:utils:loss_avg: 1.03058, lr_pg0:7.498942093324554e-05, lr_pg1: 7.498942093324554e-05final_score:0.52887, mc_score:0.05093
+[DEBUG]2020-06-20 05:29:40,902:utils:grad info pg0: norm std(0.005690) mean(0.012799)
+[DEBUG]2020-06-20 05:29:40,906:utils:grad info pg1: norm std(0.000846) mean(0.001456)
+[DEBUG]2020-06-20 05:29:41,226:utils:on_backward_begin lr: 7.943282347242811e-05
+[DEBUG]2020-06-20 05:29:41,227:utils:itr: 116, num_batch: 116, last loss: 0.872181, smooth_loss: 0.979499
+[DEBUG]2020-06-20 05:29:41,238:utils:loss_avg: 1.02922, lr_pg0:7.943282347242811e-05, lr_pg1: 7.943282347242811e-05final_score:0.52755, mc_score:0.04714
+[DEBUG]2020-06-20 05:29:41,613:utils:grad info pg0: norm std(0.011947) mean(0.021821)
+[DEBUG]2020-06-20 05:29:41,616:utils:grad info pg1: norm std(0.000961) mean(0.001882)
+[DEBUG]2020-06-20 05:29:41,914:utils:on_backward_begin lr: 8.413951416451946e-05
+[DEBUG]2020-06-20 05:29:41,916:utils:itr: 117, num_batch: 117, last loss: 0.779552, smooth_loss: 0.975094
+[DEBUG]2020-06-20 05:29:41,926:utils:loss_avg: 1.02711, lr_pg0:8.413951416451946e-05, lr_pg1: 8.413951416451946e-05final_score:0.52927, mc_score:0.04869
+[DEBUG]2020-06-20 05:29:42,293:utils:grad info pg0: norm std(0.006827) mean(0.017747)
+[DEBUG]2020-06-20 05:29:42,296:utils:grad info pg1: norm std(0.000842) mean(0.001586)
+[DEBUG]2020-06-20 05:29:42,592:utils:on_backward_begin lr: 8.912509381337452e-05
+[DEBUG]2020-06-20 05:29:42,593:utils:itr: 118, num_batch: 118, last loss: 0.967416, smooth_loss: 0.974925
+[DEBUG]2020-06-20 05:29:42,603:utils:loss_avg: 1.02661, lr_pg0:8.912509381337452e-05, lr_pg1: 8.912509381337452e-05final_score:0.52857, mc_score:0.04818
+[DEBUG]2020-06-20 05:29:42,968:utils:grad info pg0: norm std(0.004974) mean(0.013891)
+[DEBUG]2020-06-20 05:29:42,971:utils:grad info pg1: norm std(0.000648) mean(0.001244)
+[DEBUG]2020-06-20 05:29:43,275:utils:on_backward_begin lr: 9.44060876285923e-05
+[DEBUG]2020-06-20 05:29:43,276:utils:itr: 119, num_batch: 119, last loss: 0.710971, smooth_loss: 0.969133
+[DEBUG]2020-06-20 05:29:43,286:utils:loss_avg: 1.02398, lr_pg0:9.44060876285923e-05, lr_pg1: 9.44060876285923e-05final_score:0.53144, mc_score:0.05280
+[DEBUG]2020-06-20 05:29:43,654:utils:grad info pg0: norm std(0.005180) mean(0.011670)
+[DEBUG]2020-06-20 05:29:43,657:utils:grad info pg1: norm std(0.000609) mean(0.001131)
+[DEBUG]2020-06-20 05:29:43,958:utils:on_backward_begin lr: 9.999999999999998e-05
+[DEBUG]2020-06-20 05:29:43,960:utils:itr: 120, num_batch: 120, last loss: 0.706354, smooth_loss: 0.963378
+[DEBUG]2020-06-20 05:29:43,969:utils:loss_avg: 1.02135, lr_pg0:9.999999999999998e-05, lr_pg1: 9.999999999999998e-05final_score:0.53393, mc_score:0.05651
+[DEBUG]2020-06-20 05:29:44,335:utils:grad info pg0: norm std(0.004700) mean(0.011833)
+[DEBUG]2020-06-20 05:29:44,338:utils:grad info pg1: norm std(0.000943) mean(0.001489)
+[DEBUG]2020-06-20 05:29:44,650:utils:on_backward_begin lr: 0.00010592537251772888
+[DEBUG]2020-06-20 05:29:44,651:utils:itr: 121, num_batch: 121, last loss: 0.981949, smooth_loss: 0.963784
+[DEBUG]2020-06-20 05:29:44,660:utils:loss_avg: 1.02103, lr_pg0:0.00010592537251772888, lr_pg1: 0.00010592537251772888final_score:0.53278, mc_score:0.05269
+[DEBUG]2020-06-20 05:29:45,029:utils:grad info pg0: norm std(0.004012) mean(0.010665)
+[DEBUG]2020-06-20 05:29:45,032:utils:grad info pg1: norm std(0.000841) mean(0.001394)
+[DEBUG]2020-06-20 05:29:45,342:utils:on_backward_begin lr: 0.00011220184543019631
+[DEBUG]2020-06-20 05:29:45,344:utils:itr: 122, num_batch: 122, last loss: 0.838404, smooth_loss: 0.961048
+[DEBUG]2020-06-20 05:29:45,356:utils:loss_avg: 1.01954, lr_pg0:0.00011220184543019631, lr_pg1: 0.00011220184543019631final_score:0.53248, mc_score:0.04944
+[DEBUG]2020-06-20 05:29:45,772:utils:grad info pg0: norm std(0.035255) mean(0.036511)
+[DEBUG]2020-06-20 05:29:45,775:utils:grad info pg1: norm std(0.001304) mean(0.002387)
+[DEBUG]2020-06-20 05:29:46,075:utils:on_backward_begin lr: 0.00011885022274370182
+[DEBUG]2020-06-20 05:29:46,076:utils:itr: 123, num_batch: 123, last loss: 0.622357, smooth_loss: 0.953672
+[DEBUG]2020-06-20 05:29:46,087:utils:loss_avg: 1.01634, lr_pg0:0.00011885022274370182, lr_pg1: 0.00011885022274370182final_score:0.53640, mc_score:0.05251
+[DEBUG]2020-06-20 05:29:46,455:utils:grad info pg0: norm std(0.013064) mean(0.034433)
+[DEBUG]2020-06-20 05:29:46,458:utils:grad info pg1: norm std(0.001775) mean(0.003155)
+[DEBUG]2020-06-20 05:29:46,754:utils:on_backward_begin lr: 0.0001258925411794167
+[DEBUG]2020-06-20 05:29:46,756:utils:itr: 124, num_batch: 124, last loss: 1.030403, smooth_loss: 0.955340
+[DEBUG]2020-06-20 05:29:46,765:utils:loss_avg: 1.01645, lr_pg0:0.0001258925411794167, lr_pg1: 0.0001258925411794167final_score:0.53702, mc_score:0.05191
+[DEBUG]2020-06-20 05:29:47,133:utils:grad info pg0: norm std(0.008783) mean(0.019647)
+[DEBUG]2020-06-20 05:29:47,137:utils:grad info pg1: norm std(0.000972) mean(0.001724)
+[DEBUG]2020-06-20 05:29:47,440:utils:on_backward_begin lr: 0.0001333521432163324
+[DEBUG]2020-06-20 05:29:47,442:utils:itr: 125, num_batch: 125, last loss: 0.818678, smooth_loss: 0.952375
+[DEBUG]2020-06-20 05:29:47,453:utils:loss_avg: 1.01488, lr_pg0:0.0001333521432163324, lr_pg1: 0.0001333521432163324final_score:0.53956, mc_score:0.05211
+[DEBUG]2020-06-20 05:29:47,823:utils:grad info pg0: norm std(0.007203) mean(0.016430)
+[DEBUG]2020-06-20 05:29:47,827:utils:grad info pg1: norm std(0.001546) mean(0.002389)
+[DEBUG]2020-06-20 05:29:48,128:utils:on_backward_begin lr: 0.00014125375446227543
+[DEBUG]2020-06-20 05:29:48,130:utils:itr: 126, num_batch: 126, last loss: 1.136188, smooth_loss: 0.956357
+[DEBUG]2020-06-20 05:29:48,140:utils:loss_avg: 1.01584, lr_pg0:0.00014125375446227543, lr_pg1: 0.00014125375446227543final_score:0.54220, mc_score:0.05544
+[DEBUG]2020-06-20 05:29:48,514:utils:grad info pg0: norm std(0.008423) mean(0.020125)
+[DEBUG]2020-06-20 05:29:48,518:utils:grad info pg1: norm std(0.001457) mean(0.002326)
+[DEBUG]2020-06-20 05:29:48,815:utils:on_backward_begin lr: 0.00014962356560944336
+[DEBUG]2020-06-20 05:29:48,816:utils:itr: 127, num_batch: 127, last loss: 0.899351, smooth_loss: 0.955124
+[DEBUG]2020-06-20 05:29:48,827:utils:loss_avg: 1.01493, lr_pg0:0.00014962356560944336, lr_pg1: 0.00014962356560944336final_score:0.54269, mc_score:0.05456
+[DEBUG]2020-06-20 05:29:49,199:utils:grad info pg0: norm std(0.011918) mean(0.034453)
+[DEBUG]2020-06-20 05:29:49,202:utils:grad info pg1: norm std(0.001358) mean(0.002691)
+[DEBUG]2020-06-20 05:29:49,507:utils:on_backward_begin lr: 0.00015848931924611136
+[DEBUG]2020-06-20 05:29:49,509:utils:itr: 128, num_batch: 128, last loss: 0.997433, smooth_loss: 0.956038
+[DEBUG]2020-06-20 05:29:49,518:utils:loss_avg: 1.01479, lr_pg0:0.00015848931924611136, lr_pg1: 0.00015848931924611136final_score:0.54273, mc_score:0.05265
+[DEBUG]2020-06-20 05:29:49,886:utils:grad info pg0: norm std(0.006196) mean(0.015010)
+[DEBUG]2020-06-20 05:29:49,889:utils:grad info pg1: norm std(0.000945) mean(0.001704)
+
+[DEBUG]2020-06-20 05:29:50,191:utils:on_backward_begin lr: 0.00016788040181225605
+[DEBUG]2020-06-20 05:29:50,192:utils:itr: 129, num_batch: 129, last loss: 1.000897, smooth_loss: 0.957005
+[DEBUG]2020-06-20 05:29:50,206:utils:loss_avg: 1.01469, lr_pg0:0.00016788040181225605, lr_pg1: 0.00016788040181225605final_score:0.54333, mc_score:0.05449
+[DEBUG]2020-06-20 05:29:50,573:utils:grad info pg0: norm std(0.008089) mean(0.020454)
+[DEBUG]2020-06-20 05:29:50,577:utils:grad info pg1: norm std(0.001405) mean(0.002338)
+[DEBUG]2020-06-20 05:29:50,881:utils:on_backward_begin lr: 0.00017782794100389232
+[DEBUG]2020-06-20 05:29:50,883:utils:itr: 130, num_batch: 130, last loss: 0.693575, smooth_loss: 0.951334
+[DEBUG]2020-06-20 05:29:50,894:utils:loss_avg: 1.01224, lr_pg0:0.00017782794100389232, lr_pg1: 0.00017782794100389232final_score:0.54667, mc_score:0.05782
+[DEBUG]2020-06-20 05:29:51,262:utils:grad info pg0: norm std(0.009449) mean(0.019268)
+[DEBUG]2020-06-20 05:29:51,265:utils:grad info pg1: norm std(0.001201) mean(0.002101)
+[DEBUG]2020-06-20 05:29:51,576:utils:on_backward_begin lr: 0.0001883649089489801
+[DEBUG]2020-06-20 05:29:51,578:utils:itr: 131, num_batch: 131, last loss: 0.701814, smooth_loss: 0.945971
+[DEBUG]2020-06-20 05:29:51,588:utils:loss_avg: 1.00988, lr_pg0:0.0001883649089489801, lr_pg1: 0.0001883649089489801final_score:0.54932, mc_score:0.06163
+[DEBUG]2020-06-20 05:29:51,958:utils:grad info pg0: norm std(0.000865) mean(0.002146)
+[DEBUG]2020-06-20 05:29:51,962:utils:grad info pg1: norm std(0.000150) mean(0.000252)
+[DEBUG]2020-06-20 05:29:52,260:utils:on_backward_begin lr: 0.000199526231496888
+[DEBUG]2020-06-20 05:29:52,263:utils:itr: 132, num_batch: 132, last loss: 0.677522, smooth_loss: 0.940210
+[DEBUG]2020-06-20 05:29:52,273:utils:loss_avg: 1.00738, lr_pg0:0.000199526231496888, lr_pg1: 0.000199526231496888final_score:0.55250, mc_score:0.06568
+[DEBUG]2020-06-20 05:29:52,641:utils:grad info pg0: norm std(0.000117) mean(0.000200)
+[DEBUG]2020-06-20 05:29:52,644:utils:grad info pg1: norm std(0.000011) mean(0.000020)
+[DEBUG]2020-06-20 05:29:52,945:utils:on_backward_begin lr: 0.0002113489039836648
+[DEBUG]2020-06-20 05:29:52,946:utils:itr: 133, num_batch: 133, last loss: 1.798826, smooth_loss: 0.958610
+[DEBUG]2020-06-20 05:29:52,957:utils:loss_avg: 1.01329, lr_pg0:0.0002113489039836648, lr_pg1: 0.0002113489039836648final_score:0.54946, mc_score:0.06245
+[DEBUG]2020-06-20 05:29:53,325:utils:grad info pg0: norm std(0.000187) mean(0.000387)
+[DEBUG]2020-06-20 05:29:53,329:utils:grad info pg1: norm std(0.000019) mean(0.000034)
+[DEBUG]2020-06-20 05:29:53,642:utils:on_backward_begin lr: 0.00022387211385683408
+[DEBUG]2020-06-20 05:29:53,643:utils:itr: 134, num_batch: 134, last loss: 2.004953, smooth_loss: 0.981001
+[DEBUG]2020-06-20 05:29:53,654:utils:loss_avg: 1.02064, lr_pg0:0.00022387211385683408, lr_pg1: 0.00022387211385683408final_score:0.54641, mc_score:0.05933
+[DEBUG]2020-06-20 05:29:54,022:utils:grad info pg0: norm std(0.000051) mean(0.000111)
+[DEBUG]2020-06-20 05:29:54,025:utils:grad info pg1: norm std(0.000006) mean(0.000011)
+[DEBUG]2020-06-20 05:29:54,324:utils:on_backward_begin lr: 0.00023713737056616565
+[DEBUG]2020-06-20 05:29:54,325:utils:itr: 135, num_batch: 135, last loss: 1.449392, smooth_loss: 0.991010
+[DEBUG]2020-06-20 05:29:54,335:utils:loss_avg: 1.02379, lr_pg0:0.00023713737056616565, lr_pg1: 0.00023713737056616565final_score:0.54154, mc_score:0.05200
+[DEBUG]2020-06-20 05:29:54,704:utils:grad info pg0: norm std(0.000014) mean(0.000024)
+[DEBUG]2020-06-20 05:29:54,708:utils:grad info pg1: norm std(0.000001) mean(0.000003)
+[DEBUG]2020-06-20 05:29:55,006:utils:on_backward_begin lr: 0.00025118864315095817
+[DEBUG]2020-06-20 05:29:55,008:utils:itr: 136, num_batch: 136, last loss: 0.813053, smooth_loss: 0.987213
+[DEBUG]2020-06-20 05:29:55,018:utils:loss_avg: 1.02225, lr_pg0:0.00025118864315095817, lr_pg1: 0.00025118864315095817final_score:0.54199, mc_score:0.05162
+[DEBUG]2020-06-20 05:29:55,387:utils:grad info pg0: norm std(0.000064) mean(0.000137)
+[DEBUG]2020-06-20 05:29:55,390:utils:grad info pg1: norm std(0.000006) mean(0.000012)
+[DEBUG]2020-06-20 05:29:55,688:utils:on_backward_begin lr: 0.0002660725059798811
+[DEBUG]2020-06-20 05:29:55,689:utils:itr: 137, num_batch: 137, last loss: 0.833798, smooth_loss: 0.983943
+[DEBUG]2020-06-20 05:29:55,700:utils:loss_avg: 1.02089, lr_pg0:0.0002660725059798811, lr_pg1: 0.0002660725059798811final_score:0.54169, mc_score:0.05084
+[DEBUG]2020-06-20 05:29:56,073:utils:grad info pg0: norm std(0.000049) mean(0.000090)
+[DEBUG]2020-06-20 05:29:56,076:utils:grad info pg1: norm std(0.000005) mean(0.000008)
+[DEBUG]2020-06-20 05:29:56,376:utils:on_backward_begin lr: 0.0002818382931264452
+[DEBUG]2020-06-20 05:29:56,378:utils:itr: 138, num_batch: 138, last loss: 0.867028, smooth_loss: 0.981455
+[DEBUG]2020-06-20 05:29:56,390:utils:loss_avg: 1.01978, lr_pg0:0.0002818382931264452, lr_pg1: 0.0002818382931264452final_score:0.54366, mc_score:0.05382
+[DEBUG]2020-06-20 05:29:56,759:utils:grad info pg0: norm std(0.000052) mean(0.000106)
+[DEBUG]2020-06-20 05:29:56,763:utils:grad info pg1: norm std(0.000005) mean(0.000009)
+[DEBUG]2020-06-20 05:29:57,062:utils:on_backward_begin lr: 0.0002985382618917958
+[DEBUG]2020-06-20 05:29:57,064:utils:itr: 139, num_batch: 139, last loss: 1.126376, smooth_loss: 0.984535
+[DEBUG]2020-06-20 05:29:57,073:utils:loss_avg: 1.02054, lr_pg0:0.0002985382618917958, lr_pg1: 0.0002985382618917958final_score:0.54325, mc_score:0.05520
+[DEBUG]2020-06-20 05:29:57,441:utils:grad info pg0: norm std(0.000065) mean(0.000152)
+[DEBUG]2020-06-20 05:29:57,444:utils:grad info pg1: norm std(0.000008) mean(0.000015)
+[DEBUG]2020-06-20 05:29:57,744:utils:on_backward_begin lr: 0.0003162277660168378
+[DEBUG]2020-06-20 05:29:57,746:utils:itr: 140, num_batch: 140, last loss: 1.640198, smooth_loss: 0.998455
+[DEBUG]2020-06-20 05:29:57,755:utils:loss_avg: 1.02493, lr_pg0:0.0003162277660168378, lr_pg1: 0.0003162277660168378final_score:0.53922, mc_score:0.05053
+[DEBUG]2020-06-20 05:29:58,123:utils:grad info pg0: norm std(0.000047) mean(0.000081)
+[DEBUG]2020-06-20 05:29:58,126:utils:grad info pg1: norm std(0.000005) mean(0.000009)
+[DEBUG]2020-06-20 05:29:58,425:utils:on_backward_begin lr: 0.00033496543915782746
+[DEBUG]2020-06-20 05:29:58,427:utils:itr: 141, num_batch: 141, last loss: 1.014719, smooth_loss: 0.998800
+[DEBUG]2020-06-20 05:29:58,436:utils:loss_avg: 1.02486, lr_pg0:0.00033496543915782746, lr_pg1: 0.00033496543915782746final_score:0.53794, mc_score:0.04878
+[DEBUG]2020-06-20 05:29:58,804:utils:grad info pg0: norm std(0.000133) mean(0.000223)
+[DEBUG]2020-06-20 05:29:58,808:utils:grad info pg1: norm std(0.000009) mean(0.000018)
+[DEBUG]2020-06-20 05:29:59,105:utils:on_backward_begin lr: 0.00035481338923357527
+[DEBUG]2020-06-20 05:29:59,106:utils:itr: 142, num_batch: 142, last loss: 0.723214, smooth_loss: 0.992963
+[DEBUG]2020-06-20 05:29:59,116:utils:loss_avg: 1.02275, lr_pg0:0.00035481338923357527, lr_pg1: 0.00035481338923357527final_score:0.53884, mc_score:0.05172
+[DEBUG]2020-06-20 05:29:59,485:utils:grad info pg0: norm std(0.000253) mean(0.000369)
+[DEBUG]2020-06-20 05:29:59,487:utils:grad info pg1: norm std(0.000027) mean(0.000046)
+[DEBUG]2020-06-20 05:29:59,786:utils:on_backward_begin lr: 0.000375837404288444
+[DEBUG]2020-06-20 05:29:59,788:utils:itr: 143, num_batch: 143, last loss: 0.849595, smooth_loss: 0.989931
+[DEBUG]2020-06-20 05:29:59,797:utils:loss_avg: 1.02155, lr_pg0:0.000375837404288444, lr_pg1: 0.000375837404288444final_score:0.53881, mc_score:0.05116
+[DEBUG]2020-06-20 05:30:00,164:utils:grad info pg0: norm std(0.000239) mean(0.000418)
+[DEBUG]2020-06-20 05:30:00,168:utils:grad info pg1: norm std(0.000023) mean(0.000041)
+[DEBUG]2020-06-20 05:30:00,468:utils:on_backward_begin lr: 0.00039810717055349714
+[DEBUG]2020-06-20 05:30:00,469:utils:itr: 144, num_batch: 144, last loss: 0.937151, smooth_loss: 0.988816
+[DEBUG]2020-06-20 05:30:00,478:utils:loss_avg: 1.02097, lr_pg0:0.00039810717055349714, lr_pg1: 0.00039810717055349714final_score:0.53743, mc_score:0.04692
+[DEBUG]2020-06-20 05:30:00,847:utils:grad info pg0: norm std(0.000243) mean(0.000427)
+[DEBUG]2020-06-20 05:30:00,851:utils:grad info pg1: norm std(0.000025) mean(0.000045)
+
+[DEBUG]2020-06-20 05:30:01,152:utils:on_backward_begin lr: 0.00042169650342858213
+[DEBUG]2020-06-20 05:30:01,153:utils:itr: 145, num_batch: 145, last loss: 0.782527, smooth_loss: 0.984462
+[DEBUG]2020-06-20 05:30:01,163:utils:loss_avg: 1.01934, lr_pg0:0.00042169650342858213, lr_pg1: 0.00042169650342858213final_score:0.53844, mc_score:0.04972
+[DEBUG]2020-06-20 05:30:01,530:utils:grad info pg0: norm std(0.000114) mean(0.000184)
+[DEBUG]2020-06-20 05:30:01,533:utils:grad info pg1: norm std(0.000012) mean(0.000021)
+[DEBUG]2020-06-20 05:30:01,833:utils:on_backward_begin lr: 0.00044668359215096305
+[DEBUG]2020-06-20 05:30:01,835:utils:itr: 146, num_batch: 146, last loss: 1.084105, smooth_loss: 0.986563
+[DEBUG]2020-06-20 05:30:01,845:utils:loss_avg: 1.01978, lr_pg0:0.00044668359215096305, lr_pg1: 0.00044668359215096305final_score:0.53752, mc_score:0.04959
+[DEBUG]2020-06-20 05:30:02,219:utils:grad info pg0: norm std(0.000333) mean(0.000472)
+[DEBUG]2020-06-20 05:30:02,223:utils:grad info pg1: norm std(0.000023) mean(0.000042)
+[DEBUG]2020-06-20 05:30:02,519:utils:on_backward_begin lr: 0.00047315125896148035
+[DEBUG]2020-06-20 05:30:02,520:utils:itr: 147, num_batch: 147, last loss: 1.166298, smooth_loss: 0.990348
+[DEBUG]2020-06-20 05:30:02,530:utils:loss_avg: 1.02077, lr_pg0:0.00047315125896148035, lr_pg1: 0.00047315125896148035final_score:0.53606, mc_score:0.04663
+[DEBUG]2020-06-20 05:30:02,895:utils:grad info pg0: norm std(0.000043) mean(0.000072)
+[DEBUG]2020-06-20 05:30:02,898:utils:grad info pg1: norm std(0.000004) mean(0.000007)
+[DEBUG]2020-06-20 05:30:03,194:utils:on_backward_begin lr: 0.0005011872336272722
+[DEBUG]2020-06-20 05:30:03,195:utils:itr: 148, num_batch: 148, last loss: 0.719493, smooth_loss: 0.984650
+[DEBUG]2020-06-20 05:30:03,205:utils:loss_avg: 1.01874, lr_pg0:0.0005011872336272722, lr_pg1: 0.0005011872336272722final_score:0.53812, mc_score:0.05198
+[DEBUG]2020-06-20 05:30:03,571:utils:grad info pg0: norm std(0.000029) mean(0.000048)
+[DEBUG]2020-06-20 05:30:03,574:utils:grad info pg1: norm std(0.000003) mean(0.000006)
+[DEBUG]2020-06-20 05:30:03,872:utils:on_backward_begin lr: 0.0005308844442309883
+[DEBUG]2020-06-20 05:30:03,873:utils:itr: 149, num_batch: 149, last loss: 2.115553, smooth_loss: 1.008416
+[DEBUG]2020-06-20 05:30:03,883:utils:loss_avg: 1.02606, lr_pg0:0.0005308844442309883, lr_pg1: 0.0005308844442309883final_score:0.53578, mc_score:0.04933
+[DEBUG]2020-06-20 05:30:04,252:utils:grad info pg0: norm std(0.000016) mean(0.000028)
+[DEBUG]2020-06-20 05:30:04,256:utils:grad info pg1: norm std(0.000002) mean(0.000003)
+[DEBUG]2020-06-20 05:30:04,562:utils:on_backward_begin lr: 0.0005623413251903491
+[DEBUG]2020-06-20 05:30:04,564:utils:itr: 150, num_batch: 150, last loss: 2.566210, smooth_loss: 1.041119
+[DEBUG]2020-06-20 05:30:04,574:utils:loss_avg: 1.03626, lr_pg0:0.0005623413251903491, lr_pg1: 0.0005623413251903491final_score:0.53033, mc_score:0.04288
+[DEBUG]2020-06-20 05:30:04,942:utils:grad info pg0: norm std(0.000003) mean(0.000005)
+[DEBUG]2020-06-20 05:30:04,945:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:05,244:utils:on_backward_begin lr: 0.0005956621435290105
+[DEBUG]2020-06-20 05:30:05,246:utils:itr: 151, num_batch: 151, last loss: 1.133912, smooth_loss: 1.043066
+[DEBUG]2020-06-20 05:30:05,256:utils:loss_avg: 1.03690, lr_pg0:0.0005956621435290105, lr_pg1: 0.0005956621435290105final_score:0.53109, mc_score:0.04424
+[DEBUG]2020-06-20 05:30:05,636:utils:grad info pg0: norm std(0.000001) mean(0.000002)
+[DEBUG]2020-06-20 05:30:05,640:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:05,940:utils:on_backward_begin lr: 0.0006309573444801933
+[DEBUG]2020-06-20 05:30:05,941:utils:itr: 152, num_batch: 152, last loss: 1.033337, smooth_loss: 1.042862
+[DEBUG]2020-06-20 05:30:05,952:utils:loss_avg: 1.03688, lr_pg0:0.0006309573444801933, lr_pg1: 0.0006309573444801933final_score:0.52920, mc_score:0.03833
+[DEBUG]2020-06-20 05:30:06,320:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:06,324:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:06,626:utils:on_backward_begin lr: 0.0006683439175686147
+[DEBUG]2020-06-20 05:30:06,627:utils:itr: 153, num_batch: 153, last loss: 0.974306, smooth_loss: 1.041427
+[DEBUG]2020-06-20 05:30:06,637:utils:loss_avg: 1.03647, lr_pg0:0.0006683439175686147, lr_pg1: 0.0006683439175686147final_score:0.52842, mc_score:0.03686
+[DEBUG]2020-06-20 05:30:07,005:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:07,009:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:07,308:utils:on_backward_begin lr: 0.000707945784384138
+[DEBUG]2020-06-20 05:30:07,310:utils:itr: 154, num_batch: 154, last loss: 1.095729, smooth_loss: 1.042562
+[DEBUG]2020-06-20 05:30:07,319:utils:loss_avg: 1.03685, lr_pg0:0.000707945784384138, lr_pg1: 0.000707945784384138final_score:0.52725, mc_score:0.03422
+[DEBUG]2020-06-20 05:30:07,686:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:07,690:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:07,993:utils:on_backward_begin lr: 0.000749894209332456
+[DEBUG]2020-06-20 05:30:07,994:utils:itr: 155, num_batch: 155, last loss: 0.947869, smooth_loss: 1.040584
+[DEBUG]2020-06-20 05:30:08,004:utils:loss_avg: 1.03628, lr_pg0:0.000749894209332456, lr_pg1: 0.000749894209332456final_score:0.52690, mc_score:0.02977
+[DEBUG]2020-06-20 05:30:08,372:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:08,375:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:08,677:utils:on_backward_begin lr: 0.0007943282347242816
+[DEBUG]2020-06-20 05:30:08,678:utils:itr: 156, num_batch: 156, last loss: 0.945866, smooth_loss: 1.038607
+[DEBUG]2020-06-20 05:30:08,688:utils:loss_avg: 1.03571, lr_pg0:0.0007943282347242816, lr_pg1: 0.0007943282347242816final_score:0.52605, mc_score:0.02744
+[DEBUG]2020-06-20 05:30:09,056:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:09,059:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:09,357:utils:on_backward_begin lr: 0.0008413951416451952
+[DEBUG]2020-06-20 05:30:09,359:utils:itr: 157, num_batch: 157, last loss: 0.621217, smooth_loss: 1.029901
+[DEBUG]2020-06-20 05:30:09,370:utils:loss_avg: 1.03308, lr_pg0:0.0008413951416451952, lr_pg1: 0.0008413951416451952final_score:0.52879, mc_score:0.03246
+[DEBUG]2020-06-20 05:30:09,744:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:09,747:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:10,058:utils:on_backward_begin lr: 0.0008912509381337458
+[DEBUG]2020-06-20 05:30:10,060:utils:itr: 158, num_batch: 158, last loss: 1.010131, smooth_loss: 1.029489
+[DEBUG]2020-06-20 05:30:10,073:utils:loss_avg: 1.03294, lr_pg0:0.0008912509381337458, lr_pg1: 0.0008912509381337458final_score:0.52951, mc_score:0.03375
+[DEBUG]2020-06-20 05:30:10,446:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:10,450:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:10,762:utils:on_backward_begin lr: 0.0009440608762859237
+[DEBUG]2020-06-20 05:30:10,764:utils:itr: 159, num_batch: 159, last loss: 1.718415, smooth_loss: 1.043834
+[DEBUG]2020-06-20 05:30:10,774:utils:loss_avg: 1.03722, lr_pg0:0.0009440608762859237, lr_pg1: 0.0009440608762859237final_score:0.52625, mc_score:0.02968
+[DEBUG]2020-06-20 05:30:11,149:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:11,152:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:11,461:utils:on_backward_begin lr: 0.0010000000000000005
+[DEBUG]2020-06-20 05:30:11,463:utils:itr: 160, num_batch: 160, last loss: 1.335687, smooth_loss: 1.049906
+[DEBUG]2020-06-20 05:30:11,473:utils:loss_avg: 1.03908, lr_pg0:0.0010000000000000005, lr_pg1: 0.0010000000000000005final_score:0.52440, mc_score:0.02747
+[DEBUG]2020-06-20 05:30:11,841:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:11,844:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+
+[DEBUG]2020-06-20 05:30:12,145:utils:on_backward_begin lr: 0.0010592537251772895
+[DEBUG]2020-06-20 05:30:12,146:utils:itr: 161, num_batch: 161, last loss: 1.083249, smooth_loss: 1.050599
+[DEBUG]2020-06-20 05:30:12,157:utils:loss_avg: 1.03935, lr_pg0:0.0010592537251772895, lr_pg1: 0.0010592537251772895final_score:0.52326, mc_score:0.02532
+[DEBUG]2020-06-20 05:30:12,530:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:12,534:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:12,845:utils:on_backward_begin lr: 0.0011220184543019641
+[DEBUG]2020-06-20 05:30:12,847:utils:itr: 162, num_batch: 162, last loss: 0.935228, smooth_loss: 1.048203
+[DEBUG]2020-06-20 05:30:12,858:utils:loss_avg: 1.03871, lr_pg0:0.0011220184543019641, lr_pg1: 0.0011220184543019641final_score:0.52291, mc_score:0.02400
+[DEBUG]2020-06-20 05:30:13,225:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:13,228:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:13,524:utils:on_backward_begin lr: 0.0011885022274370177
+[DEBUG]2020-06-20 05:30:13,525:utils:itr: 163, num_batch: 163, last loss: 0.824387, smooth_loss: 1.043557
+[DEBUG]2020-06-20 05:30:13,534:utils:loss_avg: 1.03740, lr_pg0:0.0011885022274370177, lr_pg1: 0.0011885022274370177final_score:0.52333, mc_score:0.02541
+[DEBUG]2020-06-20 05:30:13,902:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:13,905:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:14,203:utils:on_backward_begin lr: 0.0012589254117941666
+[DEBUG]2020-06-20 05:30:14,205:utils:itr: 164, num_batch: 164, last loss: 0.922237, smooth_loss: 1.041041
+[DEBUG]2020-06-20 05:30:14,216:utils:loss_avg: 1.03670, lr_pg0:0.0012589254117941666, lr_pg1: 0.0012589254117941666final_score:0.52340, mc_score:0.02411
+[DEBUG]2020-06-20 05:30:14,584:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:14,587:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:14,901:utils:on_backward_begin lr: 0.0013335214321633232
+[DEBUG]2020-06-20 05:30:14,903:utils:itr: 165, num_batch: 165, last loss: 0.891411, smooth_loss: 1.037940
+[DEBUG]2020-06-20 05:30:14,912:utils:loss_avg: 1.03583, lr_pg0:0.0013335214321633232, lr_pg1: 0.0013335214321633232final_score:0.52294, mc_score:0.02259
+[DEBUG]2020-06-20 05:30:15,282:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:15,285:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:15,781:utils:on_backward_begin lr: 0.0014125375446227537
+[DEBUG]2020-06-20 05:30:15,782:utils:itr: 166, num_batch: 166, last loss: 0.810124, smooth_loss: 1.033222
+[DEBUG]2020-06-20 05:30:15,792:utils:loss_avg: 1.03448, lr_pg0:0.0014125375446227537, lr_pg1: 0.0014125375446227537final_score:0.52325, mc_score:0.02389
+[DEBUG]2020-06-20 05:30:16,160:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:16,163:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:16,484:utils:on_backward_begin lr: 0.0014962356560944327
+[DEBUG]2020-06-20 05:30:16,486:utils:itr: 167, num_batch: 167, last loss: 0.962215, smooth_loss: 1.031753
+[DEBUG]2020-06-20 05:30:16,496:utils:loss_avg: 1.03405, lr_pg0:0.0014962356560944327, lr_pg1: 0.0014962356560944327final_score:0.52372, mc_score:0.02516
+[DEBUG]2020-06-20 05:30:16,865:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:16,868:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:17,171:utils:on_backward_begin lr: 0.001584893192461113
+[DEBUG]2020-06-20 05:30:17,173:utils:itr: 168, num_batch: 168, last loss: 1.079736, smooth_loss: 1.032745
+[DEBUG]2020-06-20 05:30:17,183:utils:loss_avg: 1.03432, lr_pg0:0.001584893192461113, lr_pg1: 0.001584893192461113final_score:0.52311, mc_score:0.02475
+[DEBUG]2020-06-20 05:30:17,552:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:17,555:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:17,874:utils:on_backward_begin lr: 0.0016788040181225598
+[DEBUG]2020-06-20 05:30:17,876:utils:itr: 169, num_batch: 169, last loss: 1.035752, smooth_loss: 1.032807
+[DEBUG]2020-06-20 05:30:17,887:utils:loss_avg: 1.03433, lr_pg0:0.0016788040181225598, lr_pg1: 0.0016788040181225598final_score:0.52257, mc_score:0.02292
+[DEBUG]2020-06-20 05:30:18,257:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:18,260:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:18,559:utils:on_backward_begin lr: 0.001778279410038922
+[DEBUG]2020-06-20 05:30:18,561:utils:itr: 170, num_batch: 170, last loss: 0.851122, smooth_loss: 1.029055
+[DEBUG]2020-06-20 05:30:18,571:utils:loss_avg: 1.03326, lr_pg0:0.001778279410038922, lr_pg1: 0.001778279410038922final_score:0.52271, mc_score:0.02431
+[DEBUG]2020-06-20 05:30:18,939:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:18,942:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:19,238:utils:on_backward_begin lr: 0.0018836490894898
+[DEBUG]2020-06-20 05:30:19,240:utils:itr: 171, num_batch: 171, last loss: 0.905630, smooth_loss: 1.026507
+[DEBUG]2020-06-20 05:30:19,250:utils:loss_avg: 1.03251, lr_pg0:0.0018836490894898, lr_pg1: 0.0018836490894898final_score:0.52371, mc_score:0.02567
+[DEBUG]2020-06-20 05:30:19,619:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:19,622:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:19,928:utils:on_backward_begin lr: 0.001995262314968879
+[DEBUG]2020-06-20 05:30:19,930:utils:itr: 172, num_batch: 172, last loss: 1.524831, smooth_loss: 1.036786
+[DEBUG]2020-06-20 05:30:19,940:utils:loss_avg: 1.03536, lr_pg0:0.001995262314968879, lr_pg1: 0.001995262314968879final_score:0.52135, mc_score:0.02313
+[DEBUG]2020-06-20 05:30:20,308:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:20,311:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:20,612:utils:on_backward_begin lr: 0.002113489039836646
+[DEBUG]2020-06-20 05:30:20,614:utils:itr: 173, num_batch: 173, last loss: 0.793858, smooth_loss: 1.031778
+[DEBUG]2020-06-20 05:30:20,625:utils:loss_avg: 1.03397, lr_pg0:0.002113489039836646, lr_pg1: 0.002113489039836646final_score:0.52171, mc_score:0.02586
+[DEBUG]2020-06-20 05:30:20,993:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:20,996:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:21,296:utils:on_backward_begin lr: 0.0022387211385683395
+[DEBUG]2020-06-20 05:30:21,297:utils:itr: 174, num_batch: 174, last loss: 0.871456, smooth_loss: 1.028476
+[DEBUG]2020-06-20 05:30:21,308:utils:loss_avg: 1.03304, lr_pg0:0.0022387211385683395, lr_pg1: 0.0022387211385683395final_score:0.52160, mc_score:0.02293
+[DEBUG]2020-06-20 05:30:21,678:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:21,681:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:21,979:utils:on_backward_begin lr: 0.002371373705661655
+[DEBUG]2020-06-20 05:30:21,980:utils:itr: 175, num_batch: 175, last loss: 1.095547, smooth_loss: 1.029857
+[DEBUG]2020-06-20 05:30:21,991:utils:loss_avg: 1.03340, lr_pg0:0.002371373705661655, lr_pg1: 0.002371373705661655final_score:0.52046, mc_score:0.02096
+[DEBUG]2020-06-20 05:30:22,359:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:22,362:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:22,659:utils:on_backward_begin lr: 0.00251188643150958
+[DEBUG]2020-06-20 05:30:22,661:utils:itr: 176, num_batch: 176, last loss: 0.716887, smooth_loss: 1.023417
+[DEBUG]2020-06-20 05:30:22,672:utils:loss_avg: 1.03161, lr_pg0:0.00251188643150958, lr_pg1: 0.00251188643150958final_score:0.52256, mc_score:0.02533
+[DEBUG]2020-06-20 05:30:23,042:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:23,045:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:23,348:utils:on_backward_begin lr: 0.0026607250597988096
+
+[DEBUG]2020-06-20 05:30:23,349:utils:itr: 177, num_batch: 177, last loss: 0.912919, smooth_loss: 1.021145
+[DEBUG]2020-06-20 05:30:23,360:utils:loss_avg: 1.03094, lr_pg0:0.0026607250597988096, lr_pg1: 0.0026607250597988096final_score:0.52295, mc_score:0.02649
+[DEBUG]2020-06-20 05:30:23,728:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:23,732:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:24,037:utils:on_backward_begin lr: 0.002818382931264454
+[DEBUG]2020-06-20 05:30:24,038:utils:itr: 178, num_batch: 178, last loss: 1.114650, smooth_loss: 1.023067
+[DEBUG]2020-06-20 05:30:24,050:utils:loss_avg: 1.03141, lr_pg0:0.002818382931264454, lr_pg1: 0.002818382931264454final_score:0.52064, mc_score:0.02148
+[DEBUG]2020-06-20 05:30:24,419:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:24,423:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:24,720:utils:on_backward_begin lr: 0.0029853826189179603
+[DEBUG]2020-06-20 05:30:24,721:utils:itr: 179, num_batch: 179, last loss: 1.316080, smooth_loss: 1.029085
+[DEBUG]2020-06-20 05:30:24,731:utils:loss_avg: 1.03299, lr_pg0:0.0029853826189179603, lr_pg1: 0.0029853826189179603final_score:0.52066, mc_score:0.02155
+[DEBUG]2020-06-20 05:30:25,098:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:25,102:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:25,402:utils:on_backward_begin lr: 0.0031622776601683803
+[DEBUG]2020-06-20 05:30:25,404:utils:itr: 180, num_batch: 180, last loss: 0.587775, smooth_loss: 1.020025
+[DEBUG]2020-06-20 05:30:25,414:utils:loss_avg: 1.03053, lr_pg0:0.0031622776601683803, lr_pg1: 0.0031622776601683803final_score:0.52371, mc_score:0.02535
+[DEBUG]2020-06-20 05:30:25,783:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:25,787:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:26,085:utils:on_backward_begin lr: 0.0033496543915782777
+[DEBUG]2020-06-20 05:30:26,086:utils:itr: 181, num_batch: 181, last loss: 1.243479, smooth_loss: 1.024610
+[DEBUG]2020-06-20 05:30:26,095:utils:loss_avg: 1.03170, lr_pg0:0.0033496543915782777, lr_pg1: 0.0033496543915782777final_score:0.52340, mc_score:0.02537
+[DEBUG]2020-06-20 05:30:26,463:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:26,466:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:26,769:utils:on_backward_begin lr: 0.003548133892335756
+[DEBUG]2020-06-20 05:30:26,771:utils:itr: 182, num_batch: 182, last loss: 0.789365, smooth_loss: 1.019786
+[DEBUG]2020-06-20 05:30:26,782:utils:loss_avg: 1.03038, lr_pg0:0.003548133892335756, lr_pg1: 0.003548133892335756final_score:0.52377, mc_score:0.02664
+[DEBUG]2020-06-20 05:30:27,151:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:27,154:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:27,453:utils:on_backward_begin lr: 0.003758374042884443
+[DEBUG]2020-06-20 05:30:27,455:utils:itr: 183, num_batch: 183, last loss: 0.955429, smooth_loss: 1.018467
+[DEBUG]2020-06-20 05:30:27,466:utils:loss_avg: 1.02997, lr_pg0:0.003758374042884443, lr_pg1: 0.003758374042884443final_score:0.52374, mc_score:0.02629
+[DEBUG]2020-06-20 05:30:27,834:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:27,837:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:28,139:utils:on_backward_begin lr: 0.003981071705534974
+[DEBUG]2020-06-20 05:30:28,141:utils:itr: 184, num_batch: 184, last loss: 0.942730, smooth_loss: 1.016915
+[DEBUG]2020-06-20 05:30:28,150:utils:loss_avg: 1.02950, lr_pg0:0.003981071705534974, lr_pg1: 0.003981071705534974final_score:0.52458, mc_score:0.02752
+[DEBUG]2020-06-20 05:30:28,518:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:28,521:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:28,834:utils:on_backward_begin lr: 0.004216965034285824
+[DEBUG]2020-06-20 05:30:28,835:utils:itr: 185, num_batch: 185, last loss: 0.774995, smooth_loss: 1.011961
+[DEBUG]2020-06-20 05:30:28,845:utils:loss_avg: 1.02813, lr_pg0:0.004216965034285824, lr_pg1: 0.004216965034285824final_score:0.52535, mc_score:0.02885
+[DEBUG]2020-06-20 05:30:29,211:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:29,215:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:29,516:utils:on_backward_begin lr: 0.004466835921509634
+[DEBUG]2020-06-20 05:30:29,517:utils:itr: 186, num_batch: 186, last loss: 3.068631, smooth_loss: 1.054057
+[DEBUG]2020-06-20 05:30:29,528:utils:loss_avg: 1.03904, lr_pg0:0.004466835921509634, lr_pg1: 0.004466835921509634final_score:0.52360, mc_score:0.02703
+[DEBUG]2020-06-20 05:30:29,897:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:29,900:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:30,201:utils:on_backward_begin lr: 0.004731512589614808
+[DEBUG]2020-06-20 05:30:30,203:utils:itr: 187, num_batch: 187, last loss: 1.263783, smooth_loss: 1.058348
+[DEBUG]2020-06-20 05:30:30,213:utils:loss_avg: 1.04024, lr_pg0:0.004731512589614808, lr_pg1: 0.004731512589614808final_score:0.52335, mc_score:0.02670
+[DEBUG]2020-06-20 05:30:30,581:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:30,584:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:30,891:utils:on_backward_begin lr: 0.005011872336272719
+[DEBUG]2020-06-20 05:30:30,893:utils:itr: 188, num_batch: 188, last loss: 1.173010, smooth_loss: 1.060693
+[DEBUG]2020-06-20 05:30:30,902:utils:loss_avg: 1.04094, lr_pg0:0.005011872336272719, lr_pg1: 0.005011872336272719final_score:0.52226, mc_score:0.02543
+[DEBUG]2020-06-20 05:30:31,276:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:31,280:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:31,588:utils:on_backward_begin lr: 0.005308844442309881
+[DEBUG]2020-06-20 05:30:31,590:utils:itr: 189, num_batch: 189, last loss: 0.922492, smooth_loss: 1.057868
+[DEBUG]2020-06-20 05:30:31,601:utils:loss_avg: 1.04032, lr_pg0:0.005308844442309881, lr_pg1: 0.005308844442309881final_score:0.52220, mc_score:0.02400
+[DEBUG]2020-06-20 05:30:31,970:utils:grad info pg0: norm std(0.000000) mean(0.000001)
+[DEBUG]2020-06-20 05:30:31,973:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:32,271:utils:on_backward_begin lr: 0.0056234132519034875
+[DEBUG]2020-06-20 05:30:32,273:utils:itr: 190, num_batch: 190, last loss: 3.406496, smooth_loss: 1.105853
+[DEBUG]2020-06-20 05:30:32,284:utils:loss_avg: 1.05270, lr_pg0:0.0056234132519034875, lr_pg1: 0.0056234132519034875final_score:0.52051, mc_score:0.02225
+[DEBUG]2020-06-20 05:30:32,655:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:32,658:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:32,959:utils:on_backward_begin lr: 0.005956621435290102
+[DEBUG]2020-06-20 05:30:32,961:utils:itr: 191, num_batch: 191, last loss: 1.464909, smooth_loss: 1.113186
+[DEBUG]2020-06-20 05:30:32,972:utils:loss_avg: 1.05485, lr_pg0:0.005956621435290102, lr_pg1: 0.005956621435290102final_score:0.51917, mc_score:0.02062
+[DEBUG]2020-06-20 05:30:33,340:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:33,344:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:33,650:utils:on_backward_begin lr: 0.006309573444801929
+[DEBUG]2020-06-20 05:30:33,653:utils:itr: 192, num_batch: 192, last loss: 2.378167, smooth_loss: 1.139008
+[DEBUG]2020-06-20 05:30:33,663:utils:loss_avg: 1.06171, lr_pg0:0.006309573444801929, lr_pg1: 0.006309573444801929final_score:0.52040, mc_score:0.02183
+[DEBUG]2020-06-20 05:30:34,033:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:34,036:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:34,337:utils:on_backward_begin lr: 0.006683439175686144
+[DEBUG]2020-06-20 05:30:34,339:utils:itr: 193, num_batch: 193, last loss: 1.783793, smooth_loss: 1.152165
+
+[DEBUG]2020-06-20 05:30:34,349:utils:loss_avg: 1.06543, lr_pg0:0.006683439175686144, lr_pg1: 0.006683439175686144final_score:0.52044, mc_score:0.02184
+[DEBUG]2020-06-20 05:30:34,722:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:34,726:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:35,026:utils:on_backward_begin lr: 0.007079457843841376
+[DEBUG]2020-06-20 05:30:35,027:utils:itr: 194, num_batch: 194, last loss: 2.797308, smooth_loss: 1.185721
+[DEBUG]2020-06-20 05:30:35,037:utils:loss_avg: 1.07431, lr_pg0:0.007079457843841376, lr_pg1: 0.007079457843841376final_score:0.51598, mc_score:0.01723
+[DEBUG]2020-06-20 05:30:35,406:utils:grad info pg0: norm std(0.000000) mean(0.000001)
+[DEBUG]2020-06-20 05:30:35,409:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:35,709:utils:on_backward_begin lr: 0.007498942093324556
+[DEBUG]2020-06-20 05:30:35,711:utils:itr: 195, num_batch: 195, last loss: 1.827399, smooth_loss: 1.198804
+[DEBUG]2020-06-20 05:30:35,721:utils:loss_avg: 1.07815, lr_pg0:0.007498942093324556, lr_pg1: 0.007498942093324556final_score:0.51684, mc_score:0.01837
+[DEBUG]2020-06-20 05:30:36,089:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:36,092:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:36,389:utils:on_backward_begin lr: 0.007943282347242814
+[DEBUG]2020-06-20 05:30:36,390:utils:itr: 196, num_batch: 196, last loss: 1.754774, smooth_loss: 1.210135
+[DEBUG]2020-06-20 05:30:36,402:utils:loss_avg: 1.08159, lr_pg0:0.007943282347242814, lr_pg1: 0.007943282347242814final_score:0.51650, mc_score:0.01810
+[DEBUG]2020-06-20 05:30:36,770:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:36,773:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:37,073:utils:on_backward_begin lr: 0.008413951416451949
+[DEBUG]2020-06-20 05:30:37,075:utils:itr: 197, num_batch: 197, last loss: 7.597126, smooth_loss: 1.340258
+[DEBUG]2020-06-20 05:30:37,087:utils:loss_avg: 1.11450, lr_pg0:0.008413951416451949, lr_pg1: 0.008413951416451949final_score:0.51522, mc_score:0.01700
+[DEBUG]2020-06-20 05:30:37,462:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:37,466:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:37,782:utils:on_backward_begin lr: 0.008912509381337454
+[DEBUG]2020-06-20 05:30:37,783:utils:itr: 198, num_batch: 198, last loss: 1.786048, smooth_loss: 1.349337
+[DEBUG]2020-06-20 05:30:37,793:utils:loss_avg: 1.11787, lr_pg0:0.008912509381337454, lr_pg1: 0.008912509381337454final_score:0.51394, mc_score:0.01536
+[DEBUG]2020-06-20 05:30:38,161:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:38,164:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:38,461:utils:on_backward_begin lr: 0.009440608762859232
+[DEBUG]2020-06-20 05:30:38,462:utils:itr: 199, num_batch: 199, last loss: 1.328048, smooth_loss: 1.348903
+[DEBUG]2020-06-20 05:30:38,473:utils:loss_avg: 1.11892, lr_pg0:0.009440608762859232, lr_pg1: 0.009440608762859232final_score:0.51241, mc_score:0.01368
+[DEBUG]2020-06-20 05:30:38,842:utils:grad info pg0: norm std(0.000000) mean(0.000000)
+[DEBUG]2020-06-20 05:30:38,845:utils:grad info pg1: norm std(0.000000) mean(0.000000)
+```
