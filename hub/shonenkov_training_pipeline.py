@@ -116,12 +116,11 @@ def get_pickled_data(file_path):
         return get_obj_or_dump(f"{ROOT_PATH}/input/clean-pickle-for-jigsaw-toxicity/{file_path}")
 
     return obj
-vocab = get_pickled_data("vocab.pkl")
 
-# + [markdown] colab_type="text" id="tPoNUuvx3bGU"
-# if vocab is None: # vocab file read~~
-#    vocab = [tokenizer.convert_ids_to_tokens(i) for i in range(tokenizer.vocab_size)]
-#    get_obj_or_dump("vocab.pkl", default=vocab)
+vocab = get_pickled_data("vocab.pkl")
+#if vocab is None: # vocab file read~~
+#   vocab = [tokenizer.convert_ids_to_tokens(i) for i in range(tokenizer.vocab_size)]
+#   get_obj_or_dump("vocab.pkl", default=vocab)
 
 
 # # + colab={} colab_type="code" id="jAeLvflH3bGV"
@@ -733,7 +732,7 @@ class TrainGlobalConfig:
 
     # -------------------
     verbose = True  # выводить принты
-    verbose_step = 1  # количество шагов для вывода принта
+    verbose_step = 25  # количество шагов для вывода принта
     # -------------------
 
     # --------------------
@@ -780,7 +779,7 @@ def _change_dl(dl, shuffle):
     train_sampler = DistributedSamplerWrapper(
         sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
         num_replicas=8, #xm.xrt_world_size(),
-        rank=0, #xm.get_ordinal(),
+        rank=0, #xm.get_ordinal(), it only get 1/8 data ....
         shuffle=True
     )
     train_loader = torch.utils.data.DataLoader(
@@ -1116,9 +1115,9 @@ class TPUFitter:
 
             if self.config.verbose:
                 if step % self.config.verbose_step == 0:
-                    logger.info(
-                        f'Train Step {step}, bs: {batch_size}, loss: ' + \
-                        f"{losses.avg:.5f}, lr: {self.optimizer.param_groups[0]['lr']} final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, " + \
+                    self.log(
+                        f'Train Step {step}, loss: ' + \
+                        f"{losses.avg:.5f}, final_score: {final_scores.avg:.5f}, mc_score: {final_scores.mc_avg:.5f}, " + \
                         f'time: {(time.time() - t):.5f}'
                     )
 
@@ -1137,7 +1136,7 @@ class TPUFitter:
             losses.update(loss.detach().item(), batch_size)
 
             loss.backward()
-            logger.info("step: %d, loss: %f", step, loss)
+            #logger.info("step: %d, loss: %f", step, loss)
 
             xm.optimizer_step(self.optimizer)
 

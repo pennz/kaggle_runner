@@ -7,6 +7,7 @@ JUPYTER_PARAMS= --NotebookApp.token=greatday --NotebookApp.notebook_dir=/content
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
+"gabrichy/nvidiaapex",
 "k1gaggle/clean-pickle-for-jigsaw-toxicity",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
 "k1gaggle/jigsaw-toxicity-train-data-with-aux",
@@ -34,7 +35,7 @@ export SED := $(SED)
 SERVER := $(SERVER)
 CHECK_PORT := $(CHECK_PORT)
 ifeq ($(SERVER),)
-	SERVER := vtool.duckdns.org
+	SERVER := pengyuzhou.com
 endif
 ifeq ($(CHECK_PORT),)
 	CHECK_PORT := 23455
@@ -261,6 +262,12 @@ kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
 cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}' &
 
+ddj:
+	(cmp_name="jigsaw-unintended-bias-in-toxicity-classification"; \
+kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
+cd /kaggle/input/$$cmp_name; unzip '*.zip') &
+	
+
 vim:
 	apt install vim -y
 	$(PY) -m pip install pyvim neovim jedi
@@ -305,7 +312,7 @@ xlmr:
 
 apex:
 	-$(PY) -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && \
-$(PY) -m pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .input/nvidiaapex/repository/NVIDIA-apex-39e153a)
+$(PY) -m pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a)
 	$(PY) -c "from apex import amp"
 
 mbd:
