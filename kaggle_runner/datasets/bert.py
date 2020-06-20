@@ -244,3 +244,99 @@ def pack_data():
 
 
     return X,y, X_val, y_val, X_test
+
+def onehot(size, target, aux=None):
+    if aux is not None:
+        vec = np.zeros(size+len(aux), dtype=np.float32)
+        vec[target] = 1.
+        vec[2:] = aux
+        vec = torch.tensor(vec, dtype=torch.float32)
+    else:
+        vec = torch.zeros(size, dtype=torch.float32)
+        vec[target] = 1.
+
+    return vec
+
+class DatasetRetriever(Dataset):
+    def __init__(self, labels_or_ids, comment_texts, langs,
+                 severe_toxic=None, obscene=None, threat=None, insult=None, identity_hate=None,
+                 use_train_transforms=False, test=False, use_aux=True, transformers=None):
+        self.test = test
+        self.labels_or_ids = labels_or_ids
+        self.comment_texts = comment_texts
+        self.langs = langs
+        self.severe_toxic = severe_toxic
+        self.obscene = obscene
+        self.threat = threat
+        self.insult = insult
+        self.identity_hate = identity_hate
+        self.use_train_transforms = use_train_transforms
+        self.aux = None
+        assert transformers is not None
+        self.transformers = transformers
+        self.vocab = vocab
+
+        if use_aux:
+            self.aux = [self.severe_toxic, self.obscene, self.threat, self.insult, self.identity_hate]
+
+    def get_tokens(self, text):
+        encoded = self.transformers['tokenizer'].encode_plus(
+            text,
+            add_special_tokens=True,
+            max_length=MAX_LENGTH,
+            pad_to_max_length=True
+        )
+
+        return encoded['input_ids'], encoded['attention_mask']
+
+    def __len__(self):
+        return self.comment_texts.shape[0]
+
+    def __getitem__(self, idx):
+        text = self.comment_texts[idx]
+        lang = self.langs[idx]
+
+        if self.severe_toxic is None:
+            aux = [0., 0., 0., 0., 0.]
+        else:
+            aux = [self.severe_toxic[idx], self.obscene[idx], self.threat[idx], self.insult[idx], self.identity_hate[idx]]
+
+
+        label = self.labels_or_ids[idx]
+
+        if self.use_train_transforms and (not self.test):
+            text, _ = self.transformers['train_transforms'](data=(text, lang))['data']
+            tokens, attention_mask = self.get_tokens(str(text))
+            token_length = sum(attention_mask)
+
+            if token_length > 0.8*MAX_LENGTH:
+                text, _ = self.transformers['shuffle_transforms'](data=(text, lang))['data']
+            elif token_length < 60:
+                text, label = self.transformers['synthesic_transforms_often'](data=(text, label))['data']
+            else: # will not need to use transforms
+                #text, label = synthesic_transforms_low(data=(text, label))['data']
+                pass
+
+        # TODO add language detection and shuffle
+        # https://pypi.org/project/langdetect/
+        # if self.use_train_transforms and self.test:
+        #    text, _ = train_transforms(data=(text, lang))['data']
+        #    tokens, attention_mask = self.get_tokens(str(text))
+        #    token_length = sum(attention_mask)
+
+        #    if token_length > 0.8*MAX_LENGTH:
+        #        text, _ = shuffle_transforms(data=(text, lang))['data']
+        # to tensors
+        tokens, attention_mask = self.get_tokens(str(text))
+        tokens, attention_mask = torch.tensor(tokens), torch.tensor(attention_mask)
+
+        if self.test:  # for test, return id TODO TTA
+            return [tokens, attention_mask], self.labels_or_ids[idx]
+
+        # label might be changed
+        target = onehot(2, label, aux=aux)
+
+        return [tokens, attention_mask], target
+
+    def get_labels(self):
+        return list(np.char.add(self.labels_or_ids.astype(str), self.langs))
