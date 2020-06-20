@@ -2,6 +2,7 @@ import cv2
 import pandas as pd
 import re
 
+import random
 import albumentations as A
 from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
                             GridDistortion, HorizontalFlip, IAAEmboss,
@@ -12,6 +13,7 @@ from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
 from albumentations.pytorch import ToTensor
 from albumentations.core.transforms_interface import DualTransform, BasicTransform
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
+from nltk import sent_tokenize
 
 class NLPTransform(BasicTransform):
     """ Transform for nlp task."""

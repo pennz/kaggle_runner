@@ -118,11 +118,6 @@ def seed_everything(seed):
     torch.backends.cudnn.benchmark = True
 
 # # + colab={"base_uri": "https://localhost:8080/", "height": 86} colab_type="code" id="Nej3KhiY3bGZ"
-from nltk import sent_tokenize
-from random import shuffle
-import random
-import albumentations
-from albumentations.core.transforms_interface import DualTransform, BasicTransform
 
 
 # # + colab={} colab_type="code" id="JLdFogcG3bGe"
@@ -361,7 +356,6 @@ def len_parallelloader(self):
 pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
-import pysnooper
 
 
 def _to_tpu_distributed(learn:Learner) -> Learner:
@@ -557,8 +551,6 @@ def test_model_fn(device=torch.device("cpu")):
 
 # # + colab={} colab_type="code" id="n7z7QKwF3bIr"
 from functools import partial
-from fastai.callbacks.misc import StopAfterNBatches
-from fastai.callbacks import *
 
 import pysnooper
 
