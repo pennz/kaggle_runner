@@ -25,9 +25,9 @@ KAGGLE_USER_NAME=$(shell jq -r '.username' ~/.kaggle/kaggle.json)
 KIP=$(shell ip addr show dev eth0 | grep inet | sed 's/.*inet \([^\/]*\).*/\1/')
 
 
-SED := $(shell type -p gsed)
+SED := $(shell which gsed &>/dev/null && echo "gsed")
 ifeq ($(SED),)
-	SED := $(shell type -p sed)
+	SED := sed
 endif
 export SED := $(SED)
 
@@ -413,3 +413,5 @@ entry.sh &)
 prompt:
 	$(PY) -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 	$(PY) -m pip install ipdb pysnooper
+sed:
+	@echo sed used is $(SED)
