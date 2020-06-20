@@ -9,6 +9,7 @@ from albumentations import (Blur, Compose, ElasticTransform, GaussNoise,
                             ShiftScaleRotate, Transpose, VerticalFlip)
 from albumentations.pytorch import ToTensor
 from albumentations.core.transforms_interface import DualTransform, BasicTransform
+from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 
 class NLPTransform(BasicTransform):
     """ Transform for nlp task."""
