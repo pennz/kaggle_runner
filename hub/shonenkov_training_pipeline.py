@@ -7,28 +7,28 @@
 #     text_representation:
 #       extension: .py
 #       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.5.0
+#       format_version: '1.4'
+#       jupytext_version: 1.1.7
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
 
-# + colab={} colab_type="code" id="bWF5pHpO3bEX"
+# # + colab={} colab_type="code" id="bWF5pHpO3bEX"
 # %load_ext autoreload
 # %autoreload 2
 
 # + colab={"base_uri": "https://localhost:8080/", "height": 191} colab_type="code" id="f7_Bllh93bEt" language="bash"
 # pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
-# mv kaggle_runner k && \
-# mv k/* . && mv k/.* ; \
-# pip3 install -e .;\
-# export PATH=$PWD/bin:$PATH; \
-# entry.sh &)
+# # mv kaggle_runner k && \
+# # mv k/* . && mv k/.* ; \
+# # pip3 install -e .;\
+# # export PATH=$PWD/bin:$PATH; \
+# # entry.sh &)
 
 
-# + colab={} colab_type="code" id="Mg3zuCSx3bE9"
+# # + colab={} colab_type="code" id="Mg3zuCSx3bE9"
 # !make xla
 import torch_xla
 from importlib import reload
@@ -36,17 +36,17 @@ import kaggle_runner
 reload(kaggle_runner)
 
 
-# + colab={} colab_type="code" id="h9Wgilnm3bFE"
+# # + colab={} colab_type="code" id="h9Wgilnm3bFE"
 import numpy as np
 import pandas as pd
 import os
 os.environ['XLA_USE_BF16'] = "1"
 
-# + colab={} colab_type="code" id="ecCODkEU3bFK"
+# # + colab={} colab_type="code" id="ecCODkEU3bFK"
 from glob import glob
 
 
-# + colab={} colab_type="code" id="KBw5JHOK3bFR"
+# # + colab={} colab_type="code" id="KBw5JHOK3bFR"
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset,DataLoader
@@ -54,57 +54,57 @@ from torch.autograd import Variable
 from torch.utils.data.sampler import SequentialSampler, RandomSampler
 import sklearn
 
-# + colab={} colab_type="code" id="g8HpmDLV3bFX"
+# # + colab={} colab_type="code" id="g8HpmDLV3bFX"
 import time
 import random
 from datetime import datetime
 from tqdm import tqdm
 tqdm.pandas()
 
-# + colab={} colab_type="code" id="63n9I5s03bFc"
+# # + colab={} colab_type="code" id="63n9I5s03bFc"
 from transformers import XLMRobertaModel, XLMRobertaTokenizer
 from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_schedule
 from fastai.text.transform import Vocab
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 
-# + colab={} colab_type="code" id="m_bxIOBr3bFf"
+# # + colab={} colab_type="code" id="m_bxIOBr3bFf"
 import gc
 import re
 
-# + colab={"base_uri": "https://localhost:8080/", "height": 139} colab_type="code" id="PQAFCOlu3bFl"
+# # + colab={"base_uri": "https://localhost:8080/", "height": 139} colab_type="code" id="PQAFCOlu3bFl"
 # # !python3 -m pip install nltk > /dev/null
 import nltk
 nltk.download('punkt')
 
-# + colab={} colab_type="code" id="Tz4yfcsg3bFq"
+# # + colab={} colab_type="code" id="Tz4yfcsg3bFq"
 from nltk import sent_tokenize
 
-# + colab={} colab_type="code" id="krJjgsvu3bFw"
+# # + colab={} colab_type="code" id="krJjgsvu3bFw"
 from pandarallel import pandarallel
 
-# + colab={"base_uri": "https://localhost:8080/", "height": 52} colab_type="code" id="-dI4yCqa3bF1"
+# # + colab={"base_uri": "https://localhost:8080/", "height": 52} colab_type="code" id="-dI4yCqa3bF1"
 pandarallel.initialize(nb_workers=4, progress_bar=False)
 
-# + colab={"base_uri": "https://localhost:8080/", "height": 159} colab_type="code" id="Ja1ioFcG3bF7"
+# # + colab={"base_uri": "https://localhost:8080/", "height": 159} colab_type="code" id="Ja1ioFcG3bF7"
 from fastai.basic_data import DataBunch
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 from kaggle_runner import may_debug
 
 
-# + colab={} colab_type="code" id="ErWqUgQH3bGA"
+# # + colab={} colab_type="code" id="ErWqUgQH3bGA"
 SEED = 142
 
-# + colab={} colab_type="code" id="Rl2PW6iO3bGF"
+# # + colab={} colab_type="code" id="Rl2PW6iO3bGF"
 MAX_LENGTH = 224
 BACKBONE_PATH = 'xlm-roberta-large'
 
-# + colab={} colab_type="code" id="94IiMvCD3bGJ"
+# # + colab={} colab_type="code" id="94IiMvCD3bGJ"
 tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
 
-# + colab={} colab_type="code" id="ya6Mxv0G3bGO"
+# # + colab={} colab_type="code" id="ya6Mxv0G3bGO"
 ROOT_PATH = f'/kaggle' # for colab
 
-# + colab={} colab_type="code" id="sA1Da3DB3bGQ"
+# # + colab={} colab_type="code" id="sA1Da3DB3bGQ"
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 def get_pickled_data(file_path):
     obj = get_obj_or_dump(file_path)
@@ -123,7 +123,7 @@ vocab = get_pickled_data("vocab.pkl")
 #    get_obj_or_dump("vocab.pkl", default=vocab)
 
 
-# + colab={} colab_type="code" id="jAeLvflH3bGV"
+# # + colab={} colab_type="code" id="jAeLvflH3bGV"
 def seed_everything(seed):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -133,7 +133,7 @@ def seed_everything(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
 
-# + colab={"base_uri": "https://localhost:8080/", "height": 86} colab_type="code" id="Nej3KhiY3bGZ"
+# # + colab={"base_uri": "https://localhost:8080/", "height": 86} colab_type="code" id="Nej3KhiY3bGZ"
 from nltk import sent_tokenize
 from random import shuffle
 import random
@@ -141,7 +141,7 @@ import albumentations
 from albumentations.core.transforms_interface import DualTransform, BasicTransform
 
 
-# + colab={} colab_type="code" id="JLdFogcG3bGe"
+# # + colab={} colab_type="code" id="JLdFogcG3bGe"
 LANGS = {
     'en': 'english',
     'it': 'italian',
@@ -152,11 +152,11 @@ LANGS = {
     'pt': 'portuguese'
 }
 
-# + colab={} colab_type="code" id="8lcd0sZJ3bGj"
+# # + colab={} colab_type="code" id="8lcd0sZJ3bGj"
 def get_sentences(text, lang='en'):
     return sent_tokenize(text, LANGS.get(lang, 'english'))
 
-# + colab={} colab_type="code" id="gMHg6Xvz3bGn"
+# # + colab={} colab_type="code" id="gMHg6Xvz3bGn"
 def exclude_duplicate_sentences(text, lang='en'):
     sentences = []
 
@@ -168,7 +168,7 @@ def exclude_duplicate_sentences(text, lang='en'):
 
     return ' '.join(sentences)
 
-# + colab={} colab_type="code" id="EizVrxLZ3bGr"
+# # + colab={} colab_type="code" id="EizVrxLZ3bGr"
 def clean_text(text, lang='en'):
     text = str(text)
     text = re.sub(r'[0-9"]', '', text)
@@ -181,7 +181,7 @@ def clean_text(text, lang='en'):
     return text.strip()
 
 
-# + colab={} colab_type="code" id="ffbjaiBH3bGu"
+# # + colab={} colab_type="code" id="ffbjaiBH3bGu"
 class NLPTransform(BasicTransform):
     """ Transform for nlp task."""
 
@@ -201,7 +201,7 @@ class NLPTransform(BasicTransform):
     def get_sentences(self, text, lang='en'):
         return sent_tokenize(text, LANGS.get(lang, 'english'))
 
-# + colab={} colab_type="code" id="yi6VEAZB3bGy"
+# # + colab={} colab_type="code" id="yi6VEAZB3bGy"
 class ShuffleSentencesTransform(NLPTransform):
     """ Do shuffle by sentence """
     def __init__(self, always_apply=False, p=0.5):
@@ -214,7 +214,7 @@ class ShuffleSentencesTransform(NLPTransform):
 
         return ' '.join(sentences), lang
 
-# + colab={} colab_type="code" id="3b2yIDOv3bG1"
+# # + colab={} colab_type="code" id="3b2yIDOv3bG1"
 class ExcludeDuplicateSentencesTransform(NLPTransform):
     """ Exclude equal sentences """
     def __init__(self, always_apply=False, p=0.5):
@@ -232,7 +232,7 @@ class ExcludeDuplicateSentencesTransform(NLPTransform):
 
         return ' '.join(sentences), lang
 
-# + colab={} colab_type="code" id="kyDSPoUF3bG4"
+# # + colab={} colab_type="code" id="kyDSPoUF3bG4"
 class ExcludeNumbersTransform(NLPTransform):
     """ exclude any numbers """
     def __init__(self, always_apply=False, p=0.5):
@@ -245,7 +245,7 @@ class ExcludeNumbersTransform(NLPTransform):
 
         return text, lang
 
-# + colab={} colab_type="code" id="cAbXjyV63bG8"
+# # + colab={} colab_type="code" id="cAbXjyV63bG8"
 class ExcludeHashtagsTransform(NLPTransform):
     """ Exclude any hashtags with # """
     def __init__(self, always_apply=False, p=0.5):
@@ -258,7 +258,7 @@ class ExcludeHashtagsTransform(NLPTransform):
 
         return text, lang
 
-# + colab={} colab_type="code" id="UQHHd_wo3bG_"
+# # + colab={} colab_type="code" id="UQHHd_wo3bG_"
 class ExcludeUsersMentionedTransform(NLPTransform):
     """ Exclude @users """
     def __init__(self, always_apply=False, p=0.5):
@@ -271,7 +271,7 @@ class ExcludeUsersMentionedTransform(NLPTransform):
 
         return text, lang
 
-# + colab={} colab_type="code" id="8sv-ecgw3bHC"
+# # + colab={} colab_type="code" id="8sv-ecgw3bHC"
 class ExcludeUrlsTransform(NLPTransform):
     """ Exclude urls """
     def __init__(self, always_apply=False, p=0.5):
@@ -284,7 +284,7 @@ class ExcludeUrlsTransform(NLPTransform):
 
         return text, lang
 
-# + colab={} colab_type="code" id="0YSO5OEp3bHF"
+# # + colab={} colab_type="code" id="0YSO5OEp3bHF"
 def get_open_subtitles():
     df_ot = get_pickled_data("ot.pkl")
 
@@ -299,7 +299,7 @@ def get_open_subtitles():
     return df_ot
 
 
-# + colab={} colab_type="code" id="3Oyryrcx3bHI"
+# # + colab={} colab_type="code" id="3Oyryrcx3bHI"
 class SynthesicOpenSubtitlesTransform(NLPTransform):
     def __init__(self, always_apply=False, supliment_toxic=None, p=0.5, mix=False):
         super(SynthesicOpenSubtitlesTransform, self).__init__(always_apply, p)
@@ -345,7 +345,7 @@ class SynthesicOpenSubtitlesTransform(NLPTransform):
 
         return text, toxic
 
-# + colab={} colab_type="code" id="IY_VsMfk3bHL"
+# # + colab={} colab_type="code" id="IY_VsMfk3bHL"
 def get_train_transforms():
     return albumentations.Compose([
         ExcludeUsersMentionedTransform(p=0.95),
@@ -355,11 +355,11 @@ def get_train_transforms():
         ExcludeDuplicateSentencesTransform(p=0.95),
     ], p=1.0)
 
-# + colab={} colab_type="code" id="4bTYrA1l3bHR"
+# # + colab={} colab_type="code" id="4bTYrA1l3bHR"
 def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
     return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
 
-# + colab={} colab_type="code" id="NjmhIsAK3bHU"
+# # + colab={} colab_type="code" id="NjmhIsAK3bHU"
 def get_toxic_comments(df):
         df = df[~df['comment_text'].isna()]
         df = df.drop_duplicates(subset='comment_text')
@@ -367,7 +367,7 @@ def get_toxic_comments(df):
 
         return df[df['toxic'] == 1].comment_text.values
 
-# + colab={} colab_type="code" id="Nib4YbrO3bHX"
+# # + colab={} colab_type="code" id="Nib4YbrO3bHX"
 def onehot(size, target, aux=None):
     if aux is not None:
         vec = np.zeros(size+len(aux), dtype=np.float32)
@@ -380,7 +380,7 @@ def onehot(size, target, aux=None):
 
     return vec
 
-# + colab={} colab_type="code" id="PsNlLK4G3bHZ"
+# # + colab={} colab_type="code" id="PsNlLK4G3bHZ"
 class DatasetRetriever(Dataset):
     def __init__(self, labels_or_ids, comment_texts, langs,
                  severe_toxic=None, obscene=None, threat=None, insult=None, identity_hate=None,
@@ -465,11 +465,11 @@ class DatasetRetriever(Dataset):
     def get_labels(self):
         return list(np.char.add(self.labels_or_ids.astype(str), self.langs))
 
-# + colab={} colab_type="code" id="swiDMY2l3bHb"
+# # + colab={} colab_type="code" id="swiDMY2l3bHb"
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 
 
-# + colab={} colab_type="code" id="yrGZycwx3bHd"
+# # + colab={} colab_type="code" id="yrGZycwx3bHd"
 class Shonenkov(FastAIKernel):
     def __init__(self, **kargs):
         super(Shonenkov, self).__init__(**kargs)
@@ -586,7 +586,7 @@ class Shonenkov(FastAIKernel):
                 self.logger.error("peek_data failed, DataBunch is None.")
 
 
-# + colab={} colab_type="code" id="0U0v_7EA3bHg"
+# # + colab={} colab_type="code" id="0U0v_7EA3bHg"
 from kaggle_runner.metrics.metrics import matthews_correlation
 class RocAucMeter(object):
     def __init__(self):
@@ -622,7 +622,7 @@ class RocAucMeter(object):
     def mc_avg(self):
         return self.mc_score
 
-# + colab={} colab_type="code" id="sj4NmKFm3bHj"
+# # + colab={} colab_type="code" id="sj4NmKFm3bHj"
 class AverageMeter(object):
     """Computes and stores the average and current value"""
     def __init__(self):
@@ -644,7 +644,7 @@ class AverageMeter(object):
 
 
 
-# + colab={} colab_type="code" id="jcatLT2U3bHn"
+# # + colab={} colab_type="code" id="jcatLT2U3bHn"
 class ToxicSimpleNNModel(nn.Module):
     def __init__(self, use_aux=True):
         super(ToxicSimpleNNModel, self).__init__()
@@ -669,22 +669,22 @@ class ToxicSimpleNNModel(nn.Module):
 
         return self.linear(x)
 
-# + colab={} colab_type="code" id="Z2NkI1sW3bHs"
+# # + colab={} colab_type="code" id="Z2NkI1sW3bHs"
 import warnings
 
-# + colab={} colab_type="code" id="imzd88o33bIB"
+# # + colab={} colab_type="code" id="imzd88o33bIB"
 warnings.filterwarnings("ignore")
 
-# + colab={} colab_type="code" id="fGfbDB5z3bID"
+# # + colab={} colab_type="code" id="fGfbDB5z3bID"
 import torch_xla
 import torch_xla.core.xla_model as xm
 import torch_xla.distributed.parallel_loader as pl
 import torch_xla.distributed.xla_multiprocessing as xmp
 
-# + colab={} colab_type="code" id="LnDl9J_d3bIF"
+# # + colab={} colab_type="code" id="LnDl9J_d3bIF"
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 
-# + colab={} colab_type="code" id="qbxKT4Td3bII"
+# # + colab={} colab_type="code" id="qbxKT4Td3bII"
 class TPUFitter:
 
     def __init__(self, model, device, config):
@@ -859,7 +859,7 @@ class TPUFitter:
         with open(self.log_path, 'a+') as logger:
             xm.master_print(f'{message}', logger)
 
-# + colab={} colab_type="code" id="yRdMTDq13bIN"
+# # + colab={} colab_type="code" id="yRdMTDq13bIN"
 class LabelSmoothing(nn.Module):
     """https://github.com/pytorch/pytorch/issues/7455#issuecomment-513062631"""
 
@@ -890,7 +890,7 @@ class LabelSmoothing(nn.Module):
         else:
             return torch.nn.functional.cross_entropy(x[:,:2], target[:,:2])
 
-# + colab={} colab_type="code" id="6KQPK1tG3bIO"
+# # + colab={} colab_type="code" id="6KQPK1tG3bIO"
 class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
@@ -925,27 +925,27 @@ class TrainGlobalConfig:
     criterion = LabelSmoothing()
     # -------------------
 
-# + colab={} colab_type="code" id="0jRWjZRd3bIQ"
+# # + colab={} colab_type="code" id="0jRWjZRd3bIQ"
 def test_init():
     l = Shonenkov(loss_func=None, metrics=None)
     assert l is not None
 
-# + colab={} colab_type="code" id="cQ86CF413bIS"
+# # + colab={} colab_type="code" id="cQ86CF413bIS"
 # !cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
 
 
-# + colab={} colab_type="code" id="ROFBN4h33bIV"
+# # + colab={} colab_type="code" id="ROFBN4h33bIV"
 import ipdb
 
-# + colab={} colab_type="code" id="H7bNG49v3bIZ"
+# # + colab={} colab_type="code" id="H7bNG49v3bIZ"
 from kaggle_runner import may_debug
 
-# + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
+# # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
 k = Shonenkov(metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
 
-# + colab={} colab_type="code" id="j0ienNqm3bId"
+# # + colab={} colab_type="code" id="j0ienNqm3bId"
 def _check_grad(raw_opt):
     pg = raw_opt.param_groups
     pg0pl = pg[0]['params'] # pg0pl[0] is a Parameter
@@ -966,7 +966,7 @@ def _check_grad(raw_opt):
         logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
 
 
-# + colab={} colab_type="code" id="Sul01z663bIf"
+# # + colab={} colab_type="code" id="Sul01z663bIf"
 from kaggle_runner import logger
 
 def test_model_fn(device=torch.device("cpu")):
@@ -1152,7 +1152,7 @@ def test_model_fn(device=torch.device("cpu")):
     logger.info(f"Test done, result len %d", len(results))
 
 
-# + colab={} colab_type="code" id="wDtvtHma3bIh"
+# # + colab={} colab_type="code" id="wDtvtHma3bIh"
 from kaggle_runner import defaults
 _DEBUG = defaults.DEBUG
 defaults.DEBUG = True
@@ -1160,10 +1160,10 @@ defaults.DEBUG = True
 defaults.DEBUG = _DEBUG
 
 # + colab={} colab_type="code" id="kl5LAGTl3bIi"
-#k.learner
-#k.learner.recorder.plot()
+# k.learner
+# k.learner.recorder.plot()
 
-# + colab={} colab_type="code" id="W-54VVqb3bIn"
+# # + colab={} colab_type="code" id="W-54VVqb3bIn"
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -1188,7 +1188,7 @@ def len_parallelloader(self):
 pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
-# + colab={} colab_type="code" id="xnvcfuzd3bIp"
+# # + colab={} colab_type="code" id="xnvcfuzd3bIp"
 import pysnooper
 class CheckGrad(LearnerCallback):
     def __init__(self, learn:Learner, skip_loss_step=False):
@@ -1395,11 +1395,11 @@ def filelist2df(path):
 
     return df
 
-#train_path = path/'train.txt'
-#test_path = path/'test.txt'
+# train_path = path/'train.txt'
+# test_path = path/'test.txt'
 
 
-# + colab={} colab_type="code" id="n7z7QKwF3bIr"
+# # + colab={} colab_type="code" id="n7z7QKwF3bIr"
 from functools import partial
 from fastai.callbacks.misc import StopAfterNBatches
 from fastai.callbacks import *
@@ -1447,12 +1447,12 @@ def debug_train(use_dist_cb=True):
     learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
     defaults.DEBUG = _DEBUG
 
-# + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="VrJUbCYd3bIu"
+# # + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="VrJUbCYd3bIu"
 # %%time
 debug_train(use_dist_cb=False)
 
 
-# + colab={} colab_type="code" id="4MbjVEVm3bIw"
+# # + colab={} colab_type="code" id="4MbjVEVm3bIw"
 from functools import partial
 import pysnooper
 
@@ -1494,12 +1494,12 @@ def train_loop(index, *args):
     #learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
     learn.fit(1, lr=5e-6, wd=0.001)
 
-# + colab={"base_uri": "https://localhost:8080/", "height": 573} colab_type="code" id="EQDJ4gsP3bIx"
+# # + colab={"base_uri": "https://localhost:8080/", "height": 573} colab_type="code" id="EQDJ4gsP3bIx"
 FLAGS={}
 xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
-# + colab={} colab_type="code" id="m-zDM9QL3bIz"
+# # + colab={} colab_type="code" id="m-zDM9QL3bIz"
 import pysnooper
 
 @pysnooper.snoop()
@@ -1577,28 +1577,28 @@ def _mp_fn(rank, flags, k=k):
     fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
 
 
-# + colab={} colab_type="code" id="hhQxQcSA3bI3"
+# # + colab={} colab_type="code" id="hhQxQcSA3bI3"
 import gc
 gc.collect()
 
-# + colab={} colab_type="code" id="bpLwWDel3bI7"
+# # + colab={} colab_type="code" id="bpLwWDel3bI7"
 # %%time
 
 if __name__ == "__main__":
     FLAGS={}
     xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 
-# + colab={} colab_type="code" id="hTEdrF6n3bJA"
+# # + colab={} colab_type="code" id="hTEdrF6n3bJA"
 from datetime import date
 today = date.today()
 output_model_file='XLMRobertaModel_tpu_trained.bin'
 torch.save(k.model.state_dict(), f"{today}_{output_model_file}")
 
-# + colab={} colab_type="code" id="Wu0VhhZAFuYs"
+# # + colab={} colab_type="code" id="Wu0VhhZAFuYs"
 submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
 submission['toxic'].hist(bins=100)
 
-# + colab={} colab_type="code" id="RRr-yzJ_yVTW"
+# # + colab={} colab_type="code" id="RRr-yzJ_yVTW"
 submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
 # #!cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
