@@ -274,7 +274,7 @@ vim:
 	vim -u ~/.vimrc_back +PlugInstall kaggle_runner
 
 kaggle: /root/.kaggle/kaggle.json
-	-xclip ~/.kaggle/kaggle.json -selection clipboard
+	-@ xclip ~/.kaggle/kaggle.json -selection clipboard
 
 update_sh_ipynb:
 	jupytext --sync hub/shonenkov_training_pipeline.ipynb || jupytext --set-formats ipynb,py hub/shonenkov_training_pipeline.ipynb
