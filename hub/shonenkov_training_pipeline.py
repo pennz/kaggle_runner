@@ -7,8 +7,8 @@
 #     text_representation:
 #       extension: .py
 #       format_name: light
-#       format_version: '1.4'
-#       jupytext_version: 1.1.7
+#       format_version: '1.5'
+#       jupytext_version: 1.5.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -953,9 +953,9 @@ def _check_grad(raw_opt):
 
     with torch.no_grad():
         #norms = torch.tensor([torch.norm(p) for p in pg0pl])
-        may_debug()
-        logger.debug("%s", pg0pl[0].grad)
-        logger.debug("%s", pg0pl[0].data)
+        #may_debug()
+        #logger.debug("%s", pg0pl[0].grad)
+        #logger.debug("%s", pg0pl[0].data)
         normsg = torch.tensor([torch.norm(p.grad) for p in pg0pl[:10] if p.grad is not None])
         #logger.debug("params info pg0: norm std(%f) mean(%f)", *torch.std_mean(norms))
         logger.debug("grad info pg0: norm std(%f) mean(%f)", *torch.std_mean(normsg))
