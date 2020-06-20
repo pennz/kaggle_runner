@@ -7,6 +7,7 @@ JUPYTER_PARAMS= --NotebookApp.token=greatday --NotebookApp.notebook_dir=/content
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
+"gabrichy/nvidiaapex",
 "k1gaggle/clean-pickle-for-jigsaw-toxicity",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
 "k1gaggle/jigsaw-toxicity-train-data-with-aux",
