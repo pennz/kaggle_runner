@@ -1,10 +1,16 @@
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
-
-
-
-# # + colab={} colab_type="code" id="0U0v_7EA3bHg"
 from kaggle_runner.metrics.metrics import matthews_correlation
-# # + colab={} colab_type="code" id="yrGZycwx3bHd"
+from kaggle_runner.datasets.transfomers import *
+
+def get_train_transforms():
+    return albumentations.Compose([
+        ExcludeUsersMentionedTransform(p=0.95),
+        ExcludeUrlsTransform(p=0.95),
+        ExcludeNumbersTransform(p=0.95),
+        ExcludeHashtagsTransform(p=0.95),
+        ExcludeDuplicateSentencesTransform(p=0.95),
+    ], p=1.0)
+
 class Shonenkov(FastAIKernel):
     def __init__(self, device, **kargs):
         super(Shonenkov, self).__init__(**kargs)

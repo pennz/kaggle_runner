@@ -155,14 +155,6 @@ LANGS = {
 
 
 # # + colab={} colab_type="code" id="IY_VsMfk3bHL"
-def get_train_transforms():
-    return albumentations.Compose([
-        ExcludeUsersMentionedTransform(p=0.95),
-        ExcludeUrlsTransform(p=0.95),
-        ExcludeNumbersTransform(p=0.95),
-        ExcludeHashtagsTransform(p=0.95),
-        ExcludeDuplicateSentencesTransform(p=0.95),
-    ], p=1.0)
 
 # # + colab={} colab_type="code" id="4bTYrA1l3bHR"
 def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
