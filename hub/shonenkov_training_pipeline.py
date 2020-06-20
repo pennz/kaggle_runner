@@ -725,7 +725,7 @@ class LabelSmoothing(nn.Module):
 class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
-    batch_size = 8  # bs , 8 for GPU, 16 for TPU
+    batch_size = 16  # bs , 8 for GPU, 16 for TPU
     n_epochs = 2  # количество эпох для обучения
     lr = 0.5 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
     fold_number = 0  # номер фолда для обучения
@@ -979,7 +979,7 @@ def debug_train(use_dist_cb=True):
 # -
 
 # %%time
-debug_train(use_dist_cb=False)
+#debug_train(use_dist_cb=False)
 
 
 # # XLA
@@ -1576,7 +1576,7 @@ def _mp_fn(rank, flags, k=k):
         num_workers=TrainGlobalConfig.num_workers
     )
 
-    logger.debug("rank: %d", rank)
+    logger.debug("rank: %d. Will create TPU Fitter", rank)
 
     if rank == 0:
         time.sleep(1)
@@ -1595,7 +1595,7 @@ gc.collect()
 
 if __name__ == "__main__":
     FLAGS={}
-    #xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
+    xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 # # + colab={} colab_type="code" id="hTEdrF6n3bJA"
 from datetime import date
