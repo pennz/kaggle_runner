@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from transformers import XLMRobertaModel
-from transformers import XLMRobertaModel
+from transformers import XLMRobertaModel, DistilBertModel
+from transformers import XLNetConfig, XLNetModel, XLNetPreTrainedModel
 
 BACKBONE_PATH = 'xlm-roberta-large'
 
@@ -22,7 +22,8 @@ class ToxicSimpleNNModel(nn.Module):
 
     def forward(self, input_ids, attention_masks):
         bs, seq_length = input_ids.shape
-        seq_x, _ = self.backbone(input_ids=input_ids, attention_mask=attention_masks)
+        seq_x, _ = self.backbone(
+            input_ids=input_ids, attention_mask=attention_masks)
         apool = torch.mean(seq_x, 1)
         mpool, _ = torch.max(seq_x, 1)
         x = torch.cat((apool, mpool), 1)
@@ -30,10 +31,15 @@ class ToxicSimpleNNModel(nn.Module):
 
         return self.linear(x)
 
+
 class ToxicSimpleNNModelChangeInner(ToxicSimpleNNModel):
     def __init__(self, use_aux=True):
-        super(ToxicSimpleNNModel, self).__init__()
-        self.backbone = XLMRobertaModel.from_pretrained(BACKBONE_PATH)
+        super(ToxicSimpleNNModelChangeInner, self).__init__(use_aux)
+
+        transformer_layer = DistilBertModel.\
+        from_pretrained('distilbert-base-multilingual-cased')
+
+        self.backbone = transformer_layer
         self.dropout = nn.Dropout(0.3)
         aux_len = 0
 

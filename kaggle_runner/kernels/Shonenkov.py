@@ -7,7 +7,7 @@ from kaggle_runner.datasets.bert import DatasetRetriever
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModelChangeInner,ToxicSimpleNNModel
 from fastai.basic_data import DataBunch
-from transformers import XLMRobertaTokenizer
+from transformers import XLMRobertaTokenizer, XLNetTokenizer
 import albumentations
 
 ROOT_PATH = f'/kaggle' # for colab
@@ -162,7 +162,141 @@ class Shonenkov(FastAIKernel):
             if self.logger is not None:
                 self.logger.error("peek_data failed, DataBunch is None.")
 
+from kaggle_runner import may_debug
 class ShonenkovChangeInner(Shonenkov):
+    def __init__(self, device, config, **kargs):
+        super(ShonenkovChangeInner, self).__init__(device, config, **kargs)
+        assert self.transformers is not None
+
     def build_and_set_model(self):
         self.model = ToxicSimpleNNModelChangeInner()
         self.model = self.model.to(self.device)
+
+    def prepare_train_dev_data(self):
+        df_train = get_pickled_data("train_inner.pkl")
+
+        if df_train is None:
+            df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
+            df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+            get_obj_or_dump("train_inner.pkl", default=df_train)
+
+        #supliment_toxic = get_toxic_comments(df_train)
+        self.train_dataset = DatasetRetriever(
+            labels_or_ids=df_train['toxic'].values,
+            comment_texts=df_train['comment_text'].values,
+            langs=df_train['lang'].values,
+            severe_toxic=df_train['severe_toxic'].values,
+            obscene=df_train['obscene'].values,
+            threat=df_train['threat'].values,
+            insult=df_train['insult'].values,
+            identity_hate=df_train['identity_hate'].values,
+            use_train_transforms=True,
+            transformers=self.transformers
+        )
+        df_val = get_pickled_data("val_inner.pkl")
+
+        if df_val is None:
+            df_val = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/validation.csv', index_col='id')
+            df_val['comment_text'] = df_val.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
+            get_obj_or_dump("val_inner.pkl", default=df_val)
+
+        self.validation_tune_dataset = DatasetRetriever(
+            labels_or_ids=df_val['toxic'].values,
+            comment_texts=df_val['comment_text'].values,
+            langs=df_val['lang'].values,
+            use_train_transforms=True,
+            transformers=self.transformers
+        )
+        self.validation_dataset = DatasetRetriever(
+            labels_or_ids=df_val['toxic'].values,
+            comment_texts=df_val['comment_text'].values,
+            langs=df_val['lang'].values,
+            use_train_transforms=False,
+            transformers=self.transformers
+        )
+
+        del df_val
+        gc.collect();
+
+        del df_train
+        gc.collect();
+
+    def prepare_test_data(self):
+        df_test = get_pickled_data("test_inner.pkl")
+
+        if df_test is None:
+            df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/test.csv', index_col='id')
+            df_test['comment_text'] = df_test.parallel_apply(lambda x: clean_text(x['content'], x['lang']), axis=1)
+            get_obj_or_dump("test_inner.pkl", default=df_test)
+
+        self.test_dataset = DatasetRetriever(
+            labels_or_ids=df_test.index.values, ## here different!!!
+            comment_texts=df_test['comment_text'].values,
+            langs=df_test['lang'].values,
+            use_train_transforms=False,
+            test=True,
+            transformers=self.transformers
+        )
+
+        del df_test
+        gc.collect();
+
+    def setup_transformers(self):
+        may_debug(True)
+
+        if self.transformers is None:
+            supliment_toxic = None # avoid overfit
+            train_transforms = get_train_transforms();
+            synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
+            synthesic_transforms_low = None
+            shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
+
+            from tokenizers import BertWordPieceTokenizer
+            tokenizer = transformers.DistilBertTokenizer.from_pretrained(
+                'distilbert-base-multilingual-cased')
+
+            self.transformers = {'train_transforms': train_transforms,
+                                 'synthesic_transforms_often': synthesic_transforms_often,
+                                 'synthesic_transforms_low': synthesic_transforms_low,
+                                 'tokenizer': tokenizer, 'shuffle_transforms':
+                                 shuffle_transforms}
+
+import torch
+class DummyTrainGlobalConfig:
+    """ Global Config for this notebook """
+    num_workers = 0  # количество воркеров для loaders
+    batch_size = 16  # bs , 8 for GPU, 16 for TPU
+    n_epochs = 2  # количество эпох для обучения
+    lr = 0.3 * 1e-5 # стартовый learning rate (внутри логика работы с мульти TPU домножает на кол-во процессов)
+    fold_number = 0  # номер фолда для обучения
+
+    # -------------------
+    verbose = True  # выводить принты
+    verbose_step = 25  # количество шагов для вывода принта
+    # -------------------
+
+    # --------------------
+    step_scheduler = False  # выполнять scheduler.step после вызова optimizer.step
+    validation_scheduler = True  # выполнять scheduler.step после валидации loss (например для плато)
+    SchedulerClass = torch.optim.lr_scheduler.ReduceLROnPlateau
+    scheduler_params = dict(
+        mode='max',
+        factor=0.7,
+        patience=0,
+        verbose=False,
+        threshold=0.0001,
+        threshold_mode='abs',
+        cooldown=0,
+        min_lr=1e-8,
+        eps=1e-08
+    )
+    # --------------------
+
+    # -------------------
+    criterion = 'L'
+    # -------------------
+
+
+def test_change_inner_module():
+    k = ShonenkovChangeInner(torch.device("cpu"), DummyTrainGlobalConfig, metrics=None, loss_func='LabelSmoothing', opt_func=None)
+    assert k is not None
