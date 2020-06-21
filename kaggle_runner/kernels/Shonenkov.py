@@ -179,7 +179,7 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
             aux_len = 5
         may_debug(True)
         self.linear = nn.Linear(
-            in_features=self.backbone.layer[11].ff.out_features*2,
+            in_features=self.backbone.layer[11].ff.layer_2.out_features*2,
             out_features=2+aux_len,
         )
     def forward(self, input_ids, attention_masks):
