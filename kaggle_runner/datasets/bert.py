@@ -7,8 +7,7 @@ import pandas as pd
 import tensorflow as tf
 
 from kaggle_runner import may_debug, logger
-from kaggle_runner import defaults
-from kaggle_runner.defaults import DEBUG
+from kaggle_runner.defaults import DEBUG, LOAD_BERT_DATA
 from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
                                               get_obj_or_dump)
 #from kaggle_runner.utils.tpu import (strategy, tpu_resolver)
@@ -91,7 +90,7 @@ train_dataset = None
 test_dataset = None
 valid_dataset = None
 
-if defaults.LOAD_BERT_DATA:
+if LOAD_BERT_DATA:
     data_package = get_kaggle_dataset_input(
         "jigsaw-multilingula-toxicity-token-encoded/toxic_fast_tok_512.pk")
     try:
