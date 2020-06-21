@@ -27,6 +27,7 @@ PRETRAIND_PICKLE_AND_MORE='/kaggle/input/toxic-multilang-trained-torch-model'
 strategy=None
 tpu_resolver=None
 BATCH_SIZE = 32 * 2
+MAX_LENGTH = 224
 
 if tpu_resolver is None:
     if DEBUG:

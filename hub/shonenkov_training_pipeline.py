@@ -102,7 +102,6 @@ warnings.filterwarnings("ignore")
 
 
 # # + colab={} colab_type="code" id="Rl2PW6iO3bGF"
-MAX_LENGTH = 224
 ROOT_PATH = f'/kaggle' # for colab
 
 def get_toxic_comments(df):
