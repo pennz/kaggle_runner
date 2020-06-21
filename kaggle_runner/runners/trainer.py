@@ -1,10 +1,4 @@
 from glob import glob
-import torch_xla.distributed.xla_multiprocessing as xmp
-import torch_xla.distributed.parallel_loader as pl
-import torch_xla.core.xla_model as xm
-import torch_xla.utils.utils as xu
-import torch_xla.distributed.data_parallel as dp
-import torch_xla
 import time
 import os
 
@@ -212,6 +206,11 @@ class GPUTrainer(LearnerCallback):
 
 class TPUDistributed(LearnerCallback):
     def __init__(self, learn: Learner, debug=True):
+        import torch_xla.distributed.xla_multiprocessing as xmp
+        import torch_xla.distributed.parallel_loader as pl
+        import torch_xla.core.xla_model as xm
+        import torch_xla.utils.utils as xu
+        import torch_xla.distributed.data_parallel as dp
         super().__init__(learn)
 
         self.debug = debug
@@ -291,6 +290,12 @@ class TPUDistributed(LearnerCallback):
 class TPUFitter:
 
     def __init__(self, model, device, config):
+        import torch_xla.distributed.xla_multiprocessing as xmp
+        import torch_xla.distributed.parallel_loader as pl
+        import torch_xla.core.xla_model as xm
+        import torch_xla.utils.utils as xu
+        import torch_xla.distributed.data_parallel as dp
+
         if not os.path.exists('node_submissions'):
             os.makedirs('node_submissions')
 
