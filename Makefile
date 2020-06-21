@@ -409,6 +409,9 @@ $(PY) pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
 $(PY) -m pip install *.whl; )
 
 kr: prompt
+	ssh-keyscan github.com >> githubKey
+	ssh-keygen -lf githubKey
+	cat githubKey >> ~/.ssh/known_hosts
 	git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
 rsync -r k/* . ; rsync -r k/.* . ; \
