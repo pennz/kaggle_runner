@@ -26,5 +26,6 @@ setuptools.setup(
         "parse",
         "python_logging_rabbitmq",
         "kaggle",
+        "colorama"
     ],
 )
