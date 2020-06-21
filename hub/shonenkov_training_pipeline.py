@@ -125,7 +125,8 @@ def get_toxic_comments(df):
         return df[df['toxic'] == 1].comment_text.values
 
 
-# ![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
+# #![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
+subprocess.run('![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .', shell=True)
 
 
 
