@@ -15,6 +15,8 @@ cat >.datasets <<'EOF'
 "k1gaggle/jigsaw-toxicity-train-data-with-aux",
 "shonenkov/jigsaw-public-baseline-train-data",
 "shonenkov/jigsaw-public-baseline-results"
+"kashnitsky/jigsaw-multilingual-toxic-test-translated",
+"pranshu29/jigsaw-new-balanced-dataset"
 EOF
 endef
 export write_dataset_list_script = $(value _write_dataset_list)

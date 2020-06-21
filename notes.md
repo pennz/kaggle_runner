@@ -4256,3 +4256,8 @@ For TPU, it will freeze when trying to get Grad
 [DEBUG]2020-06-20 05:30:38,842:utils:grad info pg0: norm std(0.000000) mean(0.000000)
 [DEBUG]2020-06-20 05:30:38,845:utils:grad info pg1: norm std(0.000000) mean(0.000000)
 ```
+
+## Version 28
+0.9373
+## Version 29
+0.9410 with 3e-06 learning rate
