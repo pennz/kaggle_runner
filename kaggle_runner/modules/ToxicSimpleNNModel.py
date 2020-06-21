@@ -34,16 +34,14 @@ class ToxicSimpleNNModel(nn.Module):
 
 class ToxicSimpleNNModelChangeInner(ToxicSimpleNNModel):
     def __init__(self, use_aux=True):
-        transformer_layer = DistilBertModel.\
-        from_pretrained('distilbert-base-multilingual-cased')
 
-        self.backbone = transformer_layer
+        self.backbone = XLNetModel.from_pretrained('xlnet-base-cased')
         self.dropout = nn.Dropout(0.3)
         aux_len = 0
 
         if use_aux:
             aux_len = 5
         self.linear = nn.Linear(
-            in_features=self.backbone.pooler.dense.out_features*2,
+            in_features=self.backbone.layer[11].ff.out_features*2,
             out_features=2+aux_len,
         )
