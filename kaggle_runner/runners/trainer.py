@@ -17,7 +17,7 @@ from fastai.torch_core import *
 from fastai.basic_data import *
 from fastai.basic_train import LearnerCallback, Learner
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
-import datetime
+from datetime import datetime
 
 from kaggle_runner import logger
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
