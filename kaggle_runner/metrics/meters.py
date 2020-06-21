@@ -2,6 +2,7 @@ import numpy as np
 import torch
 
 import torch.nn as nn
+import sklearn
 from kaggle_runner.datasets.coders import compute_iou_batch
 from kaggle_runner.metrics.metrics import metric
 from kaggle_runner.predictors import predict
