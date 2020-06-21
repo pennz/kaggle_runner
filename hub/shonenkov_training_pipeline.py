@@ -274,7 +274,7 @@ def debug_train(use_dist_cb=True):
 # -
 
 # %%time
-#debug_train(use_dist_cb=False)
+debug_train(use_dist_cb=False)
 
 
 # # XLA
