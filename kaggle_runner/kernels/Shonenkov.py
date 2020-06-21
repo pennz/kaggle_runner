@@ -170,7 +170,7 @@ import torch.nn as nn
 class ToxicSimpleNNModelChangeInner(nn.Module):
 
     def __init__(self, use_aux=True):
-        self.backbone = XLNetModel.from_pretrained('xlnet-base-cased')
+        self.backbone = XLNetModel.from_pretrained('xlnet-large-cased')
         may_debug(True)
         self.dropout = nn.Dropout(0.3)
         aux_len = 0
@@ -279,7 +279,7 @@ class ShonenkovChangeInner(Shonenkov):
             shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
             from tokenizers import BertWordPieceTokenizer
-            tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
+            tokenizer = XLNetTokenizer.from_pretrained('xlnet-large-cased')
 
             self.transformers = {'train_transforms': train_transforms,
                                  'synthesic_transforms_often': synthesic_transforms_often,
