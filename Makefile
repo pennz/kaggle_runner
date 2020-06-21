@@ -148,7 +148,7 @@ lstm:
 debug_toxic:
 	DEBUG=true make toxic #python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 
-toxic: check
+toxic: check install_dep
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
@@ -415,16 +415,15 @@ $(PY) -m pip install *.whl; \
 make transformers; )
 
 kr: prompt
-	(git clone https://github.com/pennz/kaggle_runner; \
+	git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
 rsync -r k/* . ; rsync -r k/.* . ; \
 git submodule update --init || ( \
 sed -i 's/git@.*:/https:\/\/github.com\//' .git/config; \
 sed -i 's/git@.*:/https:\/\/github.com\//' .gitmodules; \
 git submodule update --init; \
-$(PY) -m pip install -e .;\
-export PATH=$$PWD/bin:$$PATH; \
-pgrep -f entry || entry.sh & )
+$(PY) -m pip install -e .;)
+	export PATH=$$PWD/bin:$$PATH; pgrep -f entry || entry.sh &
 	touch hub/custom_fastai_callbacks/__init__.py
 
 prompt:
