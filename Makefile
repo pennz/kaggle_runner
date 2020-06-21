@@ -148,7 +148,7 @@ lstm:
 debug_toxic:
 	DEBUG=true make toxic #python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 
-toxic: check install_dep
+toxic: check install_dep transformers
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
@@ -191,10 +191,7 @@ install_dep_seg:
 (test -z "$$($(PY) -m segmentation_models_pytorch 2>&1 | grep direct)" && $(PY) -m pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
 wait'
 
-install_dev_dep:
-	$(PY) -m pip install kaggle
-
-TOXIC_DEP := ipdb pyicu pycld2 polyglot textstat googletrans
+TOXIC_DEP := ipdb pyicu pycld2 polyglot textstat googletrans transformers==2.5.1 pandarallel catalyst==20.4.2
 
 $(TOXIC_DEP):
 	$(PY) -m pip show $@ &>/dev/null || $(PY) -m pip install -q $@ &
@@ -403,10 +400,8 @@ nodejs:
 	#apt install gcc g++ make
 
 
-transformers:
-	$(PY) -m pip install transformers==2.5.1 > /dev/null;
-	$(PY) -m pip install pandarallel > /dev/null;
-	$(PY) -m pip install catalyst==20.4.2 > /dev/null;
+transformers: transformers==2.5.1 pandarallel catalyst==20.4.2
+	@echo make $@ done
 
 xla:
 	$(PY) -m pip show torch_xla || ( curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py; \
