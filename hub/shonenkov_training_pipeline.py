@@ -82,7 +82,6 @@ from fastai.callbacks.misc import StopAfterNBatches
 from fastai.callbacks import *
 from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_schedule
 from fastai.text.transform import Vocab
-#from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 
 # # + colab={} colab_type="code" id="m_bxIOBr3bFf"
 import gc
@@ -157,60 +156,9 @@ k = Shonenkov(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=La
 k.run(dump_flag=False)
 
 # +
-def _change_dl(dl, shuffle):
-    old_dl = dl
-    train_sampler = DistributedSamplerWrapper(
-        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
-        num_replicas=8, #xm.xrt_world_size(),
-        rank=0, #xm.get_ordinal(), it only get 1/8 data ....
-        shuffle=True
-    )
-    train_loader = torch.utils.data.DataLoader(
-        k.train_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        sampler=train_sampler,
-        pin_memory=True,
-        drop_last=True,
-        num_workers=TrainGlobalConfig.num_workers,
-    )
-    new_dl = train_loader
-
-    return old_dl,new_dl,train_sampler
-
-def _change_dl_val(dl, shuffle):
-    old_dl = dl
-    validation_sampler = torch.utils.data.distributed.DistributedSampler(
-        k.validation_dataset,
-        num_replicas=8, #xm.xrt_world_size(),
-        rank=0, #xm.get_ordinal(),
-        shuffle=False
-    )
-    validation_loader = torch.utils.data.DataLoader(
-        k.validation_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        sampler=validation_sampler,
-        pin_memory=False,
-        drop_last=False,
-        num_workers=TrainGlobalConfig.num_workers
-    )
-
-    return old_dl,validation_loader,validation_sampler
-
-
-# +
-def to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
-    "Recursively map lists of tensors in `b ` to FP16."
-
-    return recurse(lambda x: x.to(device), b)
-
-def batch_to_device(b:Collection[Tensor],device:torch.device)->Collection[Tensor]:
-    "Move the input of batch `b` to TPU."
-
-    return [to_device(b[0],device), to_device(b[1],device)]
-
-# +
-def _to_gpu(learn:Learner) -> Learner:
-    learn.callback_fns.append(GPUTrainer)
+from kaggle_runner.kernels.fastai_kernel import FastAIKernel
+def _to_gpu(learn:Learner, k: FastAIKernel) -> Learner:
+    learn.callback_fns.append(partial(GPUTrainer, k=k))
 
     return learn
 
@@ -256,7 +204,7 @@ def debug_train(use_dist_cb=True):
     if use_dist_cb:
         learn = learn.to_tpu_distributed()
     else:
-        learn = learn.to_gpu()
+        learn = learn.to_gpu(k)
 
     #learn.callback_fns.append(CheckGrad)
     #print('hello')
