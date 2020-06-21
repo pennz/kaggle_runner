@@ -7,6 +7,7 @@ from kaggle_runner.datasets.bert import DatasetRetriever
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
 from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModelChangeInner,ToxicSimpleNNModel
 from fastai.basic_data import DataBunch
+import transformers
 from transformers import XLMRobertaTokenizer, XLNetTokenizer
 import albumentations
 
@@ -262,7 +263,7 @@ class ShonenkovChangeInner(Shonenkov):
                                  shuffle_transforms}
 
 import torch
-class DummyTrainGlobalConfig:
+class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs , 8 for GPU, 16 for TPU
