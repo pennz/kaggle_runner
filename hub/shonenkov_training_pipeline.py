@@ -45,11 +45,15 @@ from kaggle_runner.datasets.transfomers import *
 from kaggle_runner import defaults
 
 
+
 import numpy as np
 import pandas as pd
 import os
 os.environ['XLA_USE_BF16'] = "1"
+
+
 from glob import glob
+
 
 
 import torch
@@ -64,7 +68,11 @@ import time
 import random
 from datetime import datetime
 from tqdm import tqdm
-tqdm.pandas()import fastai
+tqdm.pandas()
+
+
+
+import fastai
 from fastai import *
 from fastai.core import *
 from fastai.torch_core import *
@@ -89,7 +97,11 @@ from pandarallel import pandarallel
 pandarallel.initialize(nb_workers=4, progress_bar=False)
 
 import warnings
-warnings.filterwarnings("ignore")ROOT_PATH = f'/kaggle' # for colab
+warnings.filterwarnings("ignore")
+
+
+
+ROOT_PATH = f'/kaggle' # for colab
 
 def get_toxic_comments(df):
         df = df[~df['comment_text'].isna()]
@@ -99,7 +111,11 @@ def get_toxic_comments(df):
         return df[df['toxic'] == 1].comment_text.values
 
 
-# ![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .class TrainGlobalConfig:
+# ![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
+
+
+
+class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs , 8 for GPU, 16 for TPU
@@ -226,6 +242,10 @@ from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 def len_parallelloader(self):
     return len(self._loader._loader)
 pl.PerDeviceLoader.__len__ = len_parallelloader
+
+
+
+
 def _to_tpu_distributed(learn:Learner) -> Learner:
     learn.callback_fns.append(TPUDistributed)
 
@@ -413,7 +433,11 @@ def test_model_fn(device=torch.device("cpu")):
     logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
 
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
-    logger.info(f"Test done, result len %d", len(results))from functools import partial
+    logger.info(f"Test done, result len %d", len(results))
+
+
+
+from functools import partial
 import pysnooper
 
 @pysnooper.snoop()
@@ -529,7 +553,11 @@ def _mp_fn(rank, flags, k=k):
 
     fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
     fitter.fit(train_loader, validation_loader)
-    fitter.run_tuning_and_inference(test_loader, validation_tune_loader)import gc
+    fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
+
+
+
+import gc
 gc.collect()
 
 
