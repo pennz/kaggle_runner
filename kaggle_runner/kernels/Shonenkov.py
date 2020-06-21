@@ -243,7 +243,7 @@ class ShonenkovChangeInner(Shonenkov):
         gc.collect();
 
     def setup_transformers(self):
-        if self.transformers is None:
+        if not hasattr(self, 'transformers') or self.transformers is None:
             supliment_toxic = None # avoid overfit
             train_transforms = get_train_transforms();
             synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
