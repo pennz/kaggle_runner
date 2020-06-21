@@ -217,7 +217,7 @@ def debug_train(use_dist_cb=True):
 # -
 
 # %%time
-debug_train(use_dist_cb=False)
+#debug_train(use_dist_cb=False)
 
 
 # # XLA
@@ -478,6 +478,8 @@ def train_loop(index, *args):
 FLAGS={}
 #xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
+def test_abc():
+    assert False
 
 # # + colab={} colab_type="code" id="m-zDM9QL3bIz"
 import pysnooper
