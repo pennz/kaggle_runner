@@ -417,8 +417,10 @@ make transformers; )
 kr: prompt
 	$(PY) -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
-$(PY) -m pip install -e k;\
-export PATH=$PWD/k/bin:$PATH; \
+mv k/* . ; mv k/.* . ; \
+git submodule update --init ; \
+$(PY) -m pip install -e .;\
+export PATH=$$PWD/bin:$$PATH; \
 entry.sh &)
 	touch hub/custom_fastai_callbacks/__init__.py
 
