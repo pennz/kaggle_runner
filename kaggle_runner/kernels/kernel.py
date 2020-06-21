@@ -67,6 +67,7 @@ class KaggleKernel(metaclass=ABCMeta):
 
     def set_data_size(self):
         "might be useful when test different input datasize"
+        pass
 
     def save_model(self):
         pass

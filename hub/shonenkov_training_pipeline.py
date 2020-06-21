@@ -70,7 +70,6 @@ from tqdm import tqdm
 tqdm.pandas()
 
 # # + colab={} colab_type="code" id="63n9I5s03bFc"
-from transformers import XLMRobertaTokenizer
 from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_schedule
 from fastai.text.transform import Vocab
 #from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
@@ -101,21 +100,12 @@ MAX_LENGTH = 224
 BACKBONE_PATH = 'xlm-roberta-large'
 
 # # + colab={} colab_type="code" id="94IiMvCD3bGJ"
-tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
 
 # # + colab={} colab_type="code" id="ya6Mxv0G3bGO"
 ROOT_PATH = f'/kaggle' # for colab
 
 
 # # + colab={} colab_type="code" id="jAeLvflH3bGV"
-def seed_everything(seed):
-    random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = True
 
 # # + colab={"base_uri": "https://localhost:8080/", "height": 86} colab_type="code" id="Nej3KhiY3bGZ"
 

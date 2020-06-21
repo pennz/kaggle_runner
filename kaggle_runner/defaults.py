@@ -1,6 +1,8 @@
 import os
 import subprocess
 
+SEED = 1
+
 FOCAL_LOSS_GAMMA = 0.0
 FOCAL_LOSS_GAMMA_NEG_POS = 0.25
 FOCAL_LOSS_BETA_NEG_POS = 1.0

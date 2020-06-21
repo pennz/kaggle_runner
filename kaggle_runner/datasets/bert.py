@@ -11,7 +11,7 @@ from kaggle_runner.defaults import DEBUG
 from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
                                               get_obj_or_dump)
 #from kaggle_runner.utils.tpu import (strategy, tpu_resolver)
-from kaggle_runner.hub.bert.extract_features import load_data, get_tokenizer
+from hub.bert.extract_features import load_data, get_tokenizer
 import torch
 
 

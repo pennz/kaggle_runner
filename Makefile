@@ -9,6 +9,7 @@ define _write_dataset_list
 cat >.datasets <<'EOF'
 "gabrichy/nvidiaapex",
 "k1gaggle/clean-pickle-for-jigsaw-toxicity",
+"k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
 "k1gaggle/jigsaw-toxicity-train-data-with-aux",
 "shonenkov/jigsaw-public-baseline-train-data",

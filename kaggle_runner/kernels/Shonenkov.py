@@ -1,10 +1,15 @@
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
+from kaggle_runner.kernels.fastai_kernel_bert import seed_everything
 from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.datasets.transfomers import *
+from kaggle_runner.datasets.bert import DatasetRetriever
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
+from transformers import XLMRobertaTokenizer
 import albumentations
 
 ROOT_PATH = f'/kaggle' # for colab
+BACKBONE_PATH = 'xlm-roberta-large'
+from kaggle_runner.defaults import SEED
 
 def get_train_transforms():
     return albumentations.Compose([
@@ -56,7 +61,7 @@ class Shonenkov(FastAIKernel):
             train_transforms = get_train_transforms();
             synthesic_transforms_often = get_synthesic_transforms(supliment_toxic, p=0.5)
             synthesic_transforms_low = None
-            #tokenizer = tokenizer
+            tokenizer = XLMRobertaTokenizer.from_pretrained(BACKBONE_PATH)
             shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
             self.transformers = {'train_transforms': train_transforms,
