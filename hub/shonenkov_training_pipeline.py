@@ -194,7 +194,7 @@ def debug_train(use_dist_cb=True):
                              callback_fns=[partial(GradientClipping, clip=0.5),
                                            partial(CSVLogger, append=True),
                                            partial(GradientAccumulator, num_iterations=4),
-                                           partial(CheckGrad, skip_loss_step=False)]
+                                           partial(CheckGrad, skip_loss_step=False, batch_size=k.config.batch_size)]
                              )
     k.learner = learn
 

@@ -68,12 +68,13 @@ def _check_grad(raw_opt):
         logger.debug("grad info pg1: norm std(%f) mean(%f)", *torch.std_mean(norms1g))
 
 class CheckGrad(LearnerCallback):
-    def __init__(self, learn:Learner, skip_loss_step=False):
+    def __init__(self, learn:Learner, skip_loss_step=False, batch_size=16):
         super().__init__(learn)
         self.skip_loss_step = skip_loss_step
         logger.debug("Init Callback CheckGrad with skip_loss_step: " +str(self.skip_loss_step))
         self.losses = None
         self.final_scores = None
+        self.batch_size = batch_size
 
     def on_train_begin(self, **kwargs:Any)->None:
         self.losses = AverageMeter()
@@ -94,7 +95,7 @@ class CheckGrad(LearnerCallback):
                      kwargs['last_loss'], kwargs['smooth_loss'])
 
         self.final_scores.update(kwargs['last_target'], kwargs['last_output'])
-        self.losses.update(kwargs['last_loss'].detach().item(), TrainGlobalConfig.batch_size)
+        self.losses.update(kwargs['last_loss'].detach().item(), self.batch_size)
         logger.debug(f"loss_avg: {self.losses.avg:.5f}, lr_pg0:"
                      f"{pg[0]['lr']}, lr_pg1: {pg[1]['lr']}final_score:"
                      f"{self.final_scores.avg:.5f}, mc_score:"
