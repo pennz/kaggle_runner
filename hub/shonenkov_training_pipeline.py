@@ -19,10 +19,10 @@
 # %autoreload 2
 
 # + {"magic_args": "--bg", "language": "bash"}
-# #pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
+# #python3 -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
 # #mv kaggle_runner k && \
 # #mv k/* . && mv k/.* .; \
-# #pip3 install -e .; \
+# #python3 -m pip install -e .; \
 # #git submodule update --init; \
 # #export PATH=$PWD/bin:$PATH; \
 # #entry.sh; echo You can wait to setup for remote access)
@@ -30,10 +30,10 @@
 
 
 import subprocess
-subprocess.run("""pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner;
+subprocess.run("""python3 -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner;
 mv kaggle_runner k &&
 mv k/* . && mv k/.* .;
-pip3 install -e .;
+python3 -m pip install -e .;
 git submodule update --init;
 export PATH=$PWD/bin:$PATH;
 entry.sh &; echo You can wait to setup for remote access)
