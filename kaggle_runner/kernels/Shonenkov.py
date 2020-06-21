@@ -170,8 +170,7 @@ import torch.nn as nn
 class ToxicSimpleNNModelChangeInner(nn.Module):
 
     def __init__(self, use_aux=True):
-        self.backbone = transformer_layer = XLNetModel.\
-        from_pretrained('xlnet-base-cased')
+        self.backbone = XLNetModel.from_pretrained('xlnet-base-cased')
         may_debug(True)
         self.dropout = nn.Dropout(0.3)
         aux_len = 0
