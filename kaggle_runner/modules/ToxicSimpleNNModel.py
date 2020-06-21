@@ -34,8 +34,6 @@ class ToxicSimpleNNModel(nn.Module):
 
 class ToxicSimpleNNModelChangeInner(ToxicSimpleNNModel):
     def __init__(self, use_aux=True):
-        super(ToxicSimpleNNModelChangeInner, self).__init__(use_aux)
-
         transformer_layer = DistilBertModel.\
         from_pretrained('distilbert-base-multilingual-cased')
 

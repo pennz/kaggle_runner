@@ -5,10 +5,10 @@ from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.datasets.transfomers import *
 from kaggle_runner.datasets.bert import DatasetRetriever
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
-from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModelChangeInner,ToxicSimpleNNModel
+from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModel
 from fastai.basic_data import DataBunch
 import transformers
-from transformers import XLMRobertaTokenizer, XLNetTokenizer
+from transformers import *
 import albumentations
 
 ROOT_PATH = f'/kaggle' # for colab
@@ -164,6 +164,37 @@ class Shonenkov(FastAIKernel):
                 self.logger.error("peek_data failed, DataBunch is None.")
 
 from kaggle_runner import may_debug
+
+import torch.nn as nn
+
+class ToxicSimpleNNModelChangeInner(nn.Module):
+
+    def __init__(self, use_aux=True):
+        transformer_layer = XLNetModel.\
+        from_pretrained('xlnet-base-cased')
+
+        self.backbone = transformer_layer
+        may_debug(True)
+        self.dropout = nn.Dropout(0.3)
+        aux_len = 0
+
+        if use_aux:
+            aux_len = 5
+        self.linear = nn.Linear(
+            in_features=self.backbone.pooler.dense.out_features*2,
+            out_features=2+aux_len,
+        )
+    def forward(self, input_ids, attention_masks):
+        bs, seq_length = input_ids.shape
+        seq_x, _ = self.backbone(
+            input_ids=input_ids, attention_mask=attention_masks)
+        apool = torch.mean(seq_x, 1)
+        mpool, _ = torch.max(seq_x, 1)
+        x = torch.cat((apool, mpool), 1)
+        x = self.dropout(x)
+
+        return self.linear(x)
+
 class ShonenkovChangeInner(Shonenkov):
     def __init__(self, device, config, **kargs):
         super(ShonenkovChangeInner, self).__init__(device, config, **kargs)
@@ -251,14 +282,13 @@ class ShonenkovChangeInner(Shonenkov):
             shuffle_transforms = ShuffleSentencesTransform(always_apply=True)
 
             from tokenizers import BertWordPieceTokenizer
-            tokenizer = transformers.DistilBertTokenizer.from_pretrained(
-                'distilbert-base-multilingual-cased')
+            tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
 
             self.transformers = {'train_transforms': train_transforms,
                                  'synthesic_transforms_often': synthesic_transforms_often,
                                  'synthesic_transforms_low': synthesic_transforms_low,
-                                 'tokenizer': tokenizer, 'shuffle_transforms':
-                                 shuffle_transforms}
+                                 'tokenizer': tokenizer,
+                                 'shuffle_transforms': shuffle_transforms}
 
 import torch
 class DummyTrainGlobalConfig:
