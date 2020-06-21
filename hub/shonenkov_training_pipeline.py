@@ -70,6 +70,16 @@ from tqdm import tqdm
 tqdm.pandas()
 
 # # + colab={} colab_type="code" id="63n9I5s03bFc"
+from kaggle_runner import logger
+from kaggle_runner import defaults
+
+import fastai
+from fastai import *
+from fastai.core import *
+from fastai.torch_core import *
+from fastai.vision import *
+from fastai.callbacks.misc import StopAfterNBatches
+from fastai.callbacks import *
 from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_schedule
 from fastai.text.transform import Vocab
 #from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
@@ -90,29 +100,14 @@ pandarallel.initialize(nb_workers=4, progress_bar=False)
 
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 from kaggle_runner import may_debug
+import warnings
+warnings.filterwarnings("ignore")
 
-
-# # + colab={} colab_type="code" id="ErWqUgQH3bGA"
-SEED = 142
 
 # # + colab={} colab_type="code" id="Rl2PW6iO3bGF"
 MAX_LENGTH = 224
-BACKBONE_PATH = 'xlm-roberta-large'
-
-# # + colab={} colab_type="code" id="94IiMvCD3bGJ"
-
-# # + colab={} colab_type="code" id="ya6Mxv0G3bGO"
 ROOT_PATH = f'/kaggle' # for colab
 
-
-# # + colab={} colab_type="code" id="jAeLvflH3bGV"
-
-# # + colab={"base_uri": "https://localhost:8080/", "height": 86} colab_type="code" id="Nej3KhiY3bGZ"
-
-
-# # + colab={} colab_type="code" id="JLdFogcG3bGe"
-
-# # + colab={} colab_type="code" id="NjmhIsAK3bHU"
 def get_toxic_comments(df):
         df = df[~df['comment_text'].isna()]
         df = df.drop_duplicates(subset='comment_text')
@@ -120,16 +115,8 @@ def get_toxic_comments(df):
 
         return df[df['toxic'] == 1].comment_text.values
 
-# # + colab={} colab_type="code" id="Nib4YbrO3bHX"
-import warnings
-warnings.filterwarnings("ignore")
-
-
 # # + colab={} colab_type="code" id="cQ86CF413bIS"
 # ![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
-
-
-# !pip3 install pysnooper ipdb
 
 
 # # + colab={} colab_type="code" id="6KQPK1tG3bIO"
@@ -170,18 +157,6 @@ class TrainGlobalConfig:
 # # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
 k = Shonenkov(torch.device("cpu"), metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
-
-# # + colab={} colab_type="code" id="Sul01z663bIf"
-from kaggle_runner import logger
-from kaggle_runner import defaults
-
-import fastai
-from fastai import *
-from fastai.core import *
-from fastai.torch_core import *
-from fastai.vision import *
-from fastai.callbacks.misc import StopAfterNBatches
-from fastai.callbacks import *
 
 # +
 def _change_dl(dl, shuffle):
@@ -306,8 +281,6 @@ def debug_train(use_dist_cb=True):
 
 # # + colab={} colab_type="code" id="W-54VVqb3bIn"
 # !make xla
-import warnings
-warnings.filterwarnings('ignore')
 
 import torch_xla
 import torch_xla.distributed.data_parallel as dp
@@ -323,14 +296,8 @@ from fastai.core import *
 from fastai.torch_core import *
 from fastai.vision import *
 from fastai.basic_train import *
-from kaggle_runner import logger
 
-
-# # + colab={} colab_type="code" id="LnDl9J_d3bIF"
-# from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
-
-# # + colab={} colab_type="code" id="qbxKT4Td3bII"
-
+from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 def len_parallelloader(self):
     return len(self._loader._loader)
 pl.PerDeviceLoader.__len__ = len_parallelloader
@@ -339,7 +306,6 @@ pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
 def _to_tpu_distributed(learn:Learner) -> Learner:
-  #Learner.fit = _fit_tpu
     learn.callback_fns.append(TPUDistributed)
 
     return learn
@@ -527,12 +493,6 @@ def test_model_fn(device=torch.device("cpu")):
 
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
-
-
-# # + colab={} colab_type="code" id="n7z7QKwF3bIr"
-from functools import partial
-
-import pysnooper
 
 
 # # + colab={} colab_type="code" id="4MbjVEVm3bIw"
