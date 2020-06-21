@@ -194,16 +194,15 @@ wait'
 install_dev_dep:
 	$(PY) -m pip install kaggle
 
-install_dep:
-	bash -c '$(PY) -m pip install -q ipdb & \
-$(PY) -m pip install -q pyicu & \
-$(PY) -m pip install -q pycld2 & \
-$(PY) -m pip install -q polyglot & \
-$(PY) -m pip install -q textstat & \
-$(PY) -m pip install -q googletrans & \
-wait'
+TOXIC_DEP := ipdb pyicu pycld2 polyglot textstat googletrans
+
+$(TOXIC_DEP):
+	$(PY) -m pip show $@ &>/dev/null || $(PY) -m pip install -q $@ &
+
+install_dep: $(TOXIC_DEP)
 	#$(PY) -m pip install -q eumetsat expect &
 	#conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
+	echo make $@ done
 
 connect_close:
 	stty raw -echo && ( ps aux | $(SED) -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
