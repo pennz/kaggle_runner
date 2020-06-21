@@ -59,9 +59,10 @@ if [ "x${ENABLE_RVS}" = x1 ]; then
     fi
 fi &
 
-python3 -m pip install pysnooper ipdb ripdb jupytext pydicom parse pytest-logger python_logging_rabbitmq coverage &
-python3 -m pip install pyvim neovim msgpack==1.0.0 jedi &
-# python -m pip install pyvim neovim msgpack==1.0.0 & # for vim
+python3 -m pip install pysnooper ipdb ripdb \
+pytest-logger python_logging_rabbitmq coverage &
+python3 -m pip install parse jupytext pydicom
+#python3 -m pip install pyvim neovim msgpack==1.0.0 jedi &
 
 SRC_WORK_FOLDER=/kaggle/working
 [ -d ${SRC_WORK_FOLDER} ] || mkdir -p ${SRC_WORK_FOLDER}
