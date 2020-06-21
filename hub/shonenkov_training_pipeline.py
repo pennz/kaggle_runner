@@ -19,25 +19,28 @@
 # %autoreload 2
 
 # + {"magic_args": "--bg", "language": "bash"}
-# pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
-# mv kaggle_runner k && \
-# mv k/* . && mv k/.* .; \
-# pip3 install -e .; \
-# git submodule update --init; \
-# export PATH=$PWD/bin:$PATH; \
-# entry.sh; echo You can wait to setup for remote access)
-# import subprocess
-# subprocess.run("""pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner;
-# mv kaggle_runner k &&
-# mv k/* . && mv k/.* .;
-# pip3 install -e .;
-# git submodule update --init;
-# export PATH=$PWD/bin:$PATH;
-# entry.sh; echo You can wait to setup for remote access)
-# """, shell=True)
+# #pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
+# #mv kaggle_runner k && \
+# #mv k/* . && mv k/.* .; \
+# #pip3 install -e .; \
+# #git submodule update --init; \
+# #export PATH=$PWD/bin:$PATH; \
+# #entry.sh; echo You can wait to setup for remote access)
+# -
+
+
+import subprocess
+subprocess.run("""pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner;
+mv kaggle_runner k &&
+mv k/* . && mv k/.* .;
+pip3 install -e .;
+git submodule update --init;
+export PATH=$PWD/bin:$PATH;
+entry.sh &; echo You can wait to setup for remote access)
+""", shell=True)
 
 # + {"language": "bash"}
-# make install_dep
+# #make install_dep
 # -
 import subprocess
 subprocess.run("make install_dep", shell=True)
