@@ -202,7 +202,8 @@ $(TOXIC_DEP):
 install_dep: $(TOXIC_DEP)
 	#$(PY) -m pip install -q eumetsat expect &
 	#conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
-	echo make $@ done
+	wait
+	@echo make $@ done
 
 connect_close:
 	stty raw -echo && ( ps aux | $(SED) -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
