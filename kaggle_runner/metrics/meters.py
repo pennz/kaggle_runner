@@ -5,7 +5,7 @@ import torch.nn as nn
 from kaggle_runner.datasets.coders import compute_iou_batch
 from kaggle_runner.metrics.metrics import metric
 from kaggle_runner.predictors import predict
-from .metrics improt matthews_correlation
+from .metrics import matthews_correlation
 
 
 class Meter:
