@@ -15,7 +15,6 @@ class ToxicSimpleNNModel(nn.Module):
 
         if use_aux:
             aux_len = 5
-        may_debug(True)
         self.linear = nn.Linear(
             in_features=self.backbone.pooler.dense.out_features*2,
             out_features=2+aux_len,

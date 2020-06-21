@@ -118,11 +118,11 @@ warnings.filterwarnings("ignore")
 ROOT_PATH = f'/kaggle' # for colab
 
 def get_toxic_comments(df):
-        df = df[~df['comment_text'].isna()]
-        df = df.drop_duplicates(subset='comment_text')
-        df['toxic'] = df['toxic'].round().astype(np.int)
+    df = df[~df['comment_text'].isna()]
+    df = df.drop_duplicates(subset='comment_text')
+    df['toxic'] = df['toxic'].round().astype(np.int)
 
-        return df[df['toxic'] == 1].comment_text.values
+    return df[df['toxic'] == 1].comment_text.values
 
 
 # #![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
@@ -304,7 +304,6 @@ def test_model_fn(device=torch.device("cpu")):
         drop_last=True,
         num_workers=TrainGlobalConfig.num_workers,
     )
-    may_debug()
     validation_loader = torch.utils.data.DataLoader(
         self.validation_dataset,
         batch_size=TrainGlobalConfig.batch_size,
