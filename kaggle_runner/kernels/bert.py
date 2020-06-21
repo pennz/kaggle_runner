@@ -10,6 +10,8 @@ from tensorflow.keras.optimizers import Adam
 
 from kaggle_runner import may_debug
 from kaggle_runner.callbacks import ReduceLROnPlateauLogCBs
+from kaggle_runner import defaults
+defaults.LOAD_BERT_DATA = True
 from kaggle_runner.datasets.bert import (DATA_PATH, test_dataset, x_valid,
                                          y_valid)
 from kaggle_runner.metrics.metrics import matthews_correlation
@@ -18,10 +20,10 @@ from kaggle_runner.utils.wrapper import size_decorator
 
 # ### learn from 1st place solution
 # Custom head for BERT, XLNet and GPT2 and Bucket Sequencing Collator
-# Auxiliary tasks for models -> to add
+# Auxiliary tasks for models -> to add -> done
 # Custom mimic loss -> done, need test
 # SWA and checkpoint ensemble
-# Rank average ensemble of 2x XLNet, 2x BERT and GPT2 medium
+# Rank average ensemble of 2x XLNet, 2x BERT and GPT2 medium (ensemble)
 
 
 # ### DistilBERT

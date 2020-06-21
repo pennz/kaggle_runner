@@ -1,6 +1,9 @@
 import subprocess
 
 from kaggle_runner import logger, may_debug
+
+from kaggle_runner import defaults
+defaults.LOAD_BERT_DATA = True
 from kaggle_runner.datasets.bert import (BATCH_SIZE, TRAIN_LEN, train_dataset,
                                          val_data, valid_dataset, x_valid,
                                          y_valid)

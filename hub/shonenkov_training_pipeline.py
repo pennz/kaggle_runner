@@ -31,7 +31,7 @@
 # make transformers
 # -
 
-# # + colab={} colab_type="code" id="Mg3zuCSx3bE9"
+
 from importlib import reload
 import kaggle_runner
 reload(kaggle_runner)
@@ -45,17 +45,17 @@ from kaggle_runner.datasets.transfomers import *
 from kaggle_runner import defaults
 
 
-# # + colab={} colab_type="code" id="h9Wgilnm3bFE"
+
 import numpy as np
 import pandas as pd
 import os
 os.environ['XLA_USE_BF16'] = "1"
 
-# # + colab={} colab_type="code" id="ecCODkEU3bFK"
+
 from glob import glob
 
 
-# # + colab={} colab_type="code" id="KBw5JHOK3bFR"
+
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset,DataLoader
@@ -63,14 +63,14 @@ from torch.autograd import Variable
 from torch.utils.data.sampler import SequentialSampler, RandomSampler
 import sklearn
 
-# # + colab={} colab_type="code" id="g8HpmDLV3bFX"
+
 import time
 import random
 from datetime import datetime
 from tqdm import tqdm
 tqdm.pandas()
 
-# # + colab={} colab_type="code" id="63n9I5s03bFc"
+
 
 import fastai
 from fastai import *
@@ -82,11 +82,11 @@ from fastai.callbacks import *
 from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_schedule
 from fastai.text.transform import Vocab
 
-# # + colab={} colab_type="code" id="m_bxIOBr3bFf"
+
 import gc
 import re
 
-# # + colab={"base_uri": "https://localhost:8080/", "height": 139} colab_type="code" id="PQAFCOlu3bFl"
+
 # # !python3 -m pip install nltk > /dev/null
 import nltk
 nltk.download('punkt')
@@ -100,7 +100,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-# # + colab={} colab_type="code" id="Rl2PW6iO3bGF"
+
 ROOT_PATH = f'/kaggle' # for colab
 
 def get_toxic_comments(df):
@@ -110,11 +110,11 @@ def get_toxic_comments(df):
 
         return df[df['toxic'] == 1].comment_text.values
 
-# # + colab={} colab_type="code" id="cQ86CF413bIS"
+
 # ![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
 
 
-# # + colab={} colab_type="code" id="6KQPK1tG3bIO"
+
 class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
@@ -149,7 +149,7 @@ class TrainGlobalConfig:
     criterion = LabelSmoothing()
     # -------------------
 
-# # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
+
 k = Shonenkov(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
@@ -162,10 +162,9 @@ def _to_gpu(learn:Learner, k: FastAIKernel) -> Learner:
     return learn
 
 Learner.to_gpu = _to_gpu
-# -
 
 
-# # + colab={} colab_type="code" id="xnvcfuzd3bIp"
+# +
 import pysnooper
 from functools import partial
 
@@ -198,8 +197,6 @@ def debug_train(use_dist_cb=True):
                              )
     k.learner = learn
 
-    k.learner = learn
-
     if use_dist_cb:
         learn = learn.to_tpu_distributed()
     else:
@@ -222,7 +219,7 @@ def debug_train(use_dist_cb=True):
 
 # # XLA
 
-# # + colab={} colab_type="code" id="W-54VVqb3bIn"
+
 # !make xla
 
 import torch_xla
@@ -439,7 +436,7 @@ def test_model_fn(device=torch.device("cpu")):
     logger.info(f"Test done, result len %d", len(results))
 
 
-# # + colab={} colab_type="code" id="4MbjVEVm3bIw"
+
 from functools import partial
 import pysnooper
 
@@ -474,14 +471,14 @@ def train_loop(index, *args):
     #learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
     learn.fit(1, lr=5e-6, wd=0.001)
 
-# # + colab={"base_uri": "https://localhost:8080/", "height": 573} colab_type="code" id="EQDJ4gsP3bIx"
+
 FLAGS={}
 #xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 def test_abc():
     assert False
 
-# # + colab={} colab_type="code" id="m-zDM9QL3bIz"
+
 import pysnooper
 
 @pysnooper.snoop()
@@ -559,29 +556,30 @@ def _mp_fn(rank, flags, k=k):
     fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
 
 
-# # + colab={} colab_type="code" id="hhQxQcSA3bI3"
+
 import gc
 gc.collect()
 
-# # + colab={} colab_type="code" id="bpLwWDel3bI7"
+
 # %%time
 
 if __name__ == "__main__":
     FLAGS={}
     xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 
-# # + colab={} colab_type="code" id="hTEdrF6n3bJA"
+
 from datetime import date
 today = date.today()
 output_model_file='XLMRobertaModel_tpu_trained.bin'
 torch.save(k.model.state_dict(), f"{today}_{output_model_file}")
 
-# # + colab={} colab_type="code" id="Wu0VhhZAFuYs"
+
 submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
 submission['toxic'].hist(bins=100)
 
-# # + colab={} colab_type="code" id="RRr-yzJ_yVTW"
+
 submission.to_csv(f'{ROOT_PATH}/submission.csv')
+
 
 # #!cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
 # !make push_dataset
