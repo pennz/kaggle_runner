@@ -280,7 +280,7 @@ class DatasetRetriever(Dataset):
         self.aux = None
         assert transformers is not None
         self.transformers = transformers
-        self.vocab = vocab
+        self.vocab = None
 
         if use_aux:
             self.aux = [self.severe_toxic, self.obscene, self.threat, self.insult, self.identity_hate]

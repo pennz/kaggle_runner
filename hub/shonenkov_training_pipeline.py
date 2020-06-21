@@ -168,7 +168,7 @@ class TrainGlobalConfig:
     # -------------------
 
 # # + colab={"base_uri": "https://localhost:8080/", "height": 173} colab_type="code" id="fYMCn2Gt3bIb"
-k = Shonenkov(torch.device("cpu"), metrics=None, loss_func=LabelSmoothing(), opt_func=None)
+k = Shonenkov(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
 # # + colab={} colab_type="code" id="Sul01z663bIf"

@@ -1,9 +1,12 @@
+from kaggle_runner import logger
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 from kaggle_runner.kernels.fastai_kernel_bert import seed_everything
 from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.datasets.transfomers import *
 from kaggle_runner.datasets.bert import DatasetRetriever
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
+from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModel
+from fastai.basic_data import DataBunch
 from transformers import XLMRobertaTokenizer
 import albumentations
 
@@ -40,12 +43,13 @@ vocab = get_pickled_data("vocab.pkl")
 #   get_obj_or_dump("vocab.pkl", default=vocab)
 
 class Shonenkov(FastAIKernel):
-    def __init__(self, device, **kargs):
+    def __init__(self, device, config, **kargs):
         super(Shonenkov, self).__init__(**kargs)
         self.data = None
         self.transformers = None
         self.setup_transformers()
         self.device = device
+        self.config = config
         self.learner = None
 
     def build_and_set_model(self):
@@ -143,9 +147,9 @@ class Shonenkov(FastAIKernel):
         logger.debug("kernel use device %s", self.device)
         self.data = DataBunch.create(self.train_dataset,
                                      self.validation_dataset,
-                                     bs=TrainGlobalConfig.batch_size,
+                                     bs=self.config.batch_size,
                                      device=self.device,
-                                     num_workers=TrainGlobalConfig.num_workers)
+                                     num_workers=self.config.num_workers)
 
     def peek_data(self):
         if self.data is not None:
