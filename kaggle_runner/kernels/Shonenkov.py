@@ -243,8 +243,6 @@ class ShonenkovChangeInner(Shonenkov):
         gc.collect();
 
     def setup_transformers(self):
-        may_debug(True)
-
         if self.transformers is None:
             supliment_toxic = None # avoid overfit
             train_transforms = get_train_transforms();
