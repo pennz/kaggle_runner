@@ -297,5 +297,9 @@ class DummyTrainGlobalConfig:
 
 
 def test_change_inner_module():
-    k = ShonenkovChangeInner(torch.device("cpu"), DummyTrainGlobalConfig, metrics=None, loss_func='LabelSmoothing', opt_func=None)
+    from kaggle_runner.losses import LabelSmoothing
+    k = ShonenkovChangeInner(torch.device("cpu"), DummyTrainGlobalConfig,
+                             metrics=None, loss_func=LabelSmoothing(),
+                             opt_func=None)
     assert k is not None
+    k.run(dump_flag=False)

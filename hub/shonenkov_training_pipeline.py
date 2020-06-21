@@ -152,6 +152,8 @@ class TrainGlobalConfig:
 
 k = Shonenkov(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
+#k = Shonenkov(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
+#k.run(dump_flag=False)
 
 # +
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
