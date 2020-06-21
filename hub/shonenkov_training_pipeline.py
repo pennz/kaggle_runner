@@ -40,7 +40,6 @@ from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModel
 from kaggle_runner.kernels.Shonenkov import Shonenkov
 from kaggle_runner.callbacks import CheckGrad,_check_grad
 from kaggle_runner.metrics.meters import AverageMeter, RocAucMeter
-from kaggle_runner.runners.trainer import TPUDistributed,TPUFitter, GPUTrainer
 from kaggle_runner.losses import LabelSmoothing
 from kaggle_runner.datasets.transfomers import *
 from kaggle_runner import defaults
@@ -156,6 +155,7 @@ k.run(dump_flag=False)
 
 # +
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
+from kaggle_runner.runners.trainer import GPUTrainer
 def _to_gpu(learn:Learner, k: FastAIKernel) -> Learner:
     learn.callback_fns.append(partial(GPUTrainer, k=k))
 
@@ -222,6 +222,7 @@ debug_train(use_dist_cb=False)
 
 # # XLA
 
+from kaggle_runner.runners.tpu_trainer import TPUDistributed,TPUFitter
 # # + colab={} colab_type="code" id="W-54VVqb3bIn"
 # !make xla
 
