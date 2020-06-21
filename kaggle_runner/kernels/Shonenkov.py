@@ -170,7 +170,7 @@ import torch.nn as nn
 class ToxicSimpleNNModelChangeInner(nn.Module):
 
     def __init__(self, use_aux=True):
-        may_debug(True)
+        super(ToxicSimpleNNModelChangeInner, self).__init__()
         self.backbone = XLNetModel.from_pretrained('xlnet-large-cased')
         self.dropout = nn.Dropout(0.3)
         aux_len = 0
@@ -178,7 +178,7 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
         if use_aux:
             aux_len = 5
         self.linear = nn.Linear(
-            in_features=self.backbone.pooler.dense.out_features*2,
+            in_features=self.backbone.layer[11].ff.out_features*2,
             out_features=2+aux_len,
         )
     def forward(self, input_ids, attention_masks):

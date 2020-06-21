@@ -30,18 +30,3 @@ class ToxicSimpleNNModel(nn.Module):
         x = self.dropout(x)
 
         return self.linear(x)
-
-
-class ToxicSimpleNNModelChangeInner(ToxicSimpleNNModel):
-    def __init__(self, use_aux=True):
-
-        self.backbone = XLNetModel.from_pretrained('xlnet-base-cased')
-        self.dropout = nn.Dropout(0.3)
-        aux_len = 0
-
-        if use_aux:
-            aux_len = 5
-        self.linear = nn.Linear(
-            in_features=self.backbone.layer[11].ff.out_features*2,
-            out_features=2+aux_len,
-        )
