@@ -37,7 +37,7 @@ import kaggle_runner
 reload(kaggle_runner)
 from kaggle_runner import may_debug, logger
 from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModel
-from kaggle_runner.kernels.Shonenkov import Shonenkov
+from kaggle_runner.kernels.Shonenkov import Shonenkov, ShonenkovChangeInner
 from kaggle_runner.callbacks import CheckGrad,_check_grad
 from kaggle_runner.metrics.meters import AverageMeter, RocAucMeter
 from kaggle_runner.losses import LabelSmoothing
