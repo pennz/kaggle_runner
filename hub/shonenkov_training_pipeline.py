@@ -19,15 +19,16 @@
 # %autoreload 2
 
 # + {"language": "bash"}
-# # pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
+# pip3 show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
 # mv kaggle_runner k && \
 # mv k/* . && mv k/.* .; \
-# pip3 install -e .;\
+# pip3 install -e .; \
+# git submodule update --init; \
 # export PATH=$PWD/bin:$PATH; \
 # entry.sh &)
 
 # + {"language": "bash"}
-# # make transformers
+# make transformers
 # -
 
 # # + colab={} colab_type="code" id="Mg3zuCSx3bE9"
@@ -42,6 +43,7 @@ from kaggle_runner.metrics.meters import AverageMeter, RocAucMeter
 from kaggle_runner.runners.trainer import TPUDistributed,TPUFitter, GPUTrainer
 from kaggle_runner.losses import LabelSmoothing
 from kaggle_runner.datasets.transfomers import *
+from kaggle_runner import defaults
 
 
 # # + colab={} colab_type="code" id="h9Wgilnm3bFE"
@@ -70,8 +72,6 @@ from tqdm import tqdm
 tqdm.pandas()
 
 # # + colab={} colab_type="code" id="63n9I5s03bFc"
-from kaggle_runner import logger
-from kaggle_runner import defaults
 
 import fastai
 from fastai import *
@@ -98,8 +98,6 @@ from nltk import sent_tokenize
 from pandarallel import pandarallel
 pandarallel.initialize(nb_workers=4, progress_bar=False)
 
-from kaggle_runner.kernels.fastai_kernel import FastAIKernel
-from kaggle_runner import may_debug
 import warnings
 warnings.filterwarnings("ignore")
 
