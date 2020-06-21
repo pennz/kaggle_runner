@@ -415,10 +415,13 @@ $(PY) -m pip install *.whl; \
 make transformers; )
 
 kr: prompt
-	$(PY) -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
+	$(PY) -m pip show kaggle_runner || (git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
 mv k/* . ; mv k/.* . ; \
-git submodule update --init ; \
+git submodule update --init || (\
+sed -i 's/git@.*:/https:\/\/github.com\//' .git/config; \
+sed -i 's/git@.*:/https:\/\/github.com\//' .gitmodules; \
+git submodule update --init) \
 $(PY) -m pip install -e .;\
 export PATH=$$PWD/bin:$$PATH; \
 entry.sh &)
