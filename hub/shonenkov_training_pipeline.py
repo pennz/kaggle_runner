@@ -222,7 +222,6 @@ def debug_train(use_dist_cb=True):
 
 # # XLA
 
-from kaggle_runner.runners.tpu_trainer import TPUDistributed,TPUFitter
 # # + colab={} colab_type="code" id="W-54VVqb3bIn"
 # !make xla
 
@@ -240,6 +239,7 @@ from fastai.core import *
 from fastai.torch_core import *
 from fastai.vision import *
 from fastai.basic_train import *
+from kaggle_runner.runners.tpu_trainer import TPUDistributed, TPUFitter
 
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 def len_parallelloader(self):
