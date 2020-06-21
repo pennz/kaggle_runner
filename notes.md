@@ -4261,3 +4261,5 @@ For TPU, it will freeze when trying to get Grad
 0.9373
 ## Version 29
 0.9410 with 3e-06 learning rate
+
+Q: different lr, the final negative predicted value changed.

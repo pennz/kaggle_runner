@@ -5,7 +5,7 @@ from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.datasets.transfomers import *
 from kaggle_runner.datasets.bert import DatasetRetriever
 from kaggle_runner.utils.kernel_utils import get_obj_or_dump
-from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModel
+from kaggle_runner.modules.ToxicSimpleNNModel import ToxicSimpleNNModelChangeInner,ToxicSimpleNNModel
 from fastai.basic_data import DataBunch
 from transformers import XLMRobertaTokenizer
 import albumentations
@@ -161,3 +161,8 @@ class Shonenkov(FastAIKernel):
         else:
             if self.logger is not None:
                 self.logger.error("peek_data failed, DataBunch is None.")
+
+class ShonenkovChangeInner(Shonenkov):
+    def build_and_set_model(self):
+        self.model = ToxicSimpleNNModelChangeInner()
+        self.model = self.model.to(self.device)
