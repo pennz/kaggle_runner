@@ -263,7 +263,7 @@ class ShonenkovChangeInner(Shonenkov):
                                  shuffle_transforms}
 
 import torch
-class TrainGlobalConfig:
+class DummyTrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs , 8 for GPU, 16 for TPU
