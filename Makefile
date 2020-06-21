@@ -149,7 +149,7 @@ lstm:
 debug_toxic:
 	DEBUG=true make toxic #python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 
-toxic: check install_dep transformers
+toxic: check install_dep
 	echo $$(ps aux | grep "make $@$$")
 	echo DEBUG flag is $$DEBUG .
 	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
@@ -400,14 +400,11 @@ nodejs:
 	#apt install gcc g++ make
 
 
-transformers: transformers\=\=2.5.1 pandarallel catalyst\=\=20.4.2
-	@echo make $@ done
 
-xla:
+xla: install_dep
 	$(PY) -m pip show torch_xla || ( curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py; \
 $(PY) pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
-$(PY) -m pip install *.whl; \
-make transformers; )
+$(PY) -m pip install *.whl; )
 
 kr: prompt
 	git clone https://github.com/pennz/kaggle_runner; \
