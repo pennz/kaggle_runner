@@ -13,7 +13,12 @@ from kaggle_runner.utils.kernel_utils import (get_kaggle_dataset_input,
 #from kaggle_runner.utils.tpu import (strategy, tpu_resolver)
 from hub.bert.extract_features import load_data, get_tokenizer
 import torch
-from torch.utils.data import DataSet
+import torch.nn as nn
+from torch.utils.data import Dataset,DataLoader
+from torch.autograd import Variable
+from torch.utils.data.sampler import SequentialSampler, RandomSampler
+from fastai import *
+from fastai.core import *
 
 
 TOKENS_PATH = "/kaggle/input/jigsaw-toxic-token-ids-for-bert"
