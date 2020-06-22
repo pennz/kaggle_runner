@@ -285,6 +285,7 @@ class KaggleKernelOnlyPredict(KaggleKernel):
         super(KaggleKernelOnlyPredict, self).__init__(logger=logger)
         self.only_predict = True
 
+    @abstractmethod
     def build_and_set_model(self):
         """load pretrained one"""
         pass
@@ -292,9 +293,11 @@ class KaggleKernelOnlyPredict(KaggleKernel):
     def prepare_train_dev_data(self):
         pass
 
+    @abstractmethod
     def prepare_test_data(self, data_config=None):
         pass
 
+    @abstractmethod
     def check_predict_details(self):
         pass
 
