@@ -180,8 +180,6 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
         self.dropout = nn.Dropout(0.3)
         aux_len = 0
 
-        may_debug(True)
-
         if use_aux:
             aux_len = 5
 
