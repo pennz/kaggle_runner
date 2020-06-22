@@ -411,14 +411,14 @@ kr:
 	ssh-keyscan github.com >> githubKey
 	ssh-keygen -lf githubKey
 	cat githubKey >> ~/.ssh/known_hosts
-	git clone https://github.com/pennz/kaggle_runner; \
+	[ -d kaggle_runner ] || (git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
-rsync -r k/* . ; rsync -r k/.* . ; \
+rsync -r k/* . ; rsync -r k/.* . ); \
 git submodule update --init || ( \
 sed -i 's/git@.*:/https:\/\/github.com\//' .git/config; \
 sed -i 's/git@.*:/https:\/\/github.com\//' .gitmodules; \
-git submodule update --init; \
-$(PY) -m pip install -e .;)
+git submodule update --init;); \
+$(PY) -m pip install -e .;
 	export PATH=$$PWD/bin:$$PATH; pgrep -f entry || entry.sh &
 	touch hub/custom_fastai_callbacks/__init__.py
 
