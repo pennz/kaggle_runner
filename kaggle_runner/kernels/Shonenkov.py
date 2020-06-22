@@ -172,7 +172,7 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
     def __init__(self, use_aux=True):
         super(ToxicSimpleNNModelChangeInner, self).__init__()
 
-        self.backbone = BertModel.from_pretrained('bert-base-cased')
+        self.backbone = BertModel.from_pretrained('bert-base-multilingual-cased')
         self.dropout = nn.Dropout(0.3)
         aux_len = 0
 
@@ -287,7 +287,7 @@ class ShonenkovChangeInner(Shonenkov):
 
             #from tokenizers import BertWordPieceTokenizer
             #tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
-            tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+            tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased')
 
             self.transformers = {'train_transforms': train_transforms,
                                  'synthesic_transforms_often': synthesic_transforms_often,
