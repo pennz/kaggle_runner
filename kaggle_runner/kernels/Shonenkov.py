@@ -172,7 +172,7 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
     def __init__(self, use_aux=True):
         super(ToxicSimpleNNModelChangeInner, self).__init__()
 
-        self.backbone = BertModel.from_pretrained('bert-base-multilingual-cased')
+        self.backbone = XLMModel.from_pretrained('xlm-mlm-tlm-xnli15-1024')
         self.dropout = nn.Dropout(0.3)
         aux_len = 0
 
@@ -209,12 +209,12 @@ class ShonenkovChangeInner(Shonenkov):
         self.model = self.model.to(self.device)
 
     def prepare_train_dev_data(self):
-        df_train = get_pickled_data("train_inner.pkl")
+        df_train = get_pickled_data("train_XLM.pkl")
 
         if df_train is None:
             df_train = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-toxicity-train-data-with-aux/train_data.csv')
             df_train['comment_text'] = df_train.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
-            get_obj_or_dump("train_inner.pkl", default=df_train)
+            get_obj_or_dump("train_XLM.pkl", default=df_train)
 
         #supliment_toxic = get_toxic_comments(df_train)
         self.train_dataset = DatasetRetriever(
@@ -229,12 +229,12 @@ class ShonenkovChangeInner(Shonenkov):
             use_train_transforms=True,
             transformers=self.transformers
         )
-        df_val = get_pickled_data("val_inner.pkl")
+        df_val = get_pickled_data("val_XLM.pkl")
 
         if df_val is None:
             df_val = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/validation.csv', index_col='id')
             df_val['comment_text'] = df_val.parallel_apply(lambda x: clean_text(x['comment_text'], x['lang']), axis=1)
-            get_obj_or_dump("val_inner.pkl", default=df_val)
+            get_obj_or_dump("val_XLM.pkl", default=df_val)
 
         self.validation_tune_dataset = DatasetRetriever(
             labels_or_ids=df_val['toxic'].values,
@@ -258,12 +258,12 @@ class ShonenkovChangeInner(Shonenkov):
         gc.collect();
 
     def prepare_test_data(self):
-        df_test = get_pickled_data("test_inner.pkl")
+        df_test = get_pickled_data("test_XLM.pkl")
 
         if df_test is None:
             df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/test.csv', index_col='id')
             df_test['comment_text'] = df_test.parallel_apply(lambda x: clean_text(x['content'], x['lang']), axis=1)
-            get_obj_or_dump("test_inner.pkl", default=df_test)
+            get_obj_or_dump("test_XLM.pkl", default=df_test)
 
         self.test_dataset = DatasetRetriever(
             labels_or_ids=df_test.index.values, ## here different!!!
@@ -287,7 +287,7 @@ class ShonenkovChangeInner(Shonenkov):
 
             #from tokenizers import BertWordPieceTokenizer
             #tokenizer = XLNetTokenizer.from_pretrained('xlnet-base-cased')
-            tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased')
+            tokenizer = XLMTokenizer.from_pretrained('xlm-mlm-tlm-xnli15-1024')
 
             self.transformers = {'train_transforms': train_transforms,
                                  'synthesic_transforms_often': synthesic_transforms_often,
@@ -331,7 +331,7 @@ class DummyTrainGlobalConfig:
     # -------------------
 
 
-def test_change_inner_module():
+def test_change_XLM_module():
     from kaggle_runner.losses import LabelSmoothing
     k = ShonenkovChangeInner(torch.device("cpu"), DummyTrainGlobalConfig,
                              metrics=None, loss_func=LabelSmoothing(),
