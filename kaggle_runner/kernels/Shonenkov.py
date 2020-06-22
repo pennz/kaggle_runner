@@ -1,3 +1,4 @@
+import os
 from kaggle_runner import logger
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 from kaggle_runner.kernels.fastai_kernel_bert import seed_everything
