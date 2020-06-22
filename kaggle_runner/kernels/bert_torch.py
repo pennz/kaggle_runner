@@ -71,8 +71,8 @@ def get_trained_model(fine_tuned = "bert_pytorch.bin", device=torch.device('cuda
         output_model_file = pretrain_data_folder+"/"+fine_tuned
         bert_config = BertConfig.from_json_file(pretrain_data_folder + "/bert_config.json")
 
-# Run validation
-# The following 2 lines are not needed but show how to download the model for prediction
+        # Run validation
+        # The following 2 lines are not needed but show how to download the model for prediction
         model = BertForSequenceClassification(
             bert_config, num_labels=len(y_columns))
         model.load_state_dict(torch.load(output_model_file))

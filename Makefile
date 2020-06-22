@@ -9,6 +9,7 @@ TOXIC_DEP := ipdb pyicu pycld2 polyglot textstat googletrans transformers==2.5.1
 define _write_dataset_list
 cat >.datasets <<'EOF'
 "gabrichy/nvidiaapex",
+"matsuik/ppbert", #for pytorch pretrained bert
 "k1gaggle/clean-pickle-for-jigsaw-toxicity",
 "k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
