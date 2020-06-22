@@ -14,7 +14,6 @@ class KernelGroup:
     def __init__(self, *kernels):
         self.kernels = kernels
 
-
 class KaggleKernel(metaclass=ABCMeta):
     def __init__(self, logger=None):
         self.submit_run = False
@@ -85,11 +84,9 @@ class KaggleKernel(metaclass=ABCMeta):
     def set_model(self):
         pass
 
-    @abstractmethod
     def set_loss(self, loss_func):
         pass
 
-    @abstractmethod
     def set_metrics(self, metrics):
         """
         set_metrics for model training
@@ -279,3 +276,33 @@ class KaggleKernel(metaclass=ABCMeta):
     @abstractmethod
     def check_predict_details(self):
         pass
+
+from kaggle_runner import logger
+
+class KaggleKernelOnlyPredict(KaggleKernel):
+
+    def __init__(self, model_path):
+        super(KaggleKernelOnlyPredict, self).__init__(logger=logger)
+        self.only_predict = True
+
+    def build_and_set_model(self):
+        """load pretrained one"""
+        pass
+
+    def prepare_train_dev_data(self):
+        pass
+
+    def prepare_test_data(self, data_config=None):
+        pass
+
+    def check_predict_details(self):
+        pass
+
+    def peek_data(self):
+        pass
+
+
+def test_init_only_predict():
+    k = KaggleKernelOnlyPredict()
+    assert k is not None
+    assert k.model is not None

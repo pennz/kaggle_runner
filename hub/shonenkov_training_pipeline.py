@@ -581,6 +581,9 @@ if __name__ == "__main__":
     FLAGS={}
     xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 
+def only_predict():
+    pass
+
 
 from datetime import date
 today = date.today()

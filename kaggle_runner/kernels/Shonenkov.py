@@ -186,7 +186,8 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
             aux_len = 5
 
         #in_features = self.backbone.layer[11].ff.layer_2.out_features*2
-        in_features = self.backbone.pooler.dense.out_features*2
+        #in_features = self.backbone.pooler.dense.out_features*2 # bert
+        in_features = self.backbone.ffns[11].lin2.out_features*2 # xlm
         self.linear = nn.Linear(
             in_features=in_features,
             out_features=2+aux_len,
