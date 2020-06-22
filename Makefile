@@ -281,14 +281,13 @@ update_sh_ipynb:
 	jupytext --sync hub/shonenkov_training_pipeline.ipynb || jupytext --set-formats ipynb,py hub/shonenkov_training_pipeline.ipynb
 
 dmetadata: kaggle 
-	[ -d datas ] || mkdir datas
-	kaggle datasets metadata -p datas/ k1gaggle/bert-for-toxic-classfication-trained
+	[ -d datas ] || (mkdir datas; kaggle datasets metadata -p datas/ k1gaggle/bert-for-toxic-classfication-trained)
 
 push_dataset: dmetadata
 	-cp datas/dataset-metadata.json datas/dm.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	-cp node_submissions/* log.txt /kaggle/submission.csv datas
-	kaggle datasets version -p datas/ -m "$$(git show --no-patch --oneline) $$(date)"
+	kaggle datasets create -p datas/ #-m "$$(git show --no-patch --oneline) $$(date)"
 
 /root/.kaggle/kaggle.json:
 	-@mkdir -p ~/.kaggle
