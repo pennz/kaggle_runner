@@ -125,7 +125,10 @@ class Shonenkov(FastAIKernel):
         gc.collect();
 
     def prepare_test_data(self):
-        df_test = get_pickled_data("test.pkl")
+        if os.path.exists('/content'): # colab
+            df_test = get_pickled_data("test.pkl")
+        else:
+            df_test = None
 
         if df_test is None:
             df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/test.csv', index_col='id')
@@ -258,7 +261,10 @@ class ShonenkovChangeInner(Shonenkov):
         gc.collect();
 
     def prepare_test_data(self):
-        df_test = get_pickled_data("test_XLM.pkl")
+        if os.path.exists('/content'): # colab
+            df_test = get_pickled_data("test_XLM.pkl")
+        else:
+            df_test = None
 
         if df_test is None:
             df_test = pd.read_csv(f'{ROOT_PATH}/input/jigsaw-multilingual-toxic-comment-classification/test.csv', index_col='id')
