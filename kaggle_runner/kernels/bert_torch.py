@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 import sys
-package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
+package_dir_a = "/kaggle/input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
 sys.path.insert(0, package_dir_a)
 
 from kaggle_runner.datasets.bert import DATA_PATH, BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
