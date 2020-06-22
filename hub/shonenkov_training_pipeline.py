@@ -443,12 +443,14 @@ def test_model_fn(device=torch.device("cpu")):
             run_inference(net, device, TrainGlobalConfig, validation_loader)
 
     train_one_epoch(net, device, TrainGlobalConfig, train_loader, TrainGlobalConfig.criterion, optimizer)
-    losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
-    logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
+    #losses, final_scores = validation(net, device, TrainGlobalConfig, validation_loader, TrainGlobalConfig.criterion)
+    #logger.info(f"Val results: losses={losses}, final_scores={final_scores}")
 
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
 
+
+test_model_fn()
 
 
 from functools import partial
@@ -488,9 +490,6 @@ def train_loop(index, *args):
 
 FLAGS={}
 #xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
-
-def test_abc():
-    assert False
 
 
 import pysnooper
