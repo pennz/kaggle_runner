@@ -10,6 +10,8 @@ class ToxicPredictModel(KaggleKernelOnlyPredict):
         self.model_path = model_path
 
     def save_model(self, output_dir="./models/"):
+        model = self.model
+
         from transformers import WEIGHTS_NAME, CONFIG_NAME
 # Step 1: Save a model, configuration and vocabulary that you have fine-tuned
 
@@ -61,6 +63,6 @@ import torch
 def test_load():
     output_model_file='/kaggle/input/bert-for-toxic-classfication-trained/2020-06-21_XLMRobertaModel_tpu_trained.bin'
     state_dict = torch.load(output_model_file)
-    model.load_state_dict(state_dict)
+    k.model.load_state_dict(state_dict)
 
     print(model)

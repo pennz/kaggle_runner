@@ -163,9 +163,28 @@ class TrainGlobalConfig:
     criterion = LabelSmoothing()
     # -------------------
 
-
 k = ShonenkovChangeInner(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
+
+def save_model(self, output_dir="./models/"):
+    model = self.model
+
+    from transformers import WEIGHTS_NAME, CONFIG_NAME
+# Step 1: Save a model, configuration and vocabulary that you have fine-tuned
+
+# If we have a distributed model, save only the encapsulated model
+# (it was wrapped in PyTorch DistributedDataParallel or DataParallel)
+    model_to_save = model.module if hasattr(model, 'module') else model
+
+# If we save using the predefined names, we can load using `from_pretrained`
+    output_model_file = os.path.join(output_dir, WEIGHTS_NAME)
+    output_config_file = os.path.join(output_dir, CONFIG_NAME)
+
+    torch.save(model_to_save.state_dict(), output_model_file)
+    model_to_save.config.to_json_file(output_config_file)
+    tokenizer.save_pretrained(output_dir)
+
+save_model(k)
 
 def test_load():
     output_model_file='/kaggle/input/bert-for-toxic-classfication-trained/2020-06-21_XLMRobertaModel_tpu_trained.bin'
