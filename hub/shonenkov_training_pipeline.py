@@ -167,6 +167,13 @@ class TrainGlobalConfig:
 k = ShonenkovChangeInner(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
+def test_load():
+    output_model_file='/kaggle/input/bert-for-toxic-classfication-trained/2020-06-21_XLMRobertaModel_tpu_trained.bin'
+    state_dict = torch.load(output_model_file)
+    k.model.load_state_dict(state_dict)
+
+    print(model)
+
 # +
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
 from kaggle_runner.runners.trainer import GPUTrainer
@@ -257,8 +264,6 @@ from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 def len_parallelloader(self):
     return len(self._loader._loader)
 pl.PerDeviceLoader.__len__ = len_parallelloader
-
-
 
 
 def _to_tpu_distributed(learn:Learner) -> Learner:

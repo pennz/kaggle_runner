@@ -36,7 +36,6 @@ class ToxicPredictModel(KaggleKernelOnlyPredict):
         model = BertForQuestionAnswering.from_pretrained(output_dir)
         tokenizer = BertTokenizer.from_pretrained(output_dir)  # Add specific options if needed
 
-
     def prepare_train_dev_data(self):
         pass
 
@@ -56,3 +55,12 @@ def test_init():
     k = ToxicPredictModel(".")
     assert k is not None
     k.save_model()
+
+import torch
+
+def test_load():
+    output_model_file='/kaggle/input/bert-for-toxic-classfication-trained/2020-06-21_XLMRobertaModel_tpu_trained.bin'
+    state_dict = torch.load(output_model_file)
+    model.load_state_dict(state_dict)
+
+    print(model)
