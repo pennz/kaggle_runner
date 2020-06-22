@@ -124,7 +124,7 @@ def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=D
 def for_pytorch(data_package, device=torch.device('cuda'), SEED=118, phase="predict", model=None):
 
     if device is None and os.getenv("TPU_NAME") is not None:
-        import torch_xla
+        import torch_xla # model
         import torch_xla.core.xla_model as xm
         device = xm.xla_device()
 

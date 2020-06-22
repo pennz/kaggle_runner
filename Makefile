@@ -10,12 +10,13 @@ define _write_dataset_list
 cat >.datasets <<'EOF'
 "gabrichy/nvidiaapex",
 "matsuik/ppbert", #for pytorch pretrained bert
-"k1gaggle/clean-pickle-for-jigsaw-toxicity",
+"maxjeblick/bert-pretrained-models", #for pytorch pretrained bert
+"k1gaggle/clean-pickle-for-jigsaw-toxicity", # XLMRobert(sh) and XLNET data
 "k1gaggle/jigsaw-multilingula-toxicity-token-encoded",
 "shonenkov/open-subtitles-toxic-pseudo-labeling",
 "k1gaggle/jigsaw-toxicity-train-data-with-aux",
 "shonenkov/jigsaw-public-baseline-train-data",
-"shonenkov/jigsaw-public-baseline-results"
+"shonenkov/jigsaw-public-baseline-results",
 "kashnitsky/jigsaw-multilingual-toxic-test-translated",
 "pranshu29/jigsaw-new-balanced-dataset"
 EOF
