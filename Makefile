@@ -407,7 +407,7 @@ xla: install_dep
 $(PY) pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
 $(PY) -m pip install *.whl; )
 
-kr: prompt
+kr:
 	ssh-keyscan github.com >> githubKey
 	ssh-keygen -lf githubKey
 	cat githubKey >> ~/.ssh/known_hosts
@@ -424,7 +424,6 @@ $(PY) -m pip install -e .;)
 
 prompt:
 	$(PY) -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
-	$(PY) -m pip install ipdb pysnooper
 
 sed:
 	@echo sed used is $(SED)

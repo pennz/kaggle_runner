@@ -43,7 +43,7 @@ entry.sh &; echo You can wait to setup for remote access)
 # #make install_dep
 # -
 import subprocess
-subprocess.run("make install_dep", shell=True)
+subprocess.run("make install_dep; mkdir -p /root/.ssh ; make kr", shell=True)
 
 
 from importlib import reload
