@@ -205,7 +205,7 @@ $(TOXIC_DEP):
 
 install_dep: $(TOXIC_DEP) pytest
 	for p in $^; do \
-($(PY) -m pip show $p &>/dev/null || $(PY) -m pip install -q $p) &; \
+($(PY) -m pip show $$p &>/dev/null || $(PY) -m pip install -q $$p) &; \
 done; wait
 	#$(PY) -m pip install -q eumetsat expect &
 	#conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
