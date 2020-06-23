@@ -203,10 +203,10 @@ $(TOXIC_DEP):
 	@echo "Installing $@"
 	#$(PY) -m pip show $@ &>/dev/null || $(PY) -m pip install -q $@
 
-install_dep: $(TOXIC_DEP)
+install_dep: $(TOXIC_DEP) pytest
 	for p in $^; do \
 ($(PY) -m pip show $p &>/dev/null || $(PY) -m pip install -q $p) &; \
-done
+done; wait
 	#$(PY) -m pip install -q eumetsat expect &
 	#conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 	@echo make $@ $^ done
