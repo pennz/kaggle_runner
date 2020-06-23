@@ -422,6 +422,7 @@ kr:
 	[ -d kaggle_runner ] || (git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
 rsync -r k/* . ; rsync -r k/.* . ); \
+git pull; \
 git submodule update --init || ( \
 sed -i 's/git@.*:/https:\/\/github.com\//' .git/config; \
 sed -i 's/git@.*:/https:\/\/github.com\//' .gitmodules; \
