@@ -276,7 +276,7 @@ cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 vim:
 	apt install vim -y
 	$(PY) -m pip install pyvim neovim jedi
-	vim -u ~/.vimrc_back +PlugInstall kaggle_runner
+	yes | vim -u ~/.vimrc_back +PlugInstall +qa
 
 kaggle: /root/.kaggle/kaggle.json
 	-@ xclip ~/.kaggle/kaggle.json -selection clipboard
