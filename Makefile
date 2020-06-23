@@ -417,6 +417,7 @@ $(PY) -m pip install *.whl; )
 kr:
 	ssh-keyscan github.com >> githubKey
 	ssh-keygen -lf githubKey
+	mkdir -p ~/.ssh
 	cat githubKey >> ~/.ssh/known_hosts
 	[ -d kaggle_runner ] || (git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
