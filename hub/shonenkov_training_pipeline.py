@@ -244,6 +244,7 @@ def test_load():
 
 # + {"id": "9dqdFgwAZQgw", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
 test_load()
+test_predict()
 
 # + {"id": "VXNH-qcCUQ1B", "colab_type": "code", "colab": {}}
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
