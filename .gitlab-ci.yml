@@ -23,11 +23,12 @@ before_script:
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
+  - make kr
 
 test:
   script:
     - pip install tox flake8  # you can also use tox
-    - tox -e py36
+    - tox -e py3
     - make
 
 run:
