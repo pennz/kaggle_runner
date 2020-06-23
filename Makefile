@@ -61,7 +61,7 @@ IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 _: CI
 	echo "DONE $@"
 
-CI: vim kr check test
+CI: vim kr check ctr
 	echo "CI"
 
 test: test_bert_torch
@@ -110,7 +110,7 @@ pccnct: rvs_session _pccnct
 	-$(IS_CENTOS) && sudo service rabbitmq-server start # For AMQP log, our server 
 	@echo "pc connector started now"
 
-all: $(SRC)
+ctr: $(SRC)
 	-git push
 	[ -f cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > cc-test-reporter
 	chmod +x cc-test-reporter
