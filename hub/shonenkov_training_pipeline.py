@@ -163,7 +163,7 @@ class TrainGlobalConfig:
     criterion = LabelSmoothing()
     # -------------------
 
-k = ShonenkovChangeInner(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
+k = Shonenkov(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
 def save_model(self, output_dir="./models/"):
@@ -181,17 +181,23 @@ def save_model(self, output_dir="./models/"):
     output_config_file = os.path.join(output_dir, CONFIG_NAME)
 
     torch.save(model_to_save.state_dict(), output_model_file)
-    model_to_save.config.to_json_file(output_config_file)
+    model_to_save.backbone.config.to_json_file(output_config_file)
     tokenizer.save_pretrained(output_dir)
 
 save_model(k)
 
 def test_load():
+    from transformers import WEIGHTS_NAME, CONFIG_NAME
+
+    output_model_file = os.path.join(output_dir, WEIGHTS_NAME)
+    output_config_file = os.path.join(output_dir, CONFIG_NAME)
+
     output_model_file='/kaggle/input/bert-for-toxic-classfication-trained/2020-06-21_XLMRobertaModel_tpu_trained.bin'
+
     state_dict = torch.load(output_model_file)
     k.model.load_state_dict(state_dict)
 
-    print(model)
+    print(k.model) # detail
 
 # +
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
