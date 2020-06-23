@@ -1,7 +1,6 @@
 import os
 from kaggle_runner import logger
 from kaggle_runner.kernels.fastai_kernel import FastAIKernel
-from kaggle_runner.kernels.fastai_kernel_bert import seed_everything
 from kaggle_runner.metrics.metrics import matthews_correlation
 from kaggle_runner.datasets.transfomers import *
 from kaggle_runner.datasets.bert import DatasetRetriever
@@ -14,7 +13,19 @@ import albumentations
 
 ROOT_PATH = f'/kaggle' # for colab
 BACKBONE_PATH = 'xlm-roberta-large'
+
 from kaggle_runner.defaults import SEED
+import random
+import numpy as np
+
+def seed_everything(seed):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
 
 def get_train_transforms():
     return albumentations.Compose([
