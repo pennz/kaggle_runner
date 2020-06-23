@@ -6,7 +6,7 @@
 	url = git@github.com:pennz/combat-wombat-bias-in-toxicity.git
 [submodule "hub/custom-fastai-callbacks"]
 	path = hub/custom-fastai-callbacks
-	url = https://github.com/akashpalrecha/custom-fastai-callbacks
+	url = git@github.com:akashpalrecha/custom-fastai-callbacks
 [submodule "hub/custom_fastai_callbacks"]
 	path = hub/custom_fastai_callbacks
 	url = git@github.com:pennz/custom-fastai-callbacks
