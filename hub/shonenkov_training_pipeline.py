@@ -51,17 +51,13 @@ export PATH=$PWD/bin:$PATH; entry.sh &
 echo You can wait to setup for remote access)
 """, shell=True)
 
-# + {"id": "yxqEong9UQzO", "colab_type": "code", "colab": {}, "language": "bash"}
-# #make install_dep
-# + {"id": "WZFZKdhTUQzW", "colab_type": "code", "colab": {}}
 import subprocess
-subprocess.run("make install_dep; mkdir -p /root/.ssh ; make kr", shell=True)
+subprocess.run("make install_dep; mkdir -p /root/.ssh ; make kr; wait; make xla &", shell=True)
 
 
 # + {"id": "6lwyNn2ONmLR", "colab_type": "code", "colab": {}}
 # !make dd
 # !make vim &
-# !make xla &
 
 # + {"id": "MYBRID_uUQzb", "colab_type": "code", "colab": {}}
 from importlib import reload
@@ -674,6 +670,7 @@ gc.collect()
 # %%time
 
 # + {"id": "6x45fTI1UQ2B", "colab_type": "code", "colab": {}}
+
 if __name__ == "__main__":
     FLAGS={}
     xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
