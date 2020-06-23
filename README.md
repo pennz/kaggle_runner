@@ -2,6 +2,7 @@
 [![PyPI version](https://badge.fury.io/py/kaggle-runner.svg)](https://badge.fury.io/py/kaggle-runner)
 [![Maintainability](https://api.codeclimate.com/v1/badges/979bc98e4acb59a5e1aa/maintainability)](https://codeclimate.com/github/pennz/kaggle_runner/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/979bc98e4acb59a5e1aa/test_coverage)](https://codeclimate.com/github/pennz/kaggle_runner/test_coverage)
+[![coverage report](https://gitlab.com/MrCue/kaggle_runner/badges/master/coverage.svg)](https://gitlab.com/MrCue/kaggle_runner/-/commits/master)
 
 # kaggle_runner
 
