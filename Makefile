@@ -58,13 +58,10 @@ SHELL=/bin/bash
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
-_: CI
+_: test
 	echo "DONE $@"
 
-CI: vim kr check ctr
-	echo "CI"
-
-test: test_bert_torch
+test: vim kr check ctr
 	echo "DONE $@"
 
 test_bert_torch: pytest
