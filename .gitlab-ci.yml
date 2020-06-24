@@ -19,25 +19,24 @@ cache:
     - venv/
 
 before_script:
-  - python -V  # Print out python version for debugging
-  - pip install virtualenv
+  - python3 -V  # Print out python version for debugging
+  - python3 -m pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
   - make kr
+  - make install_dep
 
 test:
   script:
-    - make kr
-    - make install_dep
-    - pip install tox flake8  # you can also use tox
+    - python3 -m pip install tox flake8  # you can also use tox
     - tox -e py3
     - make
 
 run:
   script:
-    - python setup.py bdist_wheel
+    - python3 setup.py bdist_wheel
     # an alternative approach is to install and run:
-    - pip install dist/*
+    - python3 -m pip install dist/*
     # run the command here
   artifacts:
     paths:
@@ -45,7 +44,7 @@ run:
 
 pages:
   script:
-    - pip install sphinx sphinx-rtd-theme
+    - python3 -m pip install sphinx sphinx-rtd-theme
     - cd doc ; make html
     - mv build/html/ ../public/
   artifacts:
