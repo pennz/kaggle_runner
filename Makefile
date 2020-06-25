@@ -109,8 +109,8 @@ pccnct: rvs_session _pccnct
 
 ctr: $(SRC)
 	-git push
-	[ -f cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > cc-test-reporter
-	chmod +x cc-test-reporter
+	[ -f cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > bin/cc-test-reporter
+	chmod +x bin/cc-test-reporter
 	cc-test-reporter before-build
 	-coverage run -m pytest .
 	coverage xml
@@ -271,9 +271,7 @@ cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 	
 
 vim:
-	apt install vim -y
-	$(PY) -m pip install pyvim neovim jedi
-	yes | vim -u ~/.vimrc_back +PlugInstall +qa
+	-apt install vim -y && $(PY) -m pip install pyvim neovim jedi && yes | vim -u ~/.vimrc_back +PlugInstall +qa
 
 kaggle: /root/.kaggle/kaggle.json
 	-@ xclip ~/.kaggle/kaggle.json -selection clipboard

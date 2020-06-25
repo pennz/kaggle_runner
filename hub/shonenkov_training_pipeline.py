@@ -244,114 +244,7 @@ def test_load():
 
 # + {"id": "9dqdFgwAZQgw", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
 test_load()
-test_predict()
 
-# + {"id": "VXNH-qcCUQ1B", "colab_type": "code", "colab": {}}
-from kaggle_runner.kernels.fastai_kernel import FastAIKernel
-from kaggle_runner.runners.trainer import GPUTrainer
-def _to_gpu(learn:Learner, k: FastAIKernel) -> Learner:
-    learn.callback_fns.append(partial(GPUTrainer, k=k))
-
-    return learn
-
-Learner.to_gpu = _to_gpu
-
-
-# + {"id": "2Z1O-ZLfUQ1D", "colab_type": "code", "colab": {}}
-import pysnooper
-from functools import partial
-
-from hub.custom_fastai_callbacks.callbacks import GradientAccumulator
-def debug_train(use_dist_cb=True):
-    logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
-    from kaggle_runner import defaults
-    _DEBUG = defaults.DEBUG
-    #defaults.DEBUG = True
-
-    param_optimizer = list(k.model.named_parameters())
-    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
-    ]
-
-    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
-        kargs['lr']=TrainGlobalConfig.lr*8 #xm.xrt_world_size()
-
-        return AdamW(optimizer_grouped_parameters, *args, **kargs)
-
-    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
-                             loss_func=LabelSmoothing(),
-                             wd=0.01,
-                             callback_fns=[partial(GradientClipping, clip=0.5),
-                                           partial(CSVLogger, append=True),
-                                           partial(GradientAccumulator, num_iterations=4),
-                                           partial(CheckGrad, skip_loss_step=False, batch_size=k.config.batch_size)]
-                             )
-    k.learner = learn
-
-    if use_dist_cb:
-        learn = learn.to_tpu_distributed()
-    else:
-        learn = learn.to_gpu(k)
-
-    #learn.callback_fns.append(CheckGrad)
-    #print('hello')
-    #learn.lr_find(start_lr=1e-7, end_lr=1e-2, num_it=200)
-    #learn.recorder.plot()
-    learn.fit_one_cycle(2, max_lr=3e-5)
-    #learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
-    defaults.DEBUG = _DEBUG
-
-
-# + {"id": "uUzCsw_wUQ1F", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 54}}
-# %%time
-#debug_train(use_dist_cb=False)
-
-
-# + {"id": "rO2ay06LUQ1I", "colab_type": "text", "cell_type": "markdown"}
-# # XLA
-
-
-# + {"id": "eeL1PlTnUQ1J", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 36}}
-import subprocess
-subprocess.run('make xla', shell=True)
-
-# + {"id": "5fUVZUIYUQ1M", "colab_type": "code", "colab": {}}
-import torch_xla
-import torch_xla.distributed.data_parallel as dp
-import torch_xla.utils.utils as xu
-import torch_xla.core.xla_model as xm
-import torch_xla.distributed.parallel_loader as pl
-import torch_xla.distributed.xla_multiprocessing as xmp
-import torch
-
-# + {"id": "qWaNMw-rUQ1O", "colab_type": "code", "colab": {}}
-import fastai
-from fastai import *
-from fastai.core import *
-from fastai.torch_core import *
-from fastai.vision import *
-from fastai.basic_train import *
-from kaggle_runner.runners.tpu_trainer import TPUDistributed, TPUFitter
-
-# + {"id": "VomH5RztUQ1T", "colab_type": "code", "colab": {}}
-from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
-def len_parallelloader(self):
-    return len(self._loader._loader)
-pl.PerDeviceLoader.__len__ = len_parallelloader
-
-
-# + {"id": "0d8Bzl8DUQ1X", "colab_type": "code", "colab": {}}
-def _to_tpu_distributed(learn:Learner) -> Learner:
-    learn.callback_fns.append(TPUDistributed)
-
-    return learn
-
-# + {"id": "a6_DgUIyUQ1Z", "colab_type": "code", "colab": {}}
-Learner.to_tpu_distributed = _to_tpu_distributed
-
-# + {"id": "wJhxTHZGUQ1c", "colab_type": "code", "colab": {}}
 def test_model_fn(device=torch.device("cpu")):
     #device = xm.xla_device(devkind='TPU')
     #device=torch.device("xla")
@@ -533,9 +426,120 @@ def test_model_fn(device=torch.device("cpu")):
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
 
+test_model_fn()
+
+# + {"id": "VXNH-qcCUQ1B", "colab_type": "code", "colab": {}}
+from kaggle_runner.kernels.fastai_kernel import FastAIKernel
+from kaggle_runner.runners.trainer import GPUTrainer
+def _to_gpu(learn:Learner, k: FastAIKernel) -> Learner:
+    learn.callback_fns.append(partial(GPUTrainer, k=k))
+
+    return learn
+
+Learner.to_gpu = _to_gpu
+
+
+# + {"id": "2Z1O-ZLfUQ1D", "colab_type": "code", "colab": {}}
+import pysnooper
+from functools import partial
+
+from hub.custom_fastai_callbacks.callbacks import GradientAccumulator
+def debug_train(use_dist_cb=True):
+    logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
+    from kaggle_runner import defaults
+    _DEBUG = defaults.DEBUG
+    #defaults.DEBUG = True
+
+    param_optimizer = list(k.model.named_parameters())
+    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
+    ]
+
+    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
+        kargs['lr']=TrainGlobalConfig.lr*8 #xm.xrt_world_size()
+
+        return AdamW(optimizer_grouped_parameters, *args, **kargs)
+
+    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
+                             loss_func=LabelSmoothing(),
+                             wd=0.01,
+                             callback_fns=[partial(GradientClipping, clip=0.5),
+                                           partial(CSVLogger, append=True),
+                                           partial(GradientAccumulator, num_iterations=4),
+                                           partial(CheckGrad, skip_loss_step=False, batch_size=k.config.batch_size)]
+                             )
+    k.learner = learn
+
+    if use_dist_cb:
+        learn = learn.to_tpu_distributed()
+    else:
+        learn = learn.to_gpu(k)
+
+    #learn.callback_fns.append(CheckGrad)
+    #print('hello')
+    #learn.lr_find(start_lr=1e-7, end_lr=1e-2, num_it=200)
+    #learn.recorder.plot()
+    learn.fit_one_cycle(2, max_lr=3e-5)
+    #learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
+    defaults.DEBUG = _DEBUG
+
+
+# + {"id": "uUzCsw_wUQ1F", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 54}}
+# %%time
+#debug_train(use_dist_cb=False)
+
+
+# + {"id": "rO2ay06LUQ1I", "colab_type": "text", "cell_type": "markdown"}
+# # XLA
+
+
+# + {"id": "eeL1PlTnUQ1J", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 36}}
+import subprocess
+subprocess.run('make xla', shell=True)
+# TODO add system call, we can get log?
+
+# + {"id": "5fUVZUIYUQ1M", "colab_type": "code", "colab": {}}
+import torch_xla
+import torch_xla.distributed.data_parallel as dp
+import torch_xla.utils.utils as xu
+import torch_xla.core.xla_model as xm
+import torch_xla.distributed.parallel_loader as pl
+import torch_xla.distributed.xla_multiprocessing as xmp
+import torch
+
+# + {"id": "qWaNMw-rUQ1O", "colab_type": "code", "colab": {}}
+import fastai
+from fastai import *
+from fastai.core import *
+from fastai.torch_core import *
+from fastai.vision import *
+from fastai.basic_train import *
+from kaggle_runner.runners.tpu_trainer import TPUDistributed, TPUFitter
+
+# + {"id": "VomH5RztUQ1T", "colab_type": "code", "colab": {}}
+from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
+def len_parallelloader(self):
+    return len(self._loader._loader)
+pl.PerDeviceLoader.__len__ = len_parallelloader
+
+
+# + {"id": "0d8Bzl8DUQ1X", "colab_type": "code", "colab": {}}
+def _to_tpu_distributed(learn:Learner) -> Learner:
+    learn.callback_fns.append(TPUDistributed)
+
+    return learn
+
+# + {"id": "a6_DgUIyUQ1Z", "colab_type": "code", "colab": {}}
+Learner.to_tpu_distributed = _to_tpu_distributed
+
+# + {"id": "wJhxTHZGUQ1c", "colab_type": "code", "colab": {}}
+
+
 
 # + {"id": "B_tochnQUQ1e", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 372}}
-test_model_fn()
+
 
 
 # + {"id": "M_tjbI16UQ1g", "colab_type": "code", "colab": {}}
