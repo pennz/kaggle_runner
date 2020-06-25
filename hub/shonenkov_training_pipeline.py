@@ -448,7 +448,7 @@ def test_model_fn(device=torch.device("cpu")):
         result = {'id': [], 'toxic': []}
         t = time.time()
 
-        for step, (inputs_masks, targets) in enumerate(test_loader):
+        for step, (inputs_masks, ids) in enumerate(test_loader):
             inputs=inputs_masks[0]
             attention_masks=inputs_masks[1]
 
