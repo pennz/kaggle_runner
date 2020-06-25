@@ -4,7 +4,7 @@ export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
 JUPYTER_PARAMS := --NotebookApp.token=greatday --NotebookApp.notebook_dir=/content/ --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10010000000 --NotebookApp.open_browser=False --allow-root
-TOXIC_DEP := ipdb pyicu pycld2 polyglot textstat googletrans transformers==2.5.1 pandarallel catalyst==20.4.2 colorama parse pysnooper ripdb pytest-logger python_logging_rabbitmq coverage
+TOXIC_DEP := coverage ipdb pyicu pycld2 polyglot textstat googletrans transformers==2.5.1 pandarallel catalyst==20.4.2 colorama parse pysnooper ripdb pytest-logger python_logging_rabbitmq
 
 define _write_dataset_list
 cat >.datasets <<'EOF'
@@ -61,7 +61,7 @@ IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 _: test
 	echo "DONE $@"
 
-test: vim kr check ctr
+test: ctr
 	echo "DONE $@"
 
 test_bert_torch: pytest
@@ -107,14 +107,14 @@ pccnct: rvs_session _pccnct
 	-$(IS_CENTOS) && sudo service rabbitmq-server start # For AMQP log, our server 
 	@echo "pc connector started now"
 
-ctr: $(SRC)
-	-git push
-	[ -f cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > bin/cc-test-reporter
+ctr: kr check install_dep $(SRC)
+	-timeout 10 git push
+	[ -f bin/cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > bin/cc-test-reporter
 	chmod +x bin/cc-test-reporter
-	cc-test-reporter before-build
+	-bin/cc-test-reporter before-build
 	-coverage run -m pytest .
-	coverage xml
-	cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
+	-coverage xml
+	-bin/cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
 get_submission:
 	kaggle datasets download --file submission.csv --unzip k1gaggle/bert-for-toxic-classfication-trained
@@ -236,7 +236,7 @@ amqp_log:
 mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
-check:
+check: kr
 	-ps aux | grep make
 	echo $(SED)
 	-@echo $(http_proxy)
@@ -246,8 +246,8 @@ check:
 	pstree -laps $$$$
 	-@echo "$$(which $(PY)) is our $(PY) executable"; if [[ x$$(which $(PY)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
 	@$(PY) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
-	@$(PY) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner cannot be imported."; $(PY) -m pip install -e . && $(PY) -c 'import kaggle_runner')
-	@$(PY) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
+	@$(PY) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner CANNOT be imported."; $(PY) -m pip install -e . && $(PY) -c 'import kaggle_runner')
+	-@$(PY) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
 	-@timeout 3s $(PY) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 
@@ -420,9 +420,11 @@ git submodule update --init || ( \
 sed -i 's/git@.*:/https:\/\/github.com\//' .git/config; \
 sed -i 's/git@.*:/https:\/\/github.com\//' .gitmodules; \
 git submodule update --init;); \
-$(PY) -m pip install -e .;
-	export PATH=$$PWD/bin:$$PATH; pgrep -f entry || entry.sh &
+$(PY) -m pip show kaggle_runner || $(PY) -m pip install -e .;
 	touch hub/custom_fastai_callbacks/__init__.py
+
+entry: kr
+	export PATH=$$PWD/bin:$$PATH; pgrep -f entry || entry.sh &
 
 prompt:
 	$(PY) -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
