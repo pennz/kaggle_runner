@@ -55,11 +55,16 @@ import subprocess
 subprocess.run("make install_dep; mkdir -p /root/.ssh ; make kr; wait; make xla &", shell=True)
 
 
-# + {"id": "6lwyNn2ONmLR", "colab_type": "code", "colab": {}}
-# !make dd
-# !make vim &
+# + {"id": "9aQY9GJrVmGl", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 129}}
+# !yes | make vim &
 
-# + {"id": "MYBRID_uUQzb", "colab_type": "code", "colab": {}}
+# + {"colab_type": "code", "id": "6lwyNn2ONmLR", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
+# !make dd
+
+# + {"id": "3ccg5MJlyvLy", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
+# !make install_dep
+
+# + {"colab_type": "code", "id": "MYBRID_uUQzb", "colab": {"base_uri": "https://localhost:8080/", "height": 167}}
 from importlib import reload
 import kaggle_runner
 reload(kaggle_runner)
@@ -213,10 +218,10 @@ k.run(dump_flag=False)
 # !mkdir ./models_xlmrobert/
 
 # + {"id": "gDt1SW3AUQ02", "colab_type": "code", "colab": {}}
+from transformers import WEIGHTS_NAME, CONFIG_NAME
 def save_model(self, output_dir="./models_xlmrobert/"):
     model = self.model
 
-    from transformers import WEIGHTS_NAME, CONFIG_NAME
 # Step 1: Save a model, configuration and vocabulary that you have fine-tuned
 
 # If we have a distributed model, save only the encapsulated model
@@ -231,16 +236,19 @@ def save_model(self, output_dir="./models_xlmrobert/"):
     model_to_save.backbone.config.to_json_file(output_config_file)
     #tokenizer.save_pretrained(output_dir)
 
-# + {"id": "PN07kHKOUQ06", "colab_type": "code", "colab": {}}
+# + {"colab_type": "code", "id": "PN07kHKOUQ06", "colab": {}}
 save_model(k)
 
-# + {"id": "0qUwvlFnUQ0-", "colab_type": "code", "colab": {}}
-def test_load():
-    output_model_file='/kaggle/input/bert-for-toxic-classfication-trained/2020-06-21_XLMRobertaModel_tpu_trained.bin'
+# + {"colab_type": "code", "id": "0qUwvlFnUQ0-", "colab": {}}
+def load_model(self, output_dir="./models_xlmrobert/"):
+    output_model_file = os.path.join(output_dir, WEIGHTS_NAME)
     state_dict = torch.load(output_model_file)
-    k.model.load_state_dict(state_dict)
+    self.model.load_state_dict(state_dict)
 
-    print(k.model)
+    print(self.model)
+
+def test_load():
+    load_model(k)
 
 # + {"id": "9dqdFgwAZQgw", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
 test_load()
