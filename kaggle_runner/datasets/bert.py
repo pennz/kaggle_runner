@@ -23,11 +23,13 @@ from fastai.core import *
 
 TOKENS_PATH = "/kaggle/input/jigsaw-toxic-token-ids-for-bert"
 PRETRAIND_PICKLE_AND_MORE='/kaggle/input/toxic-multilang-trained-torch-model'
+TRAIN_LEN = 0
 
 strategy=None
 tpu_resolver=None
 BATCH_SIZE = 32 * 2
 MAX_LENGTH = 224
+X,y, x_valid, y_valid, X_test = None,None,None,None,None
 
 if tpu_resolver is None:
     if DEBUG:

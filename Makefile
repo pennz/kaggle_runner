@@ -107,12 +107,12 @@ pccnct: rvs_session _pccnct
 	-$(IS_CENTOS) && sudo service rabbitmq-server start # For AMQP log, our server 
 	@echo "pc connector started now"
 
-ctr: kr check install_dep $(SRC)
+ctr: kr check install_dep pytest $(SRC)
 	-timeout 10 git push
 	[ -f bin/cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > bin/cc-test-reporter
 	chmod +x bin/cc-test-reporter
 	-bin/cc-test-reporter before-build
-	-coverage run -m pytest .
+	-coverage run -m pytest -vs tests
 	-coverage xml
 	-bin/cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
