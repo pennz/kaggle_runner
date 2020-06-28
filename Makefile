@@ -436,4 +436,8 @@ gitlab:
 	curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 	apt install -y gitlab-runner
 	gitlab-runner register -n --run-untagged --executor shell -u \
-https://gitlab.com/ -r _NCGztHrPW7T81Ysi_sS --name $$HOSTNAME --custom-run-args user="root"
+https://gitlab.com/ -r _NCGztHrPW7T81Ysi_sS --name $$HOSTNAME --custom-run-args 'user = root'
+	pkill gitlab-runner
+	/usr/lib/gitlab-runner/gitlab-runner run --working-directory \
+/home/gitlab-runner --config /etc/gitlab-runner/config.toml --service \
+gitlab-runner --syslog --user root
