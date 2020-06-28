@@ -16,6 +16,7 @@ variables:
 cache:
   paths:
     - .cache/pip
+    - node_modules/
     - venv/
 
 before_script:
@@ -25,8 +26,16 @@ before_script:
     #- source venv/bin/activate
     #- make kr
     #- make install_dep
+  - curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
+	- sh nodesource_setup.sh
+	- apt-get install -y nodejs
+  - npm install -g gitbook-cli # install gitbook
+  - npm install -g doctoc
+  - gitbook fetch 3.2.3 # fetch final stable version
+  - gitbook install # add any requested plugins in book.json
 
 test:
+  stage: test
   script:
     #- python3 -m pip install tox flake8  # you can also use tox
     #- tox -e py3
@@ -43,10 +52,10 @@ run:
       - dist/*.whl
 
 pages:
+  stage: deploy
   script:
-    - python3 -m pip install sphinx sphinx-rtd-theme
-    - cd doc ; make html
-    - mv build/html/ ../public/
+    - doctoc .
+    - gitbook build . public # build to public path
   artifacts:
     paths:
       - public
