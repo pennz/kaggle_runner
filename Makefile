@@ -112,8 +112,8 @@ ctr: kr check install_dep pytest $(SRC)
 	[ -f bin/cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > bin/cc-test-reporter
 	chmod +x bin/cc-test-reporter
 	-bin/cc-test-reporter before-build
-	-coverage run -m pytest -vs tests
-	-coverage xml
+	-$(PY) -m coverage run -m pytest -vs tests
+	-$(PY) -m coverage xml
 	-bin/cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
 get_submission:
