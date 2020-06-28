@@ -253,6 +253,7 @@ def test_load():
 # + {"id": "9dqdFgwAZQgw", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
 test_load()
 
+from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 def test_model_fn(device=torch.device("cpu")):
     #device = xm.xla_device(devkind='TPU')
     #device=torch.device("xla")
