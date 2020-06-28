@@ -154,7 +154,7 @@ debug_toxic:
 
 toxic: check install_dep
 	echo $$(ps aux | grep "make $@$$")
-	echo DEBUG flag is $$DEBUG .
+	echo "$@:" DEBUG flag is $$DEBUG .
 	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
 	if [ -z $$DEBUG ]; then $(UNBUFFER) $(PY) tests/test_distilbert_model.py 2>&1 | $(UNBUFFERP) tee -a toxic_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); else wt '$(PY) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
@@ -245,10 +245,10 @@ check: kr
 	-expect -h
 	pstree -laps $$$$
 	-@echo "$$(which $(PY)) is our $(PY) executable"; if [[ x$$(which $(PY)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
-	@$(PY) -c 'import os; print("DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
+	@$(PY) -c 'import os; print("$@: DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
 	@$(PY) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner CANNOT be imported."; $(PY) -m pip install -e . && $(PY) -c 'import kaggle_runner')
 	-@$(PY) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
-	-@timeout 3s $(PY) -c 'import os; from kaggle_runner import logger; logger.debug("DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
+	-@timeout 3s $(PY) -c 'import os; from kaggle_runner import logger; logger.debug("$@: DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 
 mbd_log:
