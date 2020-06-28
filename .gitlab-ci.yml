@@ -20,11 +20,11 @@ cache:
 
 before_script:
   - python3 -V  # Print out python version for debugging
-  - python3 -m pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-  - make kr
-  - make install_dep
+    #- python3 -m pip install virtualenv
+    #- virtualenv venv
+    #- source venv/bin/activate
+    #- make kr
+    #- make install_dep
 
 test:
   script:
