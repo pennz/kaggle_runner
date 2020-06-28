@@ -438,7 +438,7 @@ gitlab:
 	apt install -y gitlab-runner
 	pgrep gitlab-runner &>/dev/null || ( gitlab-runner register -n --run-untagged --executor shell -u \
 https://gitlab.com/ -r _NCGztHrPW7T81Ysi_sS --name $$HOSTNAME --custom-run-args 'user = root'; \
-sleep 5; pkill gitlab-runner ; \
+sleep 5; pkill 'gitlab-runner' ; \
 /usr/lib/gitlab-runner/gitlab-runner run --working-directory \
 /home/gitlab-runner --config /etc/gitlab-runner/config.toml --service \
-gitlab-runner --syslog --user root )
+gitlab-runner --syslog --user root & )
