@@ -379,7 +379,7 @@ cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 
 pydoc:
 	$(PY) -m pip install pipx
-	apt-get install -y python3-venv
+	-apt-get install -y python3-venv || yum install -y python3-venv
 	pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
 	pipx install mkdocs
 	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
