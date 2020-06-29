@@ -386,7 +386,7 @@ npm install -g gitbook-cli; \
 npm install -g doctoc; \
 gitbook fetch 3.2.3 ; gitbook install ) # fetch final stable version and add any requested plugins in book.json
 
-pydoc:
+pydoc: install_gitbook
 	$(PY) -m pip install pipx
 	-apt-get install -y python3-venv || yum install -y python3-venv
 	pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
