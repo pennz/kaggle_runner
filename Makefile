@@ -382,6 +382,8 @@ pydoc:
 	apt-get install -y python3-venv
 	pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
 	pipx install mkdocs
+	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
+	pydoc-markdown -m "kaggle_runner" --render-toc > kaggle_runner.md
 	pydoc-markdown --bootstrap-mkdocs
 	-pydoc-markdown --server --open-browser
 
@@ -391,6 +393,7 @@ pydoc:
 # PROJECT_ID = 'your-google-cloud-project'
 # from google.cloud import storage
 # storage_client = storage.Client(project=PROJECT_ID)
+
 sync_result:
 	while true; do git commit -asm "Good game" --no-edit; git pull; git push; sleep 10; done
 

@@ -9,12 +9,43 @@ from kaggle_runner.utils import kernel_utils
 
 
 class KernelGroup:
-    "Kernel Group to try different combination of kernels hyperparameter"
+    """Kernel Group to try different combination of kernels hyperparameter
 
-    def __init__(self, *kernels):
+    Follow this example:
+    https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+
+    Attributes:
+        kernels (list): List of kernels whose results will be analyse together.
+
+    """
+
+    def __init__(self, kernels):
         self.kernels = kernels
 
 class KaggleKernel(metaclass=ABCMeta):
+    """Kernel for kaggle competitions/researchs
+
+    Attributes:
+        _stage
+        model_metrics
+        data_loader
+        optimizer
+        model
+        train_X
+        developing
+        submit_run
+        test_X
+        model_loss
+        num_epochs
+        device
+        result_analyzer
+        logger
+        dependency
+        dev_X
+        train_Y
+        dev_Y
+
+    """
     def __init__(self, logger=None):
         self.submit_run = False
         self.num_epochs = 8
