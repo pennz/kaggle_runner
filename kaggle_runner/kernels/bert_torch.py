@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 import sys
-package_dir_a = "../input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
+package_dir_a = "/kaggle/input/ppbert/pytorch-pretrained-bert/pytorch-pretrained-BERT"
 sys.path.insert(0, package_dir_a)
 
 from kaggle_runner.datasets.bert import DATA_PATH, BERT_BASE_DIR, PRETRAIND_PICKLE_AND_MORE
@@ -71,8 +71,8 @@ def get_trained_model(fine_tuned = "bert_pytorch.bin", device=torch.device('cuda
         output_model_file = pretrain_data_folder+"/"+fine_tuned
         bert_config = BertConfig.from_json_file(pretrain_data_folder + "/bert_config.json")
 
-# Run validation
-# The following 2 lines are not needed but show how to download the model for prediction
+        # Run validation
+        # The following 2 lines are not needed but show how to download the model for prediction
         model = BertForSequenceClassification(
             bert_config, num_labels=len(y_columns))
         model.load_state_dict(torch.load(output_model_file))
@@ -124,7 +124,7 @@ def get_test_result(self, test_dataset, device=torch.device('cuda'), data_path=D
 def for_pytorch(data_package, device=torch.device('cuda'), SEED=118, phase="predict", model=None):
 
     if device is None and os.getenv("TPU_NAME") is not None:
-        import torch_xla
+        import torch_xla # model
         import torch_xla.core.xla_model as xm
         device = xm.xla_device()
 

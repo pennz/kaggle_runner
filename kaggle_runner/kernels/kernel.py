@@ -14,7 +14,6 @@ class KernelGroup:
     def __init__(self, *kernels):
         self.kernels = kernels
 
-
 class KaggleKernel(metaclass=ABCMeta):
     def __init__(self, logger=None):
         self.submit_run = False
@@ -57,6 +56,7 @@ class KaggleKernel(metaclass=ABCMeta):
         logging.basicConfig(format=FORMAT)
         logger = logging.getLogger(name)
         logger.setLevel(level)
+
         if handler is not None:
             logger.addHandler(handler)
         self.logger = logger
@@ -66,6 +66,7 @@ class KaggleKernel(metaclass=ABCMeta):
 
     def set_data_size(self):
         "might be useful when test different input datasize"
+        pass
 
     def save_model(self):
         pass
@@ -73,6 +74,7 @@ class KaggleKernel(metaclass=ABCMeta):
     def load_model_weight(self):
         pass
 
+    @abstractmethod
     def build_and_set_model(self):
         pass
 
@@ -82,10 +84,10 @@ class KaggleKernel(metaclass=ABCMeta):
     def set_model(self):
         pass
 
-    def set_loss(self):
+    def set_loss(self, loss_func):
         pass
 
-    def set_metrics(self):
+    def set_metrics(self, metrics):
         """
         set_metrics for model training
 
@@ -107,6 +109,7 @@ class KaggleKernel(metaclass=ABCMeta):
     def prepare_test_data(self, data_config=None):
         pass
 
+    @abstractmethod
     def peek_data(self):
         pass
 
@@ -115,6 +118,7 @@ class KaggleKernel(metaclass=ABCMeta):
 
     def dump_state(self, exec_flag=False):
         self.logger.debug("state %s" % self._stage)
+
         if exec_flag:
             self.logger.debug("dumping state to file for %s" % self._stage)
             # dump_obj(self, 'run_state.pkl', force=True)  # too large
@@ -144,9 +148,11 @@ class KaggleKernel(metaclass=ABCMeta):
         end_stage=KernelRunningState.SAVE_SUBMISSION_DONE,
         dump_flag=False,
     ):
+        self.set_random_seed()
         self.logger.debug(
             "%s -> %s", start_stage, end_stage,
         )
+
         if start_stage is not None:
             assert start_stage.value < end_stage.value
             self._stage = start_stage
@@ -158,6 +164,7 @@ class KaggleKernel(metaclass=ABCMeta):
 
             self._stage = KernelRunningState.PREPARE_DATA_DONE
             self.dump_state(exec_flag=dump_flag)
+
             if self._stage.value >= end_stage.value:
                 return
 
@@ -171,6 +178,7 @@ class KaggleKernel(metaclass=ABCMeta):
 
             self._stage = KernelRunningState.TRAINING_DONE
             self.dump_state(exec_flag=dump_flag)
+
             if self._stage.value >= end_stage.value:
                 return
 
@@ -179,6 +187,7 @@ class KaggleKernel(metaclass=ABCMeta):
 
             self._stage = KernelRunningState.EVL_DEV_DONE
             self.dump_state(exec_flag=dump_flag)
+
             if self._stage.value >= end_stage.value:
                 return
 
@@ -194,6 +203,7 @@ class KaggleKernel(metaclass=ABCMeta):
 
             self._stage = KernelRunningState.SAVE_SUBMISSION_DONE
             self.dump_state(exec_flag=dump_flag)
+
             if self._stage.value >= end_stage.value:
                 return
 
@@ -204,13 +214,16 @@ class KaggleKernel(metaclass=ABCMeta):
         :param file_name:
         :return: the kernel object, need to continue
         """
+
         if stage is not None:
             file_name = f"run_state_{stage}.pkl"
+
         if logger is not None:
             logger.debug(f"restore from {file_name}")
         self = kernel_utils.get_obj_or_dump(filename=file_name)
         assert self is not None
         self.logger = logger
+
         return self
 
     def load_state_data_only(self, file_name="run_state.pkl"):
@@ -263,3 +276,36 @@ class KaggleKernel(metaclass=ABCMeta):
     @abstractmethod
     def check_predict_details(self):
         pass
+
+from kaggle_runner import logger
+
+class KaggleKernelOnlyPredict(KaggleKernel):
+
+    def __init__(self, model_path):
+        super(KaggleKernelOnlyPredict, self).__init__(logger=logger)
+        self.only_predict = True
+
+    @abstractmethod
+    def build_and_set_model(self):
+        """load pretrained one"""
+        pass
+
+    def prepare_train_dev_data(self):
+        pass
+
+    @abstractmethod
+    def prepare_test_data(self, data_config=None):
+        pass
+
+    @abstractmethod
+    def check_predict_details(self):
+        pass
+
+    def peek_data(self):
+        pass
+
+
+def test_init_only_predict():
+    k = KaggleKernelOnlyPredict()
+    assert k is not None
+    assert k.model is not None

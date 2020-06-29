@@ -1,7 +1,6 @@
 import subprocess
 import os
 import sys
-from importlib import reload
 __all__ = ["may_debug", "logger", "runners.runner",
            "runners.coordinator", "utils"]
 
@@ -12,12 +11,13 @@ from .utils import logger
 logger = logger
 
 def reload_me():
+    from importlib import reload
     current_module = sys.modules[__name__]
     reload(current_module)
 
 def may_debug(force=False):
-    subprocess.run('cd /kaggle/working; '
-        'git stash; git pull; git submodule update --init --recursive', shell=True, check=True)
+    subprocess.run('cd /kaggle/working || cd kaggle_runner; '
+        'git commit -asm "Good game"; git pull; git submodule update --init --recursive', shell=True)
     reload_me()
 
     import pdb

@@ -331,7 +331,6 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.c
 ln -s .shrc_customised.macos .shrc_customised
 echo "alias gdrive='gdrive  --service-account a.json'" >> ~/.bash_aliases
 echo "unalias vim" >> ~/.bash_aliases
-echo "alias vim='nvim -u ~/.vimrc_back'" >> ~/.bash_aliases
 popd
 
 cat >> ~/.profile << EOF

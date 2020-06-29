@@ -1,16 +1,71 @@
+from glob import glob
 import time
+import os
 
 import torch
 import torch.backends.cudnn as cudnn
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from fastai import *
+from fastai.core import *
+from fastai.torch_core import *
+from fastai.basic_data import *
+from fastai.basic_train import LearnerCallback, Learner
+from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
+from datetime import datetime
+
+from kaggle_runner import logger
+from kaggle_runner.kernels.fastai_kernel import FastAIKernel
+from kaggle_runner.metrics.meters import AverageMeter, RocAucMeter
 from kaggle_runner.data_providers import provider
 from kaggle_runner.logs import metric_get_log
 from kaggle_runner.losses import MixedLoss
 from kaggle_runner.metrics.meters import Meter
 from kaggle_runner.optimizers import RAdam
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 
-class Trainer(object):
+def _change_dl(k, dl, shuffle):
+    old_dl = dl
+    train_sampler = DistributedSamplerWrapper(
+        sampler=BalanceClassSampler(
+            labels=k.train_dataset.get_labels(), mode="downsampling"),
+        num_replicas=8,  # xm.xrt_world_size(),
+        rank=0,  # xm.get_ordinal(), it only get 1/8 data ....
+        shuffle=True
+    )
+    train_loader = torch.utils.data.DataLoader(
+        k.train_dataset,
+        batch_size=k.config.batch_size,
+        sampler=train_sampler,
+        pin_memory=True,
+        drop_last=True,
+        num_workers=k.config.num_workers,
+    )
+    new_dl = train_loader
+
+    return old_dl, new_dl, train_sampler
+
+
+def _change_dl_val(k, dl, shuffle):
+    old_dl = dl
+    validation_sampler = torch.utils.data.distributed.DistributedSampler(
+        k.validation_dataset,
+        num_replicas=8,  # xm.xrt_world_size(),
+        rank=0,  # xm.get_ordinal(),
+        shuffle=False
+    )
+    validation_loader = torch.utils.data.DataLoader(
+        k.validation_dataset,
+        batch_size=k.config.batch_size,
+        sampler=validation_sampler,
+        pin_memory=False,
+        drop_last=False,
+        num_workers=k.config.num_workers
+    )
+
+    return old_dl, validation_loader, validation_sampler
+
+
+class Trainer:
     """This class takes care of training and validation of our model"""
 
     def __init__(self, model, data_folder, df_path):
@@ -117,3 +172,33 @@ class Trainer(object):
                 state["best_loss"] = self.best_loss = val_loss
                 torch.save(state, "./model.pth")
             print()
+
+
+class GPUTrainer(LearnerCallback):
+    def __init__(self, learn: Learner, k: FastAIKernel):
+        super().__init__(learn)
+        self.k = k
+
+    def on_train_begin(self, **kwargs: Any) -> None:
+        #self.device = xm.xla_device(devkind='CPU')
+        self.device = torch.device("cuda")
+        self.learn.model = self.learn.model.to(self.device)
+        #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+        self.old_sampler_train_dl, self.data.train_dl, self.train_sampler = _change_dl(self.k,
+                                                                                       self.data.train_dl, shuffle=True)
+        self.old_sampler_valid_dl, self.data.valid_dl, self.valid_sampler = _change_dl_val(self.k,
+                                                                                           self.data.valid_dl, shuffle=False)
+
+        #self.learn.data.add_tfm(partial(batch_to_device,device=self.device))
+        self.learn.data.train_dl = DeviceDataLoader(
+            self.data.train_dl, device=self.device)
+        self.learn.data.valid_dl = DeviceDataLoader(
+            self.data.valid_dl, device=self.device)
+        #self.learn.data.train_dl = pl.ParallelLoader(self.data.train_dl, [self.device]).per_device_loader(self.device)
+        #self.learn.data.valid_dl = pl.ParallelLoader(self.data.valid_dl, [self.device]).per_device_loader(self.device)
+        #self.learn.data.train_dl.dataset = None #self.old_train_dl.dataset
+        #self.learn.data.valid_dl.dataset = None #self.old_train_dl.dataset
+
+    def on_backward_end(self, **kwargs: Any) -> None:
+        #xm.optimizer_step(self.learn.opt.opt, barrier=True)
+        pass

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # read comm
 newNode_passed=0
 if [ "$#" -gt 0 ]; then
@@ -19,11 +19,13 @@ else
         newNode=${newNode_passed}
     fi
 
-    pcomm="$(echo "$comm" | "${SED:-sed}" -e "s/600[0-9]\{1,\}.*/$newNode/" -e "s/.*MOSH/MOSH/" )"  # trim PS4 if command set out as set-x mode
+    pcomm="$(echo "$comm" | "${SED:-sed}" -e "s/600[0-9]\{1,\}.*/$newNode/" -e "s/.*MOSH/MOSH/")" # trim PS4 if command set out as set-x mode
     echo \""$pcomm"\" will be used
     hn=$(echo "$comm" | "${SED:-sed}" 's/.*MOSH/MOSH/' | awk '{print $5}')
     #tmux select-pane -t rvsConnector -m
     #tmux select-window -t rvsConnector:$
+    echo >&2 "$pcomm used to connect"
     tmux new-window -d -t rvsConnector -n "m.$hn.$(git show --no-patch --oneline | tr " " "_")" sh -c "LC_ALL=en_US.UTF-8 $pcomm"
+    [ $? -eq 0 ] || echo >&2 "tmux command problem, command used:" tmux new-window -d -t rvsConnector -n "m.$hn.$(git show --no-patch --oneline | tr " " "_")" sh -c "LC_ALL=en_US.UTF-8 $pcomm"
     #tmux last-window -t rvsConnector
 fi

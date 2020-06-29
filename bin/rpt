@@ -1,0 +1,60 @@
+#!/bin/bash
+[ -d ~/.fzf ] || {
+    git clone --depth=1 https://github.com/pennz/dotfiles
+    rsync -r dotfiles/.* ~
+    rsync -r dotfiles/* ~
+    rmdir dotfiles
+    pushd ~
+    git submodule update --init
+    .fzf/install --all
+    curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    # vim -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +qa &
+    # ( sleep 60; nvim -Vnvim_log -u ~/.vimrc_back "+call plug#begin()" +PlugInstall +checkhealth +qa )&
+    ln -s .shrc_customised.macos .shrc_customised
+    echo "alias gdrive='gdrive  --service-account a.json'" >>~/.bash_aliases
+    echo "unalias vim; alias vim='vim -u ~/.vimrc_back'" >>~/.bash_aliases
+    vim -u ~/.vimrc_back +PlugInstall +qa
+    popd
+
+    cat >>~/.profile <<EOF
+export SHELL=/bin/bash
+export TERM=screen-256color
+stty intr ^\c susp ^\x eof ^\f echo opost
+# https://unix.stackexchange.com/questions/343088/what-is-the-equivalent-of-stty-echo-for-zsh
+# unsetopt ZLE # for zsh
+# for ourside stty raw isig -echo icrnl time 3 echoprt opost eof ^\p
+
+color_my_prompt () {
+    local __user_and_host="\[\033[01;32m\]\u@\h"
+    local __cur_location="\[\033[01;34m\]\w"
+    local __git_branch_color="\[\033[31m\]"
+    # local __git_branch="\`ruby -e \"print (%x{git branch 2> /dev/null}.grep(/^\*/).first || '').gsub(/^\* (.+)$/, '(\1) ')\"\`"
+    local __git_branch='$(git branch 2>/dev/null | grep -e ^* | ${SED:-sed} -E s/^\\\*\ \(.+\)$/\(\\\1\)\ /)'
+    local __prompt_tail="\[\033[35m\]$"
+    local __last_color="\[\033[00m\]"
+    export PS1="$__user_and_host $__cur_location $__git_branch_color$__git_branch$__prompt_tail$__last_color "
+}
+
+ENV=/root/.bashrc
+PYTHONWARNINGS=ignore:::pip._internal.cli.base_command
+MPLBACKEND=module://ipykernel.pylab.backend_inline
+
+PS4="$HOSTNAME: "'${LINENO}: '
+_=/usr/bin/env
+PWD=/kaggle/working
+cd $PWD
+OLDPWD=/root
+
+color_my_prompt
+locale-gen
+echo "#" $(
+        grep 'cpu ' /proc/stat >/dev/null
+        sleep 0.1
+        grep 'cpu ' /proc/stat | awk -v RS="" '{print "CPU: "($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)"%"}'
+    ) "Mem: "$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{print 100-100*a/t"%"}' /proc/meminfo) "Uptime: "$(uptime | awk '{print $1 " " $2 " " $3}')
+echo "#" TPU_NAME=$TPU_NAME
+nvidia-smi
+conda activate base
+EOF
+}
