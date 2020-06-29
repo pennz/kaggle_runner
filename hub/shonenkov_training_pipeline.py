@@ -443,73 +443,82 @@ def test_load():
 test_save_model()
 test_load()
 test_model_fn()
-# + {"colab_type": "code", "id": "NSC6BrbwUQ2G", "colab": {}}
-def only_predict():
-    pass
 
-if os.getenv("CI") == "true":
-    import sys
-    sys.exit(0)
-# + {"id": "Ch92ag9dmMk-", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
-# !echo $HOSTNAME
-# !bin/rvs.sh pengyuzhou.com 23454
+import pytest
+import sys
+
+def test_exit():
+    with pytest.raises(SystemExit) as exc:
+        # test goes here
+
+        if os.getenv("CI") == "true":
+            sys.exit(1)
+        else:
+            sys.exit(0)
+    assert exc.value.code == 0
+
+test_exit()
+
+# + {"colab_type": "code", "id": "NSC6BrbwUQ2G", "colab": {}}
+
+if os.getenv("CI") != "true":
 
 # + {"colab_type": "code", "id": "VXNH-qcCUQ1B", "colab": {}}
-from kaggle_runner.kernels.fastai_kernel import FastAIKernel
-from kaggle_runner.runners.trainer import GPUTrainer
-def _to_gpu(learn:Learner, k: FastAIKernel) -> Learner:
-    learn.callback_fns.append(partial(GPUTrainer, k=k))
+    from kaggle_runner.kernels.fastai_kernel import FastAIKernel
+    from kaggle_runner.runners.trainer import GPUTrainer
+    def _to_gpu(learn:Learner, k: FastAIKernel) -> Learner:
+        learn.callback_fns.append(partial(GPUTrainer, k=k))
 
-    return learn
+        return learn
 
-Learner.to_gpu = _to_gpu
+    Learner.to_gpu = _to_gpu
 
 
 # + {"colab_type": "code", "id": "2Z1O-ZLfUQ1D", "colab": {}}
-import pysnooper
-from functools import partial
+    import pysnooper
+    from functools import partial
 
-from hub.custom_fastai_callbacks.callbacks import GradientAccumulator
-def debug_train(use_dist_cb=True):
-    logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
-    from kaggle_runner import defaults
-    _DEBUG = defaults.DEBUG
-    #defaults.DEBUG = True
+    from hub.custom_fastai_callbacks.callbacks import GradientAccumulator
+    def debug_train(use_dist_cb=True):
+        logger.debug(f'debug train with{" " if use_dist_cb else "OUT"} to_tpu_distributed')
+        from kaggle_runner import defaults
+        _DEBUG = defaults.DEBUG
+        #defaults.DEBUG = True
 
-    param_optimizer = list(k.model.named_parameters())
-    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
-    ]
+        param_optimizer = list(k.model.named_parameters())
+        no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+        optimizer_grouped_parameters = [
+            {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.01},
+            {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 0., 'weight_decay': 0.0}
+        ]
 
-    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
-        kargs['lr']=TrainGlobalConfig.lr*8 #xm.xrt_world_size()
+        def AdamW_with_given_p(p_to_ignore, *args, **kargs):
+            kargs['lr']=TrainGlobalConfig.lr*8 #xm.xrt_world_size()
 
-        return AdamW(optimizer_grouped_parameters, *args, **kargs)
+            return AdamW(optimizer_grouped_parameters, *args, **kargs)
 
-    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
-                             loss_func=LabelSmoothing(),
-                             wd=0.01,
-                             callback_fns=[partial(GradientClipping, clip=0.5),
-                                           partial(CSVLogger, append=True),
-                                           partial(GradientAccumulator, num_iterations=4),
-                                           partial(CheckGrad, skip_loss_step=False, batch_size=k.config.batch_size)]
-                             )
-    k.learner = learn
+        learn = k.create_learner(k, opt_func=AdamW_with_given_p,
+                                 loss_func=LabelSmoothing(),
+                                 wd=0.01,
+                                 callback_fns=[partial(GradientClipping, clip=0.5),
+                                               partial(CSVLogger, append=True),
+                                               partial(GradientAccumulator, num_iterations=4),
+                                               partial(CheckGrad, skip_loss_step=False, batch_size=k.config.batch_size)]
+                                 )
+        k.learner = learn
 
-    if use_dist_cb:
-        learn = learn.to_tpu_distributed()
-    else:
-        learn = learn.to_gpu(k)
+        if use_dist_cb:
+            learn = learn.to_tpu_distributed()
+        else:
+            learn = learn.to_gpu(k)
 
-    #learn.callback_fns.append(CheckGrad)
-    #print('hello')
-    #learn.lr_find(start_lr=1e-7, end_lr=1e-2, num_it=200)
-    #learn.recorder.plot()
-    learn.fit_one_cycle(2, max_lr=3e-5)
-    #learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
-    defaults.DEBUG = _DEBUG
+        #learn.callback_fns.append(CheckGrad)
+        #print('hello')
+        #learn.lr_find(start_lr=1e-7, end_lr=1e-2, num_it=200)
+        #learn.recorder.plot()
+        learn.fit_one_cycle(2, max_lr=3e-5)
+        #learn.fit(1, lr=4e-5) # original 0.5*e-5*8=4*e-5
+        defaults.DEBUG = _DEBUG
 
 
 # + {"colab_type": "code", "id": "uUzCsw_wUQ1F", "colab": {}}
@@ -522,209 +531,196 @@ def debug_train(use_dist_cb=True):
 
 
 # + {"colab_type": "code", "id": "eeL1PlTnUQ1J", "colab": {}}
-import subprocess
-subprocess.run('make xla', shell=True)
-# TODO add system call, we can get log?
+    import subprocess
+    subprocess.run('make xla', shell=True) # TODO add system call, we can get log?
 
 # + {"colab_type": "code", "id": "5fUVZUIYUQ1M", "colab": {}}
-import torch_xla
-import torch_xla.distributed.data_parallel as dp
-import torch_xla.utils.utils as xu
-import torch_xla.core.xla_model as xm
-import torch_xla.distributed.parallel_loader as pl
-import torch_xla.distributed.xla_multiprocessing as xmp
-import torch
+    import torch_xla
+    import torch_xla.distributed.data_parallel as dp
+    import torch_xla.utils.utils as xu
+    import torch_xla.core.xla_model as xm
+    import torch_xla.distributed.parallel_loader as pl
+    import torch_xla.distributed.xla_multiprocessing as xmp
+    import torch
 
 # + {"colab_type": "code", "id": "qWaNMw-rUQ1O", "colab": {}}
-import fastai
-from fastai import *
-from fastai.core import *
-from fastai.torch_core import *
-from fastai.vision import *
-from fastai.basic_train import *
-from kaggle_runner.runners.tpu_trainer import TPUDistributed, TPUFitter
+    import fastai
+    from fastai import *
+    from fastai.core import *
+    from fastai.torch_core import *
+    from fastai.vision import *
+    from fastai.basic_train import *
+    from kaggle_runner.runners.tpu_trainer import TPUDistributed, TPUFitter
 
 # + {"colab_type": "code", "id": "VomH5RztUQ1T", "colab": {}}
-from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
-def len_parallelloader(self):
-    return len(self._loader._loader)
-pl.PerDeviceLoader.__len__ = len_parallelloader
+    from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
+    def len_parallelloader(self):
+        return len(self._loader._loader)
+    pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
 # + {"colab_type": "code", "id": "0d8Bzl8DUQ1X", "colab": {}}
-def _to_tpu_distributed(learn:Learner) -> Learner:
-    learn.callback_fns.append(TPUDistributed)
+    def _to_tpu_distributed(learn:Learner) -> Learner:
+        learn.callback_fns.append(TPUDistributed)
 
-    return learn
+        return learn
 
 # + {"colab_type": "code", "id": "a6_DgUIyUQ1Z", "colab": {}}
-Learner.to_tpu_distributed = _to_tpu_distributed
-
-# + {"colab_type": "code", "id": "wJhxTHZGUQ1c", "colab": {}}
-
-
-
-# + {"colab_type": "code", "id": "B_tochnQUQ1e", "colab": {}}
-
+    Learner.to_tpu_distributed = _to_tpu_distributed
 
 
 # + {"colab_type": "code", "id": "M_tjbI16UQ1g", "colab": {}}
-from functools import partial
-import pysnooper
+    from functools import partial
+    import pysnooper
 
 # + {"colab_type": "code", "id": "0nejQ0FwUQ1j", "colab": {}}
-@pysnooper.snoop()
-def train_loop(index, *args):
-    logger.debug("rank: %d entered train_loop", index)
+    @pysnooper.snoop()
+    def train_loop(index, *args):
+        logger.debug("rank: %d entered train_loop", index)
 
-    param_optimizer = list(k.model.named_parameters())
-    no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-    optimizer_grouped_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 4e-5, 'weight_decay': 0.01},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 4e-5, 'weight_decay': 0.0}
-    ]
+        param_optimizer = list(k.model.named_parameters())
+        no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
+        optimizer_grouped_parameters = [
+            {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'lr': 4e-5, 'weight_decay': 0.01},
+            {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'lr': 4e-5, 'weight_decay': 0.0}
+        ]
 
-    def AdamW_with_given_p(p_to_ignore, *args, **kargs):
-        kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
+        def AdamW_with_given_p(p_to_ignore, *args, **kargs):
+            kargs['lr']=TrainGlobalConfig.lr*xm.xrt_world_size()
 
-        return AdamW(optimizer_grouped_parameters, *args, **kargs)
+            return AdamW(optimizer_grouped_parameters, *args, **kargs)
 
-    if index == 0:
-        time.sleep(1)
-    learn = k.create_learner(k, opt_func=AdamW_with_given_p,
-                             loss_func=LabelSmoothing(),
-                             wd=0.01,
-                             callback_fns=[partial(GradientClipping, clip=0.5),
-                                           ShowGraph,
-                                           partial(CSVLogger, append=True),
-                                           partial(CheckGrad, skip_loss_step=False)]
-                             ).to_tpu_distributed()
-    learn.lr_find(start_lr=1e-7, end_lr=1e-5, num_it=200)
-    learn.recorder.plot()
-    #learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
-    learn.fit(1, lr=5e-6, wd=0.001)
+        if index == 0:
+            time.sleep(1)
+        learn = k.create_learner(k, opt_func=AdamW_with_given_p,
+                                 loss_func=LabelSmoothing(),
+                                 wd=0.01,
+                                 callback_fns=[partial(GradientClipping, clip=0.5),
+                                               ShowGraph,
+                                               partial(CSVLogger, append=True),
+                                               partial(CheckGrad, skip_loss_step=False)]
+                                 ).to_tpu_distributed()
+        learn.lr_find(start_lr=1e-7, end_lr=1e-5, num_it=200)
+        learn.recorder.plot()
+        #learn.fit_one_cycle(3, max_lr=5e-6, wd=0.001)
+        learn.fit(1, lr=5e-6, wd=0.001)
 
 
 # + {"colab_type": "code", "id": "JTqfMd9JUQ1k", "colab": {}}
-FLAGS={}
-#xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
+    FLAGS={}
+    #xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
 # + {"colab_type": "code", "id": "oh5655pAUQ10", "colab": {}}
-import pysnooper
+    import pysnooper
 
 # + {"colab_type": "code", "id": "2YGBLtQ1UQ12", "colab": {}}
-@pysnooper.snoop()
-def _mp_fn(rank, flags, k=k):
-    device = xm.xla_device(devkind='TPU')
-    logger.debug("%s used for xla_device" % device)
-    net = k.model
-    net.to(device)
-    logger.debug("%s used for xla_device, to device done" % device)
+    @pysnooper.snoop()
+    def _mp_fn(rank, flags, k=k):
+        device = xm.xla_device(devkind='TPU')
+        logger.debug("%s used for xla_device" % device)
+        net = k.model
+        net.to(device)
+        logger.debug("%s used for xla_device, to device done" % device)
 
-    train_sampler = DistributedSamplerWrapper(
-        sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
-        num_replicas=xm.xrt_world_size(),
-        rank=xm.get_ordinal(),
-        shuffle=True
-    )
-    train_loader = torch.utils.data.DataLoader(
-        k.train_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        sampler=train_sampler,
-        pin_memory=False,
-        drop_last=True,
-        num_workers=TrainGlobalConfig.num_workers,
-    )
-    validation_sampler = torch.utils.data.distributed.DistributedSampler(
-        k.validation_dataset,
-        num_replicas=xm.xrt_world_size(),
-        rank=xm.get_ordinal(),
-        shuffle=False
-    )
-    validation_loader = torch.utils.data.DataLoader(
-        k.validation_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        sampler=validation_sampler,
-        pin_memory=False,
-        drop_last=False,
-        num_workers=TrainGlobalConfig.num_workers
-    )
-    validation_tune_sampler = torch.utils.data.distributed.DistributedSampler(
-        k.validation_tune_dataset,
-        num_replicas=xm.xrt_world_size(),
-        rank=xm.get_ordinal(),
-        shuffle=True
-    )
-    validation_tune_loader = torch.utils.data.DataLoader(
-        k.validation_tune_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        sampler=validation_tune_sampler,
-        pin_memory=False,
-        drop_last=False,
-        num_workers=TrainGlobalConfig.num_workers
-    )
-    test_sampler = torch.utils.data.distributed.DistributedSampler(
-        k.test_dataset,
-        num_replicas=xm.xrt_world_size(),
-        rank=xm.get_ordinal(),
-        shuffle=False
-    )
-    test_loader = torch.utils.data.DataLoader(
-        k.test_dataset,
-        batch_size=TrainGlobalConfig.batch_size,
-        sampler=test_sampler,
-        pin_memory=False,
-        drop_last=False,
-        num_workers=TrainGlobalConfig.num_workers
-    )
+        train_sampler = DistributedSamplerWrapper(
+            sampler=BalanceClassSampler(labels=k.train_dataset.get_labels(), mode="downsampling"),
+            num_replicas=xm.xrt_world_size(),
+            rank=xm.get_ordinal(),
+            shuffle=True
+        )
+        train_loader = torch.utils.data.DataLoader(
+            k.train_dataset,
+            batch_size=TrainGlobalConfig.batch_size,
+            sampler=train_sampler,
+            pin_memory=False,
+            drop_last=True,
+            num_workers=TrainGlobalConfig.num_workers,
+        )
+        validation_sampler = torch.utils.data.distributed.DistributedSampler(
+            k.validation_dataset,
+            num_replicas=xm.xrt_world_size(),
+            rank=xm.get_ordinal(),
+            shuffle=False
+        )
+        validation_loader = torch.utils.data.DataLoader(
+            k.validation_dataset,
+            batch_size=TrainGlobalConfig.batch_size,
+            sampler=validation_sampler,
+            pin_memory=False,
+            drop_last=False,
+            num_workers=TrainGlobalConfig.num_workers
+        )
+        validation_tune_sampler = torch.utils.data.distributed.DistributedSampler(
+            k.validation_tune_dataset,
+            num_replicas=xm.xrt_world_size(),
+            rank=xm.get_ordinal(),
+            shuffle=True
+        )
+        validation_tune_loader = torch.utils.data.DataLoader(
+            k.validation_tune_dataset,
+            batch_size=TrainGlobalConfig.batch_size,
+            sampler=validation_tune_sampler,
+            pin_memory=False,
+            drop_last=False,
+            num_workers=TrainGlobalConfig.num_workers
+        )
+        test_sampler = torch.utils.data.distributed.DistributedSampler(
+            k.test_dataset,
+            num_replicas=xm.xrt_world_size(),
+            rank=xm.get_ordinal(),
+            shuffle=False
+        )
+        test_loader = torch.utils.data.DataLoader(
+            k.test_dataset,
+            batch_size=TrainGlobalConfig.batch_size,
+            sampler=test_sampler,
+            pin_memory=False,
+            drop_last=False,
+            num_workers=TrainGlobalConfig.num_workers
+        )
 
-    logger.debug("rank: %d. Will create TPU Fitter", rank)
+        logger.debug("rank: %d. Will create TPU Fitter", rank)
 
-    if rank == 0:
-        time.sleep(1)
+        if rank == 0:
+            time.sleep(1)
 
-    fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
-    fitter.fit(train_loader, validation_loader)
-    fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
+        fitter = TPUFitter(model=net, device=device, config=TrainGlobalConfig)
+        fitter.fit(train_loader, validation_loader)
+        fitter.run_tuning_and_inference(test_loader, validation_tune_loader)
 
-# + {"colab_type": "code", "id": "8vdV8ftfUQ16", "colab": {}}
 
 
 
 # + {"colab_type": "code", "id": "cVRPNFYuUQ18", "colab": {}}
-import gc
-gc.collect()
+    import gc
+    gc.collect()
 
-
-# + {"colab_type": "code", "id": "8qPXm5m9UQ1_", "colab": {}}
-# %%time
 
 # + {"colab_type": "code", "id": "6x45fTI1UQ2B", "colab": {}}
 
-if __name__ == "__main__":
     FLAGS={}
     xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 # + {"colab_type": "code", "id": "JJPxfj1OUQ2E", "colab": {}}
-from kaggle_runner.kernels.kernel import KaggleKernelOnlyPredict
+    from kaggle_runner.kernels.kernel import KaggleKernelOnlyPredict
 
 
 
 # + {"colab_type": "code", "id": "a_etfRgnUQ2I", "colab": {}}
-from datetime import date
-today = date.today()
-output_model_file='XLMRobertaModel_tpu_trained.bin'
-torch.save(k.model.state_dict(), f"{today}_{output_model_file}")
+    from datetime import date
+    today = date.today()
+    output_model_file='XLMRobertaModel_tpu_trained.bin'
+    torch.save(k.model.state_dict(), f"{today}_{output_model_file}")
 
 
 # + {"colab_type": "code", "id": "6Bu-tn3lUQ2J", "colab": {}}
-submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
-submission['toxic'].hist(bins=100)
+    submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
+    submission['toxic'].hist(bins=100)
 
 
 # + {"colab_type": "code", "id": "1G896nEvUQ2L", "colab": {}}
-submission.to_csv(f'{ROOT_PATH}/submission.csv')
+    submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
 
 # + {"colab_type": "code", "id": "8RHAQ4PNUQ2N", "colab": {}}
