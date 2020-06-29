@@ -334,20 +334,15 @@ t: pccnct m
 	echo "Please check remote mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
-autossh:
-	apt install autossh -y
-
-sshR: autossh
+sshR:
 	if [ -d /content ]; then echo ssh -fNR 10010:$(KIP):9000 -p $(SSH_PORT) $(SERVER); \
-else echo autossh -fNR 10010:$(KIP):8888 -p $(SSH_PORT) $(SERVER); fi
+else echo ssh -fNR 10010:$(KIP):8888 -p $(SSH_PORT) $(SERVER); fi
 	-scp -P $(SSH_PORT) v@$(SERVER):~/.ssh/* ~/.ssh
 
-
-
-sshRj: autossh
+sshRj:
 	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
 	($(PY) -m jupyter lab --ip="$(KIP)" --port=9001 $(JUPYTER_PARAMS) || $(PY) -m jupyter lab --ip="$(KIP)" --port=9001 --allow-root) &
-	autossh -fNR 10011:$(KIP):9001 -p $(SSH_PORT) $(SERVER)
+	ssh -fNR 10011:$(KIP):9001 -p $(SSH_PORT) $(SERVER)
 	scp -P $(SSH_PORT) $(SERVER):~/.ssh/* ~/.ssh
 
 githooks:
