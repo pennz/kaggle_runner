@@ -325,5 +325,13 @@ distclean: clean
 	rm -r .git
 	rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
 
+pydoc:
+	$(PY) -m pip install pipx
+	apt-get install -y python3-venv
+	pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
+	pipx install mkdocs
+	pydoc-markdown --bootstrap-mkdocs
+	-pydoc-markdown --server --open-browser
+
 .PHONY: clean connect inner_lstm pc mbd_log
 
