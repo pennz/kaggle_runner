@@ -113,6 +113,7 @@ ctr: kr check install_dep pytest $(SRC)
 	chmod +x bin/cc-test-reporter
 	-bin/cc-test-reporter before-build
 	-$(PY) -m coverage run -m pytest -vs --full-trace tests
+	-$(PY) -m coverage report -m -i | grep '^TOTAL.*[0-9]\{1,\}'
 	-$(PY) -m coverage xml -i -o coverage.xml
 	-bin/cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
