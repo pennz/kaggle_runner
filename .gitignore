@@ -145,3 +145,4 @@ receive_logs_topic
 run/
 .*
 serverNodes
+**/cc-test-reporter
