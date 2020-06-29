@@ -59,10 +59,10 @@ SHELL=/bin/bash
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
 _: test
-	echo "DONE $@"
+	@echo "DONE $@"
 
 test: ctr
-	echo "DONE $@"
+	@echo "DONE $@"
 
 test_bert_torch: pytest
 	if [ -z $$DEBUG ]; then $(PY) tests/test_bert_torch.py 2>&1 | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); \
