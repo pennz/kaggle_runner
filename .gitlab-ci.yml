@@ -26,13 +26,7 @@ before_script:
     #- source venv/bin/activate
     #- make kr
     #- make install_dep
-  - curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
-	- sh nodesource_setup.sh
-	- apt-get install -y nodejs
-  - npm install -g gitbook-cli # install gitbook
-  - npm install -g doctoc
-  - gitbook fetch 3.2.3 # fetch final stable version
-  - gitbook install # add any requested plugins in book.json
+  - make install_gitbook
 
 test:
   stage: test
@@ -54,7 +48,7 @@ run:
 pages:
   stage: deploy
   script:
-    - doctoc .
+    - make pydoc
     - gitbook build . public # build to public path
   artifacts:
     paths:

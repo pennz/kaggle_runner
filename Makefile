@@ -377,6 +377,15 @@ gpt2: jigsaw-unintended-bias-in-toxicity-classification kaggle
 kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name && \
 cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 
+install_gitbook:
+	curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
+	sh nodesource_setup.sh
+	apt-get install -y nodejs
+	npm install -g gitbook-cli # install gitbook
+	npm install -g doctoc
+	gitbook fetch 3.2.3 # fetch final stable version
+	gitbook install # add any requested plugins in book.json
+
 pydoc:
 	$(PY) -m pip install pipx
 	-apt-get install -y python3-venv || yum install -y python3-venv
@@ -385,7 +394,8 @@ pydoc:
 	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
 	pydoc-markdown -m "kaggle_runner" --render-toc > kaggle_runner.md
 	pydoc-markdown --bootstrap-mkdocs
-	-pydoc-markdown --server --open-browser
+	doctoc .
+	-pydoc-markdown --server #--open-browser
 
 .PHONY: clean connect inner_lstm pc mbd_log
 
