@@ -378,13 +378,13 @@ kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name && \
 cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 
 install_gitbook:
-	curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
-	sh nodesource_setup.sh
-	apt-get install -y nodejs
-	npm install -g gitbook-cli # install gitbook
-	npm install -g doctoc
-	gitbook fetch 3.2.3 # fetch final stable version
-	gitbook install # add any requested plugins in book.json
+	type gitbook &>/dev/null || ( \
+curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh && \
+sh nodesource_setup.sh; \
+apt-get install -y nodejs; \
+npm install -g gitbook-cli; \
+npm install -g doctoc; \
+gitbook fetch 3.2.3 ; gitbook install ) # fetch final stable version and add any requested plugins in book.json
 
 pydoc:
 	$(PY) -m pip install pipx
