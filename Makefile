@@ -393,7 +393,7 @@ pydoc:
 	pipx install mkdocs
 	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
 	pydoc-markdown -m "kaggle_runner" --render-toc > kaggle_runner.md
-	pydoc-markdown --bootstrap-mkdocs
+	rm 'pydoc-markdown.yml'; pydoc-markdown --bootstrap-mkdocs
 	doctoc .
 	-pydoc-markdown --server #--open-browser
 
