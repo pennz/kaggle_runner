@@ -218,11 +218,12 @@ k = Shonenkov(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=La
 k.run(dump_flag=False)
 
 # + {"colab_type": "code", "id": "um8I7KBrY0Ur", "colab": {}}
-# !mkdir ./models_xlmrobert/
+subprocess.run('mkdir ./models_xlmrobert/', shell=True)
 
 # + {"colab_type": "code", "id": "gDt1SW3AUQ02", "colab": {}}
 from transformers import WEIGHTS_NAME, CONFIG_NAME
 def save_model(self, output_dir="./models_xlmrobert/"):
+    subprocess.run(f'mkdir {output_dir}', shell=True)
     model = self.model
 
 # Step 1: Save a model, configuration and vocabulary that you have fine-tuned
