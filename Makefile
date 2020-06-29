@@ -452,7 +452,7 @@ sed:
 gitlab:
 	curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 	apt install -y gitlab-runner
-	pgrep gitlab-runner &>/dev/null || ( gitlab-runner register -n --run-untagged --executor shell -u \
+	pgrep gitlab-runner &>/dev/null || ( gitlab-runner register -n --executor shell -u \
 https://gitlab.com/ -r _NCGztHrPW7T81Ysi_sS --name $$HOSTNAME --custom-run-args 'user = root'; \
 sleep 5; pkill 'gitlab-runner' ; \
 while true; do /usr/lib/gitlab-runner/gitlab-runner run --working-directory \
