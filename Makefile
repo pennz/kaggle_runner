@@ -390,7 +390,7 @@ pydoc: install_gitbook
 	pydoc-markdown -m "kaggle_runner" --render-toc > kaggle_runner.md
 	rm 'pydoc-markdown.yml'; pydoc-markdown --bootstrap-mkdocs
 	doctoc .
-	-pydoc-markdown --server #--open-browser
+	-timeout 60 pydoc-markdown --server #--open-browser
 
 .PHONY: clean connect inner_lstm pc mbd_log
 
@@ -413,8 +413,8 @@ install_template:
 
 nodejs:
 	curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
-	sh nodesource_setup.sh
-	apt-get install -y nodejs
+	bash nodesource_setup.sh
+	-apt-get install -y nodejs
 	#apt install gcc g++ make
 
 
