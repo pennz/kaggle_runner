@@ -36,6 +36,7 @@ test:
     - make test
 
 run:
+  stage: deploy
   script:
     - python3 setup.py bdist_wheel
     # an alternative approach is to install and run:
