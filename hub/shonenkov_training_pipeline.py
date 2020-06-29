@@ -355,6 +355,8 @@ def test_model_fn(device=torch.device("cpu")):
             result['id'].extend(ids.cpu().numpy())
             result['toxic'].extend(toxics)
 
+            break # just test one batch
+
         return result
 
     def train_one_epoch(model, device, config, train_loader, criterion, optimizer):
@@ -441,6 +443,9 @@ def test_load():
 test_save_model()
 test_load()
 test_model_fn()
+# + {"colab_type": "code", "id": "NSC6BrbwUQ2G", "colab": {}}
+def only_predict():
+    pass
 
 if os.getenv("CI") == "true":
     import sys
@@ -704,9 +709,6 @@ if __name__ == "__main__":
 # + {"colab_type": "code", "id": "JJPxfj1OUQ2E", "colab": {}}
 from kaggle_runner.kernels.kernel import KaggleKernelOnlyPredict
 
-# + {"colab_type": "code", "id": "NSC6BrbwUQ2G", "colab": {}}
-def only_predict():
-    pass
 
 
 # + {"colab_type": "code", "id": "a_etfRgnUQ2I", "colab": {}}
