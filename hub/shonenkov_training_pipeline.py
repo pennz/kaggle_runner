@@ -241,21 +241,6 @@ def save_model(self, output_dir="./models_xlmrobert/"):
     #tokenizer.save_pretrained(output_dir)
 
 # + {"colab_type": "code", "id": "PN07kHKOUQ06", "colab": {}}
-save_model(k)
-
-# + {"colab_type": "code", "id": "0qUwvlFnUQ0-", "colab": {}}
-def load_model(self, output_dir="./models_xlmrobert/"):
-    output_model_file = os.path.join(output_dir, WEIGHTS_NAME)
-    state_dict = torch.load(output_model_file)
-    self.model.load_state_dict(state_dict)
-
-    print(self.model)
-
-def test_load():
-    load_model(k)
-
-# + {"colab_type": "code", "id": "9dqdFgwAZQgw", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
-test_load()
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 def test_model_fn(device=torch.device("cpu")):
     #device = xm.xla_device(devkind='TPU')
@@ -438,8 +423,28 @@ def test_model_fn(device=torch.device("cpu")):
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
 
+# + {"colab_type": "code", "id": "0qUwvlFnUQ0-", "colab": {}}
+def load_model(self, output_dir="./models_xlmrobert/"):
+    output_model_file = os.path.join(output_dir, WEIGHTS_NAME)
+    state_dict = torch.load(output_model_file)
+    self.model.load_state_dict(state_dict)
+
+    print(self.model)
+
+def test_save_model():
+    save_model(k)
+
+def test_load():
+    load_model(k)
+
+# + {"colab_type": "code", "id": "9dqdFgwAZQgw", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
+test_save_model()
+test_load()
 test_model_fn()
 
+if os.getenv("CI") == "true":
+    import sys
+    sys.exit(0)
 # + {"id": "Ch92ag9dmMk-", "colab_type": "code", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
 # !echo $HOSTNAME
 # !bin/rvs.sh pengyuzhou.com 23454
