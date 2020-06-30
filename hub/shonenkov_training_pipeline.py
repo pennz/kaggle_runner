@@ -59,7 +59,7 @@ subprocess.run("make install_dep; mkdir -p /root/.ssh ; make kr; wait; make gitl
 
 
 # + {"colab_type": "code", "id": "9aQY9GJrVmGl", "colab": {"base_uri": "https://localhost:8080/", "height": 121}}
-# !yes | make vim &
+# #!yes | make vim &
 
 # + {"colab_type": "code", "id": "6lwyNn2ONmLR", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
 # !make dd
