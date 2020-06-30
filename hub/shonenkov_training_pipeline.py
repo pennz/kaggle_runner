@@ -80,9 +80,6 @@ from kaggle_runner.losses import LabelSmoothing
 from kaggle_runner.datasets.transfomers import *
 from kaggle_runner import defaults
 
-# + {"colab_type": "code", "id": "e2OOEAbpUQzh", "colab": {}}
-
-
 
 # + {"colab_type": "code", "id": "bQfQoj4PUQzl", "colab": {}}
 import numpy as np
@@ -113,9 +110,6 @@ import random
 from datetime import datetime
 from tqdm import tqdm
 tqdm.pandas()
-
-# + {"colab_type": "code", "id": "DFCEM4cYUQz-", "colab": {}}
-
 
 
 # + {"colab_type": "code", "id": "63pHGleDUQ0D", "colab": {}}
@@ -151,9 +145,6 @@ pandarallel.initialize(nb_workers=4, progress_bar=False)
 import warnings
 warnings.filterwarnings("ignore")
 
-# + {"colab_type": "code", "id": "c1fHvn3cUQ0a", "colab": {}}
-
-
 
 # + {"colab_type": "code", "id": "JHro74jvUQ0d", "colab": {}}
 ROOT_PATH = f'/kaggle' # for colab
@@ -170,9 +161,6 @@ def get_toxic_comments(df):
 # + {"colab_type": "code", "id": "MpvJJZsbUQ0n", "colab": {"base_uri": "https://localhost:8080/", "height": 34}}
 # #![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
 subprocess.run('[ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .', shell=True)
-
-# + {"colab_type": "code", "id": "TfEwN7mhUQ0p", "colab": {}}
-
 
 
 # + {"colab_type": "code", "id": "cmkH1Q0qUQ0t", "colab": {}}
