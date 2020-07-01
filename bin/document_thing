@@ -1,0 +1,9 @@
+#!/bin/bash
+save_md() {
+	m_name=$(echo $1 | sed -e 's/\//./g' -e 's/\.py//')
+	md_name=$(echo $1 | sed 's/\.py/.md/')
+	pydoc-markdown -m $m_name > $md_name
+}
+export -f save_md
+find kaggle_runner -type d | grep -v "__" | xargs -I{} bash -c "echo >&2 [x] {}:; echo {}" | xargs -I{} bash -xc "find {} -type f -name \"*.py\" | grep -v __ " | xargs -I{} bash -xc "save_md {} &" 
+wait
