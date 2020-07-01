@@ -34,6 +34,8 @@ test:
     #- python3 -m pip install tox flake8  # you can also use tox
     #- tox -e py3
     - make test
+  only:
+    - ci
 
 run:
   stage: deploy
