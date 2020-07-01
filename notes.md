@@ -1,3 +1,42 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [APIs](#apis)
+  - [cancel kernel](#cancel-kernel)
+  - [create kernel run request](#create-kernel-run-request)
+- [multi-language bert](#multi-language-bert)
+  - [Fine-tuning Example](#fine-tuning-example)
+  - [TODO](#todo)
+- [submission log](#submission-log)
+  - [0610: version 6,](#0610-version-6)
+    - [Version 7](#version-7)
+      - [compare logs](#compare-logs)
+    - [version 8](#version-8)
+    - [version 9](#version-9)
+    - [Version 10](#version-10)
+    - [Version 11](#version-11)
+  - [Version 12](#version-12)
+  - [**Version 13**](#version-13)
+  - [Vesion 14](#vesion-14)
+  - [Version 15](#version-15)
+  - [Version 16](#version-16)
+  - [Version 17](#version-17)
+  - [Version 18](#version-18)
+  - [Version 19](#version-19)
+  - [Version 20](#version-20)
+  - [Version 21, back to smooth 0.1](#version-21-back-to-smooth-01)
+  - [Version 22](#version-22)
+- [Merging just makes it better](#merging-just-makes-it-better)
+  - [Version 23](#version-23)
+  - [test result](#test-result)
+  - [Version 28](#version-28)
+  - [Version 29](#version-29)
+  - [V30](#v30)
+  - [V31](#v31)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # APIs
 ## cancel kernel 
 

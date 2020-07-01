@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [kaggle_runner](#kaggle_runner)
+  - [AMQP](#amqp)
+  - [Example](#example)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 [![Build Status](https://travis-ci.org/pennz/kaggle_runner.svg?branch=master)](https://travis-ci.org/pennz/kaggle_runner)
 [![PyPI version](https://badge.fury.io/py/kaggle-runner.svg)](https://badge.fury.io/py/kaggle-runner)
 [![Maintainability](https://api.codeclimate.com/v1/badges/979bc98e4acb59a5e1aa/maintainability)](https://codeclimate.com/github/pennz/kaggle_runner/maintainability)

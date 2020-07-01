@@ -380,6 +380,7 @@ sh nodesource_setup.sh; \
 apt-get install -y nodejs; \
 npm install -g gitbook-cli; \
 npm install -g doctoc; \
+npm install -g gitbook-summary; \
 gitbook fetch 3.2.3 ; gitbook install ) # fetch final stable version and add any requested plugins in book.json
 
 pydoc: install_gitbook
@@ -392,6 +393,7 @@ pydoc: install_gitbook
 	rm 'pydoc-markdown.yml'; pydoc-markdown --bootstrap-mkdocs
 	document_thing
 	doctoc .
+	book sm
 	-timeout 60 pydoc-markdown --server #--open-browser
 
 .PHONY: clean connect inner_lstm pc mbd_log
