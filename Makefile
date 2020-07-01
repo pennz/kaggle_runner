@@ -390,6 +390,7 @@ pydoc: install_gitbook
 	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
 	pydoc-markdown -m "kaggle_runner" --render-toc > kaggle_runner.md
 	rm 'pydoc-markdown.yml'; pydoc-markdown --bootstrap-mkdocs
+	document_thing
 	doctoc .
 	-timeout 60 pydoc-markdown --server #--open-browser
 
