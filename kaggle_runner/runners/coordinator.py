@@ -394,8 +394,9 @@ fi
 
 
 class Coordinator:
+    """Coordinator runs in controller side, the runners run in dockers with GPUs."""
+
     template_path = "kaggle_runner/runner_template/"  # TODO just put it in the code
-    """run in controller side, the runners run in dockers with GPUs"""
 
     def __init__(self, title_prefix, tmp_path=".r"):
         self.tmp_path = tmp_path
@@ -420,10 +421,12 @@ class Coordinator:
         self._get_result(timeout=60)
 
     def _get_result(self, timeout):
-        """use the message queue, just use this right after push, listen for
+        """_get_result uses the message queue, just use this right after push, listen for
         result, debug local first
 
-        use jq change source code to add the log collector"
+        use jq change source code to add the log collector.
+
+        :param timeout:
         """
 
     @staticmethod
@@ -562,11 +565,20 @@ while True:
             jf.write(ss)
 
     def run_local(self, path):
+        """run_local only for local test, real kernel runs in kaggle/colab server.
+
+        :param path:
+        """
+
         return subprocess.run("python " + os.path.join(path, "main.py"), shell=True)
 
     def create_runner(self, config, seed="2020", script=True, from_template=True):
-        """
-        config will be size and model right now
+        """create_runner.
+
+        :param config: config will be size and model right now
+        :param seed:
+        :param script:
+        :param from_template:
         """
         size = config["size"]
         net = config["network"]

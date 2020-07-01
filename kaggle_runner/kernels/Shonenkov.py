@@ -19,6 +19,10 @@ import random
 import numpy as np
 
 def seed_everything(seed):
+    """seed_everything.
+
+    :param seed: number to generate pseudo random states
+    """
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
     np.random.seed(seed)
@@ -28,6 +32,8 @@ def seed_everything(seed):
     torch.backends.cudnn.benchmark = True
 
 def get_train_transforms():
+    """get_train_transforms."""
+
     return albumentations.Compose([
         ExcludeUsersMentionedTransform(p=0.95),
         ExcludeUrlsTransform(p=0.95),
@@ -37,10 +43,21 @@ def get_train_transforms():
     ], p=1.0)
 
 def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
+    """get_synthesic_transforms.
+
+    :param supliment_toxic: extra toxic data which will be used in synthesizing data
+    :param p: probability
+    :param mix: flag for mixing more data with toxic (it does not work with balanced sampler, too many toxic data)
+    """
+
     return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
 
 ROOT_PATH = '/kaggle'
 def get_pickled_data(file_path):
+    """get_pickled_data from current folder or kaggle data input folder.
+
+    :param file_path:
+    """
     obj = get_obj_or_dump(file_path)
 
     if obj is None:
@@ -56,7 +73,15 @@ vocab = get_pickled_data("vocab.pkl")
 #   get_obj_or_dump("vocab.pkl", default=vocab)
 
 class Shonenkov(FastAIKernel):
+    """Shonenkov kernel, use TPU to train; for data, down sampler and synthesizing."""
+
     def __init__(self, device, config, **kargs):
+        """__init__.
+
+        :param device:
+        :param config:
+        :param kargs:
+        """
         super(Shonenkov, self).__init__(**kargs)
         self.data = None
         self.transformers = None
@@ -66,13 +91,17 @@ class Shonenkov(FastAIKernel):
         self.learner = None
 
     def build_and_set_model(self):
+        """build_and_set_model."""
         self.model = ToxicSimpleNNModel()
         self.model = self.model.to(self.device)
 
     def set_random_seed(self):
+        """set_random_seed."""
         seed_everything(SEED)
 
     def setup_transformers(self):
+        """setup_transformers."""
+
         if self.transformers is None:
             supliment_toxic = None # avoid overfit
             train_transforms = get_train_transforms();
@@ -88,6 +117,7 @@ class Shonenkov(FastAIKernel):
                                  shuffle_transforms}
 
     def prepare_train_dev_data(self):
+        """prepare_train_dev_data."""
         df_train = get_pickled_data("train.pkl")
 
         if df_train is None:
@@ -137,6 +167,8 @@ class Shonenkov(FastAIKernel):
         gc.collect();
 
     def prepare_test_data(self):
+        """prepare_test_data."""
+
         if os.path.exists('/content'): # colab
             df_test = get_pickled_data("test.pkl")
         else:
@@ -168,6 +200,8 @@ class Shonenkov(FastAIKernel):
                                      num_workers=self.config.num_workers)
 
     def peek_data(self):
+        """peek_data."""
+
         if self.data is not None:
             may_debug()
             o = self.data.one_batch()
@@ -183,8 +217,14 @@ from kaggle_runner import may_debug
 import torch.nn as nn
 
 class ToxicSimpleNNModelChangeInner(nn.Module):
+    """ToxicSimpleNNModelChangeInner."""
+
 
     def __init__(self, use_aux=True):
+        """__init__.
+
+        :param use_aux:
+        """
         super(ToxicSimpleNNModelChangeInner, self).__init__()
 
         self.backbone = XLMModel.from_pretrained('xlm-mlm-tlm-xnli15-1024')
@@ -203,6 +243,11 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
         )
 
     def forward(self, input_ids, attention_masks):
+        """forward.
+
+        :param input_ids:
+        :param attention_masks:
+        """
         bs, seq_length = input_ids.shape
         seq_x, _ = self.backbone(
             input_ids=input_ids, attention_mask=attention_masks)
@@ -214,15 +259,25 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
         return self.linear(x)
 
 class ShonenkovChangeInner(Shonenkov):
+    """ShonenkovChangeInner."""
+
     def __init__(self, device, config, **kargs):
+        """__init__.
+
+        :param device:
+        :param config:
+        :param kargs:
+        """
         super(ShonenkovChangeInner, self).__init__(device, config, **kargs)
         assert self.transformers is not None
 
     def build_and_set_model(self):
+        """build_and_set_model."""
         self.model = ToxicSimpleNNModelChangeInner()
         self.model = self.model.to(self.device)
 
     def prepare_train_dev_data(self):
+        """prepare_train_dev_data."""
         df_train = get_pickled_data("train_XLM.pkl")
 
         if df_train is None:
@@ -272,6 +327,8 @@ class ShonenkovChangeInner(Shonenkov):
         gc.collect();
 
     def prepare_test_data(self):
+        """prepare_test_data."""
+
         if os.path.exists('/content'): # colab
             df_test = get_pickled_data("test_XLM.pkl")
         else:
@@ -295,6 +352,8 @@ class ShonenkovChangeInner(Shonenkov):
         gc.collect();
 
     def setup_transformers(self):
+        """setup_transformers."""
+
         if not hasattr(self, 'transformers') or self.transformers is None:
             supliment_toxic = None # avoid overfit
             train_transforms = get_train_transforms();
@@ -349,6 +408,7 @@ class DummyTrainGlobalConfig:
 
 
 def test_change_XLM_module():
+    """test_change_XLM_module."""
     from kaggle_runner.losses import LabelSmoothing
     k = ShonenkovChangeInner(torch.device("cpu"), DummyTrainGlobalConfig,
                              metrics=None, loss_func=LabelSmoothing(),
