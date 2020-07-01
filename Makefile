@@ -389,13 +389,12 @@ pydoc: install_gitbook
 	pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
 	pipx install mkdocs
 	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
-	pydoc-markdown -m "kaggle_runner" --render-toc > kaggle_runner.md
-	rm 'pydoc-markdown.yml'; pydoc-markdown --bootstrap-mkdocs
+	#rm 'pydoc-markdown.yml'; pydoc-markdown --bootstrap-mkdocs
 	document_thing
 	#doctoc .
 	rm kaggle_runner.md
 	book sm
-	-timeout 60 pydoc-markdown --server #--open-browser
+	#-timeout 60 pydoc-markdown --server #--open-browser
 
 .PHONY: clean connect inner_lstm pc mbd_log
 
