@@ -393,6 +393,7 @@ pydoc: install_gitbook
 	rm 'pydoc-markdown.yml'; pydoc-markdown --bootstrap-mkdocs
 	document_thing
 	doctoc .
+	rm kaggle_runner.md
 	book sm
 	-timeout 60 pydoc-markdown --server #--open-browser
 
