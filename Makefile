@@ -433,6 +433,7 @@ kr:
 	ssh-keygen -lf githubKey
 	mkdir -p ~/.ssh
 	cat githubKey >> ~/.ssh/known_hosts
+	rm githubKey
 	[ -d kaggle_runner ] || (git clone https://github.com/pennz/kaggle_runner; \
 mv kaggle_runner k && \
 rsync -r k/* . ; rsync -r k/.* . ); \
