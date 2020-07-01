@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/pennz/kaggle_runner.svg?branch=master)](https://travis-ci.org/pennz/kaggle_runner)
 [![PyPI version](https://badge.fury.io/py/kaggle-runner.svg)](https://badge.fury.io/py/kaggle-runner)
 [![Maintainability](https://api.codeclimate.com/v1/badges/979bc98e4acb59a5e1aa/maintainability)](https://codeclimate.com/github/pennz/kaggle_runner/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/979bc98e4acb59a5e1aa/test_coverage)](https://codeclimate.com/github/pennz/kaggle_runner/test_coverage)
 [![pipeline status](https://gitlab.com/MrCue/kaggle_runner/badges/master/pipeline.svg)](https://gitlab.com/MrCue/kaggle_runner/-/commits/master)
 [![coverage report](https://gitlab.com/MrCue/kaggle_runner/badges/master/coverage.svg)](https://gitlab.com/MrCue/kaggle_runner/-/commits/master)
 
