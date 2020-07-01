@@ -52,7 +52,7 @@ pages:
   stage: deploy
   script:
     - make pydoc
-    - make distclean
+    - make clean || true
     - gitbook build . public # build to public path
   artifacts:
     paths:
