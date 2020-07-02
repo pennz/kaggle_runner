@@ -1,5 +1,15 @@
 {
-  "plugins": ["splitter", "anchor-navigation-ex", "anchors", "-lunr", "-search", "search-plus", "copy-code-button", "page-toc" ],
+  "plugins": [ 
+    "splitter",
+	"anchor-navigation-ex",
+	"anchors",
+	"-lunr",
+	"-search",
+	"search-plus",
+	"copy-code-button",
+	"page-toc",
+	"folding-menu"
+  ],
   "pluginsConfig": {
     "page-toc": {
       "selector": ".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4",
