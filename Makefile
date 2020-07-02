@@ -356,7 +356,7 @@ distclean: clean
 	-rm *.py *.sh *log
 	-rm -r .git
 	-rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
-	-find . -name "*.pyc" -print0 | xargs rm
+	-find . -name "*.pyc" -print0 | xargs -I{} rm "{}"
 
 ks:
 	curl -sSLG $(KIP):9000/api/sessions
