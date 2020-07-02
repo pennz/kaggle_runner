@@ -355,7 +355,7 @@ distclean: clean
 	-@git ls-files | grep -v "\.md" | xargs -I{} sh -c 'echo rm "{}"; rm "{}"'
 	-rm *.py *.sh *log
 	-rm -r .git
-	-rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
+	-rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles rpt
 	-find . -name "*.pyc" -print0 | xargs --null -I{} rm "{}"
 
 ks:
