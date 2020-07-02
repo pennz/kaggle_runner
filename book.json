@@ -1,0 +1,17 @@
+{
+  "plugins": ["splitter", "anchor-navigation-ex", "anchors", "-lunr", "-search", "search-plus", "copy-code-button", "page-toc" ],
+  "pluginsConfig": {
+    "page-toc": {
+      "selector": ".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4",
+      "position": "before-first",
+      "showByDefault": true
+    },
+    "anchor-navigation-ex": {
+            "isRewritePageTitle": true,
+            "isShowTocTitleIcon": true,
+            "tocLevel1Icon": "fa fa-hand-o-right",
+            "tocLevel2Icon": "fa fa-hand-o-right",
+            "tocLevel3Icon": "fa fa-hand-o-right"
+        }
+  }
+}

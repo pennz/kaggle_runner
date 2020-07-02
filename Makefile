@@ -396,7 +396,7 @@ pydoc: install_gitbook
 	bash bin/document_thing
 	-@rm kaggle_runner.md
 	book sm -i node_modules
-	sed -i 's/Your Book Title/Wolf Pack Algorithm/' SUMMARY.md
+	sed -i 's/Your Book Title/Run your kernels/' SUMMARY.md
 	cat SUM*
 	#-timeout 60 pydoc-markdown --server #--open-browser
 
