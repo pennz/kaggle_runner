@@ -53,8 +53,8 @@ pages:
   script:
     - make pydoc
     - gitbook install 
-    - make distclean || true
     - gitbook build . public # build to public path
+    - make distclean || true
   artifacts:
     paths:
       - public
