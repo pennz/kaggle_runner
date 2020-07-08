@@ -466,3 +466,6 @@ sleep 5; \
 while true; do pgrep 'gitlab-runner' || /usr/lib/gitlab-runner/gitlab-runner run --working-directory \
 /home/gitlab-runner --config /etc/gitlab-runner/config.toml --service \
 gitlab-runner --syslog --user root; sleep 5; done & )
+
+ide:
+	pipx install pydocstyle
