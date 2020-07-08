@@ -1,5 +1,5 @@
 #export LD_LIBRARY_PATH := $(PWD)/lib:$(LD_LIBRARY_PATH)
-export PATH := $(PWD)/bin:$(PATH)
+export PATH := $(HOME)/.local/bin:$(PWD)/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
@@ -237,9 +237,10 @@ amqp_log:
 mlocal:
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
-check: kr
+check:
 	-ps aux | grep make
-	echo $(SED)
+	echo sed $(SED)
+	echo PATH $(PATH)
 	-@echo $(http_proxy)
 	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT)
 	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT) | ncat $(SERVER) $(CHECK_PORT)
@@ -351,10 +352,11 @@ githooks:
 
 distclean: clean
 	#-@git ls-files | sed 's/kaggle_runner\/\([^\/]*\)\/.*/\1/' | xargs -I{} sh -c "echo rm -rf {}; rm -rf {} 2>/dev/null"
-	-@git ls-files | xargs -I{} sh -c 'echo rm $$(dirname {}); rm $$(dirname {}) 2>/dev/null'
-	rm *.py *.sh *log
-	rm -r .git
-	rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
+	-@git ls-files | grep -v "\.md" | xargs -I{} sh -c 'echo rm "{}"; rm "{}"'
+	-rm *.py *.sh *log
+	-rm -r .git
+	-rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
+	-find . -name "*.pyc" -print0 | xargs --null -I{} rm "{}"
 
 ks:
 	curl -sSLG $(KIP):9000/api/sessions
@@ -381,19 +383,21 @@ apt-get install -y nodejs; \
 npm install -g gitbook-cli; \
 npm install -g doctoc; \
 npm install -g gitbook-summary; \
-gitbook fetch 3.2.3 ; gitbook install ) # fetch final stable version and add any requested plugins in book.json
+gitbook fetch 3.2.3 ; ) # fetch final stable version and add any requested plugins in book.json
 
 pydoc: install_gitbook
+	-apt install -y python3-pip
 	$(PY) -m pip install pipx
 	-apt-get install -y python3-venv || yum install -y python3-venv
 	pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
+	pipx ensurepath
 	pipx install mkdocs
 	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
-	#rm 'pydoc-markdown.yml'; pydoc-markdown --bootstrap-mkdocs
-	document_thing
-	#doctoc .
-	rm kaggle_runner.md
-	book sm
+	bash bin/document_thing
+	-@rm kaggle_runner.md
+	book sm -i node_modules
+	sed -i 's/Your Book Title/Wolf Pack Algorithm/' SUMMARY.md
+	cat SUM*
 	#-timeout 60 pydoc-markdown --server #--open-browser
 
 .PHONY: clean connect inner_lstm pc mbd_log
