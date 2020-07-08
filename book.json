@@ -12,6 +12,10 @@
      "folding-menu"
   ],
   "pluginsConfig": {
+    "folding-menu":	{
+      "animationDuration": 500,
+      "sticky":            true
+    },
     "disqus": {
             "shortName": "kaggle-runner"
     },
