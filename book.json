@@ -12,7 +12,7 @@
   ],
   "pluginsConfig": {
     "theme-default": {
-        "showLevel": true
+        "showLevel": false
     },
     "folding-menu":	{
       "animationDuration": 500,
