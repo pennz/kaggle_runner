@@ -355,7 +355,7 @@ distclean: clean
 	-@git ls-files | grep -v "\.md" | xargs -I{} sh -c 'echo rm "{}"; rm "{}"'
 	-rm *.py *.sh *log
 	-rm -r .git
-	-rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles  kaggle_runner rpt
+	-rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles rpt
 	-find . -name "*.pyc" -print0 | xargs --null -I{} rm "{}"
 
 ks:
@@ -396,7 +396,7 @@ pydoc: install_gitbook
 	bash bin/document_thing
 	-@rm kaggle_runner.md
 	book sm -i node_modules
-	sed -i 's/Your Book Title/Wolf Pack Algorithm/' SUMMARY.md
+	sed -i 's/Your Book Title/Run your kernels/' SUMMARY.md
 	cat SUM*
 	#-timeout 60 pydoc-markdown --server #--open-browser
 
