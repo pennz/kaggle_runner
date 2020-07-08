@@ -1,5 +1,5 @@
 #export LD_LIBRARY_PATH := $(PWD)/lib:$(LD_LIBRARY_PATH)
-export PATH := $(HOME)/.local/bin:$(PWD)/bin:$(PATH)
+export PATH := /nix/store/3ycgq0lva60yc2bw4qshmlsaqn0g90x4-nodejs-14.2.0/bin:$(HOME)/.local/bin:$(PWD)/bin:$(PATH)
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
@@ -385,7 +385,7 @@ npm install -g doctoc; \
 npm install -g gitbook-summary; \
 gitbook fetch 3.2.3 ; ) # fetch final stable version and add any requested plugins in book.json
 
-pydoc:
+pydoc: install_gitbook kr
 	-apt install -y python3-pip
 	$(PY) -m pip install pipx
 	-apt-get install -y python3-venv || yum install -y python3-venv
@@ -393,6 +393,7 @@ pydoc:
 	pipx ensurepath
 	pipx install mkdocs
 	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
+	#$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install tensorflow
 	bash bin/document_thing
 	-@rm kaggle_runner.md
 	book sm -i node_modules

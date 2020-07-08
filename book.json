@@ -11,6 +11,9 @@
      "page-toc"
   ],
   "pluginsConfig": {
+    "theme-default": {
+        "showLevel": true
+    },
     "folding-menu":	{
       "animationDuration": 500,
       "sticky":            true
@@ -24,7 +27,7 @@
       "showByDefault": true
     },
     "anchor-navigation-ex": {
-            "isRewritePageTitle": true,
+            "associatedWithSummary": true,
             "isShowTocTitleIcon": true,
             "tocLevel1Icon": "fa fa-hand-o-right",
             "tocLevel2Icon": "fa fa-hand-o-right",
