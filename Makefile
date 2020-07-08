@@ -385,7 +385,7 @@ npm install -g doctoc; \
 npm install -g gitbook-summary; \
 gitbook fetch 3.2.3 ; ) # fetch final stable version and add any requested plugins in book.json
 
-pydoc: install_gitbook
+pydoc:
 	-apt install -y python3-pip
 	$(PY) -m pip install pipx
 	-apt-get install -y python3-venv || yum install -y python3-venv
@@ -397,7 +397,7 @@ pydoc: install_gitbook
 	-@rm kaggle_runner.md
 	book sm -i node_modules
 	sed -i 's/Your Book Title/Run your kernels/' SUMMARY.md
-	cat SUM*
+	@cat SUM*
 	#-timeout 60 pydoc-markdown --server #--open-browser
 
 .PHONY: clean connect inner_lstm pc mbd_log

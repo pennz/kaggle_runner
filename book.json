@@ -8,8 +8,7 @@
      "-search",
      "search-plus",
      "copy-code-button",
-     "page-toc",
-     "folding-menu"
+     "page-toc"
   ],
   "pluginsConfig": {
     "folding-menu":	{
