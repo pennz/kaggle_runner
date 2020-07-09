@@ -219,7 +219,7 @@ started connection; echo $$HOSTNAME; python -c 'import pty; \
 pty.spawn([\"/bin/bash\", \"-li\"])'"; echo "End of one rvs."; sleep 5; done;
 
 r:
-	bash -c "SAVED_STTY=$$(stty -g); stty raw -echo; ncat -v $(SERVER) $$(( $(CHECK_PORT) - 1 )); stty $$SAVED_STTY"
+	bash -c "SAVED_STTY=$$(stty -g); stty raw -echo; while true; do ncat -v $(SERVER) $$(( $(CHECK_PORT) - 1 )); echo "DONE"; sleep 3; done; stty $$SAVED_STTY"
 
 dbroker:
 	while true; do set -x echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
@@ -414,7 +414,7 @@ pydoc: setup_pip install_gitbook kr
 	sed -i 's/Your Book Title/Run your kernels/' SUMMARY.md
 	@cat SUM*
 	-gitbook install 
-	-[ -f README.md ] || touch README.md
+	-[ -f README ] || cp README.md README
 	-gitbook build . public # build to public path
 	-timeout 360 gitbook serve public &
 	-make distclean || true
