@@ -213,6 +213,11 @@ connect_close:
 rpdbrvs:
 	while true; do ncat $(SERVER) 23454 --sh-exec 'ncat -w 3 127.1 4444; echo \# nc return $?' ; sleep 1; echo -n "." ; done;
 
+rvs:
+	while true; do ncat -w 60s -i 1800s $(SERVER) $$(( $(CHECK_PORT) - 1 )) -c "echo $$(date) \
+started connection; echo $$HOSTNAME; python -c 'import pty; \
+pty.spawn([\"/bin/bash\", \"-li\"])'"; echo "End of one rvs."; done;
+
 dbroker:
 	stty raw && while true; do echo "Start Listening"; ncat --broker -v -m 2 -p 23454; echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
 
