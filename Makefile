@@ -378,12 +378,12 @@ cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 install_gitbook:
 	type gitbook &>/dev/null || ( \
 curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh && \
-sh nodesource_setup.sh; \
+sh nodesource_setup.sh && ( \
 apt-get install -y nodejs; \
 npm install -g gitbook-cli; \
 npm install -g doctoc; \
 npm install -g gitbook-summary; \
-gitbook fetch 3.2.3 ; ) # fetch final stable version and add any requested plugins in book.json
+gitbook fetch 3.2.3 ; ) ) # fetch final stable version and add any requested plugins in book.json
 
 setup_pip:
 	$(PY) -m pip || apt install -y python3-pip
