@@ -212,8 +212,10 @@ connect_close:
 
 rpdbrvs:
 	while true; do ncat $(SERVER) 23454 --sh-exec 'ncat -w 3 127.1 4444; echo \# nc return $?' ; sleep 1; echo -n "." ; done;
-rpdbs:
-	while true; do ncat -vlp 23454; sleep 1; done  # just one debug session at a time, more will make you confused
+
+dbroker:
+	stty raw && while true; do echo "Start Listening"; ncat --broker -v -m 2 -p 23454; echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
+
 rpdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; ncat -v 127.0.0.1 23454; stty $$SAVED_STTY"
 
