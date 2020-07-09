@@ -385,21 +385,26 @@ npm install -g doctoc; \
 npm install -g gitbook-summary; \
 gitbook fetch 3.2.3 ; ) # fetch final stable version and add any requested plugins in book.json
 
-pydoc: install_gitbook kr
+setup_pip:
+	$(PY) -m pip || apt install -y python3-pip
+
+pydoc: setup_pip install_gitbook kr
 	-apt install -y python3-pip
 	$(PY) -m pip install pipx
 	-apt-get install -y python3-venv || yum install -y python3-venv
-	pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
+	#pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
+	$(PY) -m pip install pydoc-markdown
 	pipx ensurepath
 	pipx install mkdocs
-	$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install -e .
+	$$(head -n1 $$(which pydoc-markdown)  | sed 's/#!//') -m pip install -e .
 	#$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install tensorflow
 	bash bin/document_thing
 	-@rm kaggle_runner.md
 	book sm -i node_modules
 	sed -i 's/Your Book Title/Run your kernels/' SUMMARY.md
 	@cat SUM*
-	#-timeout 60 pydoc-markdown --server #--open-browser
+	-gitbook build .
+	-timeout 360 gitbook serve .
 
 .PHONY: clean connect inner_lstm pc mbd_log
 

@@ -7,22 +7,22 @@
 #     text_representation:
 #       extension: .py
 #       format_name: light
-#       format_version: '1.4'
-#       jupytext_version: 1.1.7
+#       format_version: '1.5'
+#       jupytext_version: 1.4.2
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
 
-# + {"id": "view-in-github", "colab_type": "text", "cell_type": "markdown"}
+# + [markdown] colab_type="text" id="view-in-github"
 # <a href="https://colab.research.google.com/github/pennz/kaggle_runner/blob/master/hub/shonenkov_training_pipeline.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
-# + {"colab_type": "code", "id": "-5g67DNAUQyh", "colab": {}}
+# + colab={} colab_type="code" id="-5g67DNAUQyh"
 # %load_ext autoreload
 # %autoreload 2
 
-# + {"colab_type": "code", "id": "n-Gf0MyQL8Ys", "colab": {}}
+# + colab={} colab_type="code" id="n-Gf0MyQL8Ys"
 #@title Kaggle thing
 
 text = "{   \"username\": \"k1gaggle\",   \"key\": \"721ad312727847f609212568cf015532\",   \"competition\": \"siim-acr-pneumothorax-segmentation\" }" #@param {type:"string"}
@@ -34,7 +34,7 @@ with open('/root/.kaggle/kaggle.json', 'w') as f:
 #print(dropdown)
 #print(text_and_dropdown)
 
-# + {"colab_type": "code", "id": "A6Yz0kroUQy0", "colab": {"base_uri": "https://localhost:8080/", "height": 34}, "magic_args": "--bg", "language": "bash"}
+# + colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" id="A6Yz0kroUQy0" magic_args="--bg" language="bash"
 # #python3 -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner; \
 # #mv kaggle_runner k && \
 # #mv k/* . && mv k/.* .; \
@@ -44,7 +44,7 @@ with open('/root/.kaggle/kaggle.json', 'w') as f:
 # #entry.sh; echo You can wait to setup for remote access)
 
 
-# + {"colab_type": "code", "id": "udc5hHgUUQzD", "colab": {"base_uri": "https://localhost:8080/", "height": 34}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" id="udc5hHgUUQzD"
 import subprocess
 subprocess.run("""python3 -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner;
 mv kaggle_runner k && mv k/* . && mv k/.* .;
@@ -58,16 +58,16 @@ import subprocess
 subprocess.run("make install_dep; mkdir -p /root/.ssh ; make kr; wait; make gitlab; make xla &", shell=True)
 
 
-# + {"colab_type": "code", "id": "9aQY9GJrVmGl", "colab": {"base_uri": "https://localhost:8080/", "height": 121}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 121} colab_type="code" id="9aQY9GJrVmGl"
 # #!yes | make vim &
 
-# + {"colab_type": "code", "id": "6lwyNn2ONmLR", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="6lwyNn2ONmLR"
 # !make dd
 
-# + {"colab_type": "code", "id": "3ccg5MJlyvLy", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="3ccg5MJlyvLy"
 # !make install_dep
 
-# + {"colab_type": "code", "id": "MYBRID_uUQzb", "colab": {"base_uri": "https://localhost:8080/", "height": 159}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 159} colab_type="code" id="MYBRID_uUQzb"
 from importlib import reload
 import kaggle_runner
 reload(kaggle_runner)
@@ -81,21 +81,21 @@ from kaggle_runner.datasets.transfomers import *
 from kaggle_runner import defaults
 
 
-# + {"colab_type": "code", "id": "bQfQoj4PUQzl", "colab": {}}
+# + colab={} colab_type="code" id="bQfQoj4PUQzl"
 import numpy as np
 import pandas as pd
 import os
 os.environ['XLA_USE_BF16'] = "1"
 
 
-# + {"colab_type": "code", "id": "jryGiXHWUQzp", "colab": {}}
+# + colab={} colab_type="code" id="jryGiXHWUQzp"
 from glob import glob
 
-# + {"colab_type": "code", "id": "0qyEzTQDUQzu", "colab": {}}
+# + colab={} colab_type="code" id="0qyEzTQDUQzu"
 
 
 
-# + {"colab_type": "code", "id": "njd0Gd2TUQz0", "colab": {}}
+# + colab={} colab_type="code" id="njd0Gd2TUQz0"
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset,DataLoader
@@ -104,7 +104,7 @@ from torch.utils.data.sampler import SequentialSampler, RandomSampler
 import sklearn
 
 
-# + {"colab_type": "code", "id": "0k4-gbQhUQz5", "colab": {}}
+# + colab={} colab_type="code" id="0k4-gbQhUQz5"
 import time
 import random
 from datetime import datetime
@@ -112,7 +112,7 @@ from tqdm import tqdm
 tqdm.pandas()
 
 
-# + {"colab_type": "code", "id": "63pHGleDUQ0D", "colab": {}}
+# + colab={} colab_type="code" id="63pHGleDUQ0D"
 import fastai
 from fastai import *
 from fastai.core import *
@@ -124,32 +124,32 @@ from transformers import AdamW, get_linear_schedule_with_warmup, get_constant_sc
 from fastai.text.transform import Vocab
 
 
-# + {"colab_type": "code", "id": "MMbcpmJHUQ0H", "colab": {}}
+# + colab={} colab_type="code" id="MMbcpmJHUQ0H"
 import gc
 import re
 
 
-# + {"colab_type": "code", "id": "-NTVjOreUQ0L", "colab": {"base_uri": "https://localhost:8080/", "height": 69}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 69} colab_type="code" id="-NTVjOreUQ0L"
 # # !python3 -m pip install nltk > /dev/null
 import nltk
 nltk.download('punkt')
 
-# + {"colab_type": "code", "id": "EfgDxZSiUQ0O", "colab": {}}
+# + colab={} colab_type="code" id="EfgDxZSiUQ0O"
 from nltk import sent_tokenize
 
-# + {"colab_type": "code", "id": "JpTc5nfQUQ0T", "colab": {"base_uri": "https://localhost:8080/", "height": 52}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 52} colab_type="code" id="JpTc5nfQUQ0T"
 from pandarallel import pandarallel
 pandarallel.initialize(nb_workers=4, progress_bar=False)
 
-# + {"colab_type": "code", "id": "itAbsNWXUQ0W", "colab": {}}
+# + colab={} colab_type="code" id="itAbsNWXUQ0W"
 import warnings
 warnings.filterwarnings("ignore")
 
 
-# + {"colab_type": "code", "id": "JHro74jvUQ0d", "colab": {}}
+# + colab={} colab_type="code" id="JHro74jvUQ0d"
 ROOT_PATH = f'/kaggle' # for colab
 
-# + {"colab_type": "code", "id": "IJD6tJMaUQ0i", "colab": {}}
+# + colab={} colab_type="code" id="IJD6tJMaUQ0i"
 def get_toxic_comments(df):
     df = df[~df['comment_text'].isna()]
     df = df.drop_duplicates(subset='comment_text')
@@ -158,12 +158,12 @@ def get_toxic_comments(df):
     return df[df['toxic'] == 1].comment_text.values
 
 
-# + {"colab_type": "code", "id": "MpvJJZsbUQ0n", "colab": {"base_uri": "https://localhost:8080/", "height": 34}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" id="MpvJJZsbUQ0n"
 # #![ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .
 subprocess.run('[ -f train.pkl ] || cp /kaggle/input/clean-pickle-for-jigsaw-toxicity/*pkl .', shell=True)
 
 
-# + {"colab_type": "code", "id": "cmkH1Q0qUQ0t", "colab": {}}
+# + colab={} colab_type="code" id="cmkH1Q0qUQ0t"
 class TrainGlobalConfig:
     """ Global Config for this notebook """
     num_workers = 0  # количество воркеров для loaders
@@ -198,17 +198,17 @@ class TrainGlobalConfig:
     criterion = LabelSmoothing()
     # -------------------
 
-# + {"colab_type": "code", "id": "pB36YxahXT6Q", "colab": {}}
+# + colab={} colab_type="code" id="pB36YxahXT6Q"
 from kaggle_runner.kernels.Shonenkov import Shonenkov
 
-# + {"colab_type": "code", "id": "furzEDtzUQ0x", "colab": {"base_uri": "https://localhost:8080/", "height": 321, "referenced_widgets": ["ee035e7ededd4627bd0c945937717ade", "e327a32093be48ab9fabd6d2f93d4c0a", "8533de2bc7134b40abacf7a9b32f0012", "9c06456568914165afb73ac30228ba06", "5ba48862ccdf438c856405814423029e", "aa4533e1247846fcbf408a8be3a1359d", "00bdb7e7c8a0450da3d432a057de1ba1", "e09d32adcc504e85a050a2fd8a8ab55c", "ff36006e3f57454fa52fb7bf1647c21a", "4218600849cd4b2c8573917cf4e7b0cc", "9e062caa49984f7e9773e6d74a7cfadf", "552da08823e04c6693f3547e0e63f5cc", "5d534c0d831b4c3e8b25229ff5949366", "94309ba4763e4a74b447c70f15fd8e07", "88309c98031a4fbdbc0e247de4e70e4a", "e7bc1adc51564d86ae8be192335b184c", "72a4d2af4a164217843d68c79e473b6c", "e5783b109ca6436b8bb62f1b8a49706f", "68eb7fcbb8c544fcad5c271a10b2a303", "1098a4a2ecc84ac39c5ce37904f2a75d", "c6655ec11ee44c35be4ed66fec0bd0df", "ed53c651dc9d4ec598feff58b65fde84", "93ea82bc7a7545e29ad646a5f83b1358", "627f81a4d35742bba995678bb36436ad"]}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 321, "referenced_widgets": ["ee035e7ededd4627bd0c945937717ade", "e327a32093be48ab9fabd6d2f93d4c0a", "8533de2bc7134b40abacf7a9b32f0012", "9c06456568914165afb73ac30228ba06", "5ba48862ccdf438c856405814423029e", "aa4533e1247846fcbf408a8be3a1359d", "00bdb7e7c8a0450da3d432a057de1ba1", "e09d32adcc504e85a050a2fd8a8ab55c", "ff36006e3f57454fa52fb7bf1647c21a", "4218600849cd4b2c8573917cf4e7b0cc", "9e062caa49984f7e9773e6d74a7cfadf", "552da08823e04c6693f3547e0e63f5cc", "5d534c0d831b4c3e8b25229ff5949366", "94309ba4763e4a74b447c70f15fd8e07", "88309c98031a4fbdbc0e247de4e70e4a", "e7bc1adc51564d86ae8be192335b184c", "72a4d2af4a164217843d68c79e473b6c", "e5783b109ca6436b8bb62f1b8a49706f", "68eb7fcbb8c544fcad5c271a10b2a303", "1098a4a2ecc84ac39c5ce37904f2a75d", "c6655ec11ee44c35be4ed66fec0bd0df", "ed53c651dc9d4ec598feff58b65fde84", "93ea82bc7a7545e29ad646a5f83b1358", "627f81a4d35742bba995678bb36436ad"]} colab_type="code" id="furzEDtzUQ0x"
 k = Shonenkov(torch.device("cpu"), TrainGlobalConfig, metrics=None, loss_func=LabelSmoothing(), opt_func=None)
 k.run(dump_flag=False)
 
-# + {"colab_type": "code", "id": "um8I7KBrY0Ur", "colab": {}}
+# + colab={} colab_type="code" id="um8I7KBrY0Ur"
 subprocess.run('mkdir ./models_xlmrobert/', shell=True)
 
-# + {"colab_type": "code", "id": "gDt1SW3AUQ02", "colab": {}}
+# + colab={} colab_type="code" id="gDt1SW3AUQ02"
 from transformers import WEIGHTS_NAME, CONFIG_NAME
 def save_model(self, output_dir="./models_xlmrobert/"):
     subprocess.run(f'mkdir {output_dir}', shell=True)
@@ -228,7 +228,7 @@ def save_model(self, output_dir="./models_xlmrobert/"):
     model_to_save.backbone.config.to_json_file(output_config_file)
     #tokenizer.save_pretrained(output_dir)
 
-# + {"colab_type": "code", "id": "PN07kHKOUQ06", "colab": {}}
+# + colab={} colab_type="code" id="PN07kHKOUQ06"
 from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
 def test_model_fn(device=torch.device("cpu")):
     #device = xm.xla_device(devkind='TPU')
@@ -413,7 +413,7 @@ def test_model_fn(device=torch.device("cpu")):
     results = run_inference(net, device, TrainGlobalConfig, validation_loader)
     logger.info(f"Test done, result len %d", len(results))
 
-# + {"colab_type": "code", "id": "0qUwvlFnUQ0-", "colab": {}}
+# + colab={} colab_type="code" id="0qUwvlFnUQ0-"
 def load_model(self, output_dir="./models_xlmrobert/"):
     output_model_file = os.path.join(output_dir, WEIGHTS_NAME)
     state_dict = torch.load(output_model_file)
@@ -427,7 +427,7 @@ def test_save_model():
 def test_load():
     load_model(k)
 
-# + {"colab_type": "code", "id": "9dqdFgwAZQgw", "colab": {"base_uri": "https://localhost:8080/", "height": 1000}}
+# + colab={"base_uri": "https://localhost:8080/", "height": 1000} colab_type="code" id="9dqdFgwAZQgw"
 test_save_model()
 test_load()
 test_model_fn()
@@ -447,11 +447,11 @@ def test_exit():
 
 test_exit()
 
-# + {"colab_type": "code", "id": "NSC6BrbwUQ2G", "colab": {}}
+# + colab={} colab_type="code" id="NSC6BrbwUQ2G"
 
 if os.getenv("CI") != "true":
 
-# + {"colab_type": "code", "id": "VXNH-qcCUQ1B", "colab": {}}
+# + colab={} colab_type="code" id="VXNH-qcCUQ1B"
     from kaggle_runner.kernels.fastai_kernel import FastAIKernel
     from kaggle_runner.runners.trainer import GPUTrainer
     def _to_gpu(learn:Learner, k: FastAIKernel) -> Learner:
@@ -462,7 +462,7 @@ if os.getenv("CI") != "true":
     Learner.to_gpu = _to_gpu
 
 
-# + {"colab_type": "code", "id": "2Z1O-ZLfUQ1D", "colab": {}}
+# + colab={} colab_type="code" id="2Z1O-ZLfUQ1D"
     import pysnooper
     from functools import partial
 
@@ -509,20 +509,20 @@ if os.getenv("CI") != "true":
         defaults.DEBUG = _DEBUG
 
 
-# + {"colab_type": "code", "id": "uUzCsw_wUQ1F", "colab": {}}
+# + colab={} colab_type="code" id="uUzCsw_wUQ1F"
 # %%time
 #debug_train(use_dist_cb=False)
 
 
-# + {"colab_type": "text", "id": "rO2ay06LUQ1I", "cell_type": "markdown"}
+# + [markdown] colab_type="text" id="rO2ay06LUQ1I"
 # # XLA
 
 
-# + {"colab_type": "code", "id": "eeL1PlTnUQ1J", "colab": {}}
+# + colab={} colab_type="code" id="eeL1PlTnUQ1J"
     import subprocess
     subprocess.run('make xla', shell=True) # TODO add system call, we can get log?
 
-# + {"colab_type": "code", "id": "5fUVZUIYUQ1M", "colab": {}}
+# + colab={} colab_type="code" id="5fUVZUIYUQ1M"
     import torch_xla
     import torch_xla.distributed.data_parallel as dp
     import torch_xla.utils.utils as xu
@@ -531,7 +531,7 @@ if os.getenv("CI") != "true":
     import torch_xla.distributed.xla_multiprocessing as xmp
     import torch
 
-# + {"colab_type": "code", "id": "qWaNMw-rUQ1O", "colab": {}}
+# + colab={} colab_type="code" id="qWaNMw-rUQ1O"
     import fastai
     from fastai import *
     from fastai.core import *
@@ -540,28 +540,28 @@ if os.getenv("CI") != "true":
     from fastai.basic_train import *
     from kaggle_runner.runners.tpu_trainer import TPUDistributed, TPUFitter
 
-# + {"colab_type": "code", "id": "VomH5RztUQ1T", "colab": {}}
+# + colab={} colab_type="code" id="VomH5RztUQ1T"
     from catalyst.data.sampler import DistributedSamplerWrapper, BalanceClassSampler
     def len_parallelloader(self):
         return len(self._loader._loader)
     pl.PerDeviceLoader.__len__ = len_parallelloader
 
 
-# + {"colab_type": "code", "id": "0d8Bzl8DUQ1X", "colab": {}}
+# + colab={} colab_type="code" id="0d8Bzl8DUQ1X"
     def _to_tpu_distributed(learn:Learner) -> Learner:
         learn.callback_fns.append(TPUDistributed)
 
         return learn
 
-# + {"colab_type": "code", "id": "a6_DgUIyUQ1Z", "colab": {}}
+# + colab={} colab_type="code" id="a6_DgUIyUQ1Z"
     Learner.to_tpu_distributed = _to_tpu_distributed
 
 
-# + {"colab_type": "code", "id": "M_tjbI16UQ1g", "colab": {}}
+# + colab={} colab_type="code" id="M_tjbI16UQ1g"
     from functools import partial
     import pysnooper
 
-# + {"colab_type": "code", "id": "0nejQ0FwUQ1j", "colab": {}}
+# + colab={} colab_type="code" id="0nejQ0FwUQ1j"
     @pysnooper.snoop()
     def train_loop(index, *args):
         logger.debug("rank: %d entered train_loop", index)
@@ -594,15 +594,15 @@ if os.getenv("CI") != "true":
         learn.fit(1, lr=5e-6, wd=0.001)
 
 
-# + {"colab_type": "code", "id": "JTqfMd9JUQ1k", "colab": {}}
+# + colab={} colab_type="code" id="JTqfMd9JUQ1k"
     FLAGS={}
     #xmp.spawn(train_loop, args=(FLAGS,),  nprocs=8, start_method='fork')
 
 
-# + {"colab_type": "code", "id": "oh5655pAUQ10", "colab": {}}
+# + colab={} colab_type="code" id="oh5655pAUQ10"
     import pysnooper
 
-# + {"colab_type": "code", "id": "2YGBLtQ1UQ12", "colab": {}}
+# + colab={} colab_type="code" id="2YGBLtQ1UQ12"
     @pysnooper.snoop()
     def _mp_fn(rank, flags, k=k):
         device = xm.xla_device(devkind='TPU')
@@ -680,37 +680,37 @@ if os.getenv("CI") != "true":
 
 
 
-# + {"colab_type": "code", "id": "cVRPNFYuUQ18", "colab": {}}
+# + colab={} colab_type="code" id="cVRPNFYuUQ18"
     import gc
     gc.collect()
 
 
-# + {"colab_type": "code", "id": "6x45fTI1UQ2B", "colab": {}}
+# + colab={} colab_type="code" id="6x45fTI1UQ2B"
 
     FLAGS={}
     xmp.spawn(_mp_fn, args=(FLAGS,),  nprocs=8, start_method='fork')
 
-# + {"colab_type": "code", "id": "JJPxfj1OUQ2E", "colab": {}}
+# + colab={} colab_type="code" id="JJPxfj1OUQ2E"
     from kaggle_runner.kernels.kernel import KaggleKernelOnlyPredict
 
 
 
-# + {"colab_type": "code", "id": "a_etfRgnUQ2I", "colab": {}}
+# + colab={} colab_type="code" id="a_etfRgnUQ2I"
     from datetime import date
     today = date.today()
     output_model_file='XLMRobertaModel_tpu_trained.bin'
     torch.save(k.model.state_dict(), f"{today}_{output_model_file}")
 
 
-# + {"colab_type": "code", "id": "6Bu-tn3lUQ2J", "colab": {}}
+# + colab={} colab_type="code" id="6Bu-tn3lUQ2J"
     submission = pd.concat([pd.read_csv(path) for path in glob('node_submissions/*.csv')]).groupby('id').mean()
     submission['toxic'].hist(bins=100)
 
 
-# + {"colab_type": "code", "id": "1G896nEvUQ2L", "colab": {}}
+# + colab={} colab_type="code" id="1G896nEvUQ2L"
     submission.to_csv(f'{ROOT_PATH}/submission.csv')
 
 
-# + {"colab_type": "code", "id": "8RHAQ4PNUQ2N", "colab": {}}
+# + colab={} colab_type="code" id="8RHAQ4PNUQ2N"
 # #!cp log.txt '/content/drive/My Drive/jigsaw2020-kaggle-public-baseline/'
 # !make push_dataset
