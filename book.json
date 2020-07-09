@@ -29,6 +29,7 @@
     "anchor-navigation-ex": {
             "associatedWithSummary": true,
             "isShowTocTitleIcon": true,
+            "multipleH1": false,
             "tocLevel1Icon": "fa fa-hand-o-right",
             "tocLevel2Icon": "fa fa-hand-o-right",
             "tocLevel3Icon": "fa fa-hand-o-right"
