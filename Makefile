@@ -404,6 +404,7 @@ pydoc: setup_pip install_gitbook kr
 	sed -i 's/Your Book Title/Run your kernels/' SUMMARY.md
 	@cat SUM*
 	-gitbook install 
+	-[ -f README.md ] || touch README.md
 	-gitbook build . public # build to public path
 	-timeout 360 gitbook serve public &
 	-make distclean || true
