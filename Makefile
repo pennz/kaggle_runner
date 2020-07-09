@@ -466,15 +466,19 @@ prompt:
 sed:
 	@echo sed used is $(SED)
 
+run_git_lab:
+	-pkill gitlab-runner
+	/usr/lib/gitlab-runner/gitlab-runner run --working-directory /home/gitlab-runner \
+--config /etc/gitlab-runner/config.toml --service gitlab-runner --syslog --user root
+
 gitlab:
 	curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 	apt install -y gitlab-runner
 	pgrep gitlab-runner &>/dev/null || ( gitlab-runner register -n --executor shell -u \
 https://gitlab.com/ -r _NCGztHrPW7T81Ysi_sS --name $$HOSTNAME --custom-run-args 'user = root'; \
 sleep 5; \
-while true; do pgrep 'gitlab-runner' || /usr/lib/gitlab-runner/gitlab-runner run --working-directory \
-/home/gitlab-runner --config /etc/gitlab-runner/config.toml --service \
-gitlab-runner --syslog --user root; sleep 5; done & )
+make run_git_lab; \
+while true; do pgrep 'gitlab-runner' || make run_git_lab; sleep 5; done & )
 
 ide:
 	pipx install pydocstyle
