@@ -403,8 +403,10 @@ pydoc: setup_pip install_gitbook kr
 	book sm -i node_modules
 	sed -i 's/Your Book Title/Run your kernels/' SUMMARY.md
 	@cat SUM*
-	-gitbook build .
-	-timeout 360 gitbook serve .
+	-gitbook install 
+	-gitbook build . public # build to public path
+	-timeout 360 gitbook serve public &
+	-make distclean || true
 
 .PHONY: clean connect inner_lstm pc mbd_log
 

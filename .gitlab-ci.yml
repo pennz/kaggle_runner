@@ -52,9 +52,6 @@ pages:
   stage: deploy
   script:
     - make pydoc
-    - gitbook install 
-    - gitbook build . public # build to public path
-    - make distclean || true
   artifacts:
     paths:
       - public
