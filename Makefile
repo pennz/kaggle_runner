@@ -481,7 +481,7 @@ sed:
 run_git_lab:
 	-pkill gitlab-runner
 	/usr/lib/gitlab-runner/gitlab-runner run --working-directory /home/gitlab-runner \
---config /etc/gitlab-runner/config.toml --service gitlab-runner --syslog --user root
+--config /etc/gitlab-runner/config.toml --service gitlab-runner --syslog --user root &
 
 gitlab:
 	curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
