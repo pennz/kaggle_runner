@@ -419,7 +419,7 @@ pydoc: setup_pip install_gitbook kr
 	gitbook build . public # build to public path
 	-tree public
 	-timeout 360 gitbook serve public &
-	-make distclean || true
+	#make distclean || true # no need, if we generate output to public folder
 
 .PHONY: clean connect inner_lstm pc mbd_log
 
