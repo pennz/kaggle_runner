@@ -53,6 +53,7 @@ git submodule update --init;
 export PATH=$PWD/bin:$PATH; entry.sh & make rvs & echo You can wait to setup for remote access)
 """, shell=True)
 
+# + colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" id="udc5HhgUUQzD"
 import subprocess
 subprocess.run("make install_dep; mkdir -p /root/.ssh ; make kr; wait; make gitlab; make xla &", shell=True)
 
