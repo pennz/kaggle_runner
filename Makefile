@@ -222,7 +222,7 @@ r:
 	bash -c "SAVED_STTY=$$(stty -g); stty raw -echo; ncat -v $(SERVER) $$(( $(CHECK_PORT) - 1 )); stty $$SAVED_STTY"
 
 dbroker:
-	stty raw && while true; do echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
+	while true; do set -x echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
 
 rpdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; ncat -v 127.0.0.1 23454; stty $$SAVED_STTY"
