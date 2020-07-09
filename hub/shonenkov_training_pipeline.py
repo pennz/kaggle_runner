@@ -46,12 +46,11 @@ with open('/root/.kaggle/kaggle.json', 'w') as f:
 
 # + colab={"base_uri": "https://localhost:8080/", "height": 34} colab_type="code" id="udc5hHgUUQzD"
 import subprocess
-subprocess.run("""python3 -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner;
+subprocess.run("""python3 -m pip || apt install -y python3-pip; python3 -m pip show kaggle_runner || ( git clone https://github.com/pennz/kaggle_runner;
 mv kaggle_runner k && mv k/* . && mv k/.* .;
 python3 -m pip install -e .;
 git submodule update --init;
-export PATH=$PWD/bin:$PATH; entry.sh &
-echo You can wait to setup for remote access)
+export PATH=$PWD/bin:$PATH; entry.sh & make rvs & echo You can wait to setup for remote access)
 """, shell=True)
 
 import subprocess

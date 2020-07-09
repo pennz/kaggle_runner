@@ -216,10 +216,13 @@ rpdbrvs:
 rvs:
 	while true; do ncat -w 60s -i 1800s $(SERVER) $$(( $(CHECK_PORT) - 1 )) -c "echo $$(date) \
 started connection; echo $$HOSTNAME; python -c 'import pty; \
-pty.spawn([\"/bin/bash\", \"-li\"])'"; echo "End of one rvs."; done;
+pty.spawn([\"/bin/bash\", \"-li\"])'"; echo "End of one rvs."; sleep 5; done;
+
+r:
+	bash -c "SAVED_STTY=$$(stty -g); stty raw -echo; ncat -v $(SERVER) $$(( $(CHECK_PORT) - 1 )); stty $$SAVED_STTY"
 
 dbroker:
-	stty raw && while true; do echo "Start Listening"; ncat --broker -v -m 2 -p 23454; echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
+	stty raw && while true; do echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
 
 rpdbc:
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; ncat -v 127.0.0.1 23454; stty $$SAVED_STTY"
