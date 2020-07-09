@@ -416,6 +416,7 @@ pydoc: setup_pip install_gitbook kr
 	-gitbook install 
 	-[ -f README ] || cp README.md README
 	-gitbook build . public # build to public path
+	-tree public
 	-timeout 360 gitbook serve public &
 	-make distclean || true
 
