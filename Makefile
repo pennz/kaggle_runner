@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := help
+
 #export LD_LIBRARY_PATH := $(PWD)/lib:$(LD_LIBRARY_PATH)
 export PATH := /nix/store/3ycgq0lva60yc2bw4qshmlsaqn0g90x4-nodejs-14.2.0/bin:$(HOME)/.local/bin:$(PWD)/bin:$(PATH)
 export DEBUG := $(DEBUG)
@@ -50,7 +52,7 @@ endif
 export SERVER
 export CHECK_PORT
 
-URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth"
+URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth" ## URL="https
 PY=python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
@@ -58,20 +60,24 @@ SHELL=/bin/bash
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
-_: test
+_: test ## _
 	@echo "DONE $@"
 
-test: ctr
+.PHONY: test
+test: ctr ## test
 	@echo "DONE $@"
 
-test_bert_torch: pytest
+.PHONY: test_bert_torch
+test_bert_torch: pytest ## test_bert_torch
 	if [ -z $$DEBUG ]; then $(PY) tests/test_bert_torch.py 2>&1 | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); \
 else wt $(PY) -m pdb tests/test_bert_torch.py </dev/tty ; fi
 
-pytest:
+.PHONY: pytest
+pytest: ## pytest
 	$(PY) -m pip show pytest | grep "Version: 5." &>/dev/null || ($(PY) -m pip install --upgrade pytest && $(PY) -m pip install --upgrade pytest-cov)
 
-check_log_receiver:
+.PHONY: check_log_receiver
+check_log_receiver: ## check_log_receiver
 	@echo "$@" will use tcp to receive logs
 	-pkill -f "$(CHECK_PORT)"
 	-$(IS_CENTOS) && (pgrep -f firewalld >/dev/null || sudo systemctl start firewalld)
@@ -79,35 +85,42 @@ check_log_receiver:
 	-$(IS_CENTOS) && sudo firewall-cmd --add-port $(CHECK_PORT)/tcp --permanent
 	ncat -vkl --recv-only  -p $(CHECK_PORT) -o logs_check & sleep 1; tail -f logs_check # logs_check will be used by pcc to get mosh-client connect authentication info
 
-pc:
+.PHONY: pc
+pc: ## pc
 	pcc
 	make connect
 
-m:
+.PHONY: m
+m: ## m
 	while true; do (setup_mosh_server 2>&1 | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT)) & sleep $$((60*25)); done
 
-mosh:
+.PHONY: mosh
+mosh: ## mosh
 	( while true; do bash -x setup_mosh_server& [ -f /tmp/mexit ] && exit 0; sleep 600; done 2>&1 | $(UNBUFFERP) tee -a ms_connect_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT) ) &
 	#@sleep 1
 	#tail ms_connect_log
 
-rvs_session:
+.PHONY: rvs_session
+rvs_session: ## rvs_session
 	-tmux new-session -d -n "good-day" -s rvsConnector "cat"
 	-tmux set-option -t rvsConnector renumber-windows on
 
-_pccnct:
+.PHONY: _pccnct
+_pccnct: ## _pccnct
 	-pkill -f "50001.*addNew"
 	echo "start mosh connector";
 	$(UNBUFFER) ncat -uklp 50001 -c "bash -c 'echo $$(date): New Incoming >>mosh_log'; echo; addNewNode.sh mosh" &
 	echo "connection listener setup done."
 	echo "pccnct has been put to backgound."
 	
-pccnct: rvs_session _pccnct
+.PHONY: pccnct
+pccnct: rvs_session _pccnct ## pccnct
 	make check_log_receiver & # will output to current process
 	-$(IS_CENTOS) && sudo service rabbitmq-server start # For AMQP log, our server 
 	@echo "pc connector started now"
 
-ctr: kr check install_dep pytest $(SRC)
+.PHONY: ctr
+ctr: kr check install_dep pytest $(SRC) ## ctr
 	-timeout 10 git push
 	[ -f bin/cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > bin/cc-test-reporter
 	chmod +x bin/cc-test-reporter
@@ -117,11 +130,13 @@ ctr: kr check install_dep pytest $(SRC)
 	-$(PY) -m coverage xml -i -o coverage.xml
 	-bin/cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
-get_submission:
+.PHONY: get_submission
+get_submission: ## get_submission
 	kaggle datasets download --file submission.csv --unzip k1gaggle/bert-for-toxic-classfication-trained
 	-unzip '*.zip' && rm *.zip && mv *.csv submission.csv
 
-push: rvs_session $(SRC)
+.PHONY: push
+push: rvs_session $(SRC) ## push
 	-#git push # push first as kernel will download the codes, so put new code to github first
 	-@echo "$$(which $(PY)) is our $(PY) executable"; [[ x$$(which $(PY)) =~ conda ]]
 	sed -i 's/\(id": "\)\(.*\)\//\1$(KAGGLE_USER_NAME)\//' kaggle_runner/runner_template/kernel-metadata.json
@@ -129,55 +144,68 @@ push: rvs_session $(SRC)
 	git add kaggle_runner/runner_template/kernel-metadata.json && git commit -sm "Update metadata when push to server" --no-gpg && git push &
 	run_coordinator $(PHASE) # source only works in specific shell: bash or ...
 
-connect:
+.PHONY: connect
+connect: ## connect
 	tmux select-window -t rvsConnector:{end}
 	tmux switch -t rvsConnector:{end}
 
 
-lint: $(SRC)
+.PHONY: lint
+lint: $(SRC) ## lint
 	echo $(SRC)
 	pylint -E $(SRC)
 
-inner_lstm:
+.PHONY: inner_lstm
+inner_lstm: ## inner_lstm
 	while true; do test x$$(git pull | grep -c Already) = x1 || { $(PY) \
 lstm.py 2>&1 | tee -a lstm_log; };  echo "$$(date) $$HOSTNAME CPU: "$$(grep \
 'cpu ' /proc/stat >/dev/null;sleep 0.1; grep 'cpu ' /proc/stat | awk -v RS='' \
 '{print ($$13-$$2+$$15-$$4)*100/($$13-$$2+$$15-$$4+$$16-$$5)}')% 'Mem: '$$(awk \
 '/MemTotal/{t=$$2}/MemAvailable/{a=$$2}END{print 100-100*a/t}' /proc/meminfo)% \
-'Uptime: '$$(uptime | awk '{print $$3}'); sleep 10; done
+.PHONY: 'Uptime
+'Uptime: '$$(uptime | awk '{print $$3}'); sleep 10; done ## 'Uptime
 
-lstm:
+.PHONY: lstm
+lstm: ## lstm
 	-pkill -f "inner_lstm"
 	make inner_lstm
 
-debug_toxic:
+.PHONY: debug_toxic
+debug_toxic: ## debug_toxic
 	DEBUG=true make toxic #python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 
-toxic: check install_dep
+.PHONY: toxic
+toxic: check install_dep ## toxic
 	echo $$(ps aux | grep "make $@$$")
 	echo "$@:" DEBUG flag is $$DEBUG .
 	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
 	if [ -z $$DEBUG ]; then $(UNBUFFER) $(PY) tests/test_distilbert_model.py 2>&1 | $(UNBUFFERP) tee -a toxic_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); else wt '$(PY) -m ipdb tests/test_distilbert_model.py'; fi
 	-git stash pop || true
 
-test_coor: update_code $(SRC)
+.PHONY: test_coor
+test_coor: update_code $(SRC) ## test_coor
 	$(PY) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY) main.py
 
-clean:
+.PHONY: clean
+clean: ## clean
 	#-bash -c 'currentPpid=$$(pstree -spa $$$$ | $(SED) -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | $(SED) "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
 	-ps aux | grep "ncat .*lp" | grep -v "while" | grep -v "50001" | grep -v "grep" | tee /dev/tty | awk '{print $$2} ' | xargs -I{} kill -9 {}
 	-rm -rf __pycache__ mylogs dist/* build/*
 
 
-submit:
+.PHONY: submit
+submit: ## submit
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
-run_submit:
+.PHONY: run_submit
+run_submit: ## run_submit
 	$(PY) DAF3D/Train.py
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 
-twine:
+.PHONY: twine
+twine: ## twine
 	@$(PY) -m twine -h >/dev/null || ( echo "twine not found, will install it." ; $(PY) -m pip install --user --upgrade twine )
-publish: clean twine
+.PHONY: publish
+publish: clean twine ## publish
 	if [[ x$(TAG) =~ xv ]] || [ -z $(TAG) ]; then >&2 echo "Please pass TAG \
 flag when you call make, and use something like 0.0.3, not v0.0.3"; false; else \
 gsed -i 's/version=.*/version=\"$(TAG)\",/' setup.py || \
@@ -188,46 +216,57 @@ git commit -sm "setup.py: v$(TAG)" && (git tag -s "v$(TAG)" || true) && git push
 fi
 	$(PY) setup.py sdist bdist_wheel
 	$(PY) -m twine upload dist/*
-update_code:
+.PHONY: update_code
+update_code: ## update_code
 	#-git stash;
 	git pull
-install_dep_seg:
+.PHONY: install_dep_seg
+install_dep_seg: ## install_dep_seg
 	bash -c '(test -z "$$($(PY) -m albumentations 2>&1 | grep direct)" && $(PY) -m pip install -U git+https://github.com/albu/albumentations) & \
 (test -z "$$($(PY) -m segmentation_models_pytorch 2>&1 | grep direct)" && $(PY) -m pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
 wait'
 
 
-$(TOXIC_DEP):
+.PHONY: $(TOXIC_DEP)
+$(TOXIC_DEP): ## $(TOXIC_DEP)
 	@echo "Installing $@"
 	#$(PY) -m pip show $@ &>/dev/null || $(PY) -m pip install -q $@
 
-install_dep: $(TOXIC_DEP) pytest
+.PHONY: install_dep
+install_dep: $(TOXIC_DEP) pytest ## install_dep
 	for p in $^; do ($(PY) -m pip show $$p &>/dev/null || $(PY) -m pip install -q $$p) & done; wait
 	#$(PY) -m pip install -q eumetsat expect &
 	#conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 	@echo make $@ $^ done
 
-connect_close:
+.PHONY: connect_close
+connect_close: ## connect_close
 	stty raw -echo && ( ps aux | $(SED) -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
 
-rpdbrvs:
+.PHONY: rpdbrvs
+rpdbrvs: ## rpdbrvs
 	while true; do ncat $(SERVER) 23454 --sh-exec 'ncat -w 3 127.1 4444; echo \# nc return $?' ; sleep 1; echo -n "." ; done;
 
-rvs:
+.PHONY: rvs
+rvs: ## rvs
 	while true; do ncat -w 60s -i 1800s $(SERVER) $$(( $(CHECK_PORT) - 1 )) -c "echo $$(date) \
 started connection; echo $$HOSTNAME; python -c 'import pty; \
 pty.spawn([\"/bin/bash\", \"-li\"])'"; echo "End of one rvs."; sleep 5; done;
 
-r:
+.PHONY: r
+r: ## r
 	bash -c "SAVED_STTY=$$(stty -g); stty raw -echo; while true; do ncat -v $(SERVER) $$(( $(CHECK_PORT) - 1 )); echo "DONE"; sleep 3; done; stty $$SAVED_STTY"
 
-dbroker:
+.PHONY: dbroker
+dbroker: ## dbroker
 	while true; do set -x echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
 
-rpdbc:
+.PHONY: rpdbc
+rpdbc: ## rpdbc
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; ncat -v 127.0.0.1 23454; stty $$SAVED_STTY"
 
-mq:
+.PHONY: mq
+mq: ## mq
 	make amqp_log &
 	id -u rabbitmq &>/dev/null; \
 if [ $$? -eq 0 ]; then \
@@ -239,15 +278,18 @@ while [ $$(ps -u rabbitmq | wc -l) -lt 5 ]; do \
 done; \
 fi
 
-amqp_log:
+.PHONY: amqp_log
+amqp_log: ## amqp_log
 	-$(IS_CENTOS) && sudo systemctl restart rabbitmq-server.service
 	$(UNBUFFER) receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n 's/^.*\[x\] \(.*\)/\1/p'  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | $(SED) -n "s/\(.*\)\[x.*/\1/p"
 
-mlocal:
+.PHONY: mlocal
+mlocal: ## mlocal
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
-check:
+.PHONY: check
+check: ## check
 	-ps aux | grep make
 	echo sed $(SED)
 	echo PATH $(PATH)
@@ -263,12 +305,15 @@ check:
 	-@timeout 3s $(PY) -c 'import os; from kaggle_runner import logger; logger.debug("$@: DEBUG flag is %s", os.environ.get("DEBUG"));' 2>&1
 
 
-mbd_log:
+.PHONY: mbd_log
+mbd_log: ## mbd_log
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
-mbd_interactive: multilang_bert_data.sh
+.PHONY: mbd_interactive
+mbd_interactive: multilang_bert_data.sh ## mbd_interactive
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
 
-dd: kaggle
+.PHONY: dd
+dd: kaggle ## dd
 	@ eval "$$write_dataset_list_script"
 	-mkdir -p /kaggle/input
 	(cmp_name="jigsaw-multilingual-toxic-comment-classification"; \
@@ -276,69 +321,86 @@ kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
 cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}' &
 
-ddj:
+.PHONY: ddj
+ddj: ## ddj
 	(cmp_name="jigsaw-unintended-bias-in-toxicity-classification"; \
 kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
 cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 	
 
-vim:
+.PHONY: vim
+vim: ## vim
 	-apt install vim -y && $(PY) -m pip install pyvim neovim jedi && yes | vim -u ~/.vimrc_back +PlugInstall +qa
 
-kaggle: /root/.kaggle/kaggle.json
+.PHONY: kaggle
+kaggle: /root/.kaggle/kaggle.json ## kaggle
 	-@ xclip ~/.kaggle/kaggle.json -selection clipboard
 
-update_sh_ipynb:
+.PHONY: update_sh_ipynb
+update_sh_ipynb: ## update_sh_ipynb
 	jupytext --sync hub/shonenkov_training_pipeline.ipynb || jupytext --set-formats ipynb,py hub/shonenkov_training_pipeline.ipynb
 
-dmetadata: kaggle 
+.PHONY: dmetadata
+dmetadata: kaggle  ## dmetadata
 	[ -d datas ] || (mkdir datas; kaggle datasets metadata -p datas/ k1gaggle/ml-bert-for-toxic-classfication-trained)
 
-push_dataset: dmetadata
+.PHONY: push_dataset
+push_dataset: dmetadata ## push_dataset
 	-cp datas/dm.json datas/dm-metadata.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	-cp node_submissions/* log.txt /kaggle/submission.csv datas
 	kaggle datasets create -p datas/ #-m "$$(git show --no-patch --oneline) $$(date)"
 
-/root/.kaggle/kaggle.json:
+.PHONY: /root/.kaggle/kaggle.json
+/root/.kaggle/kaggle.json: ## /root/.kaggle/kaggle.json
 	-@mkdir -p ~/.kaggle
 	@grep "username" ~/.kaggle/kaggle.json || (printf "\e[?1004l"; echo "Please paste your kaggle API token"; cat > ~/.kaggle/kaggle.json </dev/tty)
 	chmod 600 ~/.kaggle/kaggle.json
 
-mbd_pretrain: multilang_bert_data.sh apex
+.PHONY: mbd_pretrain
+mbd_pretrain: multilang_bert_data.sh apex ## mbd_pretrain
 	-make tpu_setup
 	STAGE=pretrain bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log
 
-exit:
+.PHONY: exit
+exit: ## exit
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && make distclean
 	@[ -z "$${DEBUG}" ] && type nvidia-smi &>/dev/null && sleep 3 && (touch /tmp/rvs_exit && pkill ncat && pkill screen && pkill -f "rvs.sh") &
 
-tpu_setup:
+.PHONY: tpu_setup
+tpu_setup: ## tpu_setup
 	curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o /tmp/pytorch-xla-env-setup.py
 	pip show torch_xla || $(PY) /tmp/pytorch-xla-env-setup.py #@param ["20200220","nightly", "xrt==1.15.0"]
 
-xlmr:
+.PHONY: xlmr
+xlmr: ## xlmr
 	$(PY) -m pip install --upgrade torch
 	$(PY) -c "import torch; xlmr = torch.hub.load('pytorch/fairseq', 'xlmr.large');"
 
-apex:
+.PHONY: apex
+apex: ## apex
 	-$(PY) -m pip show apex || ([ -d /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a ] && \
 $(PY) -m pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" /kaggle/input/nvidiaapex/repository/NVIDIA-apex-39e153a)
 	$(PY) -c "from apex import amp"
 
-mbd:
+.PHONY: mbd
+mbd: ## mbd
 	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
 	make mbd_log
 
-dataset: mbd
+.PHONY: dataset
+dataset: mbd ## dataset
 	-mkdir .k && mv * .* .k && mv .k/toxic*pkl . && rm -r .k
 
-p:
+.PHONY: p
+p: ## p
 	pushd kaggle_runner/hub/bert && (git commit -asm "GG" --no-gpg || true) && git push && popd && git add kaggle_runner/hub/bert && git commit -sm "Updated bert" --no-gpg && git push
-pl:
+.PHONY: pl
+pl: ## pl
 	git stash; git pull; git submodule update --init
 
-t: pccnct m
+.PHONY: t
+t: pccnct m ## t
 	echo "Please check local mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 	echo -e "\n\n\n\n\n\n\n\n\n"
@@ -346,21 +408,25 @@ t: pccnct m
 	echo "Please check remote mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 
-sshR:
+.PHONY: sshR
+sshR: ## sshR
 	if [ -d /content ]; then echo ssh -fNR 10010:$(KIP):9000 -p $(SSH_PORT) $(SERVER); \
 else echo ssh -fNR 10010:$(KIP):8888 -p $(SSH_PORT) $(SERVER); fi
 	-scp -P $(SSH_PORT) v@$(SERVER):~/.ssh/* ~/.ssh
 
-sshRj:
+.PHONY: sshRj
+sshRj: ## sshRj
 	$(PY) -m jupyter lab -h &>/dev/null || $(PY) -m pip install jupyterlab
 	($(PY) -m jupyter lab --ip="$(KIP)" --port=9001 $(JUPYTER_PARAMS) || $(PY) -m jupyter lab --ip="$(KIP)" --port=9001 --allow-root) &
 	ssh -fNR 10011:$(KIP):9001 -p $(SSH_PORT) $(SERVER)
 	scp -P $(SSH_PORT) $(SERVER):~/.ssh/* ~/.ssh
 
-githooks:
+.PHONY: githooks
+githooks: ## githooks
 	[ -f .git/hooks/pre-commit.sample ] && mv .git/hooks/pre-commit.sample .git/hooks/pre-commit && cat bin/pre-commit >> .git/hooks/pre-commit
 
-distclean: clean
+.PHONY: distclean
+distclean: clean ## distclean
 	#-@git ls-files | sed 's/kaggle_runner\/\([^\/]*\)\/.*/\1/' | xargs -I{} sh -c "echo rm -rf {}; rm -rf {} 2>/dev/null"
 	-@git ls-files | grep -v "\.md" | xargs -I{} sh -c 'echo rm "{}"; rm "{}"'
 	-rm *.py *.sh *log
@@ -368,24 +434,29 @@ distclean: clean
 	-rm -r __notebook_source__.ipynb bert gdrive_setup kaggle_runner.egg-info apex dotfiles rpt
 	-find . -name "*.pyc" -print0 | xargs --null -I{} rm "{}"
 
-ks:
+.PHONY: ks
+ks: ## ks
 	curl -sSLG $(KIP):9000/api/sessions
 
-push_code:
+.PHONY: push_code
+push_code: ## push_code
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .gitmodules
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .git/config
 	git push
 
-jigsaw-unintended-bias-in-toxicity-classification:
+.PHONY: jigsaw-unintended-bias-in-toxicity-classification
+jigsaw-unintended-bias-in-toxicity-classification: ## jigsaw-unintended-bias-in-toxicity-classification
 	test ! -d /kaggle/input/jigsaw-unintended-bias-in-toxicity-classification
 
-gpt2: jigsaw-unintended-bias-in-toxicity-classification kaggle
+.PHONY: gpt2
+gpt2: jigsaw-unintended-bias-in-toxicity-classification kaggle ## gpt2
 	-mkdir -p /kaggle/input
 	(cmp_name=$<; \
 kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name && \
 cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 
-install_gitbook:
+.PHONY: install_gitbook
+install_gitbook: ## install_gitbook
 	type gitbook &>/dev/null || ( \
 curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh && \
 sh nodesource_setup.sh && ( \
@@ -395,10 +466,12 @@ npm install -g doctoc; \
 npm install -g gitbook-summary; \
 gitbook fetch 3.2.3 ; ) ) # fetch final stable version and add any requested plugins in book.json
 
-setup_pip:
+.PHONY: setup_pip
+setup_pip: ## setup_pip
 	$(PY) -m pip || apt install -y python3-pip
 
-pydoc: setup_pip install_gitbook kr
+.PHONY: pydoc
+pydoc: setup_pip install_gitbook kr ## pydoc
 	-apt install -y python3-pip
 	$(PY) -m pip install pipx
 	-apt-get install -y python3-venv || yum install -y python3-venv
@@ -421,6 +494,7 @@ pydoc: setup_pip install_gitbook kr
 	-timeout 360 gitbook serve public &
 	#make distclean || true # no need, if we generate output to public folder
 
+.PHONY: .PHONY
 .PHONY: clean connect inner_lstm pc mbd_log
 
 # Set your own project id here
@@ -428,31 +502,37 @@ pydoc: setup_pip install_gitbook kr
 # from google.cloud import storage
 # storage_client = storage.Client(project=PROJECT_ID)
 
-sync_result:
+.PHONY: sync_result
+sync_result: ## sync_result
 	while true; do git commit -asm "Good game" --no-edit; git pull; git push; sleep 10; done
 
-d:
+.PHONY: d
+d: ## d
 	git diff; git diff --cached
 
-install_template:
+.PHONY: install_template
+install_template: ## install_template
 	git submodule update --init
 	git config --global init.templatedir '~/.git_template/template'
 	"$$(git config --path --get init.templatedir)/../update.sh"
 	"$$(git config --path --get init.templatedir)/configure.sh"
 
-nodejs:
+.PHONY: nodejs
+nodejs: ## nodejs
 	curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh
 	bash nodesource_setup.sh
 	-apt-get install -y nodejs
 	#apt install gcc g++ make
 
 
-xla:
+.PHONY: xla
+xla: ## xla
 	$(PY) -m pip show torch_xla || ( curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py; \
 $(PY) pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
 $(PY) -m pip install *.whl; )
 
-kr:
+.PHONY: kr
+kr: ## kr
 	ssh-keyscan github.com >> githubKey
 	ssh-keygen -lf githubKey
 	mkdir -p ~/.ssh
@@ -469,21 +549,26 @@ git submodule update --init;); \
 $(PY) -m pip show kaggle_runner || $(PY) -m pip install -e .;
 	touch hub/custom_fastai_callbacks/__init__.py
 
-entry: kr
+.PHONY: entry
+entry: kr ## entry
 	export PATH=$$PWD/bin:$$PATH; pgrep -f entry || entry.sh &
 
-prompt:
+.PHONY: prompt
+prompt: ## prompt
 	$(PY) -m pip install 'prompt-toolkit<2.0.0,>=1.0.15' --force-reinstall
 
-sed:
+.PHONY: sed
+sed: ## sed
 	@echo sed used is $(SED)
 
-run_git_lab:
+.PHONY: run_git_lab
+run_git_lab: ## run_git_lab
 	-pkill gitlab-runner
 	/usr/lib/gitlab-runner/gitlab-runner run --working-directory /home/gitlab-runner \
 --config /etc/gitlab-runner/config.toml --service gitlab-runner --syslog --user root &
 
-gitlab:
+.PHONY: gitlab
+gitlab: ## gitlab
 	curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 	apt install -y gitlab-runner
 	pgrep gitlab-runner &>/dev/null || ( gitlab-runner register -n --executor shell -u \
@@ -492,5 +577,10 @@ sleep 5; \
 make run_git_lab; \
 while true; do pgrep 'gitlab-runner' || make run_git_lab; sleep 5; done & )
 
-ide:
+.PHONY: ide
+ide: ## ide
 	pipx install pydocstyle
+
+.PHONY: help
+help:  ## Print this help. ## help
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
