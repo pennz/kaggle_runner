@@ -16,6 +16,7 @@ variables:
 cache:
   paths:
     - .cache/pip
+    - .cache/pypoetry
     - node_modules/
     - venv/
 
