@@ -56,7 +56,7 @@ endif
 export SERVER
 export CHECK_PORT
 
-URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth" ## URL="https
+URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth"
 PY=poetry run python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
@@ -64,24 +64,24 @@ SHELL=/bin/bash
 
 IS_CENTOS=type firewall-cmd >/dev/null 2>&1
 
-_: test ## _
+_: test
 	@echo "DONE $@"
 
 .PHONY: test
-test: ctr ## test
+test: ctr ## Main test function, run coverage test.
 	@echo "DONE $@"
 
 .PHONY: test_bert_torch
-test_bert_torch: pytest ## test_bert_torch
+test_bert_torch: pytest ## Test bert written in pytorch.
 	if [ -z $$DEBUG ]; then $(PY) tests/test_bert_torch.py 2>&1 | $(UNBUFFERP) tee -a test_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT); \
 else wt $(PY) -m pdb tests/test_bert_torch.py </dev/tty ; fi
 
 .PHONY: pytest
-pytest: ## pytest
+pytest: ## Install pytest.
 	$(PY) -m pip show pytest | grep "Version: 5." &>/dev/null || ($(PY) -m pip install --upgrade pytest && $(PY) -m pip install --upgrade pytest-cov)
 
 .PHONY: check_log_receiver
-check_log_receiver: ## check_log_receiver
+check_log_receiver: ## Check log receiver in CHECK_PORT.
 	@echo "$@" will use tcp to receive logs
 	-pkill -f "$(CHECK_PORT)"
 	-$(IS_CENTOS) && (pgrep -f firewalld >/dev/null || sudo systemctl start firewalld)
@@ -90,27 +90,27 @@ check_log_receiver: ## check_log_receiver
 	ncat -vkl --recv-only  -p $(CHECK_PORT) -o logs_check & sleep 1; tail -f logs_check # logs_check will be used by pcc to get mosh-client connect authentication info
 
 .PHONY: pc
-pc: ## pc
+pc: ## Connect to reverse shell.
 	pcc
 	make connect
 
 .PHONY: m
-m: ## m
+m: ## Mosh server too.
 	while true; do (setup_mosh_server 2>&1 | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT)) & sleep $$((60*25)); done
 
 .PHONY: mosh
-mosh: ## mosh
+mosh: ## Mosh server in while loop.
 	( while true; do bash -x setup_mosh_server& [ -f /tmp/mexit ] && exit 0; sleep 600; done 2>&1 | $(UNBUFFERP) tee -a ms_connect_log | $(UNBUFFERP) ncat --send-only $(SERVER) $(CHECK_PORT) ) &
 	#@sleep 1
 	#tail ms_connect_log
 
 .PHONY: rvs_session
-rvs_session: ## rvs_session
+rvs_session: ## Create new tmux session for reverse shell.
 	-tmux new-session -d -n "good-day" -s rvsConnector "cat"
 	-tmux set-option -t rvsConnector renumber-windows on
 
 .PHONY: _pccnct
-_pccnct: ## _pccnct
+_pccnct:
 	-pkill -f "50001.*addNew"
 	echo "start mosh connector";
 	$(UNBUFFER) ncat -uklp 50001 -c "bash -c 'echo $$(date): New Incoming >>mosh_log'; echo; addNewNode.sh mosh" &
@@ -118,13 +118,13 @@ _pccnct: ## _pccnct
 	echo "pccnct has been put to backgound."
 	
 .PHONY: pccnct
-pccnct: rvs_session _pccnct ## pccnct
+pccnct: rvs_session _pccnct ## Setup reverse shell receiver
 	make check_log_receiver & # will output to current process
 	-$(IS_CENTOS) && sudo service rabbitmq-server start # For AMQP log, our server 
 	@echo "pc connector started now"
 
 .PHONY: ctr
-ctr: kr check install_dep pytest $(SRC) ## ctr
+ctr: kr check install_dep pytest $(SRC) ## Coverage Test Report
 	-timeout 10 git push
 	[ -f bin/cc-test-reporter ] || curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > bin/cc-test-reporter
 	chmod +x bin/cc-test-reporter
@@ -135,12 +135,12 @@ ctr: kr check install_dep pytest $(SRC) ## ctr
 	-bin/cc-test-reporter after-build -t coverage.py # --exit-code $TRAVIS_TEST_RESULT
 
 .PHONY: get_submission
-get_submission: ## get_submission
+get_submission: ## Get submission from kaggle.
 	kaggle datasets download --file submission.csv --unzip k1gaggle/bert-for-toxic-classfication-trained
 	-unzip '*.zip' && rm *.zip && mv *.csv submission.csv
 
 .PHONY: push
-push: rvs_session $(SRC) ## push
+push: rvs_session $(SRC) ## Push code to kernel.
 	-#git push # push first as kernel will download the codes, so put new code to github first
 	-@echo "$$(which $(PY)) is our $(PY) executable"; [[ x$$(which $(PY)) =~ conda ]]
 	sed -i 's/\(id": "\)\(.*\)\//\1$(KAGGLE_USER_NAME)\//' kaggle_runner/runner_template/kernel-metadata.json
@@ -149,18 +149,12 @@ push: rvs_session $(SRC) ## push
 	run_coordinator $(PHASE) # source only works in specific shell: bash or ...
 
 .PHONY: connect
-connect: ## connect
+connect: ## Connect to mosh server.
 	tmux select-window -t rvsConnector:{end}
 	tmux switch -t rvsConnector:{end}
 
-
-.PHONY: lint
-lint: $(SRC) ## lint
-	echo $(SRC)
-	pylint -E $(SRC)
-
 .PHONY: inner_lstm
-inner_lstm: ## inner_lstm
+inner_lstm:
 	while true; do test x$$(git pull | grep -c Already) = x1 || { $(PY) \
 lstm.py 2>&1 | tee -a lstm_log; };  echo "$$(date) $$HOSTNAME CPU: "$$(grep \
 'cpu ' /proc/stat >/dev/null;sleep 0.1; grep 'cpu ' /proc/stat | awk -v RS='' \
@@ -170,16 +164,16 @@ lstm.py 2>&1 | tee -a lstm_log; };  echo "$$(date) $$HOSTNAME CPU: "$$(grep \
 'Uptime: '$$(uptime | awk '{print $$3}'); sleep 10; done ## 'Uptime
 
 .PHONY: lstm
-lstm: ## lstm
+lstm: ## Run lstm.py in loop.
 	-pkill -f "inner_lstm"
 	make inner_lstm
 
 .PHONY: debug_toxic
-debug_toxic: ## debug_toxic
+debug_toxic: ## Debug toxic code.
 	DEBUG=true make toxic #python3 -m pdb $$(which pytest) -sv tests/test_distilbert_model.py
 
 .PHONY: toxic
-toxic: check install_dep ## toxic
+toxic: check install_dep ## Run toxic code (Not Debug).
 	echo $$(ps aux | grep "make $@$$")
 	echo "$@:" DEBUG flag is $$DEBUG .
 	bash -c 'ppid=$$PPID; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); while [[ -n "$$mpid" ]] && [[ "$$mpid" -lt "$$((ppid-10))" ]]; do if [ ! -z $$mpid ]; then echo "we will kill existing \"make $@\" with pid $$mpid"; kill -9 $$mpid; sleep 1; else return 0; fi; mpid=$$(pgrep -f "make $@$$" | sort | head -n 1); done'
@@ -187,11 +181,11 @@ toxic: check install_dep ## toxic
 	-git stash pop || true
 
 .PHONY: test_coor
-test_coor: update_code $(SRC) ## test_coor
+test_coor: update_code $(SRC) ## Test coordinator.
 	$(PY) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY) main.py
 
 .PHONY: clean
-clean: _clean ## clean
+clean: _clean ## Clean.
 	#-bash -c 'currentPpid=$$(pstree -spa $$$$ | $(SED) -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | $(SED) "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
 	-ps aux | grep "ncat .*lp" | grep -v "while" | grep -v "50001" | grep -v "grep" | tee /dev/tty | awk '{print $$2} ' | xargs -I{} kill -9 {}
 	-rm -rf __pycache__ mylogs dist/* build/*
@@ -214,16 +208,13 @@ _clean:  ## Delete temporary files.
 .PHONY: submit
 submit: ## submit
 	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
-.PHONY: run_submit
-run_submit: ## run_submit
-	$(PY) DAF3D/Train.py
-	HTTP_PROXY=$(PROXY_URL) HTTPS_PROXY=$(PROXY_URL) http_proxy=$(PROXY_URL) https_proxy=$(PROXY_URL) kaggle c submit -f submission.csv -m "Just test(with T)" siim-acr-pneumothorax-segmentation
 
 .PHONY: twine
-twine: ## twine
+_twine:
 	@$(PY) -m twine -h >/dev/null || ( echo "twine not found, will install it." ; $(PY) -m pip install --user --upgrade twine )
+
 .PHONY: publish
-publish: clean twine ## publish
+publish: _twine ## Publish to pip.
 	if [[ x$(TAG) =~ xv ]] || [ -z $(TAG) ]; then >&2 echo "Please pass TAG \
 flag when you call make, and use something like 0.0.3, not v0.0.3"; false; else \
 gsed -i 's/version=.*/version=\"$(TAG)\",/' setup.py || \
@@ -234,10 +225,7 @@ git commit -sm "setup.py: v$(TAG)" && (git tag -s "v$(TAG)" || true) && git push
 fi
 	$(PY) setup.py sdist bdist_wheel
 	$(PY) -m twine upload dist/*
-.PHONY: update_code
-update_code: ## update_code
-	#-git stash;
-	git pull
+
 .PHONY: install_dep_seg
 install_dep_seg: ## install_dep_seg
 	bash -c '(test -z "$$($(PY) -m albumentations 2>&1 | grep direct)" && $(PY) -m pip install -U git+https://github.com/albu/albumentations) & \
@@ -331,7 +319,7 @@ mbd_interactive: multilang_bert_data.sh ## mbd_interactive
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
 
 .PHONY: dd
-dd: kaggle ## dd
+dd: kaggle ## Download datasets.
 	@ eval "$$write_dataset_list_script"
 	-mkdir -p /kaggle/input
 	(cmp_name="jigsaw-multilingual-toxic-comment-classification"; \
@@ -340,7 +328,7 @@ cd /kaggle/input/$$cmp_name; unzip '*.zip') &
 	sed 's/"\(.*\)".*/\1/' .datasets | xargs -I{} bash -xc 'folder=$$(echo {} | sed "s/.*\///"); kaggle datasets download --unzip -p /kaggle/input/$${folder} {}' &
 
 .PHONY: ddj
-ddj: ## ddj
+ddj: ## Download datasets of jigsaw.
 	(cmp_name="jigsaw-unintended-bias-in-toxicity-classification"; \
 kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name; \
 cd /kaggle/input/$$cmp_name; unzip '*.zip') &
@@ -351,7 +339,7 @@ vim: ## vim
 	-apt install vim -y && $(PY) -m pip install pyvim neovim jedi && yes | vim -u ~/.vimrc_back +PlugInstall +qa
 
 .PHONY: kaggle
-kaggle: /root/.kaggle/kaggle.json ## kaggle
+kaggle: /root/.kaggle/kaggle.json ## Copy Kaggle authentication.
 	-@ xclip ~/.kaggle/kaggle.json -selection clipboard
 
 .PHONY: update_sh_ipynb
@@ -363,7 +351,7 @@ dmetadata: kaggle  ## dmetadata
 	[ -d datas ] || (mkdir datas; kaggle datasets metadata -p datas/ k1gaggle/ml-bert-for-toxic-classfication-trained)
 
 .PHONY: push_dataset
-push_dataset: dmetadata ## push_dataset
+push_dataset: dmetadata ## Push dataset.
 	-cp datas/dm.json datas/dm-metadata.json
 	-ls *.bin | grep -v "last" | xargs -I{} mv {} datas/
 	-cp node_submissions/* log.txt /kaggle/submission.csv datas
@@ -525,7 +513,7 @@ sync_result: ## sync_result
 	while true; do git commit -asm "Good game" --no-edit; git pull; git push; sleep 10; done
 
 .PHONY: d
-d: ## d
+d: ## Git diff.
 	git diff; git diff --cached
 
 .PHONY: install_template
