@@ -5,6 +5,10 @@ export PATH := /nix/store/3ycgq0lva60yc2bw4qshmlsaqn0g90x4-nodejs-14.2.0/bin:$(H
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
+PY_SRC := src/ tests/ scripts/
+CI ?= false
+TESTING ?= false
+
 JUPYTER_PARAMS := --NotebookApp.token=greatday --NotebookApp.notebook_dir=/content/ --NotebookApp.allow_origin=* --NotebookApp.disable_check_xsrf=True --NotebookApp.iopub_data_rate_limit=10010000000 --NotebookApp.open_browser=False --allow-root
 TOXIC_DEP := coverage ipdb pyicu pycld2 polyglot textstat googletrans transformers==2.5.1 pandarallel catalyst==20.4.2 colorama parse pysnooper ripdb pytest-logger python_logging_rabbitmq
 
@@ -53,7 +57,7 @@ export SERVER
 export CHECK_PORT
 
 URL="https://www.kaggleusercontent.com/kf/33961266/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..b3ZzhVJx_c1vhjL3vVc5Ow.4i-Vpk1-bF9zCZJP7LHiuSY44ljoCyKbD7rLcvDSUuViAHL3Xw_Idb3gkMIGhqY6kLN9GX2VzGdxAv9qqOJGXYc7EUeljbX6dvjdssk5Iuhwl4kxz-TIsWYaxqONbMGBQX9rT-nIJYmpjV8UKle7DlX1UYFJKhLYyuckV1B5ZEGHkRjdzwasPlhc8IJkX83RfLhe7C6T0pR8oFU-gmvtQxSvKzXprbYvPQVRMyBf4xD8Bm9xvEq8aFVIiwHGROwvIcorUhZ3cHsCXRSE6RDm7f1rmbA_52xetuCEB2de1_tg-XZ7FoBx6_QaQHXnZWWRhZ1Edyzt5LlakbQI55Ncq3RBByr84QnJmAc9yJORqorQrtEWuAXCrHbYTiKR39i4sm2mkcvIhdgqYuHh8E7ZMXt7MiYr4W6Na233NBRPzY4l15DXqV5ZXp_m-th1ljwxUK8AvNTo0Qs3PNd0bvezFQew10jrMR-N-Z8ZFqtX--Ba8BbMFex6_jJxhN6JXFOXPwCJUWhrZ1yYNE3iqpavJkOM06Vkx6UEOhNbawmPrDtzF4vXViCdHbfUTcpd2qvmXgVlTg7cULSw4MzGdN-Uqbp6-MnpvGIFrRVOVooRE5u8zhrbRcZL4RApjr9SrIEPm1WSp7Qlj8wjktBL4K1bNKn4NE9-AFtOu_0X-lL0Afav41RxxhqQyL_Ox3o3YI8Y.hz022ycDLUciahf-YOeEDw/inceptionresnetv2-520b38e4.pth" ## URL="https
-PY=python3
+PY=poetry run python3
 SRC=$(wildcard */**.py)
 SHELL=/bin/bash
 
@@ -187,10 +191,24 @@ test_coor: update_code $(SRC) ## test_coor
 	$(PY) -m pytest -k "test_generate_runner" tests/test_coord.py; cd .runners/intercept-resnet-384/ && $(PY) main.py
 
 .PHONY: clean
-clean: ## clean
+clean: _clean ## clean
 	#-bash -c 'currentPpid=$$(pstree -spa $$$$ | $(SED) -n "2,3 p" |  cut -d"," -f 2 | cut -d" " -f 1); pgrep -f "rvs.sh" | sort | grep -v -e $$(echo $$currentPpid | $(SED) "s/\s\{1,\}/ -e /" ) -e $$$$ | xargs -I{} kill -9 {}'
 	-ps aux | grep "ncat .*lp" | grep -v "while" | grep -v "50001" | grep -v "grep" | tee /dev/tty | awk '{print $$2} ' | xargs -I{} kill -9 {}
 	-rm -rf __pycache__ mylogs dist/* build/*
+
+_clean:  ## Delete temporary files.
+	-@rm -rf build 2>/dev/null
+	-@rm -rf .coverage* 2>/dev/null
+	-@rm -rf dist 2>/dev/null
+	-@rm -rf .mypy_cache 2>/dev/null
+	-@rm -rf pip-wheel-metadata 2>/dev/null
+	-@rm -rf .pytest_cache 2>/dev/null
+	-@rm -rf src/*.egg-info 2>/dev/null
+	-@rm -rf src/mkdocstrings/__pycache__ 2>/dev/null
+	-@rm -rf scripts/__pycache__ 2>/dev/null
+	-@rm -rf site 2>/dev/null
+	-@rm -rf tests/__pycache__ 2>/dev/null
+	-@find . -name "*.rej" -delete 2>/dev/null
 
 
 .PHONY: submit
@@ -584,3 +602,84 @@ ide: ## ide
 .PHONY: help
 help:  ## Print this help. ## help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
+
+.PHONY: setup
+setup:  ## Setup the development environment (install dependencies).
+	@if ! $(CI); then \
+		if ! command -v poetry &>/dev/null; then \
+		  if ! command -v pipx &>/dev/null; then \
+			  pip install --user pipx; \
+			fi; \
+		  pipx install poetry; \
+		fi; \
+	fi; \
+	poetry install -v
+
+.PHONY: check_all
+check_all: check-docs check-code-quality check-types check-dependencies  ## Check it all!
+
+.PHONY: check-code-quality
+check-code-quality:  ## Check the code quality.
+	@poetry run failprint -t "Checking code quality" -- flake8 --config=config/flake8.ini $(PY_SRC)
+
+.PHONY: check-dependencies
+check-dependencies:  ## Check for vulnerabilities in dependencies.
+	@SAFETY=safety; \
+	if ! $(CI); then \
+		if ! command -v $$SAFETY &>/dev/null; then \
+			SAFETY="pipx run safety"; \
+		fi; \
+	fi; \
+	poetry export -f requirements.txt --without-hashes | \
+		poetry run failprint --no-pty -t "Checking dependencies" -- $$SAFETY check --stdin --full-report
+
+.PHONY: check-docs
+check-docs:  ## Check if the documentation builds correctly.
+	@poetry run failprint -t "Building documentation" -- mkdocs build -s
+
+.PHONY: check-types
+check-types:  ## Check that the code is correctly typed.
+	@poetry run failprint -t "Type-checking" -- mypy --config-file config/mypy.ini $(PY_SRC)
+
+.PHONY: changelog
+changelog:  ## Update the changelog in-place with latest commits.
+	@poetry run failprint -t "Updating changelog" -- python scripts/update_changelog.py \
+		C.PHONY: docs
+
+.PHONY: docs
+docs: docs-regen  ## Build the documentation locally.
+	@poetry run mkdocs build
+
+.PHONY: docs-regen
+docs-regen:  ## Regenerate some documentation pages.
+	@poetry run python scripts/regen_docs.py
+
+.PHONY: docs-serve
+docs-serve: docs-regen  ## Serve the documentation (localhost:8000).
+	@poetry run mkdocs serve
+
+.PHONY: docs-deploy
+docs-deploy: docs-regen  ## Deploy the documentation on GitHub pages.
+	@poetry run mkdocs gh-deployHANGELOG.md "<!-- insertion marker -->" "^## \[(?P<version>[^\]]+)"
+
+.PHONY: format
+format:  ## Run formatting tools on the code.
+	@poetry run failprint -t "Formatting code" -- black $(PY_SRC)
+	@poetry run failprint -t "Ordering imports" -- isort -y -rc $(PY_SRC)
+
+.PHONY: release
+release:  ## Create a new release (commit, tag, push, build, publish, deploy docs).
+ifndef v
+	$(error Pass the new version with 'make release v=0.0.0')
+endif
+	@poetry run failprint -t "Bumping version" -- poetry version $(v)
+	@poetry run failprint -t "Staging files" -- git add pyproject.toml CHANGELOG.md
+	@poetry run failprint -t "Committing changes" -- git commit -m "chore: Prepare release $(v)"
+	@poetry run failprint -t "Tagging commit" -- git tag v$(v)
+	@poetry run failprint -t "Building dist/wheel" -- poetry build
+	-@if ! $(CI) && ! $(TESTING); then \
+		poetry run failprint -t "Pushing commits" -- git push; \
+		poetry run failprint -t "Pushing tags" -- git push --tags; \
+		poetry run failprint -t "Publishing version" -- poetry publish; \
+		poetry run failprint -t "Deploying docs" -- poetry run mkdocs gh-deploy; \
+	fi
