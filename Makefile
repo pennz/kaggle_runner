@@ -304,7 +304,9 @@ check: ## check
 	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT) | ncat $(SERVER) $(CHECK_PORT)
 	-expect -h
 	pstree -laps $$$$
-	-@echo "$$(which $(PY)) is our $(PY) executable"; if [[ x$$(which $(PY)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
+	-poetry run echo "$$(which python3) is our python executable"; \
+$(PY) -c 'import sys; print(sys.path);'; \
+if [[ x$$(which $(PY)) =~ conda ]]; then echo conda env fine; else echo >&2 conda env not set correctly, please check.; source ~/.bashrc; conda activate pyt; fi
 	@$(PY) -c 'import os; print("$@: DEBUG=%s" % os.environ.get("DEBUG"));' 2>&1
 	@$(PY) -c 'import kaggle_runner' || ( >&2 echo "kaggle_runner CANNOT be imported."; $(PY) -m pip install -e . && $(PY) -c 'import kaggle_runner')
 	-@$(PY) -c 'from kaggle_runner.utils import AMQPURL, logger' 2>&1
@@ -632,7 +634,7 @@ check-types:  ## Check that the code is correctly typed.
 .PHONY: changelog
 changelog:  ## Update the changelog in-place with latest commits.
 	@poetry run failprint -t "Updating changelog" -- python scripts/update_changelog.py \
-		C.PHONY: docs
+		CHANGELOG.md "<!-- insertion marker -->" "^## \[(?P<version>[^\]]+)"
 
 .PHONY: docs
 docs: docs-regen  ## Build the documentation locally.

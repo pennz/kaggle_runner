@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "kaggle_runner"
-version = "0.12.1"
+version = "0.1.8"
 description = "Automatic documentation from sources, for MkDocs."
 authors = ["pennz <pengyuzhou.work@gmail.com>"]
 license = "MIT License"
