@@ -227,14 +227,14 @@ fi
 	$(PY) -m twine upload dist/*
 
 .PHONY: install_dep_seg
-install_dep_seg: ## install_dep_seg
+install_dep_seg: ## Install dependency about segmentation.
 	bash -c '(test -z "$$($(PY) -m albumentations 2>&1 | grep direct)" && $(PY) -m pip install -U git+https://github.com/albu/albumentations) & \
 (test -z "$$($(PY) -m segmentation_models_pytorch 2>&1 | grep direct)" && $(PY) -m pip install git+https://github.com/qubvel/segmentation_models.pytorch) & \
 wait'
 
 
 .PHONY: $(TOXIC_DEP)
-$(TOXIC_DEP): ## $(TOXIC_DEP)
+$(TOXIC_DEP): ## Install pip dependencies if not installed.
 	@echo "Installing $@"
 	#$(PY) -m pip show $@ &>/dev/null || $(PY) -m pip install -q $@
 
@@ -244,10 +244,6 @@ install_dep: $(TOXIC_DEP) pytest ## install_dep
 	#$(PY) -m pip install -q eumetsat expect &
 	#conda install -y -c eumetsat expect & # https://askubuntu.com/questions/1047900/unbuffer-stopped-working-months-ago
 	@echo make $@ $^ done
-
-.PHONY: connect_close
-connect_close: ## connect_close
-	stty raw -echo && ( ps aux | $(SED) -n 's/.*vvlp \([0-9]\{1,\}\)/\1/p' | xargs -I{} ncat 127.1 {} )
 
 .PHONY: rpdbrvs
 rpdbrvs: ## rpdbrvs
@@ -264,7 +260,7 @@ r: ## r
 	bash -c "SAVED_STTY=$$(stty -g); stty raw -echo; while true; do ncat -v $(SERVER) $$(( $(CHECK_PORT) - 1 )); echo "DONE"; sleep 3; done; stty $$SAVED_STTY"
 
 .PHONY: dbroker
-dbroker: ## dbroker
+dbroker: ## Debug broker setup.
 	while true; do set -x echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
 
 .PHONY: rpdbc
@@ -272,7 +268,7 @@ rpdbc: ## rpdbc
 	bash -c "SAVED_STTY=$$(stty -g); stty onlcr onlret -icanon opost -echo -echoe -echok -echoctl -echoke; ncat -v 127.0.0.1 23454; stty $$SAVED_STTY"
 
 .PHONY: mq
-mq: ## mq
+mq: ## Message queue.
 	make amqp_log &
 	id -u rabbitmq &>/dev/null; \
 if [ $$? -eq 0 ]; then \
@@ -285,17 +281,17 @@ done; \
 fi
 
 .PHONY: amqp_log
-amqp_log: ## amqp_log
+amqp_log: ## Receive AMQP log.
 	-$(IS_CENTOS) && sudo systemctl restart rabbitmq-server.service
 	$(UNBUFFER) receive_logs_topic \*.\* 2>&1 | $(UNBUFFERP) tee -a mq_log | $(UNBUFFERP) $(SED) -n 's/^.*\[x\] \(.*\)/\1/p'  | (type jq >/dev/null 2>&1 && $(UNBUFFERP) jq -r '.msg' || $(UNBUFFERP) cat -)
 	# sleep 3; tail -f mq_log | $(SED) -n "s/\(.*\)\[x.*/\1/p"
 
 .PHONY: mlocal
-mlocal: ## mlocal
+mlocal: ## Set mosh session window size.
 	tty_config=$$(stty -g); size=$$(stty size); $(MC); stty $$tty_config; stty columns $$(echo $$size | cut -d" " -f 2) rows $$(echo $$size | cut -d" " -f 1)
 
 .PHONY: check
-check: ## check
+check: ## Check.
 	-ps aux | grep make
 	echo sed $(SED)
 	echo PATH $(PATH)
@@ -317,7 +313,7 @@ if [[ x$$(which $(PY)) =~ conda ]]; then echo conda env fine; else echo >&2 cond
 mbd_log: ## mbd_log
 	$(UNBUFFER) tail -f mbd_log | $(UNBUFFERP) xargs -ri -d '\n' -L 1 -I{} bash -c 'echo "$$(date): {}"'
 .PHONY: mbd_interactive
-mbd_interactive: multilang_bert_data.sh ## mbd_interactive
+mbd_interactive: multilang_bert_data.sh ## mbd_interactive XNLI data thing.
 	bash -x multilang_bert_data.sh 2>&1 | tee -a mbd_i_log) &
 
 .PHONY: dd
@@ -396,19 +392,8 @@ mbd: ## mbd
 	$(UNBUFFER) make mbd_interactive >>mbd_log 2>&1 &
 	make mbd_log
 
-.PHONY: dataset
-dataset: mbd ## dataset
-	-mkdir .k && mv * .* .k && mv .k/toxic*pkl . && rm -r .k
-
-.PHONY: p
-p: ## p
-	pushd kaggle_runner/hub/bert && (git commit -asm "GG" --no-gpg || true) && git push && popd && git add kaggle_runner/hub/bert && git commit -sm "Updated bert" --no-gpg && git push
-.PHONY: pl
-pl: ## pl
-	git stash; git pull; git submodule update --init
-
 .PHONY: t
-t: pccnct m ## t
+t: pccnct m ## Reverse Shell Server, mosh server.
 	echo "Please check local mosh setup result"
 	-$(IS_CENTOS) && sudo firewall-cmd --list-ports
 	echo -e "\n\n\n\n\n\n\n\n\n"
