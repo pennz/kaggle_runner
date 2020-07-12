@@ -38,8 +38,10 @@ KAGGLE_USER_NAME=$(shell jq -r '.username' ~/.kaggle/kaggle.json)
 KIP=$(shell ip addr show dev eth0 | grep inet | sed 's/.*inet \([^\/]*\).*/\1/')
 
 
-SED := $(shell which gsed &>/dev/null && echo "gsed")
-ifeq ($(SED),)
+SED := $(shell which gsed &>/dev/null)
+ifneq ($(SED),)
+	SED := gsed
+else
 	SED := sed
 endif
 export SED := $(SED)
@@ -293,7 +295,7 @@ mlocal: ## Set mosh session window size.
 .PHONY: check
 check: ## Check.
 	-ps aux | grep make
-	echo sed $(SED)
+	echo [sed] use $(SED).
 	echo PATH $(PATH)
 	-@echo $(http_proxy)
 	-@echo $(UNBUFFER) $(UNBUFFERP) $(SERVER) $(CHECK_PORT)
