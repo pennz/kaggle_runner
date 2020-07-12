@@ -430,10 +430,10 @@ distclean: clean ## distclean
 	-find . -name "*.pyc" -print0 | xargs --null -I{} rm "{}"
 
 .PHONY: ks
-ks: ## ks
+ks: ## List kernel sessions.
 	curl -sSLG $(KIP):9000/api/sessions
 
-.PHONY: push_code
+.PHONY: Git push.
 push_code: ## push_code
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .gitmodules
 	-sed -i 's/https:\/\/\([^\/]*\)\//git@\1:/' .git/config
@@ -451,7 +451,7 @@ kaggle competitions download -p /kaggle/input/$$cmp_name $$cmp_name && \
 cd /kaggle/input/$$cmp_name && unzip '*.zip') &
 
 .PHONY: install_gitbook
-install_gitbook: ## install_gitbook
+install_gitbook: ## Setup gitbook.
 	type gitbook &>/dev/null || ( \
 curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh && \
 sh nodesource_setup.sh && ( \
@@ -466,7 +466,7 @@ setup_pip: ## setup_pip
 	python3 -m pip || apt update && apt install -y python3-pip python3-venv
 
 .PHONY: pydoc
-pydoc: setup_pip install_gitbook kr ## pydoc
+pydoc: setup_pip install_gitbook kr ## Set up pydoc and generate gitbook documentation.
 	-apt install -y python3-pip
 	$(PY) -m pip install pipx
 	-apt-get install -y python3-venv || yum install -y python3-venv
@@ -528,7 +528,7 @@ $(PY) pytorch-xla-env-setup.py --apt-packages libomp5 libopenblas-dev; \
 $(PY) -m pip install *.whl; )
 
 .PHONY: kr
-kr: ## kr
+kr: ## Download and install kaggle_runner.
 	ssh-keyscan github.com >> githubKey
 	ssh-keygen -lf githubKey
 	mkdir -p ~/.ssh
