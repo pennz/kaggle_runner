@@ -463,7 +463,7 @@ gitbook fetch 3.2.3 ; ) ) # fetch final stable version and add any requested plu
 
 .PHONY: setup_pip
 setup_pip: ## setup_pip
-	python3 -m pip || apt update && apt install -y python3-pip
+	python3 -m pip || apt update && apt install -y python3-pip python3-venv
 
 .PHONY: pydoc
 pydoc: setup_pip install_gitbook kr ## pydoc
