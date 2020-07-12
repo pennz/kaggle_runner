@@ -51,9 +51,9 @@ run:
 pages:
   stage: deploy
   script:
-    - make pydoc
+    - make docs
   artifacts:
     paths:
-      - public
+      - docs
   only:
     - master
