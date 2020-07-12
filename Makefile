@@ -582,7 +582,7 @@ help:  ## Print this help. ## help
 
 .PHONY: setup
 setup:  ## Setup the development environment (install dependencies).
-	@if ! $(CI); then \
+	@if true; then \
 		if ! which poetry &>/dev/null; then \
 		  if ! which pipx &>/dev/null; then \
 			  pip install --user pipx; \
