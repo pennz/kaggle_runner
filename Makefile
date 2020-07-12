@@ -581,11 +581,11 @@ help:  ## Print this help. ## help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
 
 .PHONY: setup
-setup:  ## Setup the development environment (install dependencies).
+setup:  setup_pip ## Setup the development environment (install dependencies).
 	@if true; then \
 		if ! which poetry &>/dev/null; then \
 		  if ! which pipx &>/dev/null; then \
-			  pip install --user pipx; \
+			  python3 -m pip install --user pipx; \
 			fi; \
 		  pipx install poetry; \
 		fi; \
