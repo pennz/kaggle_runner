@@ -54,6 +54,6 @@ pages:
     - make docs
   artifacts:
     paths:
-      - docs
+      - site
   only:
     - master

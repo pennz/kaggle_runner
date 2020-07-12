@@ -32,6 +32,7 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`kaggle`](https://github.com/Kaggle/kaggle-api) |
 [`mkdocs`](https://www.mkdocs.org) |
 [`mkdocs-material`](https://squidfunk.github.io/mkdocs-material/) |
+[`mkdocstrings`](https://github.com/pawamoy/mkdocstrings) |
 [`mypy`](http://www.mypy-lang.org/) |
 [`parse`](https://github.com/r1chardj0n3s/parse) |
 [`pymdown-extensions`](https://github.com/facelessuser/pymdown-extensions) |
