@@ -29,7 +29,7 @@ EOF
 endef
 export write_dataset_list_script = $(value _write_dataset_list)
 
-UNBUFFER := $(shell command -v unbuffer)
+UNBUFFER := $(shell which unbuffer)
 ifneq ($(UNBUFFER),)
 	UNBUFFERP := $(UNBUFFER) -p
 endif
@@ -596,8 +596,8 @@ help:  ## Print this help. ## help
 .PHONY: setup
 setup:  ## Setup the development environment (install dependencies).
 	@if ! $(CI); then \
-		if ! command -v poetry &>/dev/null; then \
-		  if ! command -v pipx &>/dev/null; then \
+		if ! which poetry &>/dev/null; then \
+		  if ! which pipx &>/dev/null; then \
 			  pip install --user pipx; \
 			fi; \
 		  pipx install poetry; \
@@ -616,7 +616,7 @@ check-code-quality:  ## Check the code quality.
 check-dependencies:  ## Check for vulnerabilities in dependencies.
 	@SAFETY=safety; \
 	if ! $(CI); then \
-		if ! command -v $$SAFETY &>/dev/null; then \
+		if ! which $$SAFETY &>/dev/null; then \
 			SAFETY="pipx run safety"; \
 		fi; \
 	fi; \
