@@ -474,8 +474,9 @@ pydoc: setup_pip install_gitbook kr ## pydoc
 	$(PY) -m pip install pydoc-markdown
 	pipx ensurepath
 	pipx install mkdocs
-	$$(head -n1 $$(which pydoc-markdown)  | sed 's/#!//') -m pip install -e .
+	#$$(head -n1 $$(which pydoc-markdown)  | sed 's/#!//') -m pip install -e .
 	#$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install tensorflow
+	$(PY) -m pip install -e .
 	bash bin/document_thing
 	-@rm kaggle_runner.md
 	book sm -i node_modules
