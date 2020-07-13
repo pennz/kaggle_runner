@@ -92,7 +92,7 @@ train_dataset = None
 test_dataset = None
 valid_dataset = None
 
-if LOAD_BERT_DATA:
+if False:
     data_package = get_kaggle_dataset_input(
         "jigsaw-multilingula-toxicity-token-encoded/toxic_fast_tok_512.pk")
     try:
