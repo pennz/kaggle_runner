@@ -29,7 +29,6 @@ parse = "^1.15."
 python_logging_rabbitmq = "^2.0"
 colorama = "^0.4.3"
 kaggle = ">=1.5"
-sklearn = "^0.23.1"
 
 [tool.poetry.dev-dependencies]
 bandit = "^1.5"
