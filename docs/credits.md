@@ -43,6 +43,7 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`python_logging_rabbitmq`]() |
 [`pytkdocs`](https://github.com/pawamoy/pytkdocs) |
 [`requests`](https://requests.readthedocs.io) |
+[`sklearn`](https://pypi.python.org/pypi/scikit-learn/) |
 [`slug`](http://www.zikzakmedia.com) |
 [`toml`](https://github.com/uiri/toml)
 
