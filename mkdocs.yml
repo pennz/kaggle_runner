@@ -1,0 +1,36 @@
+site_name: kaggle runner
+site_description: "Run kaggle kernels, for fast model prototyping."
+site_url: "https://mrcue.gitlab.io/kaggle_runner"
+repo_url: "https://github.com/pennz/kaggle_runner"
+repo_name: "pennz/kaggle_runner"
+
+nav:
+  - Overview: index.md
+
+theme:
+  name: material
+
+extra_css:
+  - css/mkdocstrings.css
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - pymdownx.emoji
+  - pymdownx.tabbed
+  - toc:
+      permalink: "¤"
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          setup_commands:
+            - import sys
+            - sys.path.append("docs")
+      watch:
+        - src/mkdocstrings
