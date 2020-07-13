@@ -6,6 +6,54 @@ repo_name: "pennz/kaggle_runner"
 
 nav:
   - Overview: index.md
+  - Credits: credits.md
+  - kaggle_runner:
+    - callbacks: kaggle_runner/callbacks.md
+    - data_providers: kaggle_runner/data_providers.md
+    - datasets:
+      - bert.py: kaggle_runner/datasets/bert.md
+      - coders.py: kaggle_runner/datasets/coders.md
+      - data_handlers.py: kaggle_runner/datasets/data_handlers.md
+      - data_prepare.py: kaggle_runner/datasets/data_prepare.md
+      - jigsaw_toxic_data.py: kaggle_runner/datasets/jigsaw_toxic_data.md
+      - mock_dataset.py: kaggle_runner/datasets/mock_dataset.md
+      - siim_dataset.py: kaggle_runner/datasets/siim_dataset.md
+      - transfomers.py: kaggle_runner/datasets/transfomers.md
+    - defaults: kaggle_runner/defaults.md
+    - kernels:
+      - KernelRunningState.py: kaggle_runner/kernels/KernelRunningState.md
+      - PSKernel.py: kaggle_runner/kernels/PSKernel.md
+      - Shonenkov.py: kaggle_runner/kernels/Shonenkov.md
+      - bert.py: kaggle_runner/kernels/bert.md
+      - bert_torch.py: kaggle_runner/kernels/bert_torch.md
+      - fastai_kernel.py: kaggle_runner/kernels/fastai_kernel.md
+      - kernel.py: kaggle_runner/kernels/kernel.md
+      - pytorchKernel.py: kaggle_runner/kernels/pytorchKernel.md
+    - logs: kaggle_runner/logs.md
+    - losses: kaggle_runner/losses.md
+    - metrics:
+      - meters.py: kaggle_runner/metrics/meters.md
+      - metrics.py: kaggle_runner/metrics/metrics.md
+    - modules:
+      - ToxicSimpleNNModel.py: kaggle_runner/modules/ToxicSimpleNNModel.md
+      - attention.py: kaggle_runner/modules/attention.md
+    - optimizers: kaggle_runner/optimizers.md
+    - plots: kaggle_runner/plots.md
+    - post_processers: kaggle_runner/post_processers.md
+    - predictors: kaggle_runner/predictors.md
+    - runner_template:
+      - main.py: kaggle_runner/runner_template/main.md
+    - runners:
+      - coordinator.py: kaggle_runner/runners/coordinator.md
+      - runner.py: kaggle_runner/runners/runner.md
+      - tpu_trainer.py: kaggle_runner/runners/tpu_trainer.md
+      - trainer.py: kaggle_runner/runners/trainer.md
+    - utils:
+      - kernel_utils.py: kaggle_runner/utils/kernel_utils.md
+      - tpu.py: kaggle_runner/utils/tpu.md
+      - utils.py: kaggle_runner/utils/utils.md
+      - visualizer.py: kaggle_runner/utils/visualizer.md
+      - wrapper.py: kaggle_runner/utils/wrapper.md
 
 theme:
   name: material
@@ -33,4 +81,4 @@ plugins:
             - import sys
             - sys.path.append("docs")
       watch:
-        - src/mkdocstrings
+        - kaggle_runner

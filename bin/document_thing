@@ -1,9 +1,35 @@
 #!/bin/bash
-save_md() {
-	m_name=$(echo $1 | sed -e 's/\//./g' -e 's/\.py$//')
-	md_name=$(echo $1 | sed 's/\.py$/.md/')
-	pydoc-markdown -m $m_name > $md_name
+
+mkdocs_flag=0
+echo $#
+
+if [ $# -gt 0 ]; then
+    echo Generate for mkdocstrings
+    mkdocs_flag=1
+fi
+
+export mkdocs_flag
+
+mkfile() {
+    mkdir -p $(dirname "$1") && touch "$1"
 }
+export -f mkfile
+
+save_md() {
+    m_name=$(echo $1 | sed -e 's/\//./g' -e 's/\.py$//')
+    md_name=$(echo $1 | sed 's/\.py$/.md/')
+
+    if [ $mkdocs_flag -eq 1 ]; then
+        #echo $m_name $md_name
+        # need to put to doc files, e.g. docs/xxx/xxx.md , content: ::: mkdocstrings.handlers.python
+        md_name="docs/"$md_name
+        mkfile $md_name
+        echo "::: $m_name" >$md_name
+    else
+        pydoc-markdown -m $m_name >$md_name
+    fi
+}
+
 export -f save_md
-find kaggle_runner -type d | grep -v "__" | xargs -I{} bash -c "echo >&2 [x] {}:; echo {}" | xargs -I{} bash -xc "find {} -type f -name \"*.py\" | grep -v __ " | xargs -I{} bash -xc "save_md {} &" 
+find kaggle_runner -type d | grep -v "__" | xargs -I{} bash -c "echo >&2 [x] {}:; echo {}" | xargs -I{} bash -c "find {} -type f -name \"*.py\" | grep -v __ " | xargs -I{} bash -c "save_md {} &"
 wait

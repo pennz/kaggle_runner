@@ -629,8 +629,13 @@ docs: docs-regen  ## Build the documentation locally.
 	@poetry run mkdocs build
 
 .PHONY: docs-regen
+docs-py-md-gen:
+	@poetry run
+
+.PHONY: docs-regen
 docs-regen:  ## Regenerate some documentation pages.
 	@poetry run python scripts/regen_docs.py
+	bin/document_thing 1
 
 .PHONY: docs-serve
 docs-serve: docs-regen  ## Serve the documentation (localhost:8000).
