@@ -27,7 +27,6 @@ before_script:
     #- source venv/bin/activate
     #- make kr
     #- make install_dep
-  - make setup
 
 test:
   stage: test
@@ -51,6 +50,7 @@ run:
 pages:
   stage: deploy
   script:
+    - make setup
     - make docs
   artifacts:
     paths:
