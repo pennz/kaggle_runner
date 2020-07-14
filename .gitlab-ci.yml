@@ -21,6 +21,7 @@ cache:
     - venv/
 
 before_script:
+  - date
   - python3 -V  # Print out python version for debugging
     #- python3 -m pip install virtualenv
     #- virtualenv venv
