@@ -633,6 +633,8 @@ docs: docs-regen  ## Build the documentation locally.
 .PHONY: docs-py-md-gen
 docs-py-md-gen:
 	@poetry run bin/document_thing 1
+	rm docs/kaggle_runner/runner_template/main.md
+	rm docs/kaggle_runner/runners/tpu_trainer.md
 
 .PHONY: docs-regen
 docs-regen: docs-py-md-gen ## Regenerate some documentation pages.

@@ -41,8 +41,6 @@ nav:
     - plots: kaggle_runner/plots.md
     - post_processers: kaggle_runner/post_processers.md
     - predictors: kaggle_runner/predictors.md
-    - runner_template:
-      - main.py: kaggle_runner/runner_template/main.md
     - runners:
       - coordinator.py: kaggle_runner/runners/coordinator.md
       - runner.py: kaggle_runner/runners/runner.md
