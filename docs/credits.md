@@ -54,9 +54,9 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`atomicwrites`](https://github.com/untitaker/python-atomicwrites) |
 [`attrs`](https://www.attrs.org/) |
 [`backcall`](https://github.com/takluyver/backcall) |
-[`certifi`](https://certifiio.readthedocs.io/en/latest/) |
+[`certifi`](https://certifi.io/) |
 [`chardet`](https://github.com/chardet/chardet) |
-[`Click`](https://palletsprojects.com/p/click/) |
+[`click`](https://palletsprojects.com/p/click/) |
 [`decorator`](https://github.com/micheles/decorator) |
 [`execnet`](https://execnet.readthedocs.io/en/latest/) |
 [`flake8-polyfill`](https://gitlab.com/pycqa/flake8-polyfill) |
@@ -67,7 +67,7 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`importlib-metadata`](http://importlib-metadata.readthedocs.io/) |
 [`ipython-genutils`](http://ipython.org) |
 [`jedi`](https://github.com/davidhalter/jedi) |
-[`Jinja2`](https://palletsprojects.com/p/jinja/) |
+[`Jinja2`](http://jinja.pocoo.org/) |
 [`joblib`](https://joblib.readthedocs.io) |
 [`livereload`](https://github.com/lepture/python-livereload) |
 [`lunr`](https://github.com/yeraydiazdiaz/lunr.py) |

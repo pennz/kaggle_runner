@@ -588,7 +588,7 @@ setup:  setup_pip ## Setup the development environment (install dependencies).
 		  if ! which pipx &>/dev/null; then \
 			  python3 -m pip install --user pipx; \
 			fi; \
-		  pipx install poetry; \
+		  python3 -m pipx install poetry; \
 		fi; \
 	fi; \
 	poetry install -v
@@ -630,12 +630,12 @@ docs: docs-regen  ## Build the documentation locally.
 	#@poetry run mkdocs build
 	$(PY) -m mkdocs build -d public
 
-.PHONY: docs-regen
+.PHONY: docs-py-md-gen
 docs-py-md-gen:
 	@poetry run bin/document_thing 1
 
 .PHONY: docs-regen
-docs-regen:  ## Regenerate some documentation pages.
+docs-regen: docs-py-md-gen ## Regenerate some documentation pages.
 	@poetry run python scripts/regen_docs.py
 
 .PHONY: docs-serve
