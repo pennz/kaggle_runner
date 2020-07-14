@@ -628,7 +628,7 @@ changelog:  ## Update the changelog in-place with latest commits.
 docs: docs-regen  ## Build the documentation locally.
 	$(PY) -m show mkdocs &>/dev/null || $(PY) -m pip install mkdocs mkdocs-material mkdocstrings
 	#@poetry run mkdocs build
-	$(PY) -m mkdocs build
+	$(PY) -m mkdocs build -d public
 
 .PHONY: docs-regen
 docs-py-md-gen:
