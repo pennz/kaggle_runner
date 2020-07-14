@@ -41,6 +41,7 @@ run:
   script:
     - apt update && apt install -y python-setuptools & apt install -y python-setuptools || true
     - apt install -y python3-setuptools & apt install -y python-setuptools || true
+    - python3 -m pip install -U pip setuptools 
     - python3 setup.py bdist_wheel
     # an alternative approach is to install and run:
     - python3 -m pip install dist/*
