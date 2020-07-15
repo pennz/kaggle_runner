@@ -20,6 +20,11 @@ class KernelGroup:
     """
 
     def __init__(self, kernels):
+        """__init__.
+
+        Args:
+            kernels: List of kernels whose results will be analyse together.
+        """
         self.kernels = kernels
 
 class KaggleKernel(metaclass=ABCMeta):
@@ -47,6 +52,11 @@ class KaggleKernel(metaclass=ABCMeta):
 
     """
     def __init__(self, logger=None):
+        """__init__.
+
+        Args:
+            logger:
+        """
         self.submit_run = False
         self.num_epochs = 8
         self.device = None
@@ -77,12 +87,29 @@ class KaggleKernel(metaclass=ABCMeta):
         self.dependency.append(dep)
 
     def install_dependency(self, dep):
+        """install_dependency.
+
+        Args:
+            dep:
+        """
         self._add_dependency(dep)
 
     def _add_logger_handler(self, handler):
+        """_add_logger_handler.
+
+        Args:
+            handler:
+        """
         self.logger.addHandler(handler)
 
     def set_logger(self, name, level=logging.DEBUG, handler=None):
+        """set_logger.
+
+        Args:
+            name:
+            level:
+            handler:
+        """
         FORMAT = "[%(levelname)s]%(asctime)s:%(name)s:%(message)s"
         logging.basicConfig(format=FORMAT)
         logger = logging.getLogger(name)
@@ -93,6 +120,8 @@ class KaggleKernel(metaclass=ABCMeta):
         self.logger = logger
 
     def set_random_seed(self):
+        """set_random_seed.
+        """
         pass
 
     def set_data_size(self):
@@ -100,22 +129,37 @@ class KaggleKernel(metaclass=ABCMeta):
         pass
 
     def save_model(self):
+        """save_model.
+        """
         pass
 
     def load_model_weight(self):
+        """load_model_weight.
+        """
         pass
 
     @abstractmethod
     def build_and_set_model(self):
+        """build_and_set_model.
+        """
         pass
 
     def train_model(self):
+        """train_model.
+        """
         pass
 
     def set_model(self):
+        """set_model.
+        """
         pass
 
     def set_loss(self, loss_func):
+        """set_loss.
+
+        Args:
+            loss_func:
+        """
         pass
 
     def set_metrics(self, metrics):
@@ -126,28 +170,50 @@ class KaggleKernel(metaclass=ABCMeta):
         """
 
     def set_result_analyzer(self):
+        """set_result_analyzer.
+        """
         pass
 
     def pre_prepare_data_hook(self):
+        """pre_prepare_data_hook.
+        """
         pass
 
     def after_prepare_data_hook(self):
+        """after_prepare_data_hook.
+        """
         pass
 
     def prepare_train_dev_data(self):
+        """prepare_train_dev_data.
+        """
         pass
 
     def prepare_test_data(self, data_config=None):
+        """prepare_test_data.
+
+        Args:
+            data_config:
+        """
         pass
 
     @abstractmethod
     def peek_data(self):
+        """peek_data.
+        """
         pass
 
     def predict_on_test(self):
+        """predict_on_test.
+        """
         pass
 
     def dump_state(self, exec_flag=False):
+        """dump_state.
+
+        Args:
+            exec_flag:
+        """
         self.logger.debug("state %s" % self._stage)
 
         if exec_flag:
@@ -179,6 +245,13 @@ class KaggleKernel(metaclass=ABCMeta):
         end_stage=KernelRunningState.SAVE_SUBMISSION_DONE,
         dump_flag=False,
     ):
+        """continue_run.
+
+        Args:
+            start_stage:
+            end_stage:
+            dump_flag:
+        """
         self.set_random_seed()
         self.logger.debug(
             "%s -> %s", start_stage, end_stage,
@@ -258,6 +331,11 @@ class KaggleKernel(metaclass=ABCMeta):
         return self
 
     def load_state_data_only(self, file_name="run_state.pkl"):
+        """load_state_data_only.
+
+        Args:
+            file_name:
+        """
         pass
 
     @classmethod
@@ -271,15 +349,23 @@ class KaggleKernel(metaclass=ABCMeta):
         self.continue_run()
 
     def pre_train(self):
+        """pre_train.
+        """
         pass
 
     def after_train(self):
+        """after_train.
+        """
         pass
 
     def pre_submit(self):
+        """pre_submit.
+        """
         pass
 
     def submit(self):
+        """submit.
+        """
         pass
 
     def after_submit(self):
@@ -287,32 +373,54 @@ class KaggleKernel(metaclass=ABCMeta):
         pass
 
     def pre_test(self):
+        """pre_test.
+        """
         pass
 
     def after_test(self):
+        """after_test.
+        """
         pass
 
     def save_result(self):
+        """save_result.
+        """
         pass
 
     def plot_train_result(self):
+        """plot_train_result.
+        """
         pass
 
     def plot_test_result(self):
+        """plot_test_result.
+        """
         pass
 
     def analyze_data(self):
+        """analyze_data.
+        """
         pass
 
     @abstractmethod
     def check_predict_details(self):
+        """check_predict_details.
+        """
         pass
 
 from kaggle_runner import logger
 
 class KaggleKernelOnlyPredict(KaggleKernel):
+    """KaggleKernelOnlyPredict.
+    """
+
 
     def __init__(self, model_path):
+        """__init__.
+
+        Args:
+            model_path:
+        """
         super(KaggleKernelOnlyPredict, self).__init__(logger=logger)
         self.only_predict = True
 
@@ -322,21 +430,34 @@ class KaggleKernelOnlyPredict(KaggleKernel):
         pass
 
     def prepare_train_dev_data(self):
+        """prepare_train_dev_data.
+        """
         pass
 
     @abstractmethod
     def prepare_test_data(self, data_config=None):
+        """prepare_test_data.
+
+        Args:
+            data_config:
+        """
         pass
 
     @abstractmethod
     def check_predict_details(self):
+        """check_predict_details.
+        """
         pass
 
     def peek_data(self):
+        """peek_data.
+        """
         pass
 
 
 def test_init_only_predict():
+    """test_init_only_predict.
+    """
     k = KaggleKernelOnlyPredict()
     assert k is not None
     assert k.model is not None

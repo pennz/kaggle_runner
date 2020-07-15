@@ -21,7 +21,11 @@ import numpy as np
 def seed_everything(seed):
     """seed_everything.
 
-    :param seed: number to generate pseudo random states
+    Args:
+      seed: number to generate pseudo random states
+
+    Returns:
+
     """
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
@@ -45,9 +49,13 @@ def get_train_transforms():
 def get_synthesic_transforms(supliment_toxic, p=0.5, mix=False):
     """get_synthesic_transforms.
 
-    :param supliment_toxic: extra toxic data which will be used in synthesizing data
-    :param p: probability
-    :param mix: flag for mixing more data with toxic (it does not work with balanced sampler, too many toxic data)
+    Args:
+      supliment_toxic: extra toxic data which will be used in synthesizing data
+      p: probability (Default value = 0.5)
+      mix: flag for mixing more data with toxic (it does not work with balanced sampler, too many toxic data) (Default value = False)
+
+    Returns:
+
     """
 
     return SynthesicOpenSubtitlesTransform(p=p, supliment_toxic=supliment_toxic, mix=mix)
@@ -56,7 +64,11 @@ ROOT_PATH = '/kaggle'
 def get_pickled_data(file_path):
     """get_pickled_data from current folder or kaggle data input folder.
 
-    :param file_path:
+    Args:
+      file_path:
+
+    Returns:
+
     """
     obj = get_obj_or_dump(file_path)
 
@@ -245,8 +257,12 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
     def forward(self, input_ids, attention_masks):
         """forward.
 
-        :param input_ids:
-        :param attention_masks:
+        Args:
+          input_ids: param attention_masks:
+          attention_masks:
+
+        Returns:
+
         """
         bs, seq_length = input_ids.shape
         seq_x, _ = self.backbone(
@@ -373,7 +389,7 @@ class ShonenkovChangeInner(Shonenkov):
 
 import torch
 class DummyTrainGlobalConfig:
-    """ Global Config for this notebook """
+    """Global Config for this notebook"""
     num_workers = 0  # количество воркеров для loaders
     batch_size = 16  # bs , 8 for GPU, 16 for TPU
     n_epochs = 2  # количество эпох для обучения
