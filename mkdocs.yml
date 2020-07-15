@@ -7,8 +7,8 @@ repo_name: "pennz/kaggle_runner"
 nav:
   - Overview: index.md
   - APIs:
-    - callbacks: kaggle_runner/callbacks.md
-    - data_providers: kaggle_runner/data_providers.md
+    - callbacks.py: kaggle_runner/callbacks.md
+    - data_providers.py: kaggle_runner/data_providers.md
     - datasets:
       - bert.py: kaggle_runner/datasets/bert.md
       - coders.py: kaggle_runner/datasets/coders.md
@@ -18,7 +18,7 @@ nav:
       - mock_dataset.py: kaggle_runner/datasets/mock_dataset.md
       - siim_dataset.py: kaggle_runner/datasets/siim_dataset.md
       - transfomers.py: kaggle_runner/datasets/transfomers.md
-    - defaults: kaggle_runner/defaults.md
+    - defaults.py: kaggle_runner/defaults.md
     - kernels:
       - KernelRunningState.py: kaggle_runner/kernels/KernelRunningState.md
       - PSKernel.py: kaggle_runner/kernels/PSKernel.md
@@ -28,18 +28,18 @@ nav:
       - fastai_kernel.py: kaggle_runner/kernels/fastai_kernel.md
       - kernel.py: kaggle_runner/kernels/kernel.md
       - pytorchKernel.py: kaggle_runner/kernels/pytorchKernel.md
-    - logs: kaggle_runner/logs.md
-    - losses: kaggle_runner/losses.md
+    - logs.py: kaggle_runner/logs.md
+    - losses.py: kaggle_runner/losses.md
     - metrics:
       - meters.py: kaggle_runner/metrics/meters.md
       - metrics.py: kaggle_runner/metrics/metrics.md
     - modules:
       - ToxicSimpleNNModel.py: kaggle_runner/modules/ToxicSimpleNNModel.md
       - attention.py: kaggle_runner/modules/attention.md
-    - optimizers: kaggle_runner/optimizers.md
-    - plots: kaggle_runner/plots.md
-    - post_processers: kaggle_runner/post_processers.md
-    - predictors: kaggle_runner/predictors.md
+    - optimizers.py: kaggle_runner/optimizers.md
+    - plots.py: kaggle_runner/plots.md
+    - post_processers.py: kaggle_runner/post_processers.md
+    - predictors.py: kaggle_runner/predictors.md
     - runners:
       - coordinator.py: kaggle_runner/runners/coordinator.md
       - runner.py: kaggle_runner/runners/runner.md
@@ -51,7 +51,7 @@ nav:
       - utils.py: kaggle_runner/utils/utils.md
       - visualizer.py: kaggle_runner/utils/visualizer.md
       - wrapper.py: kaggle_runner/utils/wrapper.md
-  - Credits: credits.md
+  - Credits.py: credits.md
   - Changelog: changelog.md
   - License: license.md
 
