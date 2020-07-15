@@ -6,7 +6,7 @@ repo_name: "pennz/kaggle_runner"
 
 nav:
   - Overview: index.md
-  - kaggle_runner:
+  - APIs:
     - callbacks: kaggle_runner/callbacks.md
     - data_providers: kaggle_runner/data_providers.md
     - datasets:
