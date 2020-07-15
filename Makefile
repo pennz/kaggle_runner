@@ -551,6 +551,7 @@ sed -i 's/git@.*:/https:\/\/github.com\//' .gitmodules; \
 git submodule update --init;); \
 $(PY) -m pip show kaggle_runner || $(PY) -m pip install -e .;
 	touch hub/custom_fastai_callbacks/__init__.py
+	python3 -m pip show kaggle_runner || python3 -m pip install -e .;
 
 .PHONY: entry
 entry: kr ## entry
@@ -634,7 +635,7 @@ changelog:  ## Update the changelog in-place with latest commits.
 		CHANGELOG.md "<!-- insertion marker -->" "^## \[(?P<version>[^\]]+)"
 
 .PHONY: docs
-docs: docs-regen ## Build the documentation locally.
+docs: docs-regen kr ## Build the documentation locally.
 	#$(PY) -m show mkdocs &>/dev/null || $(PY) -m pip install mkdocs mkdocs-material mkdocstrings
 	python3 -m pip install mkdocs mkdocs-material mkdocstrings
 	#@poetry run mkdocs build
