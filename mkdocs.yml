@@ -51,7 +51,7 @@ nav:
       - utils.py: kaggle_runner/utils/utils.md
       - visualizer.py: kaggle_runner/utils/visualizer.md
       - wrapper.py: kaggle_runner/utils/wrapper.md
-  - Credits.py: credits.md
+  - Credits: credits.md
   - Changelog: changelog.md
   - License: license.md
 
