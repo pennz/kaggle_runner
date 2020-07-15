@@ -32,7 +32,18 @@ def run_length_encode(component):
 
 
 def compute_ious(pred, label, classes, ignore_index=255, only_present=True):
-    """computes iou for one ground truth mask and predicted mask"""
+    """computes iou for one ground truth mask and predicted mask
+
+    Args:
+      pred: 
+      label: 
+      classes: 
+      ignore_index:  (Default value = 255)
+      only_present:  (Default value = True)
+
+    Returns:
+
+    """
     pred[label == ignore_index] = 0
     ious = []
     for c in classes:
@@ -49,7 +60,16 @@ def compute_ious(pred, label, classes, ignore_index=255, only_present=True):
 
 
 def compute_iou_batch(outputs, labels, classes=None):
-    """computes mean iou for a batch of ground truth masks and predicted masks"""
+    """computes mean iou for a batch of ground truth masks and predicted masks
+
+    Args:
+      outputs: 
+      labels: 
+      classes:  (Default value = None)
+
+    Returns:
+
+    """
     ious = []
     preds = np.copy(outputs)  # copy is imp
     labels = np.array(labels)  # tensor to np

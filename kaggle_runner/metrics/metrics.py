@@ -36,7 +36,17 @@ def matthews_correlation(y_true, y_pred):
 
 
 def metric(probability, truth, threshold=0.5, reduction="none"):
-    """Calculates dice of positive and negative images seperately"""
+    """Calculates dice of positive and negative images seperately
+
+    Args:
+      probability: 
+      truth: 
+      threshold:  (Default value = 0.5)
+      reduction:  (Default value = "none")
+
+    Returns:
+
+    """
     """probability and truth must be torch tensors"""
     batch_size = len(truth)
     with torch.no_grad():
@@ -89,14 +99,13 @@ def binary_sensitivity_np(y_pred, y_true):
 def binary_sensitivity(y_pred, y_true):
     """Compute the confusion matrix for a set of predictions.
 
-    Parameters
-    ----------
-    y_pred   : predicted values for a batch if samples (must be binary: 0 or 1)
-    y_true   : correct values for the set of samples used (must be binary: 0 or 1)
+    Args:
+      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)): 
+      y_true(correct values for the set of samples used (must be binary: 0 or 1)): 
 
-    Returns
-    -------
-    out : the specificity
+    Returns:
+
+    
     """
     threshold = 0.5
     TP = np.logical_and(K.eval(y_true) == 1, K.eval(y_pred) <= threshold)
@@ -114,14 +123,13 @@ def binary_sensitivity(y_pred, y_true):
 def binary_specificity(y_pred, y_true):
     """Compute the confusion matrix for a set of predictions.
 
-    Parameters
-    ----------
-    y_pred   : predicted values for a batch if samples (must be binary: 0 or 1)
-    y_true   : correct values for the set of samples used (must be binary: 0 or 1)
+    Args:
+      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)): 
+      y_true(correct values for the set of samples used (must be binary: 0 or 1)): 
 
-    Returns
-    -------
-    out : the specificity
+    Returns:
+
+    
     """
 
     threshold = 0.5
@@ -138,15 +146,20 @@ def binary_specificity(y_pred, y_true):
 
 
 def binary_auc_probability(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1e-12):
-    """
-    refer to this: https://blog.revolutionanalytics.com/2016/11/calculating-auc.html
-
+    """refer to this: https://blog.revolutionanalytics.com/2016/11/calculating-auc.html
+    
     The probabilistic interpretation is that if you randomly choose a positive case and a negative case, the probability that the positive case outranks the negative case according to the classifier is given by the AUC. This is evident from the figure, where the total area of the plot is normalized to one, the cells of the matrix enumerate all possible combinations of positive and negative cases, and the fraction under the curve comprises the cells where the positive case outranks the negative one.
 
-    :param y_true:
-    :param y_pred:
-    :param threshold:
-    :return: accuracy, f1 for this batch... not the global one, we need to be careful!!
+    Args:
+      y_true: param y_pred:
+      threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)
+      y_pred: 
+      N_MORE:  (Default value = True)
+      epsilon:  (Default value = 1e-12)
+
+    Returns:
+      accuracy, f1 for this batch... not the global one, we need to be careful!!
+
     """
 
     # labels: y_true, scores: y_pred, N the size of sample
@@ -180,22 +193,27 @@ def binary_auc_probability(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1
     # return m
 
 def bin_prd_clsf_info_neg(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1e-7):
-    """
-    refer to this: https://stats.stackexchange.com/questions/49579/balanced-accuracy-vs-f-1-score
-
+    """refer to this: https://stats.stackexchange.com/questions/49579/balanced-accuracy-vs-f-1-score
+    
     Both F1 and b_acc are metrics for classifier evaluation, that (to some extent) handle class imbalance. Depending
      of which of the two classes (N or P) outnumbers the other, each metric is outperforms the other.
-
+    
     1) If N >> P, f1 is a better.
-
+    
     2) If P >> N, b_acc is better.
-
+    
     For code: refer to this: https://www.kaggle.com/c/quora-insincere-questions-classification/discussion/70841
 
-    :param y_true:
-    :param y_pred:
-    :param threshold:
-    :return: accuracy, f1 for this batch... not the global one, we need to be careful!!
+    Args:
+      y_true: param y_pred:
+      threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)
+      y_pred: 
+      N_MORE:  (Default value = True)
+      epsilon:  (Default value = 1e-7)
+
+    Returns:
+      accuracy, f1 for this batch... not the global one, we need to be careful!!
+
     """
     # if FOCAL_LOSS_GAMMA == 2.0:
     #    threshold = 0.57
@@ -233,22 +251,27 @@ def bin_prd_clsf_info_neg(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1e
     return (pred_false_cnt - false_cnt) / false_cnt  # (batchsize 1024)
 
 def bin_prd_clsf_info_pos(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1e-7):
-    """
-    refer to this: https://stats.stackexchange.com/questions/49579/balanced-accuracy-vs-f-1-score
-
+    """refer to this: https://stats.stackexchange.com/questions/49579/balanced-accuracy-vs-f-1-score
+    
     Both F1 and b_acc are metrics for classifier evaluation, that (to some extent) handle class imbalance. Depending
      of which of the two classes (N or P) outnumbers the other, each metric is outperforms the other.
-
+    
     1) If N >> P, f1 is a better.
-
+    
     2) If P >> N, b_acc is better.
-
+    
     For code: refer to this: https://www.kaggle.com/c/quora-insincere-questions-classification/discussion/70841
 
-    :param y_true:
-    :param y_pred:
-    :param threshold:
-    :return: accuracy, f1 for this batch... not the global one, we need to be careful!!
+    Args:
+      y_true: param y_pred:
+      threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)
+      y_pred: 
+      N_MORE:  (Default value = True)
+      epsilon:  (Default value = 1e-7)
+
+    Returns:
+      accuracy, f1 for this batch... not the global one, we need to be careful!!
+
     """
     # if FOCAL_LOSS_GAMMA == 2.0:
     #    threshold = 0.57

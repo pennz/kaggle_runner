@@ -10,12 +10,13 @@ from kaggle_runner.utils import kernel_utils
 
 class KernelGroup:
     """Kernel Group to try different combination of kernels hyperparameter
-
+    
     Follow this example:
     https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
-    Attributes:
-        kernels (list): List of kernels whose results will be analyse together.
+    Args:
+
+    Returns:
 
     """
 
@@ -28,29 +29,7 @@ class KernelGroup:
         self.kernels = kernels
 
 class KaggleKernel(metaclass=ABCMeta):
-    """Kernel for kaggle competitions/researchs
-
-    Attributes:
-        _stage
-        model_metrics
-        data_loader
-        optimizer
-        model
-        train_X
-        developing
-        submit_run
-        test_X
-        model_loss
-        num_epochs
-        device
-        result_analyzer
-        logger
-        dependency
-        dev_X
-        train_Y
-        dev_Y
-
-    """
+    """Kernel for kaggle competitions/researchs"""
     def __init__(self, logger=None):
         """__init__.
 
@@ -83,6 +62,12 @@ class KaggleKernel(metaclass=ABCMeta):
 
     def _add_dependency(self, dep):
         """_add_dependency just install pip dependency now
+
+        Args:
+          dep: 
+
+        Returns:
+
         """
         self.dependency.append(dep)
 
@@ -90,7 +75,10 @@ class KaggleKernel(metaclass=ABCMeta):
         """install_dependency.
 
         Args:
-            dep:
+          dep: 
+
+        Returns:
+
         """
         self._add_dependency(dep)
 
@@ -98,7 +86,10 @@ class KaggleKernel(metaclass=ABCMeta):
         """_add_logger_handler.
 
         Args:
-            handler:
+          handler: 
+
+        Returns:
+
         """
         self.logger.addHandler(handler)
 
@@ -106,9 +97,12 @@ class KaggleKernel(metaclass=ABCMeta):
         """set_logger.
 
         Args:
-            name:
-            level:
-            handler:
+          name: 
+          level:  (Default value = logging.DEBUG)
+          handler:  (Default value = None)
+
+        Returns:
+
         """
         FORMAT = "[%(levelname)s]%(asctime)s:%(name)s:%(message)s"
         logging.basicConfig(format=FORMAT)
@@ -120,8 +114,7 @@ class KaggleKernel(metaclass=ABCMeta):
         self.logger = logger
 
     def set_random_seed(self):
-        """set_random_seed.
-        """
+        """set_random_seed."""
         pass
 
     def set_data_size(self):
@@ -129,90 +122,93 @@ class KaggleKernel(metaclass=ABCMeta):
         pass
 
     def save_model(self):
-        """save_model.
-        """
+        """save_model."""
         pass
 
     def load_model_weight(self):
-        """load_model_weight.
-        """
+        """load_model_weight."""
         pass
 
     @abstractmethod
     def build_and_set_model(self):
-        """build_and_set_model.
-        """
+        """build_and_set_model."""
         pass
 
     def train_model(self):
-        """train_model.
-        """
+        """train_model."""
         pass
 
     def set_model(self):
-        """set_model.
-        """
+        """set_model."""
         pass
 
     def set_loss(self, loss_func):
         """set_loss.
 
         Args:
-            loss_func:
+          loss_func: 
+
+        Returns:
+
         """
         pass
 
     def set_metrics(self, metrics):
-        """
-        set_metrics for model training
-
+        """set_metrics for model training
+        
         :return: None
+
+        Args:
+          metrics: 
+
+        Returns:
+
         """
 
     def set_result_analyzer(self):
-        """set_result_analyzer.
-        """
+        """set_result_analyzer."""
         pass
 
     def pre_prepare_data_hook(self):
-        """pre_prepare_data_hook.
-        """
+        """pre_prepare_data_hook."""
         pass
 
     def after_prepare_data_hook(self):
-        """after_prepare_data_hook.
-        """
+        """after_prepare_data_hook."""
         pass
 
     def prepare_train_dev_data(self):
-        """prepare_train_dev_data.
-        """
+        """prepare_train_dev_data."""
         pass
 
     def prepare_test_data(self, data_config=None):
         """prepare_test_data.
 
         Args:
-            data_config:
+          data_config:  (Default value = None)
+
+        Returns:
+
         """
         pass
 
     @abstractmethod
     def peek_data(self):
-        """peek_data.
-        """
+        """peek_data."""
         pass
 
     def predict_on_test(self):
-        """predict_on_test.
-        """
+        """predict_on_test."""
         pass
 
     def dump_state(self, exec_flag=False):
         """dump_state.
 
         Args:
-            exec_flag:
+          exec_flag:  (Default value = False)
+
+        Returns:
+
         """
         self.logger.debug("state %s" % self._stage)
 
@@ -230,10 +226,13 @@ class KaggleKernel(metaclass=ABCMeta):
     ):
         """
 
-        :param start_stage: if set, will overwrite the stage
-        :param end_stage:
-        :param dump_flag:
-        :return:
+        Args:
+          start_stage: if set, will overwrite the stage (Default value = None)
+          end_stage: param dump_flag: (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)
+          dump_flag:  (Default value = False)
+
+        Returns:
+
         """
         self.continue_run(
             start_stage=start_stage, end_stage=end_stage, dump_flag=dump_flag
@@ -248,9 +247,12 @@ class KaggleKernel(metaclass=ABCMeta):
         """continue_run.
 
         Args:
-            start_stage:
-            end_stage:
-            dump_flag:
+          start_stage:  (Default value = None)
+          end_stage:  (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)
+          dump_flag:  (Default value = False)
+
+        Returns:
+
         """
         self.set_random_seed()
         self.logger.debug(
@@ -315,8 +317,14 @@ class KaggleKernel(metaclass=ABCMeta):
     def _load_state(cls, stage=None, file_name="run_state.pkl", logger=None):
         """
 
-        :param file_name:
-        :return: the kernel object, need to continue
+        Args:
+          file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")
+          stage:  (Default value = None)
+          logger:  (Default value = None)
+
+        Returns:
+          the kernel object, need to continue
+
         """
 
         if stage is not None:
@@ -334,7 +342,10 @@ class KaggleKernel(metaclass=ABCMeta):
         """load_state_data_only.
 
         Args:
-            file_name:
+          file_name:  (Default value = "run_state.pkl")
+
+        Returns:
+
         """
         pass
 
@@ -342,30 +353,31 @@ class KaggleKernel(metaclass=ABCMeta):
     def load_state_continue_run(cls, file_name="run_state.pkl", logger=None):
         """
 
-        :param file_name:
-        :return: the kernel object, need to continue
+        Args:
+          file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")
+          logger:  (Default value = None)
+
+        Returns:
+          the kernel object, need to continue
+
         """
         self = cls._load_state(file_name=file_name, logger=logger)
         self.continue_run()
 
     def pre_train(self):
-        """pre_train.
-        """
+        """pre_train."""
         pass
 
     def after_train(self):
-        """after_train.
-        """
+        """after_train."""
         pass
 
     def pre_submit(self):
-        """pre_submit.
-        """
+        """pre_submit."""
         pass
 
     def submit(self):
-        """submit.
-        """
+        """submit."""
         pass
 
     def after_submit(self):
@@ -373,46 +385,38 @@ class KaggleKernel(metaclass=ABCMeta):
         pass
 
     def pre_test(self):
-        """pre_test.
-        """
+        """pre_test."""
         pass
 
     def after_test(self):
-        """after_test.
-        """
+        """after_test."""
         pass
 
     def save_result(self):
-        """save_result.
-        """
+        """save_result."""
         pass
 
     def plot_train_result(self):
-        """plot_train_result.
-        """
+        """plot_train_result."""
         pass
 
     def plot_test_result(self):
-        """plot_test_result.
-        """
+        """plot_test_result."""
         pass
 
     def analyze_data(self):
-        """analyze_data.
-        """
+        """analyze_data."""
         pass
 
     @abstractmethod
     def check_predict_details(self):
-        """check_predict_details.
-        """
+        """check_predict_details."""
         pass
 
 from kaggle_runner import logger
 
 class KaggleKernelOnlyPredict(KaggleKernel):
-    """KaggleKernelOnlyPredict.
-    """
+    """KaggleKernelOnlyPredict."""
 
 
     def __init__(self, model_path):
@@ -430,8 +434,7 @@ class KaggleKernelOnlyPredict(KaggleKernel):
         pass
 
     def prepare_train_dev_data(self):
-        """prepare_train_dev_data.
-        """
+        """prepare_train_dev_data."""
         pass
 
     @abstractmethod
@@ -439,25 +442,25 @@ class KaggleKernelOnlyPredict(KaggleKernel):
         """prepare_test_data.
 
         Args:
-            data_config:
+          data_config:  (Default value = None)
+
+        Returns:
+
         """
         pass
 
     @abstractmethod
     def check_predict_details(self):
-        """check_predict_details.
-        """
+        """check_predict_details."""
         pass
 
     def peek_data(self):
-        """peek_data.
-        """
+        """peek_data."""
         pass
 
 
 def test_init_only_predict():
-    """test_init_only_predict.
-    """
+    """test_init_only_predict."""
     k = KaggleKernelOnlyPredict()
     assert k is not None
     assert k.model is not None

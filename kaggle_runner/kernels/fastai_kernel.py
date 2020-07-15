@@ -17,8 +17,7 @@ from .. import logger, may_debug
 
 
 class FastAIKernel(KaggleKernel):
-    """fast.ai thing
-    """
+    """fast.ai thing"""
     def build_and_set_model(self):
         self.model = None
 
@@ -71,7 +70,20 @@ class FastAIKernel(KaggleKernel):
 
     @classmethod
     def create_learner(cls, k=None, data=None, model=None, opt_func=None, loss_func=None, metrics=None, **kargs):
-        """opt_func should pass seprately"""
+        """opt_func should pass seprately
+
+        Args:
+          k:  (Default value = None)
+          data:  (Default value = None)
+          model:  (Default value = None)
+          opt_func:  (Default value = None)
+          loss_func:  (Default value = None)
+          metrics:  (Default value = None)
+          **kargs: 
+
+        Returns:
+
+        """
 
         if k is not None:
             data = k.data if hasattr(

@@ -11,10 +11,19 @@ from .defaults import (ALPHA, FOCAL_LOSS_BETA_NEG_POS, FOCAL_LOSS_GAMMA,
 
 def toxic_custom_mimic_loss(predictions, labels, subgroups, power=5.0,
                             score_function=F.binary_cross_entropy_with_logits):
-    """
-    Just reference this
-
+    """Just reference this
+    
     https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/103280
+
+    Args:
+      predictions: 
+      labels: 
+      subgroups: 
+      power:  (Default value = 5.0)
+      score_function:  (Default value = F.binary_cross_entropy_with_logits)
+
+    Returns:
+
     """
 
     subgroup_positive_mask = subgroups & (labels.unsqueeze(-1) >= 0.5)
@@ -92,10 +101,18 @@ def binary_crossentropy_with_focal_seasoned(
     custom_weights_in_y_true=True,
 ):
     """
-    :param alpha:weight for positive classes **loss**. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
-        for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
-    :param custom_weights_in_y_true:
-    :return:
+
+    Args:
+      alpha: weight for positive classes **loss**. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
+    for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
+      custom_weights_in_y_true: return: (Default value = True)
+      y_true: 
+      logit_pred: 
+      beta:  (Default value = FOCAL_LOSS_BETA_NEG_POS)
+      gamma:  (Default value = FOCAL_LOSS_GAMMA_NEG_POS)
+
+    Returns:
+
     """
     balanced = gamma * logit_pred + beta
     y_pred = math_ops.sigmoid(balanced)
@@ -113,19 +130,22 @@ def binary_crossentropy_with_focal_seasoned(
 def binary_crossentropy_with_focal(
     y_true, y_pred, gamma=FOCAL_LOSS_GAMMA, alpha=ALPHA, custom_weights_in_y_true=True
 ):
-    """
-    https://arxiv.org/pdf/1708.02002.pdf
-
+    """https://arxiv.org/pdf/1708.02002.pdf
+    
     $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
     $$ p_t=p\: if\: y=1$$
     $$ p_t=1-p\: otherwise$$
 
-    :param y_true:
-    :param y_pred:
-    :param gamma: make easier ones weights down
-    :param alpha: weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
-        for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
-    :return:
+    Args:
+      y_true: param y_pred:
+      gamma: make easier ones weights down (Default value = FOCAL_LOSS_GAMMA)
+      alpha: weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
+    for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
+      y_pred: 
+      custom_weights_in_y_true:  (Default value = True)
+
+    Returns:
+
     """
     # assert 0 <= alpha <= 1 and gamma >= 0
     # hyper parameters, just use the one for binary?

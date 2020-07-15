@@ -12,7 +12,14 @@ from kaggle_runner.utils.kernel_utils import logger, rle2mask
 
 
 def _bytes_feature(value):
-    """Returns a bytes_list from a string / byte."""
+    """Returns a bytes_list from a string / byte.
+
+    Args:
+      value: 
+
+    Returns:
+
+    """
     if isinstance(value, type(tf.constant(0))):
         value = value.numpy()
         # BytesList won't unpack a string from an EagerTensor.
@@ -20,17 +27,38 @@ def _bytes_feature(value):
 
 
 def _float_feature(value):
-    """Returns a float_list from a float / double."""
+    """Returns a float_list from a float / double.
+
+    Args:
+      value: 
+
+    Returns:
+
+    """
     return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
 
 
 def _int64_feature(value):
-    """Returns an int64_list from a bool / enum / int / uint."""
+    """Returns an int64_list from a bool / enum / int / uint.
+
+    Args:
+      value: 
+
+    Returns:
+
+    """
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
 
 def _int64_feature_from_list(value):
-    """Returns an int64_list from a bool / enum / int / uint."""
+    """Returns an int64_list from a bool / enum / int / uint.
+
+    Args:
+      value: 
+
+    Returns:
+
+    """
     return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
 
 
@@ -122,7 +150,18 @@ class PS_TF_DataHandler:
 
     @staticmethod
     def load_data(train_path, test_path):
-        """Returns the iris dataset as (train_x, train_y), (test_x, test_y)."""
+        """Returns the iris dataset as (train_x, train_y), (test_x, test_y).
+
+        Args:
+          train_X_np: 
+          train_Y_np):  # join(dataset_dir: 
+          'labels.csv')image_ds:  (Default value = tf.data.Dataset.from_tensor_slices(train_X_np)image_mask_ds = tf.data.Dataset.from_tensor_slices(train_Y_np)return tf.data.Dataset.zip((image_ds)
+          image_mask_ds))@staticmethodload_data(train_path: 
+          test_path: 
+
+        Returns:
+
+        """
         # train_path, test_path = maybe_download()
         # here the test is really no lable we need to do CV in train part
         train_X = pickle.load(open(train_path, "rb"))  # (None, 2048)
@@ -286,7 +325,19 @@ class PS_TF_DataHandler:
     @staticmethod
     # for these, we will need to extract all the points before:
     def train_input_fn(features, labels, batch_size, split_id=-1, n_splits=10, cv=True):
-        """An input function for training"""
+        """An input function for training
+
+        Args:
+          features: 
+          labels: 
+          batch_size: 
+          split_id:  (Default value = -1)
+          n_splits:  (Default value = 10)
+          cv:  (Default value = True)
+
+        Returns:
+
+        """
         # read from the tfrecord file (save the extracted ones)(read the data)
         ds = tf.data.Dataset.from_tensor_slices((features, labels))
         if cv:
@@ -318,7 +369,18 @@ class PS_TF_DataHandler:
 
     @staticmethod
     def eval_input_fn(features, labels, batch_size, split_id, n_splits=10):
-        """An input function for evaluation or prediction"""
+        """An input function for evaluation or prediction
+
+        Args:
+          features: 
+          labels: 
+          batch_size: 
+          split_id: 
+          n_splits:  (Default value = 10)
+
+        Returns:
+
+        """
         assert split_id >= 0 and n_splits > 1 and split_id < n_splits
         if labels is None:
             # No labels, use only features.
@@ -338,7 +400,15 @@ class PS_TF_DataHandler:
 
     @staticmethod
     def predict_input_fn(features, batch_size):
-        """An input function for evaluation or prediction"""
+        """An input function for evaluation or prediction
+
+        Args:
+          features: 
+          batch_size: 
+
+        Returns:
+
+        """
         inputs = features
 
         # Convert the inputs to a Dataset.
@@ -381,9 +451,15 @@ class PS_TF_DataHandler:
 
     @staticmethod
     def serialize_PS_example(feature0, feature1):
-        """
-        NOT WORKING... don't know why
+        """NOT WORKING... don't know why
         Creates a tf.Example message ready to be written to a file.
+
+        Args:
+          feature0: 
+          feature1: 
+
+        Returns:
+
         """
         # Create a dictionary mapping the feature name to the
         # tf.Example-compatible data type.

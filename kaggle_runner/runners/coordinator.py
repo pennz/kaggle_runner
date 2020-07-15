@@ -423,10 +423,14 @@ class Coordinator:
     def _get_result(self, timeout):
         """_get_result uses the message queue, just use this right after push, listen for
         result, debug local first
-
+        
         use jq change source code to add the log collector.
 
-        :param timeout:
+        Args:
+          timeout: 
+
+        Returns:
+
         """
 
     @staticmethod
@@ -567,7 +571,11 @@ while True:
     def run_local(self, path):
         """run_local only for local test, real kernel runs in kaggle/colab server.
 
-        :param path:
+        Args:
+          path: 
+
+        Returns:
+
         """
 
         return subprocess.run("python " + os.path.join(path, "main.py"), shell=True)
@@ -575,10 +583,14 @@ while True:
     def create_runner(self, config, seed="2020", script=True, from_template=True):
         """create_runner.
 
-        :param config: config will be size and model right now
-        :param seed:
-        :param script:
-        :param from_template:
+        Args:
+          config: config will be size and model right now
+          seed: param script: (Default value = "2020")
+          from_template:  (Default value = True)
+          script:  (Default value = True)
+
+        Returns:
+
         """
         size = config["size"]
         net = config["network"]

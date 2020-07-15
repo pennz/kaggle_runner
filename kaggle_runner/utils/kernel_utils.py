@@ -80,7 +80,16 @@ def get_kaggle_dataset_input(filename):
 
 def get_obj_or_dump(filename, fullpath=False, default=None):
     """get_obj_or_dump will dump default obj to file if file not there, otherwise
-    obj will be unpickled from file. If file not found, default value will returned."""
+    obj will be unpickled from file. If file not found, default value will returned.
+
+    Args:
+      filename: 
+      fullpath:  (Default value = False)
+      default:  (Default value = None)
+
+    Returns:
+
+    """
 
     if not fullpath:
         path = BIN_FOLDER + filename
@@ -113,12 +122,20 @@ def binary_crossentropy_with_focal_seasoned(
     y_true, logit_pred, beta=0.0, gamma=1.0, alpha=0.5, custom_weights_in_Y_true=True
 ):
     """
-    :param alpha:weight for positive classes **loss**. default to 1- true
-        positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
-        for calss -1.   In practiceαmay be set by inverse class freqency or
-        hyperparameter.
-    :param custom_weights_in_Y_true:
-    :return:
+
+    Args:
+      alpha: weight for positive classes **loss**. default to 1- true
+    positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
+    for calss -1.   In practiceαmay be set by inverse class freqency or
+    hyperparameter.
+      custom_weights_in_Y_true: return: (Default value = True)
+      y_true: 
+      logit_pred: 
+      beta:  (Default value = 0.0)
+      gamma:  (Default value = 1.0)
+
+    Returns:
+
     """
     balanced = gamma * logit_pred + beta
     y_pred = math_ops.sigmoid(balanced)
@@ -138,19 +155,25 @@ def binary_crossentropy_with_focal(
     y_true, y_pred, gamma=1.0, alpha=0.5, custom_weights_in_Y_true=True
 ):
     """
-    :param y_true: y_true
-    :param y_pred: y_pred
-    :param gamma: make easier ones weights down
-    :param alpha: weight for positive classes. default to 1 - (true
-        positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha
-        for calss -1.   In practice α may be set by inverse class freqency or
-        hyperparameter.
-    :return: bce
-    Reference: https://arxiv.org/pdf/1708.02002.pdf
 
-    $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
-    $$ p_t=p\: if\: y=1$$
-    $$ p_t=1-p\: otherwise$$
+    Args:
+      y_true: y_true
+      y_pred: y_pred
+      gamma: make easier ones weights down (Default value = 1.0)
+      alpha: weight for positive classes. default to 1 - (true
+    positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha
+    for calss -1.   In practice α may be set by inverse class freqency or
+    hyperparameter.
+      custom_weights_in_Y_true:  (Default value = True)
+
+    Returns:
+      bce
+      Reference: https://arxiv.org/pdf/1708.02002.pdf
+      
+      $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
+      $$ p_t=p\: if\: y=1$$
+      $$ p_t=1-p\: otherwise$$
+
     """
 
     # assert 0 <= alpha <= 1 and gamma >= 0
@@ -288,12 +311,14 @@ def rle2mask(rle, width, height):
 
 
 def all_gather(data):
-    """
-    Run all_gather on arbitrary picklable data (not necessarily tensors)
+    """Run all_gather on arbitrary picklable data (not necessarily tensors)
+
     Args:
-        data: any picklable object
+      data: 
+
     Returns:
-        list[data]: list of data gathered from each rank
+      list[data]: list of data gathered from each rank
+
     """
     world_size = get_world_size()
 
@@ -339,12 +364,16 @@ def all_gather(data):
 
 def reduce_dict(input_dict, average=True):
     """
+
     Args:
-        input_dict (dict): all the values will be reduced
-        average (bool): whether to do average or sum
+      input_dict(dict): all the values will be reduced
+      average(bool, optional): whether to do average or sum
     Reduce the values in the dictionary from all processes so that all
     processes have the averaged results. Returns a dict with the same fields as
-    input_dict, after reduction.
+    input_dict, after reduction. (Default value = True)
+
+    Returns:
+
     """
     world_size = get_world_size()
 
@@ -392,8 +421,13 @@ def mkdir(path):
 
 
 def setup_for_distributed(is_master):
-    """
-    This function disables printing when not in master process
+    """This function disables printing when not in master process
+
+    Args:
+      is_master: 
+
+    Returns:
+
     """
     import builtins as __builtin__
 
@@ -503,10 +537,17 @@ def mask_to_rle(img, width, height):
 
 def online_mean_and_sd(loader, data_map=None):
     """Compute the mean and sd in an online fashion
-
+    
         Var[x] = E[X^2] - E^2[X]
     credit xwkuang5
     @https://discuss.pytorch.org/t/about-normalization-using-pre-trained-vgg16-networks/23560/7
+
+    Args:
+      loader: 
+      data_map:  (Default value = None)
+
+    Returns:
+
     """
     cnt = 0
     # fst_moment = torch.empty(3)

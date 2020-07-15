@@ -28,7 +28,7 @@ LANGS = {
 }
 
 class NLPTransform(BasicTransform):
-    """ Transform for nlp task."""
+    """Transform for nlp task."""
 
     @property
     def targets(self):
@@ -48,7 +48,7 @@ class NLPTransform(BasicTransform):
 
 
 class ShuffleSentencesTransform(NLPTransform):
-    """ Do shuffle by sentence """
+    """Do shuffle by sentence"""
 
     def __init__(self, always_apply=False, p=0.5):
         super(ShuffleSentencesTransform, self).__init__(always_apply, p)
@@ -199,7 +199,7 @@ def clean_text(text, lang='en'):
 
 
 class ExcludeDuplicateSentencesTransform(NLPTransform):
-    """ Exclude equal sentences """
+    """Exclude equal sentences"""
 
     def __init__(self, always_apply=False, p=0.5):
         super(ExcludeDuplicateSentencesTransform,
@@ -221,7 +221,7 @@ class ExcludeDuplicateSentencesTransform(NLPTransform):
 
 
 class ExcludeNumbersTransform(NLPTransform):
-    """ exclude any numbers """
+    """exclude any numbers"""
 
     def __init__(self, always_apply=False, p=0.5):
         super(ExcludeNumbersTransform, self).__init__(always_apply, p)
@@ -237,7 +237,7 @@ class ExcludeNumbersTransform(NLPTransform):
 
 
 class ExcludeHashtagsTransform(NLPTransform):
-    """ Exclude any hashtags with # """
+    """Exclude any hashtags with #"""
 
     def __init__(self, always_apply=False, p=0.5):
         super(ExcludeHashtagsTransform, self).__init__(always_apply, p)
@@ -253,7 +253,7 @@ class ExcludeHashtagsTransform(NLPTransform):
 
 
 class ExcludeUsersMentionedTransform(NLPTransform):
-    """ Exclude @users """
+    """Exclude @users"""
 
     def __init__(self, always_apply=False, p=0.5):
         super(ExcludeUsersMentionedTransform, self).__init__(always_apply, p)
@@ -269,7 +269,7 @@ class ExcludeUsersMentionedTransform(NLPTransform):
 
 
 class ExcludeUrlsTransform(NLPTransform):
-    """ Exclude urls """
+    """Exclude urls"""
 
     def __init__(self, always_apply=False, p=0.5):
         super(ExcludeUrlsTransform, self).__init__(always_apply, p)

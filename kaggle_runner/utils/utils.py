@@ -77,10 +77,15 @@ def log_format(self, record):
     return json.dumps(data)
 
 def attach_data_collector(logger, AMQPURL=AMQPURL()):
-    """
-    Credits: https: // github.com/albertomr86/python-logging-rabbitmq
-
+    """Credits: https: // github.com/albertomr86/python-logging-rabbitmq
+    
     !pip install python_logging_rabbitmq
+
+    Args:
+      logger: 
+      AMQPURL:  (Default value = AMQPURL())
+
+    Returns:
 
     """
 

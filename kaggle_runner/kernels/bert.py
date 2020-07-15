@@ -41,9 +41,15 @@ __model_distilbert = None
 
 
 def _build_distilbert_model_adv(transformer, max_len=512):
-    """
-    _build_distilbert_model_adv just follow the good result and try to replicate
+    """_build_distilbert_model_adv just follow the good result and try to replicate
     https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/103280
+
+    Args:
+      transformer: 
+      max_len:  (Default value = 512)
+
+    Returns:
+
     """
 
     return _build_distilbert_model(transformer, max_len=max_len)

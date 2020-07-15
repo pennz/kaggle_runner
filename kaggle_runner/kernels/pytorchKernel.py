@@ -1002,11 +1002,15 @@ class RoIHeads_loss_customized(roi_heads.RoIHeads):
     # def forward(self, features, proposals, image_shapes, targets=None):
     def forward(self, features, proposals, image_shapes, targets=None):
         """
-        Arguments:
-            features (List[Tensor])
-            proposals (List[Tensor[N, 4]])
-            image_shapes (List[Tuple[H, W]])
-            targets (List[Dict])
+
+        Args:
+          features: List
+          proposals: List
+          image_shapes: List
+          targets: List (Default value = None)
+
+        Returns:
+
         """
         maskrcnn_loss_func = maskrcnn_loss
         fastrcnn_loss_func = fastrcnn_loss
@@ -1123,12 +1127,20 @@ class RoIHeads_loss_customized(roi_heads.RoIHeads):
 
 
 def project_masks_on_boxes(gt_masks, boxes, matched_idxs, M):
-    """
-    Given segmentation masks and the bounding boxes corresponding
+    """Given segmentation masks and the bounding boxes corresponding
     to the location of the masks in the image, this function
     crops and resizes the masks in the position defined by the
     boxes. This prepares the masks for them to be fed to the
     loss computation as the targets.
+
+    Args:
+      gt_masks: 
+      boxes: 
+      matched_idxs: 
+      M: 
+
+    Returns:
+
     """
     matched_idxs = matched_idxs.to(boxes)
     rois = torch.cat([matched_idxs[:, None], boxes], dim=1)
@@ -1140,13 +1152,19 @@ def maskrcnn_loss_focal(
     mask_logits, proposals, gt_masks, gt_labels, mask_matched_idxs, focal_loss_func=None
 ):
     """
-    Arguments:
-        proposals (list[BoxList])
-        mask_logits (Tensor)
-        targets (list[BoxList])
 
-    Return:
-        mask_loss (Tensor): scalar tensor containing the loss
+    Args:
+      proposals: list
+      mask_logits: Tensor
+      targets: list
+      gt_masks: 
+      gt_labels: 
+      mask_matched_idxs: 
+      focal_loss_func:  (Default value = None)
+
+    Returns:
+      mask_loss (Tensor): scalar tensor containing the loss
+
     """
 
     discretization_size = mask_logits.shape[-1]

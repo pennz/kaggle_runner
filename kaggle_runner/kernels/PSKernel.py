@@ -88,13 +88,15 @@ class PS(KaggleKernel):
 
     @staticmethod
     def _PS_data_preprocess(fns, df, tf=False):
-        """
-        for tf=True, need to use TF2.0
+        """for tf=True, need to use TF2.0
 
-        :param fns:
-        :param df:
-        :param tf:
-        :return:
+        Args:
+          fns: param df:
+          tf: return: (Default value = False)
+          df: 
+
+        Returns:
+
         """
         TARGET_COLUMN = " EncodedPixels"
         im_height = 1024

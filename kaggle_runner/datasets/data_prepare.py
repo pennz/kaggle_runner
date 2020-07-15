@@ -227,8 +227,12 @@ def _input_fn_general(
 def _load_embeddings_only_for_fasttext_crawl_avg(path):
     """
 
-    :param path: large embedding file
-    :return: np array of
+    Args:
+      path: large embedding file
+
+    Returns:
+      np array of
+
     """
     with open(path, "r") as f:
         for i, line in enumerate(f):
@@ -286,10 +290,15 @@ class TargetDistAnalyzer:
         self.id_used_in_train = None
 
     def get_distribution(self, target_data):
-        """
-        target_data: pandas series, need to get index, so need series, in the series, values are target (prediction)
-
+        """target_data: pandas series, need to get index, so need series, in the series, values are target (prediction)
+        
         :return: (type, cnt number, frequency, index) pair list for this distribution
+
+        Args:
+          target_data: 
+
+        Returns:
+
         """
         dst = []
 
@@ -312,8 +321,13 @@ class TargetDistAnalyzer:
     def get_err_distribution(self, err_data, val_mask):
         """
 
-        :param err_data: series, contain both target values and error values
-        :return: (type, cnt number, frequency, index) pair list for this distribution
+        Args:
+          err_data: series, contain both target values and error values
+          val_mask: 
+
+        Returns:
+          type, cnt number, frequency, index) pair list for this distribution
+
         """
         dstr = {}
 
@@ -406,13 +420,17 @@ class BiasBenchmark:
 
     @staticmethod
     def compute_subgroup_classify_detail(df, subgroup, label, model_name):
-        """
-        Compute AUC for spefic subgroup
-        :param df: dataframe which contains predictions for all subgroups
-        :param subgroup: compute AUC for this subgroup
-        :param label: target column name
-        :param model_name:
-        :return: just mean/std, for pos, neg, then we just use this information to make shift
+        """Compute AUC for spefic subgroup
+
+        Args:
+          df: dataframe which contains predictions for all subgroups
+          subgroup: compute AUC for this subgroup
+          label: target column name
+          model_name: return: just mean/std, for pos, neg, then we just use this information to make shift
+
+        Returns:
+          just mean/std, for pos, neg, then we just use this information to make shift
+
         """
         subgroup_examples = df[
             df[subgroup]
@@ -432,13 +450,17 @@ class BiasBenchmark:
 
     @staticmethod
     def compute_subgroup_auc(df, subgroup, label, model_name):
-        """
-        Compute AUC for spefic subgroup. AUC only cares about ordering, not threshold
-        :param df: dataframe which contains predictions for all subgroups
-        :param subgroup: compute AUC for this subgroup
-        :param label: target column name
-        :param model_name:
-        :return: auc score
+        """Compute AUC for spefic subgroup. AUC only cares about ordering, not threshold
+
+        Args:
+          df: dataframe which contains predictions for all subgroups
+          subgroup: compute AUC for this subgroup
+          label: target column name
+          model_name: return: auc score
+
+        Returns:
+          auc score
+
         """
         subgroup_examples = df[
             df[subgroup]
@@ -451,7 +473,17 @@ class BiasBenchmark:
 
     @staticmethod
     def compute_bpsn_classify_detail(df, subgroup, label, model_name):
-        """Computes the AUC of the within-subgroup negative examples and the background positive examples."""
+        """Computes the AUC of the within-subgroup negative examples and the background positive examples.
+
+        Args:
+          df: 
+          subgroup: 
+          label: 
+          model_name: 
+
+        Returns:
+
+        """
         subgroup_negative_examples = df[df[subgroup] & ~df[label]]
         non_subgroup_positive_examples = df[
             ~df[subgroup] & df[label]
@@ -467,7 +499,17 @@ class BiasBenchmark:
 
     @staticmethod
     def compute_bpsn_auc(df, subgroup, label, model_name):
-        """Computes the AUC of the within-subgroup negative examples and the background positive examples."""
+        """Computes the AUC of the within-subgroup negative examples and the background positive examples.
+
+        Args:
+          df: 
+          subgroup: 
+          label: 
+          model_name: 
+
+        Returns:
+
+        """
         subgroup_negative_examples = df[df[subgroup] & ~df[label]]
         non_subgroup_positive_examples = df[~df[subgroup] & df[label]]
         examples = subgroup_negative_examples.append(
@@ -477,7 +519,17 @@ class BiasBenchmark:
 
     @staticmethod
     def compute_bnsp_classify_detail(df, subgroup, label, model_name):
-        """Computes the AUC of the within-subgroup positive examples and the background negative examples."""
+        """Computes the AUC of the within-subgroup positive examples and the background negative examples.
+
+        Args:
+          df: 
+          subgroup: 
+          label: 
+          model_name: 
+
+        Returns:
+
+        """
         subgroup_positive_examples = df[df[subgroup] & df[label]]
         non_subgroup_negative_examples = df[~df[subgroup] & ~df[label]]
         examples = subgroup_positive_examples.append(
@@ -489,7 +541,17 @@ class BiasBenchmark:
 
     @staticmethod
     def compute_bnsp_auc(df, subgroup, label, model_name):
-        """Computes the AUC of the within-subgroup positive examples and the background negative examples."""
+        """Computes the AUC of the within-subgroup positive examples and the background negative examples.
+
+        Args:
+          df: 
+          subgroup: 
+          label: 
+          model_name: 
+
+        Returns:
+
+        """
         subgroup_positive_examples = df[df[subgroup] & df[label]]
         non_subgroup_negative_examples = df[~df[subgroup] & ~df[label]]
         examples = subgroup_positive_examples.append(
@@ -501,15 +563,18 @@ class BiasBenchmark:
     def compute_bias_metrics_for_model(
         dataset, subgroups, model, label_col, include_asegs=False
     ):
-        """
-        Computes per-subgroup metrics for all subgroups and one model.
+        """Computes per-subgroup metrics for all subgroups and one model.
         # bias_metrics_df = BiasBenchmark.compute_bias_metrics_for_model(validate_df, IDENTITY_COLUMNS, MODEL_NAME, TARGET_COLUMN)
-        :param dataset: prediction result
-        :param subgroups: all group names
-        :param model: my model name
-        :param label_col: target column name
-        :param include_asegs: ?
-        :return:
+
+        Args:
+          dataset: prediction result
+          subgroups: all group names
+          model: my model name
+          label_col: target column name
+          include_asegs: return: (Default value = False)
+
+        Returns:
+
         """
         records = []
         subgroup_distribution = []
@@ -619,9 +684,14 @@ class BiasBenchmark:
     def calculate_benchmark(self, pred=None, validate_df=None, model_name=MODEL_NAME):
         """
 
-        :param pred:
-        :param model_name:
-        :return: final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc
+        Args:
+          pred: param model_name: (Default value = None)
+          validate_df:  (Default value = None)
+          model_name:  (Default value = MODEL_NAME)
+
+        Returns:
+          final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc
+
         """
 
         if validate_df is None:
@@ -2170,12 +2240,17 @@ class EmbeddingHandler:
     def build_matrix_prepare_data(
         self, path, emb_matrix_existed, convert_additional=False
     ):
-        """
-        build embedding matrix given tokenizer word_index and pre-trained embedding file
+        """build embedding matrix given tokenizer word_index and pre-trained embedding file
 
-        :param word_index: word_index from tokenizer
-        :param path: path to load pre-trained embedding
-        :return: embedding matrix
+        Args:
+          word_index: word_index from tokenizer
+          path: path to load pre-trained embedding
+          emb_matrix_existed: 
+          convert_additional:  (Default value = False)
+
+        Returns:
+          embedding matrix
+
         """
 
         if emb_matrix_existed:
@@ -2407,6 +2482,12 @@ class EmbeddingHandler:
     def data_prepare(self, action=None):
         """Returns the iris dataset as (train_x, train_y), (test_x, test_y).
         we load this from the tfrecord, maybe save the ones just after embedding, so it can be faster
+
+        Args:
+          action:  (Default value = None)
+
+        Returns:
+
         """
 
         if action is not None:

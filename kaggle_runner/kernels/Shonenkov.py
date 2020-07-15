@@ -65,7 +65,7 @@ def get_pickled_data(file_path):
     """get_pickled_data from current folder or kaggle data input folder.
 
     Args:
-      file_path:
+      file_path: 
 
     Returns:
 
@@ -259,7 +259,7 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
 
         Args:
           input_ids: param attention_masks:
-          attention_masks:
+          attention_masks: 
 
         Returns:
 

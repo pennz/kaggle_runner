@@ -13,7 +13,18 @@ from kaggle_runner.utils.kernel_utils import is_dist_avail_and_initialized
 
 
 def metric_get_log(phase, epoch, epoch_loss, meter, start):
-    """logging the metrics at the end of an epoch"""
+    """logging the metrics at the end of an epoch
+
+    Args:
+      phase: 
+      epoch: 
+      epoch_loss: 
+      meter: 
+      start: 
+
+    Returns:
+
+    """
     dices, iou = meter.get_metrics()
     dice, dice_neg, dice_pos = dices
     print(
@@ -267,6 +278,11 @@ class CSVLoggerBufferCustomized(csv_logger.CSVLogger):
 class SmoothedValue:
     """Track a series of values and provide access to smoothed values over a
     window or the global series average.
+
+    Args:
+
+    Returns:
+
     """
 
     def __init__(self, window_size=20, fmt=None):
@@ -288,9 +304,7 @@ class SmoothedValue:
         self.total += value * n
 
     def synchronize_between_processes(self):
-        """
-        Warning: does not synchronize the deque!
-        """
+        """Warning: does not synchronize the deque!"""
 
         if not is_dist_avail_and_initialized():
             return

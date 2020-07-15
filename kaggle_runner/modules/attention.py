@@ -143,10 +143,14 @@ class AttentionRaffel(Layer):
         return input_shape[0], self.features_dim
 
     def set_metrics(self):
-        """
-        set_metrics for model training
-
+        """set_metrics for model training
+        
         :return: None
+
+        Args:
+
+        Returns:
+
         """
         pass
 
@@ -184,10 +188,14 @@ class AttentionRaffel(Layer):
     ):
         """
 
-        :param start_stage: if set, will overwrite the stage
-        :param end_stage:
-        :param dump_flag:
-        :return:
+        Args:
+          start_stage: if set, will overwrite the stage (Default value = None)
+          end_stage: param dump_flag: (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)
+          dump_flag:  (Default value = False)
+          force_dump:  (Default value = True)
+
+        Returns:
+
         """
         self.continue_run(
             start_stage=start_stage,
@@ -253,8 +261,13 @@ class AttentionRaffel(Layer):
     def _load_state(cls, stage=None, file_name="run_state.pkl"):
         """
 
-        :param file_name:
-        :return: the kernel object, need to continue
+        Args:
+          file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")
+          stage:  (Default value = None)
+
+        Returns:
+          the kernel object, need to continue
+
         """
         if stage is not None:
             file_name = f"run_state_{stage}.pkl"
@@ -268,8 +281,12 @@ class AttentionRaffel(Layer):
     def load_state_continue_run(cls, file_name="run_state.pkl"):
         """
 
-        :param file_name:
-        :return: the kernel object, need to continue
+        Args:
+          file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")
+
+        Returns:
+          the kernel object, need to continue
+
         """
         self = cls._load_state(file_name=file_name)
         self.continue_run()
