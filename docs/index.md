@@ -4,7 +4,7 @@
 [![pipeline status](https://gitlab.com/MrCue/kaggle_runner/badges/master/pipeline.svg)](https://gitlab.com/MrCue/kaggle_runner/-/commits/master)
 [![coverage report](https://gitlab.com/MrCue/kaggle_runner/badges/master/coverage.svg)](https://gitlab.com/MrCue/kaggle_runner/-/commits/master)
 
-[Generated doc website](https://mrcue.gitlab.io/kaggle_runner)
+[Generated doc website](https://pennz.github.io/kaggle_runner)
 
 # kaggle_runner
 
