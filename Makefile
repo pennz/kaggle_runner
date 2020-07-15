@@ -468,6 +468,7 @@ gitbook fetch 3.2.3 ; ) ) # fetch final stable version and add any requested plu
 .PHONY: setup_pip
 setup_pip: ## setup_pip
 	python3 -m pip -h &>/dev/null || (curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py)
+	@poetry run python -m pip install --upgrade pip
 
 .PHONY: setup_venv
 setup_venv: setup_pip ## Install python3-venv
@@ -647,7 +648,7 @@ docs-py-md-gen:
 	rm docs/kaggle_runner/runners/tpu_trainer.md
 
 .PHONY: docs-regen
-docs-regen: docs-py-md-gen ## Regenerate some documentation pages.
+docs-regen: docs-py-md-gen setup_pip ## Regenerate some documentation pages.
 	@poetry run python scripts/regen_docs.py
 
 .PHONY: docs-serve
