@@ -631,6 +631,7 @@ check-types:  ## Check that the code is correctly typed.
 
 .PHONY: changelog
 changelog:  ## Update the changelog in-place with latest commits.
+	-@python scripts/update_changelog.py CHANGELOG.md "<!-- insertion marker -->" "^## \[(?P<version>[^\]]+)"
 	@poetry run failprint -t "Updating changelog" -- python scripts/update_changelog.py CHANGELOG.md "<!-- insertion marker -->" "^## \[(?P<version>[^\]]+)"
 
 .PHONY: docs
