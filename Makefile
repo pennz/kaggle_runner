@@ -463,7 +463,11 @@ gitbook fetch 3.2.3 ; ) ) # fetch final stable version and add any requested plu
 
 .PHONY: setup_pip
 setup_pip: ## setup_pip
-	python3 -m pip -h &>/dev/null || ( apt update && apt install -y python3-pip python3-venv )
+	python3 -m pip -h &>/dev/null || (curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py)
+
+.PHONY: setup_venv
+setup_venv: setup_pip ## Install python3-venv
+	python3 -m venv -h &>/dev/null || (apt update && apt install -y python3-venv)
 
 .PHONY: pydoc
 pydoc: setup_pip install_gitbook kr ## Set up pydoc and generate gitbook documentation.
@@ -582,7 +586,7 @@ help:  ## Print this help. ## help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
 
 .PHONY: setup
-setup:  setup_pip ## Setup the development environment (install dependencies).
+setup:  setup_venv ## Setup the development environment (install dependencies).
 	@if true; then \
 		if ! which poetry &>/dev/null; then \
 		  if ! which pipx &>/dev/null; then \
