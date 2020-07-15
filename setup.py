@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="kaggle-runner",
-    version="0.1.7",
+    version="0.2.0",
     description="Run kaggle kernels, for fast model prototyping.",
     url="http://github.com/pennz/kaggle_runner",
     author="pennz",
