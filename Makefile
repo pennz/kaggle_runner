@@ -263,7 +263,7 @@ r: ## r
 
 .PHONY: dbroker
 dbroker: ## Debug broker setup.
-	while true; do set -x echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
+	while true; do set -x; echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
 
 .PHONY: rpdbc
 rpdbc: ## rpdbc
