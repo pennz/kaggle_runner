@@ -647,6 +647,7 @@ docs-py-md-gen:
 	@poetry run bin/document_thing 1
 	rm docs/kaggle_runner/runner_template/main.md
 	rm docs/kaggle_runner/runners/tpu_trainer.md
+	rm docs/kaggle_runner/datasets/mock_dataset.md
 
 .PHONY: docs-regen
 docs-regen: docs-py-md-gen setup_pip ## Regenerate some documentation pages.

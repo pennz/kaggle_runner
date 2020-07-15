@@ -27,6 +27,7 @@ class MockDataset(Dataset):
         path = os.path.join(self.root, fname + ".png")
         image = cv2.imread(path)
         images = self.transform(image=image)["image"]
+
         return images
 
     def __len__(self):
