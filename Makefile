@@ -471,13 +471,12 @@ setup_pip: ## setup_pip
 
 .PHONY: setup_venv
 setup_venv: setup_pip ## Install python3-venv
-	python3 -m venv -h &>/dev/null || (apt update && apt install -y python3-venv)
+	-apt update && apt install -y python3-venv
 
 .PHONY: pydoc
-pydoc: setup_pip install_gitbook kr ## Set up pydoc and generate gitbook documentation.
+pydoc: setup_venv install_gitbook kr ## Set up pydoc and generate gitbook documentation.
 	-apt install -y python3-pip
 	$(PY) -m pip install pipx
-	-apt-get install -y python3-venv || yum install -y python3-venv
 	#pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
 	$(PY) -m pip install pydoc-markdown
 	pipx install mkdocs
@@ -589,7 +588,7 @@ help:  ## Print this help. ## help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
 
 .PHONY: setup
-setup:  setup_venv ## Setup the development environment (install dependencies).
+setup:  setup_venv ## Setup the development environment for poetry (install dependencies).
 	@if true; then \
 		if ! which poetry &>/dev/null; then \
 		  if ! which pipx &>/dev/null; then \
