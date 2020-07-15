@@ -259,11 +259,15 @@ pty.spawn([\"/bin/bash\", \"-li\"])'"; echo "End of one rvs."; sleep 5; done;
 
 .PHONY: r
 r: ## r
-	bash -c "SAVED_STTY=$$(stty -g); stty raw -echo; while true; do ncat -v $(SERVER) $$(( $(CHECK_PORT) - 1 )); echo "DONE"; sleep 3; done; stty $$SAVED_STTY"
+	bash -c "SAVED_STTY=$$(stty -g); stty raw -echo; while true; do ncat -v $(SERVER) $$(( $(CHECK_PORT) - 1 )); echo DONE connect to reverse shell.; echo RET: $$?.; sleep 3; done; stty $$SAVED_STTY"
 
 .PHONY: dbroker
 dbroker: ## Debug broker setup.
-	while true; do set -x; echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done  # just one debug session at a time, more will make you confused
+	while true; do set -x; echo "Start Listening"; ncat --broker -v -m 2 -p $$(( $(CHECK_PORT) - 1 )); echo >&2 "Listen failed, will restart again." ; sleep 5; done & # just one debug session at a time, more will make you confused
+
+.PHONY: broker
+broker: dbroker r ## Broker and listen to broker.
+	@echo "Done broker for remote debug."
 
 .PHONY: rpdbc
 rpdbc: ## rpdbc
@@ -570,7 +574,7 @@ run_git_lab: ## run_git_lab
 gitlab: ## gitlab
 	curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 	apt install -y gitlab-runner
-	pgrep gitlab-runner &>/dev/null || ( gitlab-runner register -n --executor shell -u \
+	( gitlab-runner register -n --executor shell -u \
 https://gitlab.com/ -r _NCGztHrPW7T81Ysi_sS --name $$HOSTNAME --custom-run-args 'user = root'; \
 sleep 5; \
 make run_git_lab; \
