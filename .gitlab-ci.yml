@@ -17,6 +17,7 @@ cache:
   paths:
     - .cache/pip
     - .cache/pypoetry
+    - /root/.cache/pypoetry
     - node_modules/
     - venv/
 
