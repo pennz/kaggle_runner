@@ -633,7 +633,7 @@ changelog:  ## Update the changelog in-place with latest commits.
 		CHANGELOG.md "<!-- insertion marker -->" "^## \[(?P<version>[^\]]+)"
 
 .PHONY: docs
-docs: docs-regen install_dep ## Build the documentation locally.
+docs: docs-regen ## Build the documentation locally.
 	$(PY) -m show mkdocs &>/dev/null || $(PY) -m pip install mkdocs mkdocs-material mkdocstrings
 	#@poetry run mkdocs build
 	$(PY) -m mkdocs build -d public
