@@ -37,6 +37,7 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`parse`](https://github.com/r1chardj0n3s/parse) |
 [`pip`](https://pip.pypa.io/) |
 [`pymdown-extensions`](https://github.com/facelessuser/pymdown-extensions) |
+[`Pyment`](https://github.com/dadadel/pyment) |
 [`pytest`](https://docs.pytest.org/en/latest/) |
 [`pytest-cov`](https://github.com/pytest-dev/pytest-cov) |
 [`pytest-sugar`](http://pivotfinland.com/pytest-sugar/) |

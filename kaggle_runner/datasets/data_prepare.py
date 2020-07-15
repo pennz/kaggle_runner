@@ -231,7 +231,7 @@ def _load_embeddings_only_for_fasttext_crawl_avg(path):
       path: large embedding file
 
     Returns:
-      np array of
+      : np array of
 
     """
     with open(path, "r") as f:
@@ -326,7 +326,7 @@ class TargetDistAnalyzer:
           val_mask: 
 
         Returns:
-          type, cnt number, frequency, index) pair list for this distribution
+          : type, cnt number, frequency, index) pair list for this distribution
 
         """
         dstr = {}
@@ -429,7 +429,7 @@ class BiasBenchmark:
           model_name: return: just mean/std, for pos, neg, then we just use this information to make shift
 
         Returns:
-          just mean/std, for pos, neg, then we just use this information to make shift
+          : just mean/std, for pos, neg, then we just use this information to make shift
 
         """
         subgroup_examples = df[
@@ -459,7 +459,7 @@ class BiasBenchmark:
           model_name: return: auc score
 
         Returns:
-          auc score
+          : auc score
 
         """
         subgroup_examples = df[
@@ -686,11 +686,11 @@ class BiasBenchmark:
 
         Args:
           pred: param model_name: (Default value = None)
-          validate_df:  (Default value = None)
-          model_name:  (Default value = MODEL_NAME)
+          validate_df: (Default value = None)
+          model_name: (Default value = MODEL_NAME)
 
         Returns:
-          final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc
+          : final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc
 
         """
 
@@ -2246,10 +2246,10 @@ class EmbeddingHandler:
           word_index: word_index from tokenizer
           path: path to load pre-trained embedding
           emb_matrix_existed: 
-          convert_additional:  (Default value = False)
+          convert_additional: (Default value = False)
 
         Returns:
-          embedding matrix
+          : embedding matrix
 
         """
 
@@ -2484,7 +2484,7 @@ class EmbeddingHandler:
         we load this from the tfrecord, maybe save the ones just after embedding, so it can be faster
 
         Args:
-          action:  (Default value = None)
+          action: (Default value = None)
 
         Returns:
 

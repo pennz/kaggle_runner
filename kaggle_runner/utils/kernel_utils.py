@@ -84,8 +84,8 @@ def get_obj_or_dump(filename, fullpath=False, default=None):
 
     Args:
       filename: 
-      fullpath:  (Default value = False)
-      default:  (Default value = None)
+      fullpath: (Default value = False)
+      default: (Default value = None)
 
     Returns:
 
@@ -131,8 +131,8 @@ def binary_crossentropy_with_focal_seasoned(
       custom_weights_in_Y_true: return: (Default value = True)
       y_true: 
       logit_pred: 
-      beta:  (Default value = 0.0)
-      gamma:  (Default value = 1.0)
+      beta: (Default value = 0.0)
+      gamma: (Default value = 1.0)
 
     Returns:
 
@@ -164,12 +164,11 @@ def binary_crossentropy_with_focal(
     positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha
     for calss -1.   In practice α may be set by inverse class freqency or
     hyperparameter.
-      custom_weights_in_Y_true:  (Default value = True)
+      custom_weights_in_Y_true: (Default value = True)
 
     Returns:
-      bce
       Reference: https://arxiv.org/pdf/1708.02002.pdf
-      
+      Reference: https://arxiv.org/pdf/1708.02002.pdf
       $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
       $$ p_t=p\: if\: y=1$$
       $$ p_t=1-p\: otherwise$$
@@ -544,7 +543,7 @@ def online_mean_and_sd(loader, data_map=None):
 
     Args:
       loader: 
-      data_map:  (Default value = None)
+      data_map: (Default value = None)
 
     Returns:
 

@@ -90,9 +90,14 @@ class Shonenkov(FastAIKernel):
     def __init__(self, device, config, **kargs):
         """__init__.
 
-        :param device:
-        :param config:
-        :param kargs:
+        Args:
+          device: param config:
+          kargs: 
+          config: 
+          **kargs: 
+
+        Returns:
+
         """
         super(Shonenkov, self).__init__(**kargs)
         self.data = None
@@ -235,7 +240,11 @@ class ToxicSimpleNNModelChangeInner(nn.Module):
     def __init__(self, use_aux=True):
         """__init__.
 
-        :param use_aux:
+        Args:
+          use_aux:  (Default value = True)
+
+        Returns:
+
         """
         super(ToxicSimpleNNModelChangeInner, self).__init__()
 
@@ -280,9 +289,14 @@ class ShonenkovChangeInner(Shonenkov):
     def __init__(self, device, config, **kargs):
         """__init__.
 
-        :param device:
-        :param config:
-        :param kargs:
+        Args:
+          device: param config:
+          kargs: 
+          config: 
+          **kargs: 
+
+        Returns:
+
         """
         super(ShonenkovChangeInner, self).__init__(device, config, **kargs)
         assert self.transformers is not None

@@ -24,7 +24,10 @@ class KernelGroup:
         """__init__.
 
         Args:
-            kernels: List of kernels whose results will be analyse together.
+          kernels: List of kernels whose results will be analyse together.
+
+        Returns:
+
         """
         self.kernels = kernels
 
@@ -34,7 +37,10 @@ class KaggleKernel(metaclass=ABCMeta):
         """__init__.
 
         Args:
-            logger:
+          logger:  (Default value = None)
+
+        Returns:
+
         """
         self.submit_run = False
         self.num_epochs = 8
@@ -98,8 +104,8 @@ class KaggleKernel(metaclass=ABCMeta):
 
         Args:
           name: 
-          level:  (Default value = logging.DEBUG)
-          handler:  (Default value = None)
+          level: (Default value = logging.DEBUG)
+          handler: (Default value = None)
 
         Returns:
 
@@ -185,7 +191,7 @@ class KaggleKernel(metaclass=ABCMeta):
         """prepare_test_data.
 
         Args:
-          data_config:  (Default value = None)
+          data_config: (Default value = None)
 
         Returns:
 
@@ -205,7 +211,7 @@ class KaggleKernel(metaclass=ABCMeta):
         """dump_state.
 
         Args:
-          exec_flag:  (Default value = False)
+          exec_flag: (Default value = False)
 
         Returns:
 
@@ -229,7 +235,7 @@ class KaggleKernel(metaclass=ABCMeta):
         Args:
           start_stage: if set, will overwrite the stage (Default value = None)
           end_stage: param dump_flag: (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)
-          dump_flag:  (Default value = False)
+          dump_flag: (Default value = False)
 
         Returns:
 
@@ -247,9 +253,9 @@ class KaggleKernel(metaclass=ABCMeta):
         """continue_run.
 
         Args:
-          start_stage:  (Default value = None)
-          end_stage:  (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)
-          dump_flag:  (Default value = False)
+          start_stage: (Default value = None)
+          end_stage: (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)
+          dump_flag: (Default value = False)
 
         Returns:
 
@@ -319,11 +325,11 @@ class KaggleKernel(metaclass=ABCMeta):
 
         Args:
           file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")
-          stage:  (Default value = None)
-          logger:  (Default value = None)
+          stage: (Default value = None)
+          logger: (Default value = None)
 
         Returns:
-          the kernel object, need to continue
+          : the kernel object, need to continue
 
         """
 
@@ -342,7 +348,7 @@ class KaggleKernel(metaclass=ABCMeta):
         """load_state_data_only.
 
         Args:
-          file_name:  (Default value = "run_state.pkl")
+          file_name: (Default value = "run_state.pkl")
 
         Returns:
 
@@ -355,10 +361,10 @@ class KaggleKernel(metaclass=ABCMeta):
 
         Args:
           file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")
-          logger:  (Default value = None)
+          logger: (Default value = None)
 
         Returns:
-          the kernel object, need to continue
+          : the kernel object, need to continue
 
         """
         self = cls._load_state(file_name=file_name, logger=logger)
@@ -423,7 +429,10 @@ class KaggleKernelOnlyPredict(KaggleKernel):
         """__init__.
 
         Args:
-            model_path:
+          model_path: 
+
+        Returns:
+
         """
         super(KaggleKernelOnlyPredict, self).__init__(logger=logger)
         self.only_predict = True
@@ -442,7 +451,7 @@ class KaggleKernelOnlyPredict(KaggleKernel):
         """prepare_test_data.
 
         Args:
-          data_config:  (Default value = None)
+          data_config: (Default value = None)
 
         Returns:
 

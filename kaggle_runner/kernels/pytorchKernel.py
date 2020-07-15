@@ -1160,10 +1160,10 @@ def maskrcnn_loss_focal(
       gt_masks: 
       gt_labels: 
       mask_matched_idxs: 
-      focal_loss_func:  (Default value = None)
+      focal_loss_func: (Default value = None)
 
     Returns:
-      mask_loss (Tensor): scalar tensor containing the loss
+      Tensor: scalar tensor containing the loss
 
     """
 

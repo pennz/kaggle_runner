@@ -32,15 +32,19 @@ class AttentionRaffel(Layer):
         bias=True,
         **kwargs,
     ):
-        """
-        Follows the work of Raffel et al. [https://arxiv.org/abs/1512.08756]
-        :param step_dim: feature vector length
-        :param W_regularizer:
-        :param b_regularizer:
-        :param W_constraint:
-        :param b_constraint:
-        :param bias:
-        :param kwargs:
+        """Follows the work of Raffel et al. [https://arxiv.org/abs/1512.08756]
+
+        Args:
+          step_dim: feature vector length
+          W_regularizer: param b_regularizer: (Default value = None)
+          W_constraint: param b_constraint: (Default value = None)
+          bias: param kwargs: (Default value = True)
+          b_regularizer:  (Default value = None)
+          b_constraint:  (Default value = None)
+          **kwargs: 
+
+        Returns:
+
         """
         super(AttentionRaffel, self).__init__(**kwargs)
         self.supports_masking = True
@@ -191,8 +195,8 @@ class AttentionRaffel(Layer):
         Args:
           start_stage: if set, will overwrite the stage (Default value = None)
           end_stage: param dump_flag: (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)
-          dump_flag:  (Default value = False)
-          force_dump:  (Default value = True)
+          dump_flag: (Default value = False)
+          force_dump: (Default value = True)
 
         Returns:
 
@@ -263,10 +267,10 @@ class AttentionRaffel(Layer):
 
         Args:
           file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")
-          stage:  (Default value = None)
+          stage: (Default value = None)
 
         Returns:
-          the kernel object, need to continue
+          : the kernel object, need to continue
 
         """
         if stage is not None:
@@ -285,7 +289,7 @@ class AttentionRaffel(Layer):
           file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")
 
         Returns:
-          the kernel object, need to continue
+          : the kernel object, need to continue
 
         """
         self = cls._load_state(file_name=file_name)

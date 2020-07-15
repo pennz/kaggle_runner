@@ -73,12 +73,12 @@ class FastAIKernel(KaggleKernel):
         """opt_func should pass seprately
 
         Args:
-          k:  (Default value = None)
-          data:  (Default value = None)
-          model:  (Default value = None)
-          opt_func:  (Default value = None)
-          loss_func:  (Default value = None)
-          metrics:  (Default value = None)
+          k: (Default value = None)
+          data: (Default value = None)
+          model: (Default value = None)
+          opt_func: (Default value = None)
+          loss_func: (Default value = None)
+          metrics: (Default value = None)
           **kargs: 
 
         Returns:

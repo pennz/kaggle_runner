@@ -19,8 +19,8 @@ def toxic_custom_mimic_loss(predictions, labels, subgroups, power=5.0,
       predictions: 
       labels: 
       subgroups: 
-      power:  (Default value = 5.0)
-      score_function:  (Default value = F.binary_cross_entropy_with_logits)
+      power: (Default value = 5.0)
+      score_function: (Default value = F.binary_cross_entropy_with_logits)
 
     Returns:
 
@@ -108,8 +108,8 @@ def binary_crossentropy_with_focal_seasoned(
       custom_weights_in_y_true: return: (Default value = True)
       y_true: 
       logit_pred: 
-      beta:  (Default value = FOCAL_LOSS_BETA_NEG_POS)
-      gamma:  (Default value = FOCAL_LOSS_GAMMA_NEG_POS)
+      beta: (Default value = FOCAL_LOSS_BETA_NEG_POS)
+      gamma: (Default value = FOCAL_LOSS_GAMMA_NEG_POS)
 
     Returns:
 
@@ -142,7 +142,7 @@ def binary_crossentropy_with_focal(
       alpha: weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
     for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
       y_pred: 
-      custom_weights_in_y_true:  (Default value = True)
+      custom_weights_in_y_true: (Default value = True)
 
     Returns:
 

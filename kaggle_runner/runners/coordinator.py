@@ -586,8 +586,8 @@ while True:
         Args:
           config: config will be size and model right now
           seed: param script: (Default value = "2020")
-          from_template:  (Default value = True)
-          script:  (Default value = True)
+          from_template: (Default value = True)
+          script: (Default value = True)
 
         Returns:
 

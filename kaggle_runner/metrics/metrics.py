@@ -41,8 +41,8 @@ def metric(probability, truth, threshold=0.5, reduction="none"):
     Args:
       probability: 
       truth: 
-      threshold:  (Default value = 0.5)
-      reduction:  (Default value = "none")
+      threshold: (Default value = 0.5)
+      reduction: (Default value = "none")
 
     Returns:
 
@@ -100,12 +100,13 @@ def binary_sensitivity(y_pred, y_true):
     """Compute the confusion matrix for a set of predictions.
 
     Args:
-      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)): 
-      y_true(correct values for the set of samples used (must be binary: 0 or 1)): 
+      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)):
+      y_true(correct values for the set of samples used (must be binary: 0 or 1)):
+      y_pred: 
+      y_true: 
 
     Returns:
 
-    
     """
     threshold = 0.5
     TP = np.logical_and(K.eval(y_true) == 1, K.eval(y_pred) <= threshold)
@@ -124,12 +125,13 @@ def binary_specificity(y_pred, y_true):
     """Compute the confusion matrix for a set of predictions.
 
     Args:
-      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)): 
-      y_true(correct values for the set of samples used (must be binary: 0 or 1)): 
+      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)):
+      y_true(correct values for the set of samples used (must be binary: 0 or 1)):
+      y_pred: 
+      y_true: 
 
     Returns:
 
-    
     """
 
     threshold = 0.5
@@ -154,11 +156,11 @@ def binary_auc_probability(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1
       y_true: param y_pred:
       threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)
       y_pred: 
-      N_MORE:  (Default value = True)
-      epsilon:  (Default value = 1e-12)
+      N_MORE: (Default value = True)
+      epsilon: (Default value = 1e-12)
 
     Returns:
-      accuracy, f1 for this batch... not the global one, we need to be careful!!
+      : accuracy, f1 for this batch... not the global one, we need to be careful!!
 
     """
 
@@ -208,11 +210,11 @@ def bin_prd_clsf_info_neg(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1e
       y_true: param y_pred:
       threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)
       y_pred: 
-      N_MORE:  (Default value = True)
-      epsilon:  (Default value = 1e-7)
+      N_MORE: (Default value = True)
+      epsilon: (Default value = 1e-7)
 
     Returns:
-      accuracy, f1 for this batch... not the global one, we need to be careful!!
+      : accuracy, f1 for this batch... not the global one, we need to be careful!!
 
     """
     # if FOCAL_LOSS_GAMMA == 2.0:
@@ -266,11 +268,11 @@ def bin_prd_clsf_info_pos(y_true, y_pred, threshold=0.5, N_MORE=True, epsilon=1e
       y_true: param y_pred:
       threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)
       y_pred: 
-      N_MORE:  (Default value = True)
-      epsilon:  (Default value = 1e-7)
+      N_MORE: (Default value = True)
+      epsilon: (Default value = 1e-7)
 
     Returns:
-      accuracy, f1 for this batch... not the global one, we need to be careful!!
+      : accuracy, f1 for this batch... not the global one, we need to be careful!!
 
     """
     # if FOCAL_LOSS_GAMMA == 2.0:

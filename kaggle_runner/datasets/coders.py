@@ -38,8 +38,8 @@ def compute_ious(pred, label, classes, ignore_index=255, only_present=True):
       pred: 
       label: 
       classes: 
-      ignore_index:  (Default value = 255)
-      only_present:  (Default value = True)
+      ignore_index: (Default value = 255)
+      only_present: (Default value = True)
 
     Returns:
 
@@ -65,7 +65,7 @@ def compute_iou_batch(outputs, labels, classes=None):
     Args:
       outputs: 
       labels: 
-      classes:  (Default value = None)
+      classes: (Default value = None)
 
     Returns:
 

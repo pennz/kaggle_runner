@@ -83,7 +83,7 @@ def attach_data_collector(logger, AMQPURL=AMQPURL()):
 
     Args:
       logger: 
-      AMQPURL:  (Default value = AMQPURL())
+      AMQPURL: (Default value = AMQPURL())
 
     Returns:
 

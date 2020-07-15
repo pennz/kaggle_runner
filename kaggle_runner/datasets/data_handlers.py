@@ -154,10 +154,12 @@ class PS_TF_DataHandler:
 
         Args:
           train_X_np: 
-          train_Y_np):  # join(dataset_dir: 
-          'labels.csv')image_ds:  (Default value = tf.data.Dataset.from_tensor_slices(train_X_np)image_mask_ds = tf.data.Dataset.from_tensor_slices(train_Y_np)return tf.data.Dataset.zip((image_ds)
-          image_mask_ds))@staticmethodload_data(train_path: 
+          train_Y_np): # join(dataset_dir:
+          'labels.csv')image_ds: (Default value = tf.data.Dataset.from_tensor_slices(train_X_np)image_mask_ds = tf.data.Dataset.from_tensor_slices(train_Y_np)return tf.data.Dataset.zip((image_ds)
+          image_mask_ds))@staticmethodload_data: 
           test_path: 
+          train_Y_np):  # join(dataset_dir: 
+          image_mask_ds))@staticmethodload_data(train_path: 
 
         Returns:
 
@@ -331,9 +333,9 @@ class PS_TF_DataHandler:
           features: 
           labels: 
           batch_size: 
-          split_id:  (Default value = -1)
-          n_splits:  (Default value = 10)
-          cv:  (Default value = True)
+          split_id: (Default value = -1)
+          n_splits: (Default value = 10)
+          cv: (Default value = True)
 
         Returns:
 
@@ -376,7 +378,7 @@ class PS_TF_DataHandler:
           labels: 
           batch_size: 
           split_id: 
-          n_splits:  (Default value = 10)
+          n_splits: (Default value = 10)
 
         Returns:
 

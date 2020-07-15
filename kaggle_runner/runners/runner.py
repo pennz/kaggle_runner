@@ -16,7 +16,7 @@ class Runner:  # blade runner
         !pip install python_logging_rabbitmq
 
         Args:
-          kernel:  (Default value = "")
+          kernel: (Default value = "")
 
         Returns:
 

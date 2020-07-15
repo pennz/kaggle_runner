@@ -46,7 +46,7 @@ def _build_distilbert_model_adv(transformer, max_len=512):
 
     Args:
       transformer: 
-      max_len:  (Default value = 512)
+      max_len: (Default value = 512)
 
     Returns:
 
