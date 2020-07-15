@@ -6,7 +6,6 @@ repo_name: "pennz/kaggle_runner"
 
 nav:
   - Overview: index.md
-  - Credits: credits.md
   - kaggle_runner:
     - callbacks: kaggle_runner/callbacks.md
     - data_providers: kaggle_runner/data_providers.md
@@ -52,6 +51,9 @@ nav:
       - utils.py: kaggle_runner/utils/utils.md
       - visualizer.py: kaggle_runner/utils/visualizer.md
       - wrapper.py: kaggle_runner/utils/wrapper.md
+  - Credits: credits.md
+  - Changelog: changelog.md
+  - License: license.md
 
 theme:
   name: material

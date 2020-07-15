@@ -659,7 +659,7 @@ docs-serve: docs-regen  ## Serve the documentation (localhost:8000).
 
 .PHONY: docs-deploy
 docs-deploy: docs-regen  ## Deploy the documentation on GitHub pages.
-	@poetry run mkdocs gh-deploy CHANGELOG.md "<!-- insertion marker -->" "^## \[(?P<version>[^\]]+)"
+	@poetry run mkdocs gh-deploy
 
 .PHONY: format
 format:  ## Run formatting tools on the code.
