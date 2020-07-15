@@ -642,16 +642,7 @@ forward<span class="p">(</span><span class="bp">self</span><span class="p">,</sp
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>43
-44
-45
-46
-47
-48
-49
-50
-51
-52
+<pre><span></span>52
 53
 54
 55
@@ -659,7 +650,16 @@ forward<span class="p">(</span><span class="bp">self</span><span class="p">,</sp
 57
 58
 59
-60</pre>
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69</pre>
 </div>
 </td>
 <td class="code">
@@ -719,25 +719,25 @@ forward<span class="p">(</span><span class="bp">self</span><span class="p">,</sp
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>186
-187
-188
-189
-190
-191
-192
-193
-194
-195
-196
-197
-198
-199
-200
-201
-202
-203
-204</pre>
+<pre><span></span>206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224</pre>
 </div>
 </td>
 <td class="code">
@@ -797,21 +797,21 @@ forward<span class="p">(</span><span class="bp">self</span><span class="p">,</sp
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>69
-70
-71
-72
-73
-74
-75
-76
-77
-78
+<pre><span></span>78
 79
 80
 81
 82
-83</pre>
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92</pre>
 </div>
 </td>
 <td class="code">
@@ -852,36 +852,53 @@ binary_crossentropy_with_focal<span class="p">(</span><span class="n">y_true</sp
 <p>$$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
 $$ p_t=p: if: y=1$$
 $$ p_t=1-p: otherwise$$</p>
-<p>:param y_true:
-:param y_pred:
-:param gamma: make easier ones weights down
-:param alpha: weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
-    for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
-:return:</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y_true</code></td>
+<td><code></code></td>
+<td>
+<p>param y_pred:</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>gamma</code></td>
+<td><code></code></td>
+<td>
+<p>make easier ones weights down (Default value = FOCAL_LOSS_GAMMA)</p>
+</td>
+<td><code>0.0</code></td>
+</tr>
+<tr>
+<td><code>alpha</code></td>
+<td><code></code></td>
+<td>
+<p>weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</p>
+</td>
+<td><code>0.5</code></td>
+</tr>
+</tbody>
+</table>
+<p>for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
+  y_pred: 
+  custom_weights_in_y_true:  (Default value = True)</p>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/losses.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
+<pre><span></span>130
 131
 132
 133
@@ -925,7 +942,27 @@ $$ p_t=1-p: otherwise$$</p>
 171
 172
 173
-174</pre>
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194</pre>
 </div>
 </td>
 <td class="code">
@@ -933,19 +970,22 @@ $$ p_t=1-p: otherwise$$</p>
 <pre><span></span><code><span class="k">def</span> <span class="nf">binary_crossentropy_with_focal</span><span class="p">(</span>
     <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">FOCAL_LOSS_GAMMA</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">ALPHA</span><span class="p">,</span> <span class="n">custom_weights_in_y_true</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    https://arxiv.org/pdf/1708.02002.pdf</span>
+    <span class="sd">"""https://arxiv.org/pdf/1708.02002.pdf</span>
 
 <span class="sd">    $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$</span>
 <span class="sd">    $$ p_t=p\: if\: y=1$$</span>
 <span class="sd">    $$ p_t=1-p\: otherwise$$</span>
 
-<span class="sd">    :param y_true:</span>
-<span class="sd">    :param y_pred:</span>
-<span class="sd">    :param gamma: make easier ones weights down</span>
-<span class="sd">    :param alpha: weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</span>
-<span class="sd">        for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.</span>
-<span class="sd">    :return:</span>
+<span class="sd">    Args:</span>
+<span class="sd">      y_true: param y_pred:</span>
+<span class="sd">      gamma: make easier ones weights down (Default value = FOCAL_LOSS_GAMMA)</span>
+<span class="sd">      alpha: weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</span>
+<span class="sd">    for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.</span>
+<span class="sd">      y_pred: </span>
+<span class="sd">      custom_weights_in_y_true:  (Default value = True)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="c1"># assert 0 &lt;= alpha &lt;= 1 and gamma &gt;= 0</span>
     <span class="c1"># hyper parameters, just use the one for binary?</span>
@@ -1006,26 +1046,40 @@ $$ p_t=1-p: otherwise$$</p>
 binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">logit_pred</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">custom_weights_in_y_true</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.losses.binary_crossentropy_with_focal_seasoned" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
-<p>:param alpha:weight for positive classes <strong>loss</strong>. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
-    for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
-:param custom_weights_in_y_true:
-:return:</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alpha</code></td>
+<td><code></code></td>
+<td>
+<p>weight for positive classes <strong>loss</strong>. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</p>
+</td>
+<td><code>0.5</code></td>
+</tr>
+</tbody>
+</table>
+<p>for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
+  custom_weights_in_y_true: return: (Default value = True)
+  y_true: 
+  logit_pred: 
+  beta:  (Default value = FOCAL_LOSS_BETA_NEG_POS)
+  gamma:  (Default value = FOCAL_LOSS_GAMMA_NEG_POS)</p>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/losses.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span> 86
- 87
- 88
- 89
- 90
- 91
- 92
- 93
- 94
- 95
+<pre><span></span> 95
  96
  97
  98
@@ -1040,7 +1094,24 @@ binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y
 107
 108
 109
-110</pre>
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127</pre>
 </div>
 </td>
 <td class="code">
@@ -1054,10 +1125,18 @@ binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y
     <span class="n">custom_weights_in_y_true</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">"""</span>
-<span class="sd">    :param alpha:weight for positive classes **loss**. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</span>
-<span class="sd">        for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.</span>
-<span class="sd">    :param custom_weights_in_y_true:</span>
-<span class="sd">    :return:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      alpha: weight for positive classes **loss**. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</span>
+<span class="sd">    for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.</span>
+<span class="sd">      custom_weights_in_y_true: return: (Default value = True)</span>
+<span class="sd">      y_true: </span>
+<span class="sd">      logit_pred: </span>
+<span class="sd">      beta:  (Default value = FOCAL_LOSS_BETA_NEG_POS)</span>
+<span class="sd">      gamma:  (Default value = FOCAL_LOSS_GAMMA_NEG_POS)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">balanced</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">logit_pred</span> <span class="o">+</span> <span class="n">beta</span>
     <span class="n">y_pred</span> <span class="o">=</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">balanced</span><span class="p">)</span>
@@ -1081,11 +1160,58 @@ binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y
 <div class="doc doc-object doc-function">
 <h2 class="doc doc-heading" id="kaggle_runner.losses.toxic_custom_mimic_loss">
 <code class="highlight language-python">
-toxic_custom_mimic_loss<span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">subgroups</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">score_function</span><span class="o">=&lt;</span><span class="n">function</span> <span class="n">binary_cross_entropy_with_logits</span> <span class="n">at</span> <span class="mh">0x7fc2331aa598</span><span class="o">&gt;</span><span class="p">)</span> </code>
+toxic_custom_mimic_loss<span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">subgroups</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">score_function</span><span class="o">=&lt;</span><span class="n">function</span> <span class="n">binary_cross_entropy_with_logits</span> <span class="n">at</span> <span class="mh">0x7fddb51a8598</span><span class="o">&gt;</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.losses.toxic_custom_mimic_loss" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
 <p>Just reference this</p>
 <p>https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/103280</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>predictions</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>labels</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>subgroups</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>power</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = 5.0)</p>
+</td>
+<td><code>5.0</code></td>
+</tr>
+<tr>
+<td><code>score_function</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = F.binary_cross_entropy_with_logits)</p>
+</td>
+<td><code>&lt;function binary_cross_entropy_with_logits at 0x7fddb51a8598&gt;</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/losses.py</code></summary>
 <table class="highlighttable">
@@ -1116,17 +1242,35 @@ toxic_custom_mimic_loss<span class="p">(</span><span class="n">predictions</span
 33
 34
 35
-36</pre>
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">toxic_custom_mimic_loss</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">subgroups</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
                             <span class="n">score_function</span><span class="o">=</span><span class="n">F</span><span class="o">.</span><span class="n">binary_cross_entropy_with_logits</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Just reference this</span>
+    <span class="sd">"""Just reference this</span>
 
 <span class="sd">    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/103280</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      predictions: </span>
+<span class="sd">      labels: </span>
+<span class="sd">      subgroups: </span>
+<span class="sd">      power:  (Default value = 5.0)</span>
+<span class="sd">      score_function:  (Default value = F.binary_cross_entropy_with_logits)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
 
     <span class="n">subgroup_positive_mask</span> <span class="o">=</span> <span class="n">subgroups</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">)</span>

@@ -526,11 +526,38 @@
 <div class="doc doc-object doc-function">
 <h2 class="doc doc-heading" id="kaggle_runner.utils.utils.attach_data_collector">
 <code class="highlight language-python">
-attach_data_collector<span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">AMQPURL</span><span class="o">=&lt;</span><span class="n">kaggle_runner</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">AMQPURL</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7fc2315675c0</span><span class="o">&gt;</span><span class="p">)</span> </code>
+attach_data_collector<span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">AMQPURL</span><span class="o">=&lt;</span><span class="n">kaggle_runner</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">AMQPURL</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7fddb2b68400</span><span class="o">&gt;</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.utils.utils.attach_data_collector" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
 <p>Credits: https: // github.com/albertomr86/python-logging-rabbitmq</p>
 <p>!pip install python_logging_rabbitmq</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>logger</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>AMQPURL</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = AMQPURL())</p>
+</td>
+<td><code>&lt;kaggle_runner.utils.utils.AMQPURL object at 0x7fddb2b68400&gt;</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/utils/utils.py</code></summary>
 <table class="highlighttable">
@@ -560,16 +587,26 @@ attach_data_collector<span class="p">(</span><span class="n">logger</span><span 
  99
 100
 101
-102</pre>
+102
+103
+104
+105
+106
+107</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">attach_data_collector</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">AMQPURL</span><span class="o">=</span><span class="n">AMQPURL</span><span class="p">()):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Credits: https: // github.com/albertomr86/python-logging-rabbitmq</span>
+    <span class="sd">"""Credits: https: // github.com/albertomr86/python-logging-rabbitmq</span>
 
 <span class="sd">    !pip install python_logging_rabbitmq</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      logger: </span>
+<span class="sd">      AMQPURL:  (Default value = AMQPURL())</span>
+
+<span class="sd">    Returns:</span>
 
 <span class="sd">    """</span>
 

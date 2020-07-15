@@ -1202,23 +1202,63 @@ load_state_continue_run<span class="p">(</span><span class="n">file_name</span><
 </span>
 <a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.load_state_continue_run" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
-<p>:param file_name:
-:return: the kernel object, need to continue</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>file_name</code></td>
+<td><code></code></td>
+<td>
+<p>return: the kernel object, need to continue (Default value = "run_state.pkl")</p>
+</td>
+<td><code>'run_state.pkl'</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>the kernel object, need to continue</p>
+</td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>267
-268
-269
-270
-271
-272
-273
-274
-275</pre>
+<pre><span></span>280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292</pre>
 </div>
 </td>
 <td class="code">
@@ -1227,8 +1267,12 @@ load_state_continue_run<span class="p">(</span><span class="n">file_name</span><
 <span class="k">def</span> <span class="nf">load_state_continue_run</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">"run_state.pkl"</span><span class="p">):</span>
     <span class="sd">"""</span>
 
-<span class="sd">    :param file_name:</span>
-<span class="sd">    :return: the kernel object, need to continue</span>
+<span class="sd">    Args:</span>
+<span class="sd">      file_name: return: the kernel object, need to continue (Default value = "run_state.pkl")</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      the kernel object, need to continue</span>
+
 <span class="sd">    """</span>
     <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_state</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">continue_run</span><span class="p">()</span>
@@ -1246,21 +1290,58 @@ load_state_continue_run<span class="p">(</span><span class="n">file_name</span><
 run<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_stage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_stage</span><span class="o">=&lt;</span><span class="n">KernelRunningState</span><span class="o">.</span><span class="n">SAVE_SUBMISSION_DONE</span><span class="p">:</span> <span class="mi">5</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dump_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force_dump</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.run" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
-<p>:param start_stage: if set, will overwrite the stage
-:param end_stage:
-:param dump_flag:
-:return:</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start_stage</code></td>
+<td><code></code></td>
+<td>
+<p>if set, will overwrite the stage (Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>end_stage</code></td>
+<td><code></code></td>
+<td>
+<p>param dump_flag: (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)</p>
+</td>
+<td><code>&lt;KernelRunningState.SAVE_SUBMISSION_DONE: 5&gt;</code></td>
+</tr>
+<tr>
+<td><code>dump_flag</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = False)</p>
+</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>force_dump</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = True)</p>
+</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>178
-179
-180
-181
-182
+<pre><span></span>182
 183
 184
 185
@@ -1275,7 +1356,15 @@ run<span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 194
 195
 196
-197</pre>
+197
+198
+199
+200
+201
+202
+203
+204
+205</pre>
 </div>
 </td>
 <td class="code">
@@ -1289,10 +1378,14 @@ run<span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 <span class="p">):</span>
     <span class="sd">"""</span>
 
-<span class="sd">    :param start_stage: if set, will overwrite the stage</span>
-<span class="sd">    :param end_stage:</span>
-<span class="sd">    :param dump_flag:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    Args:</span>
+<span class="sd">      start_stage: if set, will overwrite the stage (Default value = None)</span>
+<span class="sd">      end_stage: param dump_flag: (Default value = KernelRunningState.SAVE_SUBMISSION_DONE)</span>
+<span class="sd">      dump_flag:  (Default value = False)</span>
+<span class="sd">      force_dump:  (Default value = True)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">continue_run</span><span class="p">(</span>
         <span class="n">start_stage</span><span class="o">=</span><span class="n">start_stage</span><span class="p">,</span>
@@ -1328,16 +1421,24 @@ set_metrics<span class="p">(</span><span class="bp">self</span><span class="p">)
 148
 149
 150
-151</pre>
+151
+152
+153
+154
+155</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">set_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    set_metrics for model training</span>
+    <span class="sd">"""set_metrics for model training</span>
 
 <span class="sd">    :return: None</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="k">pass</span>
 </code></pre>

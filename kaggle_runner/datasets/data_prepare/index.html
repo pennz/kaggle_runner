@@ -480,57 +480,113 @@
 calculate_benchmark<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s1">'lstm'</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.calculate_benchmark" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
-<p>:param pred:
-:param model_name:
-:return: final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pred</code></td>
+<td><code></code></td>
+<td>
+<p>param model_name: (Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>validate_df</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>model_name</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = MODEL_NAME)</p>
+</td>
+<td><code>'lstm'</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc</p>
+</td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>619
-620
-621
-622
-623
-624
-625
-626
-627
-628
-629
-630
-631
-632
-633
-634
-635
-636
-637
-638
-639
-640
-641
-642
-643
-644
-645
-646
-647
-648
-649
-650
-651
-652
-653
-654
-655
-656
-657
-658
-659
-660</pre>
+<pre><span></span>684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710
+711
+712
+713
+714
+715
+716
+717
+718
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730</pre>
 </div>
 </td>
 <td class="code">
@@ -538,9 +594,14 @@ calculate_benchmark<span class="p">(</span><span class="bp">self</span><span cla
 <pre><span></span><code><span class="k">def</span> <span class="nf">calculate_benchmark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">MODEL_NAME</span><span class="p">):</span>
     <span class="sd">"""</span>
 
-<span class="sd">    :param pred:</span>
-<span class="sd">    :param model_name:</span>
-<span class="sd">    :return: final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc</span>
+<span class="sd">    Args:</span>
+<span class="sd">      pred: param model_name: (Default value = None)</span>
+<span class="sd">      validate_df:  (Default value = None)</span>
+<span class="sd">      model_name:  (Default value = MODEL_NAME)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc</span>
+
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">validate_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -596,71 +657,121 @@ compute_bias_metrics_for_model<span class="p">(</span><span class="n">dataset</s
 <div class="doc doc-contents">
 <p>Computes per-subgroup metrics for all subgroups and one model.</p>
 <h1 id="bias_metrics_df-biasbenchmarkcompute_bias_metrics_for_modelvalidate_df-identity_columns-model_name-target_column">bias_metrics_df = BiasBenchmark.compute_bias_metrics_for_model(validate_df, IDENTITY_COLUMNS, MODEL_NAME, TARGET_COLUMN)<a class="headerlink" href="#bias_metrics_df-biasbenchmarkcompute_bias_metrics_for_modelvalidate_df-identity_columns-model_name-target_column" title="Permanent link">¤</a></h1>
-<p>:param dataset: prediction result
-:param subgroups: all group names
-:param model: my model name
-:param label_col: target column name
-:param include_asegs: ?
-:return:</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dataset</code></td>
+<td><code></code></td>
+<td>
+<p>prediction result</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>subgroups</code></td>
+<td><code></code></td>
+<td>
+<p>all group names</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td><code></code></td>
+<td>
+<p>my model name</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>label_col</code></td>
+<td><code></code></td>
+<td>
+<p>target column name</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>include_asegs</code></td>
+<td><code></code></td>
+<td>
+<p>return: (Default value = False)</p>
+</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>500
-501
-502
-503
-504
-505
-506
-507
-508
-509
-510
-511
-512
-513
-514
-515
-516
-517
-518
-519
-520
-521
-522
-523
-524
-525
-526
-527
-528
-529
-530
-531
-532
-533
-534
-535
-536
-537
-538
-539
-540
-541
-542
-543
-544
-545
-546
-547
-548
-549
-550
-551
-552</pre>
+<pre><span></span>562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597
+598
+599
+600
+601
+602
+603
+604
+605
+606
+607
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617</pre>
 </div>
 </td>
 <td class="code">
@@ -669,15 +780,18 @@ compute_bias_metrics_for_model<span class="p">(</span><span class="n">dataset</s
 <span class="k">def</span> <span class="nf">compute_bias_metrics_for_model</span><span class="p">(</span>
     <span class="n">dataset</span><span class="p">,</span> <span class="n">subgroups</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">include_asegs</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Computes per-subgroup metrics for all subgroups and one model.</span>
+    <span class="sd">"""Computes per-subgroup metrics for all subgroups and one model.</span>
 <span class="sd">    # bias_metrics_df = BiasBenchmark.compute_bias_metrics_for_model(validate_df, IDENTITY_COLUMNS, MODEL_NAME, TARGET_COLUMN)</span>
-<span class="sd">    :param dataset: prediction result</span>
-<span class="sd">    :param subgroups: all group names</span>
-<span class="sd">    :param model: my model name</span>
-<span class="sd">    :param label_col: target column name</span>
-<span class="sd">    :param include_asegs: ?</span>
-<span class="sd">    :return:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      dataset: prediction result</span>
+<span class="sd">      subgroups: all group names</span>
+<span class="sd">      model: my model name</span>
+<span class="sd">      label_col: target column name</span>
+<span class="sd">      include_asegs: return: (Default value = False)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">subgroup_distribution</span> <span class="o">=</span> <span class="p">[]</span>
@@ -736,28 +850,85 @@ compute_bnsp_auc<span class="p">(</span><span class="n">df</span><span class="p"
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bnsp_auc" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
 <p>Computes the AUC of the within-subgroup positive examples and the background negative examples.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>df</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>subgroup</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>model_name</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>490
-491
-492
-493
-494
-495
-496
-497
-498</pre>
+<pre><span></span>542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">compute_bnsp_auc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
-    <span class="sd">"""Computes the AUC of the within-subgroup positive examples and the background negative examples."""</span>
+    <span class="sd">"""Computes the AUC of the within-subgroup positive examples and the background negative examples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      df: </span>
+<span class="sd">      subgroup: </span>
+<span class="sd">      label: </span>
+<span class="sd">      model_name: </span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
     <span class="n">subgroup_positive_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
     <span class="n">non_subgroup_negative_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
     <span class="n">examples</span> <span class="o">=</span> <span class="n">subgroup_positive_examples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -782,30 +953,87 @@ compute_bnsp_classify_detail<span class="p">(</span><span class="n">df</span><sp
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bnsp_classify_detail" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
 <p>Computes the AUC of the within-subgroup positive examples and the background negative examples.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>df</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>subgroup</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>model_name</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>478
-479
-480
-481
-482
-483
-484
-485
-486
-487
-488</pre>
+<pre><span></span>520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">compute_bnsp_classify_detail</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
-    <span class="sd">"""Computes the AUC of the within-subgroup positive examples and the background negative examples."""</span>
+    <span class="sd">"""Computes the AUC of the within-subgroup positive examples and the background negative examples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      df: </span>
+<span class="sd">      subgroup: </span>
+<span class="sd">      label: </span>
+<span class="sd">      model_name: </span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
     <span class="n">subgroup_positive_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
     <span class="n">non_subgroup_negative_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
     <span class="n">examples</span> <span class="o">=</span> <span class="n">subgroup_positive_examples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -832,28 +1060,85 @@ compute_bpsn_auc<span class="p">(</span><span class="n">df</span><span class="p"
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bpsn_auc" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
 <p>Computes the AUC of the within-subgroup negative examples and the background positive examples.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>df</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>subgroup</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>model_name</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>468
-469
-470
-471
-472
-473
-474
-475
-476</pre>
+<pre><span></span>500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">compute_bpsn_auc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
-    <span class="sd">"""Computes the AUC of the within-subgroup negative examples and the background positive examples."""</span>
+    <span class="sd">"""Computes the AUC of the within-subgroup negative examples and the background positive examples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      df: </span>
+<span class="sd">      subgroup: </span>
+<span class="sd">      label: </span>
+<span class="sd">      model_name: </span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
     <span class="n">subgroup_negative_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
     <span class="n">non_subgroup_positive_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
     <span class="n">examples</span> <span class="o">=</span> <span class="n">subgroup_negative_examples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -878,34 +1163,91 @@ compute_bpsn_classify_detail<span class="p">(</span><span class="n">df</span><sp
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bpsn_classify_detail" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
 <p>Computes the AUC of the within-subgroup negative examples and the background positive examples.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>df</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>subgroup</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>model_name</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>452
-453
-454
-455
-456
-457
-458
-459
-460
-461
-462
-463
-464
-465
-466</pre>
+<pre><span></span>474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">compute_bpsn_classify_detail</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
-    <span class="sd">"""Computes the AUC of the within-subgroup negative examples and the background positive examples."""</span>
+    <span class="sd">"""Computes the AUC of the within-subgroup negative examples and the background positive examples.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      df: </span>
+<span class="sd">      subgroup: </span>
+<span class="sd">      label: </span>
+<span class="sd">      model_name: </span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
     <span class="n">subgroup_negative_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
     <span class="n">non_subgroup_positive_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
         <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
@@ -935,49 +1277,114 @@ compute_subgroup_auc<span class="p">(</span><span class="n">df</span><span class
 </span>
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_subgroup_auc" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
-<p>Compute AUC for spefic subgroup. AUC only cares about ordering, not threshold
-:param df: dataframe which contains predictions for all subgroups
-:param subgroup: compute AUC for this subgroup
-:param label: target column name
-:param model_name:
-:return: auc score</p>
+<p>Compute AUC for spefic subgroup. AUC only cares about ordering, not threshold</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>df</code></td>
+<td><code></code></td>
+<td>
+<p>dataframe which contains predictions for all subgroups</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>subgroup</code></td>
+<td><code></code></td>
+<td>
+<p>compute AUC for this subgroup</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code></code></td>
+<td>
+<p>target column name</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>model_name</code></td>
+<td><code></code></td>
+<td>
+<p>return: auc score</p>
+</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>auc score</p>
+</td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>433
-434
-435
-436
-437
-438
-439
-440
-441
-442
-443
-444
-445
-446
-447
-448
-449
-450</pre>
+<pre><span></span>451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">compute_subgroup_auc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Compute AUC for spefic subgroup. AUC only cares about ordering, not threshold</span>
-<span class="sd">    :param df: dataframe which contains predictions for all subgroups</span>
-<span class="sd">    :param subgroup: compute AUC for this subgroup</span>
-<span class="sd">    :param label: target column name</span>
-<span class="sd">    :param model_name:</span>
-<span class="sd">    :return: auc score</span>
+    <span class="sd">"""Compute AUC for spefic subgroup. AUC only cares about ordering, not threshold</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      df: dataframe which contains predictions for all subgroups</span>
+<span class="sd">      subgroup: compute AUC for this subgroup</span>
+<span class="sd">      label: target column name</span>
+<span class="sd">      model_name: return: auc score</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      auc score</span>
+
 <span class="sd">    """</span>
     <span class="n">subgroup_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
         <span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span>
@@ -1004,33 +1411,76 @@ compute_subgroup_classify_detail<span class="p">(</span><span class="n">df</span
 </span>
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_subgroup_classify_detail" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
-<p>Compute AUC for spefic subgroup
-:param df: dataframe which contains predictions for all subgroups
-:param subgroup: compute AUC for this subgroup
-:param label: target column name
-:param model_name:
-:return: just mean/std, for pos, neg, then we just use this information to make shift</p>
+<p>Compute AUC for spefic subgroup</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>df</code></td>
+<td><code></code></td>
+<td>
+<p>dataframe which contains predictions for all subgroups</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>subgroup</code></td>
+<td><code></code></td>
+<td>
+<p>compute AUC for this subgroup</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code></code></td>
+<td>
+<p>target column name</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>model_name</code></td>
+<td><code></code></td>
+<td>
+<p>return: just mean/std, for pos, neg, then we just use this information to make shift</p>
+</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>just mean/std, for pos, neg, then we just use this information to make shift</p>
+</td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>407
-408
-409
-410
-411
-412
-413
-414
-415
-416
-417
-418
-419
-420
-421
+<pre><span></span>421
 422
 423
 424
@@ -1040,20 +1490,42 @@ compute_subgroup_classify_detail<span class="p">(</span><span class="n">df</span
 428
 429
 430
-431</pre>
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">compute_subgroup_classify_detail</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Compute AUC for spefic subgroup</span>
-<span class="sd">    :param df: dataframe which contains predictions for all subgroups</span>
-<span class="sd">    :param subgroup: compute AUC for this subgroup</span>
-<span class="sd">    :param label: target column name</span>
-<span class="sd">    :param model_name:</span>
-<span class="sd">    :return: just mean/std, for pos, neg, then we just use this information to make shift</span>
+    <span class="sd">"""Compute AUC for spefic subgroup</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      df: dataframe which contains predictions for all subgroups</span>
+<span class="sd">      subgroup: compute AUC for this subgroup</span>
+<span class="sd">      label: target column name</span>
+<span class="sd">      model_name: return: just mean/std, for pos, neg, then we just use this information to make shift</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      just mean/std, for pos, neg, then we just use this information to make shift</span>
+
 <span class="sd">    """</span>
     <span class="n">subgroup_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
         <span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span>
@@ -1094,86 +1566,73 @@ build_matrix_prepare_data<span class="p">(</span><span class="bp">self</span><sp
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.EmbeddingHandler.build_matrix_prepare_data" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
 <p>build embedding matrix given tokenizer word_index and pre-trained embedding file</p>
-<p>:param word_index: word_index from tokenizer
-:param path: path to load pre-trained embedding
-:return: embedding matrix</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>word_index</code></td>
+<td><code></code></td>
+<td>
+<p>word_index from tokenizer</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td><code></code></td>
+<td>
+<p>path to load pre-trained embedding</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>emb_matrix_existed</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>convert_additional</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = False)</p>
+</td>
+<td><code>False</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>embedding matrix</p>
+</td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>2170
-2171
-2172
-2173
-2174
-2175
-2176
-2177
-2178
-2179
-2180
-2181
-2182
-2183
-2184
-2185
-2186
-2187
-2188
-2189
-2190
-2191
-2192
-2193
-2194
-2195
-2196
-2197
-2198
-2199
-2200
-2201
-2202
-2203
-2204
-2205
-2206
-2207
-2208
-2209
-2210
-2211
-2212
-2213
-2214
-2215
-2216
-2217
-2218
-2219
-2220
-2221
-2222
-2223
-2224
-2225
-2226
-2227
-2228
-2229
-2230
-2231
-2232
-2233
-2234
-2235
-2236
-2237
-2238
-2239
-2240
+<pre><span></span>2240
 2241
 2242
 2243
@@ -1210,7 +1669,82 @@ build_matrix_prepare_data<span class="p">(</span><span class="bp">self</span><sp
 2274
 2275
 2276
-2277</pre>
+2277
+2278
+2279
+2280
+2281
+2282
+2283
+2284
+2285
+2286
+2287
+2288
+2289
+2290
+2291
+2292
+2293
+2294
+2295
+2296
+2297
+2298
+2299
+2300
+2301
+2302
+2303
+2304
+2305
+2306
+2307
+2308
+2309
+2310
+2311
+2312
+2313
+2314
+2315
+2316
+2317
+2318
+2319
+2320
+2321
+2322
+2323
+2324
+2325
+2326
+2327
+2328
+2329
+2330
+2331
+2332
+2333
+2334
+2335
+2336
+2337
+2338
+2339
+2340
+2341
+2342
+2343
+2344
+2345
+2346
+2347
+2348
+2349
+2350
+2351
+2352</pre>
 </div>
 </td>
 <td class="code">
@@ -1218,12 +1752,17 @@ build_matrix_prepare_data<span class="p">(</span><span class="bp">self</span><sp
 <pre><span></span><code><span class="k">def</span> <span class="nf">build_matrix_prepare_data</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">emb_matrix_existed</span><span class="p">,</span> <span class="n">convert_additional</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    build embedding matrix given tokenizer word_index and pre-trained embedding file</span>
+    <span class="sd">"""build embedding matrix given tokenizer word_index and pre-trained embedding file</span>
 
-<span class="sd">    :param word_index: word_index from tokenizer</span>
-<span class="sd">    :param path: path to load pre-trained embedding</span>
-<span class="sd">    :return: embedding matrix</span>
+<span class="sd">    Args:</span>
+<span class="sd">      word_index: word_index from tokenizer</span>
+<span class="sd">      path: path to load pre-trained embedding</span>
+<span class="sd">      emb_matrix_existed: </span>
+<span class="sd">      convert_additional:  (Default value = False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      embedding matrix</span>
+
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">emb_matrix_existed</span><span class="p">:</span>
@@ -1339,88 +1878,34 @@ data_prepare<span class="p">(</span><span class="bp">self</span><span class="p">
 <div class="doc doc-contents">
 <p>Returns the iris dataset as (train_x, train_y), (test_x, test_y).
 we load this from the tfrecord, maybe save the ones just after embedding, so it can be faster</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>action</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>2407
-2408
-2409
-2410
-2411
-2412
-2413
-2414
-2415
-2416
-2417
-2418
-2419
-2420
-2421
-2422
-2423
-2424
-2425
-2426
-2427
-2428
-2429
-2430
-2431
-2432
-2433
-2434
-2435
-2436
-2437
-2438
-2439
-2440
-2441
-2442
-2443
-2444
-2445
-2446
-2447
-2448
-2449
-2450
-2451
-2452
-2453
-2454
-2455
-2456
-2457
-2458
-2459
-2460
-2461
-2462
-2463
-2464
-2465
-2466
-2467
-2468
-2469
-2470
-2471
-2472
-2473
-2474
-2475
-2476
-2477
-2478
-2479
-2480
-2481
-2482
+<pre><span></span>2482
 2483
 2484
 2485
@@ -1487,7 +1972,88 @@ we load this from the tfrecord, maybe save the ones just after embedding, so it 
 2546
 2547
 2548
-2549</pre>
+2549
+2550
+2551
+2552
+2553
+2554
+2555
+2556
+2557
+2558
+2559
+2560
+2561
+2562
+2563
+2564
+2565
+2566
+2567
+2568
+2569
+2570
+2571
+2572
+2573
+2574
+2575
+2576
+2577
+2578
+2579
+2580
+2581
+2582
+2583
+2584
+2585
+2586
+2587
+2588
+2589
+2590
+2591
+2592
+2593
+2594
+2595
+2596
+2597
+2598
+2599
+2600
+2601
+2602
+2603
+2604
+2605
+2606
+2607
+2608
+2609
+2610
+2611
+2612
+2613
+2614
+2615
+2616
+2617
+2618
+2619
+2620
+2621
+2622
+2623
+2624
+2625
+2626
+2627
+2628
+2629
+2630</pre>
 </div>
 </td>
 <td class="code">
@@ -1495,6 +2061,12 @@ we load this from the tfrecord, maybe save the ones just after embedding, so it 
 <pre><span></span><code><span class="k">def</span> <span class="nf">data_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">"""Returns the iris dataset as (train_x, train_y), (test_x, test_y).</span>
 <span class="sd">    we load this from the tfrecord, maybe save the ones just after embedding, so it can be faster</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      action:  (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1660,17 +2232,32 @@ get_distribution<span class="p">(</span><span class="bp">self</span><span class=
 <div class="doc doc-contents">
 <p>target_data: pandas series, need to get index, so need series, in the series, values are target (prediction)</p>
 <p>:return: (type, cnt number, frequency, index) pair list for this distribution</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>target_data</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>288
-289
-290
-291
-292
+<pre><span></span>292
 293
 294
 295
@@ -1688,16 +2275,30 @@ get_distribution<span class="p">(</span><span class="bp">self</span><span class=
 307
 308
 309
-310</pre>
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">get_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_data</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    target_data: pandas series, need to get index, so need series, in the series, values are target (prediction)</span>
+    <span class="sd">"""target_data: pandas series, need to get index, so need series, in the series, values are target (prediction)</span>
 
 <span class="sd">    :return: (type, cnt number, frequency, index) pair list for this distribution</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      target_data: </span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">dst</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -1730,24 +2331,57 @@ get_distribution<span class="p">(</span><span class="bp">self</span><span class=
 get_err_distribution<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_data</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.datasets.data_prepare.TargetDistAnalyzer.get_err_distribution" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
-<p>:param err_data: series, contain both target values and error values
-:return: (type, cnt number, frequency, index) pair list for this distribution</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>err_data</code></td>
+<td><code></code></td>
+<td>
+<p>series, contain both target values and error values</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>val_mask</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>type, cnt number, frequency, index) pair list for this distribution</p>
+</td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>312
-313
-314
-315
-316
-317
-318
-319
-320
-321
+<pre><span></span>321
 322
 323
 324
@@ -1763,7 +2397,21 @@ get_err_distribution<span class="p">(</span><span class="bp">self</span><span cl
 334
 335
 336
-337</pre>
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351</pre>
 </div>
 </td>
 <td class="code">
@@ -1771,8 +2419,13 @@ get_err_distribution<span class="p">(</span><span class="bp">self</span><span cl
 <pre><span></span><code><span class="k">def</span> <span class="nf">get_err_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_data</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">):</span>
     <span class="sd">"""</span>
 
-<span class="sd">    :param err_data: series, contain both target values and error values</span>
-<span class="sd">    :return: (type, cnt number, frequency, index) pair list for this distribution</span>
+<span class="sd">    Args:</span>
+<span class="sd">      err_data: series, contain both target values and error values</span>
+<span class="sd">      val_mask: </span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      type, cnt number, frequency, index) pair list for this distribution</span>
+
 <span class="sd">    """</span>
     <span class="n">dstr</span> <span class="o">=</span> <span class="p">{}</span>
 

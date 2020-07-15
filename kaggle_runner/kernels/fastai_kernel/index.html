@@ -601,8 +601,8 @@ build_and_set_model<span class="p">(</span><span class="bp">self</span><span cla
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>22
-23</pre>
+<pre><span></span>21
+22</pre>
 </div>
 </td>
 <td class="code">
@@ -630,8 +630,8 @@ check_predict_details<span class="p">(</span><span class="bp">self</span><span c
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>25
-26</pre>
+<pre><span></span>24
+25</pre>
 </div>
 </td>
 <td class="code">
@@ -656,38 +656,131 @@ create_learner<span class="p">(</span><span class="n">k</span><span class="o">=<
 <a class="headerlink" href="#kaggle_runner.kernels.fastai_kernel.FastAIKernel.create_learner" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
 <p>opt_func should pass seprately</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>k</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>opt_func</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>loss_func</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>**kargs</code></td>
+<td><code></code></td>
+<td></td>
+<td><code>{}</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/kernels/fastai_kernel.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90</pre>
+<pre><span></span> 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_learner</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loss_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-    <span class="sd">"""opt_func should pass seprately"""</span>
+    <span class="sd">"""opt_func should pass seprately</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      k:  (Default value = None)</span>
+<span class="sd">      data:  (Default value = None)</span>
+<span class="sd">      model:  (Default value = None)</span>
+<span class="sd">      opt_func:  (Default value = None)</span>
+<span class="sd">      loss_func:  (Default value = None)</span>
+<span class="sd">      metrics:  (Default value = None)</span>
+<span class="sd">      **kargs: </span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span>
@@ -725,7 +818,8 @@ peek_data<span class="p">(</span><span class="bp">self</span><span class="p">)</
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>28
+<pre><span></span>27
+28
 29
 30
 31
@@ -744,8 +838,7 @@ peek_data<span class="p">(</span><span class="bp">self</span><span class="p">)</
 44
 45
 46
-47
-48</pre>
+47</pre>
 </div>
 </td>
 <td class="code">
@@ -811,8 +904,8 @@ set_loss<span class="p">(</span><span class="bp">self</span><span class="p">,</s
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>50
-51</pre>
+<pre><span></span>49
+50</pre>
 </div>
 </td>
 <td class="code">
@@ -835,14 +928,33 @@ set_metrics<span class="p">(</span><span class="bp">self</span><span class="p">,
 <div class="doc doc-contents">
 <p>set_metrics for model training</p>
 <p>:return: None</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metrics</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/kernels/fastai_kernel.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>53
-54</pre>
+<pre><span></span>52
+53</pre>
 </div>
 </td>
 <td class="code">

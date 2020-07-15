@@ -1141,7 +1141,9 @@ dump_state<span class="p">(</span><span class="bp">self</span><span class="p">,<
 <tr>
 <td><code>exec_flag</code></td>
 <td><code></code></td>
-<td></td>
+<td>
+<p>(Default value = False)</p>
+</td>
 <td><code>False</code></td>
 </tr>
 </tbody>
@@ -1266,7 +1268,9 @@ load_state_data_only<span class="p">(</span><span class="bp">self</span><span cl
 <tr>
 <td><code>file_name</code></td>
 <td><code></code></td>
-<td></td>
+<td>
+<p>(Default value = "run_state.pkl")</p>
+</td>
 <td><code>'run_state.pkl'</code></td>
 </tr>
 </tbody>
@@ -1765,6 +1769,51 @@ train_model<span class="p">(</span><span class="bp">self</span><span class="p">)
 forward<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">proposals</span><span class="p">,</span> <span class="n">image_shapes</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.kernels.pytorchKernel.RoIHeads_loss_customized.forward" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>features</code></td>
+<td><code></code></td>
+<td>
+<p>List</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>proposals</code></td>
+<td><code></code></td>
+<td>
+<p>List</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>image_shapes</code></td>
+<td><code></code></td>
+<td>
+<p>List</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>targets</code></td>
+<td><code></code></td>
+<td>
+<p>List (Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/kernels/pytorchKernel.py</code></summary>
 <table class="highlighttable">
@@ -1890,18 +1939,26 @@ forward<span class="p">(</span><span class="bp">self</span><span class="p">,</sp
 1119
 1120
 1121
-1122</pre>
+1122
+1123
+1124
+1125
+1126</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">proposals</span><span class="p">,</span> <span class="n">image_shapes</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">"""</span>
-<span class="sd">    Arguments:</span>
-<span class="sd">        features (List[Tensor])</span>
-<span class="sd">        proposals (List[Tensor[N, 4]])</span>
-<span class="sd">        image_shapes (List[Tuple[H, W]])</span>
-<span class="sd">        targets (List[Dict])</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      features: List</span>
+<span class="sd">      proposals: List</span>
+<span class="sd">      image_shapes: List</span>
+<span class="sd">      targets: List (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">maskrcnn_loss_func</span> <span class="o">=</span> <span class="n">maskrcnn_loss</span>
     <span class="n">fastrcnn_loss_func</span> <span class="o">=</span> <span class="n">fastrcnn_loss</span>
@@ -2032,6 +2089,69 @@ forward<span class="p">(</span><span class="bp">self</span><span class="p">,</sp
 maskrcnn_loss_focal<span class="p">(</span><span class="n">mask_logits</span><span class="p">,</span> <span class="n">proposals</span><span class="p">,</span> <span class="n">gt_masks</span><span class="p">,</span> <span class="n">gt_labels</span><span class="p">,</span> <span class="n">mask_matched_idxs</span><span class="p">,</span> <span class="n">focal_loss_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.kernels.pytorchKernel.maskrcnn_loss_focal" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>proposals</code></td>
+<td><code></code></td>
+<td>
+<p>list</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>mask_logits</code></td>
+<td><code></code></td>
+<td>
+<p>Tensor</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>targets</code></td>
+<td><code></code></td>
+<td>
+<p>list</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>gt_masks</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>gt_labels</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>mask_matched_idxs</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>focal_loss_func</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
 <p><strong>Returns:</strong></p>
 <table>
 <thead>
@@ -2055,19 +2175,7 @@ maskrcnn_loss_focal<span class="p">(</span><span class="n">mask_logits</span><sp
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>1139
-1140
-1141
-1142
-1143
-1144
-1145
-1146
-1147
-1148
-1149
-1150
-1151
+<pre><span></span>1151
 1152
 1153
 1154
@@ -2091,7 +2199,25 @@ maskrcnn_loss_focal<span class="p">(</span><span class="n">mask_logits</span><sp
 1172
 1173
 1174
-1175</pre>
+1175
+1176
+1177
+1178
+1179
+1180
+1181
+1182
+1183
+1184
+1185
+1186
+1187
+1188
+1189
+1190
+1191
+1192
+1193</pre>
 </div>
 </td>
 <td class="code">
@@ -2100,13 +2226,19 @@ maskrcnn_loss_focal<span class="p">(</span><span class="n">mask_logits</span><sp
     <span class="n">mask_logits</span><span class="p">,</span> <span class="n">proposals</span><span class="p">,</span> <span class="n">gt_masks</span><span class="p">,</span> <span class="n">gt_labels</span><span class="p">,</span> <span class="n">mask_matched_idxs</span><span class="p">,</span> <span class="n">focal_loss_func</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
     <span class="sd">"""</span>
-<span class="sd">    Arguments:</span>
-<span class="sd">        proposals (list[BoxList])</span>
-<span class="sd">        mask_logits (Tensor)</span>
-<span class="sd">        targets (list[BoxList])</span>
 
-<span class="sd">    Return:</span>
-<span class="sd">        mask_loss (Tensor): scalar tensor containing the loss</span>
+<span class="sd">    Args:</span>
+<span class="sd">      proposals: list</span>
+<span class="sd">      mask_logits: Tensor</span>
+<span class="sd">      targets: list</span>
+<span class="sd">      gt_masks: </span>
+<span class="sd">      gt_labels: </span>
+<span class="sd">      mask_matched_idxs: </span>
+<span class="sd">      focal_loss_func:  (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      mask_loss (Tensor): scalar tensor containing the loss</span>
+
 <span class="sd">    """</span>
 
     <span class="n">discretization_size</span> <span class="o">=</span> <span class="n">mask_logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -2152,35 +2284,88 @@ to the location of the masks in the image, this function
 crops and resizes the masks in the position defined by the
 boxes. This prepares the masks for them to be fed to the
 loss computation as the targets.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gt_masks</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>boxes</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>matched_idxs</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>M</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/kernels/pytorchKernel.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>1125
-1126
-1127
-1128
-1129
+<pre><span></span>1129
 1130
 1131
 1132
 1133
 1134
 1135
-1136</pre>
+1136
+1137
+1138
+1139
+1140
+1141
+1142
+1143
+1144
+1145
+1146
+1147
+1148</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">project_masks_on_boxes</span><span class="p">(</span><span class="n">gt_masks</span><span class="p">,</span> <span class="n">boxes</span><span class="p">,</span> <span class="n">matched_idxs</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Given segmentation masks and the bounding boxes corresponding</span>
+    <span class="sd">"""Given segmentation masks and the bounding boxes corresponding</span>
 <span class="sd">    to the location of the masks in the image, this function</span>
 <span class="sd">    crops and resizes the masks in the position defined by the</span>
 <span class="sd">    boxes. This prepares the masks for them to be fed to the</span>
 <span class="sd">    loss computation as the targets.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      gt_masks: </span>
+<span class="sd">      boxes: </span>
+<span class="sd">      matched_idxs: </span>
+<span class="sd">      M: </span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">matched_idxs</span> <span class="o">=</span> <span class="n">matched_idxs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span>
     <span class="n">rois</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">matched_idxs</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">boxes</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

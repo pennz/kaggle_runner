@@ -530,27 +530,78 @@ compute_iou_batch<span class="p">(</span><span class="n">outputs</span><span cla
 <a class="headerlink" href="#kaggle_runner.datasets.coders.compute_iou_batch" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
 <p>computes mean iou for a batch of ground truth masks and predicted masks</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>outputs</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>labels</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>classes</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/coders.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>51
-52
-53
-54
-55
-56
-57
-58
-59</pre>
+<pre><span></span>62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">compute_iou_batch</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">"""computes mean iou for a batch of ground truth masks and predicted masks"""</span>
+    <span class="sd">"""computes mean iou for a batch of ground truth masks and predicted masks</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      outputs: </span>
+<span class="sd">      labels: </span>
+<span class="sd">      classes:  (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
     <span class="n">ious</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>  <span class="c1"># copy is imp</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>  <span class="c1"># tensor to np</span>
@@ -573,6 +624,53 @@ compute_ious<span class="p">(</span><span class="n">pred</span><span class="p">,
 <a class="headerlink" href="#kaggle_runner.datasets.coders.compute_ious" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
 <p>computes iou for one ground truth mask and predicted mask</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pred</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>classes</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>ignore_index</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = 255)</p>
+</td>
+<td><code>255</code></td>
+</tr>
+<tr>
+<td><code>only_present</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = True)</p>
+</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/datasets/coders.py</code></summary>
 <table class="highlighttable">
@@ -593,13 +691,35 @@ compute_ious<span class="p">(</span><span class="n">pred</span><span class="p">,
 45
 46
 47
-48</pre>
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">compute_ious</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">only_present</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">"""computes iou for one ground truth mask and predicted mask"""</span>
+    <span class="sd">"""computes iou for one ground truth mask and predicted mask</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      pred: </span>
+<span class="sd">      label: </span>
+<span class="sd">      classes: </span>
+<span class="sd">      ignore_index:  (Default value = 255)</span>
+<span class="sd">      only_present:  (Default value = True)</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
     <span class="n">pred</span><span class="p">[</span><span class="n">label</span> <span class="o">==</span> <span class="n">ignore_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">ious</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>

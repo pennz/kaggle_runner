@@ -637,20 +637,20 @@ on_train_begin<span class="p">(</span><span class="bp">self</span><span class="p
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>251
-252
-253
-254
-255
-256
-257
-258
-259
-260
-261
-262
+<pre><span></span>262
 263
-264</pre>
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275</pre>
 </div>
 </td>
 <td class="code">
@@ -699,18 +699,7 @@ on_batch_end<span class="p">(</span><span class="bp">self</span><span class="p">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span> 59
- 60
- 61
- 62
- 63
- 64
- 65
- 66
- 67
- 68
- 69
- 70
+<pre><span></span> 70
  71
  72
  73
@@ -765,7 +754,18 @@ on_batch_end<span class="p">(</span><span class="bp">self</span><span class="p">
 122
 123
 124
-125</pre>
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136</pre>
 </div>
 </td>
 <td class="code">
@@ -881,8 +881,8 @@ but that may change in the future.</p>
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>56
-57</pre>
+<pre><span></span>67
+68</pre>
 </div>
 </td>
 <td class="code">
@@ -933,9 +933,9 @@ but that may change in the future.</p>
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>127
-128
-129</pre>
+<pre><span></span>138
+139
+140</pre>
 </div>
 </td>
 <td class="code">
@@ -961,6 +961,12 @@ but that may change in the future.</p>
 <div class="doc doc-contents">
 <p>Track a series of values and provide access to smoothed values over a
     window or the global series average.</p>
+<div class="codehilite">
+<pre><span></span><code><span class="n">Args</span><span class="o">:</span>
+
+<span class="n">Returns</span><span class="o">:</span>
+</code></pre>
+</div>
 <div class="doc doc-children">
 <div class="doc doc-object doc-method">
 <h3 class="doc doc-heading" id="kaggle_runner.logs.SmoothedValue.synchronize_between_processes">
@@ -975,28 +981,24 @@ synchronize_between_processes<span class="p">(</span><span class="bp">self</span
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>290
-291
-292
-293
-294
-295
-296
-297
-298
-299
-300
-301
-302
-303</pre>
+<pre><span></span>306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">synchronize_between_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Warning: does not synchronize the deque!</span>
-<span class="sd">    """</span>
+    <span class="sd">"""Warning: does not synchronize the deque!"""</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_dist_avail_and_initialized</span><span class="p">():</span>
         <span class="k">return</span>
@@ -1025,6 +1027,49 @@ metric_get_log<span class="p">(</span><span class="n">phase</span><span class="p
 <a class="headerlink" href="#kaggle_runner.logs.metric_get_log" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
 <p>logging the metrics at the end of an epoch</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>phase</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>epoch</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>epoch_loss</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>meter</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>start</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/logs.py</code></summary>
 <table class="highlighttable">
@@ -1041,13 +1086,35 @@ metric_get_log<span class="p">(</span><span class="n">phase</span><span class="p
 22
 23
 24
-25</pre>
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">metric_get_log</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">epoch_loss</span><span class="p">,</span> <span class="n">meter</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
-    <span class="sd">"""logging the metrics at the end of an epoch"""</span>
+    <span class="sd">"""logging the metrics at the end of an epoch</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      phase: </span>
+<span class="sd">      epoch: </span>
+<span class="sd">      epoch_loss: </span>
+<span class="sd">      meter: </span>
+<span class="sd">      start: </span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
     <span class="n">dices</span><span class="p">,</span> <span class="n">iou</span> <span class="o">=</span> <span class="n">meter</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>
     <span class="n">dice</span><span class="p">,</span> <span class="n">dice_neg</span><span class="p">,</span> <span class="n">dice_pos</span> <span class="o">=</span> <span class="n">dices</span>
     <span class="nb">print</span><span class="p">(</span>

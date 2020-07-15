@@ -594,9 +594,7 @@ all_gather<span class="p">(</span><span class="n">data</span><span class="p">)</
 <tr>
 <td><code>data</code></td>
 <td><code></code></td>
-<td>
-<p>any picklable object</p>
-</td>
+<td></td>
 <td><em>required</em></td>
 </tr>
 </tbody>
@@ -624,30 +622,7 @@ all_gather<span class="p">(</span><span class="n">data</span><span class="p">)</
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>290
-291
-292
-293
-294
-295
-296
-297
-298
-299
-300
-301
-302
-303
-304
-305
-306
-307
-308
-309
-310
-311
-312
-313
+<pre><span></span>313
 314
 315
 316
@@ -671,18 +646,45 @@ all_gather<span class="p">(</span><span class="n">data</span><span class="p">)</
 334
 335
 336
-337</pre>
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">all_gather</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    Run all_gather on arbitrary picklable data (not necessarily tensors)</span>
+    <span class="sd">"""Run all_gather on arbitrary picklable data (not necessarily tensors)</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        data: any picklable object</span>
+<span class="sd">      data: </span>
+
 <span class="sd">    Returns:</span>
-<span class="sd">        list[data]: list of data gathered from each rank</span>
+<span class="sd">      list[data]: list of data gathered from each rank</span>
+
 <span class="sd">    """</span>
     <span class="n">world_size</span> <span class="o">=</span> <span class="n">get_world_size</span><span class="p">()</span>
 
@@ -738,42 +740,83 @@ all_gather<span class="p">(</span><span class="n">data</span><span class="p">)</
 binary_crossentropy_with_focal<span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">custom_weights_in_Y_true</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.utils.kernel_utils.binary_crossentropy_with_focal" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
-<p>:param y_true: y_true
-:param y_pred: y_pred
-:param gamma: make easier ones weights down
-:param alpha: weight for positive classes. default to 1 - (true
-    positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha
-    for calss -1.   In practice α may be set by inverse class freqency or
-    hyperparameter.
-:return: bce
-Reference: https://arxiv.org/pdf/1708.02002.pdf</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y_true</code></td>
+<td><code></code></td>
+<td>
+<p>y_true</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>y_pred</code></td>
+<td><code></code></td>
+<td>
+<p>y_pred</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>gamma</code></td>
+<td><code></code></td>
+<td>
+<p>make easier ones weights down (Default value = 1.0)</p>
+</td>
+<td><code>1.0</code></td>
+</tr>
+<tr>
+<td><code>alpha</code></td>
+<td><code></code></td>
+<td>
+<p>weight for positive classes. default to 1 - (true</p>
+</td>
+<td><code>0.5</code></td>
+</tr>
+</tbody>
+</table>
+<p>positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha
+for calss -1.   In practice α may be set by inverse class freqency or
+hyperparameter.
+  custom_weights_in_Y_true:  (Default value = True)</p>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bce
+Reference</code></td>
+<td>
+<p>https://arxiv.org/pdf/1708.02002.pdf</p>
 <p>$$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
 $$ p_t=p: if: y=1$$
 $$ p_t=1-p: otherwise$$</p>
+</td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/utils/kernel_utils.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
+<pre><span></span>154
 155
 156
 157
@@ -820,7 +863,30 @@ $$ p_t=1-p: otherwise$$</p>
 198
 199
 200
-201</pre>
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224</pre>
 </div>
 </td>
 <td class="code">
@@ -829,19 +895,25 @@ $$ p_t=1-p: otherwise$$</p>
     <span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">custom_weights_in_Y_true</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
     <span class="sd">"""</span>
-<span class="sd">    :param y_true: y_true</span>
-<span class="sd">    :param y_pred: y_pred</span>
-<span class="sd">    :param gamma: make easier ones weights down</span>
-<span class="sd">    :param alpha: weight for positive classes. default to 1 - (true</span>
-<span class="sd">        positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha</span>
-<span class="sd">        for calss -1.   In practice α may be set by inverse class freqency or</span>
-<span class="sd">        hyperparameter.</span>
-<span class="sd">    :return: bce</span>
-<span class="sd">    Reference: https://arxiv.org/pdf/1708.02002.pdf</span>
 
-<span class="sd">    $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$</span>
-<span class="sd">    $$ p_t=p\: if\: y=1$$</span>
-<span class="sd">    $$ p_t=1-p\: otherwise$$</span>
+<span class="sd">    Args:</span>
+<span class="sd">      y_true: y_true</span>
+<span class="sd">      y_pred: y_pred</span>
+<span class="sd">      gamma: make easier ones weights down (Default value = 1.0)</span>
+<span class="sd">      alpha: weight for positive classes. default to 1 - (true</span>
+<span class="sd">    positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha</span>
+<span class="sd">    for calss -1.   In practice α may be set by inverse class freqency or</span>
+<span class="sd">    hyperparameter.</span>
+<span class="sd">      custom_weights_in_Y_true:  (Default value = True)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      bce</span>
+<span class="sd">      Reference: https://arxiv.org/pdf/1708.02002.pdf</span>
+
+<span class="sd">      $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$</span>
+<span class="sd">      $$ p_t=p\: if\: y=1$$</span>
+<span class="sd">      $$ p_t=1-p\: otherwise$$</span>
+
 <span class="sd">    """</span>
 
     <span class="c1"># assert 0 &lt;= alpha &lt;= 1 and gamma &gt;= 0</span>
@@ -904,28 +976,42 @@ $$ p_t=1-p: otherwise$$</p>
 binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">logit_pred</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">custom_weights_in_Y_true</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.utils.kernel_utils.binary_crossentropy_with_focal_seasoned" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
-<p>:param alpha:weight for positive classes <strong>loss</strong>. default to 1- true
-    positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
-    for calss -1.   In practiceαmay be set by inverse class freqency or
-    hyperparameter.
-:param custom_weights_in_Y_true:
-:return:</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alpha</code></td>
+<td><code></code></td>
+<td>
+<p>weight for positive classes <strong>loss</strong>. default to 1- true</p>
+</td>
+<td><code>0.5</code></td>
+</tr>
+</tbody>
+</table>
+<p>positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha
+for calss -1.   In practiceαmay be set by inverse class freqency or
+hyperparameter.
+  custom_weights_in_Y_true: return: (Default value = True)
+  y_true: 
+  logit_pred: 
+  beta:  (Default value = 0.0)
+  gamma:  (Default value = 1.0)</p>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/utils/kernel_utils.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>112
-113
-114
-115
-116
-117
-118
-119
-120
-121
+<pre><span></span>121
 122
 123
 124
@@ -937,7 +1023,24 @@ binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y
 130
 131
 132
-133</pre>
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150</pre>
 </div>
 </td>
 <td class="code">
@@ -946,12 +1049,20 @@ binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y
     <span class="n">y_true</span><span class="p">,</span> <span class="n">logit_pred</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">custom_weights_in_Y_true</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
     <span class="sd">"""</span>
-<span class="sd">    :param alpha:weight for positive classes **loss**. default to 1- true</span>
-<span class="sd">        positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</span>
-<span class="sd">        for calss -1.   In practiceαmay be set by inverse class freqency or</span>
-<span class="sd">        hyperparameter.</span>
-<span class="sd">    :param custom_weights_in_Y_true:</span>
-<span class="sd">    :return:</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      alpha: weight for positive classes **loss**. default to 1- true</span>
+<span class="sd">    positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</span>
+<span class="sd">    for calss -1.   In practiceαmay be set by inverse class freqency or</span>
+<span class="sd">    hyperparameter.</span>
+<span class="sd">      custom_weights_in_Y_true: return: (Default value = True)</span>
+<span class="sd">      y_true: </span>
+<span class="sd">      logit_pred: </span>
+<span class="sd">      beta:  (Default value = 0.0)</span>
+<span class="sd">      gamma:  (Default value = 1.0)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">balanced</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">logit_pred</span> <span class="o">+</span> <span class="n">beta</span>
     <span class="n">y_pred</span> <span class="o">=</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">balanced</span><span class="p">)</span>
@@ -980,38 +1091,91 @@ get_obj_or_dump<span class="p">(</span><span class="n">filename</span><span clas
 <div class="doc doc-contents">
 <p>get_obj_or_dump will dump default obj to file if file not there, otherwise
 obj will be unpickled from file. If file not found, default value will returned.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filename</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>fullpath</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = False)</p>
+</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/utils/kernel_utils.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>81
-82
-83
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99</pre>
+<pre><span></span> 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">get_obj_or_dump</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fullpath</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">"""get_obj_or_dump will dump default obj to file if file not there, otherwise</span>
-<span class="sd">    obj will be unpickled from file. If file not found, default value will returned."""</span>
+<span class="sd">    obj will be unpickled from file. If file not found, default value will returned.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      filename: </span>
+<span class="sd">      fullpath:  (Default value = False)</span>
+<span class="sd">      default:  (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">fullpath</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">BIN_FOLDER</span> <span class="o">+</span> <span class="n">filename</span>
@@ -1049,41 +1213,75 @@ online_mean_and_sd<span class="p">(</span><span class="n">loader</span><span cla
 </div>
 <p>credit xwkuang5
 @https://discuss.pytorch.org/t/about-normalization-using-pre-trained-vgg16-networks/23560/7</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loader</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>data_map</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = None)</p>
+</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/utils/kernel_utils.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>504
-505
-506
-507
-508
-509
-510
-511
-512
-513
-514
-515
-516
-517
-518
-519
-520
-521
-522
-523
-524
-525
-526
-527
-528
-529
-530
-531
-532</pre>
+<pre><span></span>538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573</pre>
 </div>
 </td>
 <td class="code">
@@ -1094,6 +1292,13 @@ online_mean_and_sd<span class="p">(</span><span class="n">loader</span><span cla
 <span class="sd">        Var[x] = E[X^2] - E^2[X]</span>
 <span class="sd">    credit xwkuang5</span>
 <span class="sd">    @https://discuss.pytorch.org/t/about-normalization-using-pre-trained-vgg16-networks/23560/7</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      loader: </span>
+<span class="sd">      data_map:  (Default value = None)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="c1"># fst_moment = torch.empty(3)</span>
@@ -1143,73 +1348,81 @@ reduce_dict<span class="p">(</span><span class="n">input_dict</span><span class=
 </thead>
 <tbody>
 <tr>
-<td><code>input_dict</code></td>
-<td><code>dict</code></td>
+<td><code>input_dict(dict)</code></td>
+<td><code></code></td>
 <td>
 <p>all the values will be reduced</p>
 </td>
 <td><em>required</em></td>
 </tr>
 <tr>
-<td><code>average</code></td>
-<td><code>bool</code></td>
+<td><code>average(bool,</code></td>
+<td><code>optional</code></td>
 <td>
 <p>whether to do average or sum</p>
 </td>
-<td><code>True</code></td>
+<td><em>required</em></td>
 </tr>
 </tbody>
 </table>
 <p>Reduce the values in the dictionary from all processes so that all
 processes have the averaged results. Returns a dict with the same fields as
-input_dict, after reduction.</p>
+input_dict, after reduction. (Default value = True)</p>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/utils/kernel_utils.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>340
-341
-342
-343
-344
-345
-346
-347
-348
-349
-350
-351
-352
-353
-354
-355
-356
-357
-358
-359
-360
-361
-362
-363
-364
-365
+<pre><span></span>365
 366
 367
-368</pre>
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">reduce_dict</span><span class="p">(</span><span class="n">input_dict</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">"""</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        input_dict (dict): all the values will be reduced</span>
-<span class="sd">        average (bool): whether to do average or sum</span>
+<span class="sd">      input_dict(dict): all the values will be reduced</span>
+<span class="sd">      average(bool, optional): whether to do average or sum</span>
 <span class="sd">    Reduce the values in the dictionary from all processes so that all</span>
 <span class="sd">    processes have the averaged results. Returns a dict with the same fields as</span>
-<span class="sd">    input_dict, after reduction.</span>
+<span class="sd">    input_dict, after reduction. (Default value = True)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">world_size</span> <span class="o">=</span> <span class="n">get_world_size</span><span class="p">()</span>
 
@@ -1246,34 +1459,63 @@ setup_for_distributed<span class="p">(</span><span class="n">is_master</span><sp
 <a class="headerlink" href="#kaggle_runner.utils.kernel_utils.setup_for_distributed" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
 <p>This function disables printing when not in master process</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>is_master</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/utils/kernel_utils.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>394
-395
-396
-397
-398
-399
-400
-401
-402
-403
-404
-405
-406
-407
-408</pre>
+<pre><span></span>423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
 <pre><span></span><code><span class="k">def</span> <span class="nf">setup_for_distributed</span><span class="p">(</span><span class="n">is_master</span><span class="p">):</span>
-    <span class="sd">"""</span>
-<span class="sd">    This function disables printing when not in master process</span>
+    <span class="sd">"""This function disables printing when not in master process</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      is_master: </span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="kn">import</span> <span class="nn">builtins</span> <span class="k">as</span> <span class="nn">__builtin__</span>
 

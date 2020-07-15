@@ -565,25 +565,58 @@ create_runner<span class="p">(</span><span class="bp">self</span><span class="p"
 <a class="headerlink" href="#kaggle_runner.runners.coordinator.Coordinator.create_runner" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
 <p>create_runner.</p>
-<p>:param config: config will be size and model right now
-:param seed:
-:param script:
-:param from_template:</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config</code></td>
+<td><code></code></td>
+<td>
+<p>config will be size and model right now</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td><code></code></td>
+<td>
+<p>param script: (Default value = "2020")</p>
+</td>
+<td><code>'2020'</code></td>
+</tr>
+<tr>
+<td><code>from_template</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = True)</p>
+</td>
+<td><code>True</code></td>
+</tr>
+<tr>
+<td><code>script</code></td>
+<td><code></code></td>
+<td>
+<p>(Default value = True)</p>
+</td>
+<td><code>True</code></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/runners/coordinator.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>575
-576
-577
-578
-579
-580
-581
-582
-583
+<pre><span></span>583
 584
 585
 586
@@ -608,7 +641,19 @@ create_runner<span class="p">(</span><span class="bp">self</span><span class="p"
 605
 606
 607
-608</pre>
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617
+618
+619
+620</pre>
 </div>
 </td>
 <td class="code">
@@ -616,10 +661,14 @@ create_runner<span class="p">(</span><span class="bp">self</span><span class="p"
 <pre><span></span><code><span class="k">def</span> <span class="nf">create_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="s2">"2020"</span><span class="p">,</span> <span class="n">script</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">from_template</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">"""create_runner.</span>
 
-<span class="sd">    :param config: config will be size and model right now</span>
-<span class="sd">    :param seed:</span>
-<span class="sd">    :param script:</span>
-<span class="sd">    :param from_template:</span>
+<span class="sd">    Args:</span>
+<span class="sd">      config: config will be size and model right now</span>
+<span class="sd">      seed: param script: (Default value = "2020")</span>
+<span class="sd">      from_template:  (Default value = True)</span>
+<span class="sd">      script:  (Default value = True)</span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span>
     <span class="n">net</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">"network"</span><span class="p">]</span>
@@ -706,20 +755,42 @@ run_local<span class="p">(</span><span class="bp">self</span><span class="p">,</
 <a class="headerlink" href="#kaggle_runner.runners.coordinator.Coordinator.run_local" title="Permanent link">¤</a></h3>
 <div class="doc doc-contents">
 <p>run_local only for local test, real kernel runs in kaggle/colab server.</p>
-<p>:param path:</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>path</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/runners/coordinator.py</code></summary>
 <table class="highlighttable">
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>567
-568
-569
-570
-571
+<pre><span></span>571
 572
-573</pre>
+573
+574
+575
+576
+577
+578
+579
+580
+581</pre>
 </div>
 </td>
 <td class="code">
@@ -727,7 +798,11 @@ run_local<span class="p">(</span><span class="bp">self</span><span class="p">,</
 <pre><span></span><code><span class="k">def</span> <span class="nf">run_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="sd">"""run_local only for local test, real kernel runs in kaggle/colab server.</span>
 
-<span class="sd">    :param path:</span>
+<span class="sd">    Args:</span>
+<span class="sd">      path: </span>
+
+<span class="sd">    Returns:</span>
+
 <span class="sd">    """</span>
 
     <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"python "</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"main.py"</span><span class="p">),</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
