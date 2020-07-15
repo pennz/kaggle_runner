@@ -535,9 +535,7 @@ eval_input_fn<span class="p">(</span><span class="n">features</span><span class=
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>370
-371
-372
+<pre><span></span>372
 373
 374
 375
@@ -564,7 +562,9 @@ eval_input_fn<span class="p">(</span><span class="n">features</span><span class=
 396
 397
 398
-399</pre>
+399
+400
+401</pre>
 </div>
 </td>
 <td class="code">
@@ -578,7 +578,7 @@ eval_input_fn<span class="p">(</span><span class="n">features</span><span class=
 <span class="sd">      labels: </span>
 <span class="sd">      batch_size: </span>
 <span class="sd">      split_id: </span>
-<span class="sd">      n_splits:  (Default value = 10)</span>
+<span class="sd">      n_splits: (Default value = 10)</span>
 
 <span class="sd">    Returns:</span>
 
@@ -651,13 +651,27 @@ load_data<span class="p">(</span><span class="n">train_path</span><span class="p
 <td><em>required</em></td>
 </tr>
 <tr>
-<td><code>image_mask_ds))@staticmethodload_data(train_path</code></td>
+<td><code>image_mask_ds))@staticmethodload_data</code></td>
 <td><code></code></td>
 <td></td>
 <td><em>required</em></td>
 </tr>
 <tr>
 <td><code>test_path</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>train_Y_np)</code></td>
+<td><code></code></td>
+<td>
+<h1 id="joindataset_dir">join(dataset_dir:<a class="headerlink" href="#joindataset_dir" title="Permanent link">¤</a></h1>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>image_mask_ds))@staticmethodload_data(train_path</code></td>
 <td><code></code></td>
 <td></td>
 <td><em>required</em></td>
@@ -701,7 +715,9 @@ load_data<span class="p">(</span><span class="n">train_path</span><span class="p
 179
 180
 181
-182</pre>
+182
+183
+184</pre>
 </div>
 </td>
 <td class="code">
@@ -712,10 +728,12 @@ load_data<span class="p">(</span><span class="n">train_path</span><span class="p
 
 <span class="sd">    Args:</span>
 <span class="sd">      train_X_np: </span>
-<span class="sd">      train_Y_np):  # join(dataset_dir: </span>
-<span class="sd">      'labels.csv')image_ds:  (Default value = tf.data.Dataset.from_tensor_slices(train_X_np)image_mask_ds = tf.data.Dataset.from_tensor_slices(train_Y_np)return tf.data.Dataset.zip((image_ds)</span>
-<span class="sd">      image_mask_ds))@staticmethodload_data(train_path: </span>
+<span class="sd">      train_Y_np): # join(dataset_dir:</span>
+<span class="sd">      'labels.csv')image_ds: (Default value = tf.data.Dataset.from_tensor_slices(train_X_np)image_mask_ds = tf.data.Dataset.from_tensor_slices(train_Y_np)return tf.data.Dataset.zip((image_ds)</span>
+<span class="sd">      image_mask_ds))@staticmethodload_data: </span>
 <span class="sd">      test_path: </span>
+<span class="sd">      train_Y_np):  # join(dataset_dir: </span>
+<span class="sd">      image_mask_ds))@staticmethodload_data(train_path: </span>
 
 <span class="sd">    Returns:</span>
 
@@ -787,9 +805,7 @@ predict_input_fn<span class="p">(</span><span class="n">features</span><span cla
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>401
-402
-403
+<pre><span></span>403
 404
 405
 406
@@ -807,7 +823,9 @@ predict_input_fn<span class="p">(</span><span class="n">features</span><span cla
 418
 419
 420
-421</pre>
+421
+422
+423</pre>
 </div>
 </td>
 <td class="code">
@@ -883,9 +901,7 @@ Creates a tf.Example message ready to be written to a file.</p>
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>452
-453
-454
+<pre><span></span>454
 455
 456
 457
@@ -915,7 +931,9 @@ Creates a tf.Example message ready to be written to a file.</p>
 481
 482
 483
-484</pre>
+484
+485
+486</pre>
 </div>
 </td>
 <td class="code">
@@ -1032,9 +1050,7 @@ train_input_fn<span class="p">(</span><span class="n">features</span><span class
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>325
-326
-327
+<pre><span></span>327
 328
 329
 330
@@ -1075,7 +1091,9 @@ train_input_fn<span class="p">(</span><span class="n">features</span><span class
 365
 366
 367
-368</pre>
+368
+369
+370</pre>
 </div>
 </td>
 <td class="code">
@@ -1089,9 +1107,9 @@ train_input_fn<span class="p">(</span><span class="n">features</span><span class
 <span class="sd">      features: </span>
 <span class="sd">      labels: </span>
 <span class="sd">      batch_size: </span>
-<span class="sd">      split_id:  (Default value = -1)</span>
-<span class="sd">      n_splits:  (Default value = 10)</span>
-<span class="sd">      cv:  (Default value = True)</span>
+<span class="sd">      split_id: (Default value = -1)</span>
+<span class="sd">      n_splits: (Default value = 10)</span>
+<span class="sd">      cv: (Default value = True)</span>
 
 <span class="sd">    Returns:</span>
 

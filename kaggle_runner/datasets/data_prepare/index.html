@@ -596,11 +596,11 @@ calculate_benchmark<span class="p">(</span><span class="bp">self</span><span cla
 
 <span class="sd">    Args:</span>
 <span class="sd">      pred: param model_name: (Default value = None)</span>
-<span class="sd">      validate_df:  (Default value = None)</span>
-<span class="sd">      model_name:  (Default value = MODEL_NAME)</span>
+<span class="sd">      validate_df: (Default value = None)</span>
+<span class="sd">      model_name: (Default value = MODEL_NAME)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc</span>
+<span class="sd">      : final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc</span>
 
 <span class="sd">    """</span>
 
@@ -1383,7 +1383,7 @@ compute_subgroup_auc<span class="p">(</span><span class="n">df</span><span class
 <span class="sd">      model_name: return: auc score</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      auc score</span>
+<span class="sd">      : auc score</span>
 
 <span class="sd">    """</span>
     <span class="n">subgroup_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
@@ -1524,7 +1524,7 @@ compute_subgroup_classify_detail<span class="p">(</span><span class="n">df</span
 <span class="sd">      model_name: return: just mean/std, for pos, neg, then we just use this information to make shift</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      just mean/std, for pos, neg, then we just use this information to make shift</span>
+<span class="sd">      : just mean/std, for pos, neg, then we just use this information to make shift</span>
 
 <span class="sd">    """</span>
     <span class="n">subgroup_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
@@ -1758,10 +1758,10 @@ build_matrix_prepare_data<span class="p">(</span><span class="bp">self</span><sp
 <span class="sd">      word_index: word_index from tokenizer</span>
 <span class="sd">      path: path to load pre-trained embedding</span>
 <span class="sd">      emb_matrix_existed: </span>
-<span class="sd">      convert_additional:  (Default value = False)</span>
+<span class="sd">      convert_additional: (Default value = False)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      embedding matrix</span>
+<span class="sd">      : embedding matrix</span>
 
 <span class="sd">    """</span>
 
@@ -2063,7 +2063,7 @@ we load this from the tfrecord, maybe save the ones just after embedding, so it 
 <span class="sd">    we load this from the tfrecord, maybe save the ones just after embedding, so it can be faster</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      action:  (Default value = None)</span>
+<span class="sd">      action: (Default value = None)</span>
 
 <span class="sd">    Returns:</span>
 
@@ -2424,7 +2424,7 @@ get_err_distribution<span class="p">(</span><span class="bp">self</span><span cl
 <span class="sd">      val_mask: </span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      type, cnt number, frequency, index) pair list for this distribution</span>
+<span class="sd">      : type, cnt number, frequency, index) pair list for this distribution</span>
 
 <span class="sd">    """</span>
     <span class="n">dstr</span> <span class="o">=</span> <span class="p">{}</span>

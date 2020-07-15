@@ -891,7 +891,7 @@ $$ p_t=1-p: otherwise$$</p>
 </table>
 <p>for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.
   y_pred: 
-  custom_weights_in_y_true:  (Default value = True)</p>
+  custom_weights_in_y_true: (Default value = True)</p>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/losses.py</code></summary>
 <table class="highlighttable">
@@ -982,7 +982,7 @@ $$ p_t=1-p: otherwise$$</p>
 <span class="sd">      alpha: weight for positive classes. default to 1- true positive cnts / all cnts, alpha range [0,1] for class 1 and 1-alpha</span>
 <span class="sd">    for calss -1.   In practiceαmay be set by inverse class freqency or hyperparameter.</span>
 <span class="sd">      y_pred: </span>
-<span class="sd">      custom_weights_in_y_true:  (Default value = True)</span>
+<span class="sd">      custom_weights_in_y_true: (Default value = True)</span>
 
 <span class="sd">    Returns:</span>
 
@@ -1071,8 +1071,8 @@ binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y
   custom_weights_in_y_true: return: (Default value = True)
   y_true: 
   logit_pred: 
-  beta:  (Default value = FOCAL_LOSS_BETA_NEG_POS)
-  gamma:  (Default value = FOCAL_LOSS_GAMMA_NEG_POS)</p>
+  beta: (Default value = FOCAL_LOSS_BETA_NEG_POS)
+  gamma: (Default value = FOCAL_LOSS_GAMMA_NEG_POS)</p>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/losses.py</code></summary>
 <table class="highlighttable">
@@ -1132,8 +1132,8 @@ binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y
 <span class="sd">      custom_weights_in_y_true: return: (Default value = True)</span>
 <span class="sd">      y_true: </span>
 <span class="sd">      logit_pred: </span>
-<span class="sd">      beta:  (Default value = FOCAL_LOSS_BETA_NEG_POS)</span>
-<span class="sd">      gamma:  (Default value = FOCAL_LOSS_GAMMA_NEG_POS)</span>
+<span class="sd">      beta: (Default value = FOCAL_LOSS_BETA_NEG_POS)</span>
+<span class="sd">      gamma: (Default value = FOCAL_LOSS_GAMMA_NEG_POS)</span>
 
 <span class="sd">    Returns:</span>
 
@@ -1160,7 +1160,7 @@ binary_crossentropy_with_focal_seasoned<span class="p">(</span><span class="n">y
 <div class="doc doc-object doc-function">
 <h2 class="doc doc-heading" id="kaggle_runner.losses.toxic_custom_mimic_loss">
 <code class="highlight language-python">
-toxic_custom_mimic_loss<span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">subgroups</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">score_function</span><span class="o">=&lt;</span><span class="n">function</span> <span class="n">binary_cross_entropy_with_logits</span> <span class="n">at</span> <span class="mh">0x7fbc3d9ab598</span><span class="o">&gt;</span><span class="p">)</span> </code>
+toxic_custom_mimic_loss<span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">subgroups</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">score_function</span><span class="o">=&lt;</span><span class="n">function</span> <span class="n">binary_cross_entropy_with_logits</span> <span class="n">at</span> <span class="mh">0x7fca5e1a8598</span><span class="o">&gt;</span><span class="p">)</span> </code>
 <a class="headerlink" href="#kaggle_runner.losses.toxic_custom_mimic_loss" title="Permanent link">¤</a></h2>
 <div class="doc doc-contents">
 <p>Just reference this</p>
@@ -1208,7 +1208,7 @@ toxic_custom_mimic_loss<span class="p">(</span><span class="n">predictions</span
 <td>
 <p>(Default value = F.binary_cross_entropy_with_logits)</p>
 </td>
-<td><code>&lt;function binary_cross_entropy_with_logits at 0x7fbc3d9ab598&gt;</code></td>
+<td><code>&lt;function binary_cross_entropy_with_logits at 0x7fca5e1a8598&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -1266,8 +1266,8 @@ toxic_custom_mimic_loss<span class="p">(</span><span class="n">predictions</span
 <span class="sd">      predictions: </span>
 <span class="sd">      labels: </span>
 <span class="sd">      subgroups: </span>
-<span class="sd">      power:  (Default value = 5.0)</span>
-<span class="sd">      score_function:  (Default value = F.binary_cross_entropy_with_logits)</span>
+<span class="sd">      power: (Default value = 5.0)</span>
+<span class="sd">      score_function: (Default value = F.binary_cross_entropy_with_logits)</span>
 
 <span class="sd">    Returns:</span>
 

@@ -622,7 +622,8 @@ all_gather<span class="p">(</span><span class="n">data</span><span class="p">)</
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>313
+<pre><span></span>312
+313
 314
 315
 316
@@ -670,8 +671,7 @@ all_gather<span class="p">(</span><span class="n">data</span><span class="p">)</
 358
 359
 360
-361
-362</pre>
+361</pre>
 </div>
 </td>
 <td class="code">
@@ -788,7 +788,7 @@ binary_crossentropy_with_focal<span class="p">(</span><span class="n">y_true</sp
 <p>positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha
 for calss -1.   In practice α may be set by inverse class freqency or
 hyperparameter.
-  custom_weights_in_Y_true:  (Default value = True)</p>
+  custom_weights_in_Y_true: (Default value = True)</p>
 <p><strong>Returns:</strong></p>
 <table>
 <thead>
@@ -799,11 +799,11 @@ hyperparameter.
 </thead>
 <tbody>
 <tr>
-<td><code>bce
-Reference</code></td>
+<td><code>Reference</code></td>
 <td>
-<p>https://arxiv.org/pdf/1708.02002.pdf</p>
-<p>$$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
+<p>https://arxiv.org/pdf/1708.02002.pdf
+Reference: https://arxiv.org/pdf/1708.02002.pdf
+$$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$
 $$ p_t=p: if: y=1$$
 $$ p_t=1-p: otherwise$$</p>
 </td>
@@ -885,8 +885,7 @@ $$ p_t=1-p: otherwise$$</p>
 220
 221
 222
-223
-224</pre>
+223</pre>
 </div>
 </td>
 <td class="code">
@@ -904,12 +903,11 @@ $$ p_t=1-p: otherwise$$</p>
 <span class="sd">    positive cnts / all cnts), alpha range [0,1] for class 1 and 1-alpha</span>
 <span class="sd">    for calss -1.   In practice α may be set by inverse class freqency or</span>
 <span class="sd">    hyperparameter.</span>
-<span class="sd">      custom_weights_in_Y_true:  (Default value = True)</span>
+<span class="sd">      custom_weights_in_Y_true: (Default value = True)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      bce</span>
 <span class="sd">      Reference: https://arxiv.org/pdf/1708.02002.pdf</span>
-
+<span class="sd">      Reference: https://arxiv.org/pdf/1708.02002.pdf</span>
 <span class="sd">      $$ FL(p_t) = -(1-p_t)^{\gamma}log(p_t) $$</span>
 <span class="sd">      $$ p_t=p\: if\: y=1$$</span>
 <span class="sd">      $$ p_t=1-p\: otherwise$$</span>
@@ -1003,8 +1001,8 @@ hyperparameter.
   custom_weights_in_Y_true: return: (Default value = True)
   y_true: 
   logit_pred: 
-  beta:  (Default value = 0.0)
-  gamma:  (Default value = 1.0)</p>
+  beta: (Default value = 0.0)
+  gamma: (Default value = 1.0)</p>
 <details class="quote">
 <summary>Source code in <code>kaggle_runner/utils/kernel_utils.py</code></summary>
 <table class="highlighttable">
@@ -1058,8 +1056,8 @@ hyperparameter.
 <span class="sd">      custom_weights_in_Y_true: return: (Default value = True)</span>
 <span class="sd">      y_true: </span>
 <span class="sd">      logit_pred: </span>
-<span class="sd">      beta:  (Default value = 0.0)</span>
-<span class="sd">      gamma:  (Default value = 1.0)</span>
+<span class="sd">      beta: (Default value = 0.0)</span>
+<span class="sd">      gamma: (Default value = 1.0)</span>
 
 <span class="sd">    Returns:</span>
 
@@ -1170,8 +1168,8 @@ obj will be unpickled from file. If file not found, default value will returned.
 
 <span class="sd">    Args:</span>
 <span class="sd">      filename: </span>
-<span class="sd">      fullpath:  (Default value = False)</span>
-<span class="sd">      default:  (Default value = None)</span>
+<span class="sd">      fullpath: (Default value = False)</span>
+<span class="sd">      default: (Default value = None)</span>
 
 <span class="sd">    Returns:</span>
 
@@ -1246,7 +1244,8 @@ online_mean_and_sd<span class="p">(</span><span class="n">loader</span><span cla
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>538
+<pre><span></span>537
+538
 539
 540
 541
@@ -1280,8 +1279,7 @@ online_mean_and_sd<span class="p">(</span><span class="n">loader</span><span cla
 569
 570
 571
-572
-573</pre>
+572</pre>
 </div>
 </td>
 <td class="code">
@@ -1295,7 +1293,7 @@ online_mean_and_sd<span class="p">(</span><span class="n">loader</span><span cla
 
 <span class="sd">    Args:</span>
 <span class="sd">      loader: </span>
-<span class="sd">      data_map:  (Default value = None)</span>
+<span class="sd">      data_map: (Default value = None)</span>
 
 <span class="sd">    Returns:</span>
 
@@ -1374,7 +1372,8 @@ input_dict, after reduction. (Default value = True)</p>
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>365
+<pre><span></span>364
+365
 366
 367
 368
@@ -1405,8 +1404,7 @@ input_dict, after reduction. (Default value = True)</p>
 393
 394
 395
-396
-397</pre>
+396</pre>
 </div>
 </td>
 <td class="code">
@@ -1484,7 +1482,8 @@ setup_for_distributed<span class="p">(</span><span class="n">is_master</span><sp
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>423
+<pre><span></span>422
+423
 424
 425
 426
@@ -1502,8 +1501,7 @@ setup_for_distributed<span class="p">(</span><span class="n">is_master</span><sp
 438
 439
 440
-441
-442</pre>
+441</pre>
 </div>
 </td>
 <td class="code">

@@ -649,9 +649,7 @@ bin_prd_clsf_info_neg<span class="p">(</span><span class="n">y_true</span><span 
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>195
-196
-197
+<pre><span></span>197
 198
 199
 200
@@ -705,7 +703,9 @@ bin_prd_clsf_info_neg<span class="p">(</span><span class="n">y_true</span><span 
 248
 249
 250
-251</pre>
+251
+252
+253</pre>
 </div>
 </td>
 <td class="code">
@@ -726,11 +726,11 @@ bin_prd_clsf_info_neg<span class="p">(</span><span class="n">y_true</span><span 
 <span class="sd">      y_true: param y_pred:</span>
 <span class="sd">      threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)</span>
 <span class="sd">      y_pred: </span>
-<span class="sd">      N_MORE:  (Default value = True)</span>
-<span class="sd">      epsilon:  (Default value = 1e-7)</span>
+<span class="sd">      N_MORE: (Default value = True)</span>
+<span class="sd">      epsilon: (Default value = 1e-7)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      accuracy, f1 for this batch... not the global one, we need to be careful!!</span>
+<span class="sd">      : accuracy, f1 for this batch... not the global one, we need to be careful!!</span>
 
 <span class="sd">    """</span>
     <span class="c1"># if FOCAL_LOSS_GAMMA == 2.0:</span>
@@ -861,9 +861,7 @@ bin_prd_clsf_info_pos<span class="p">(</span><span class="n">y_true</span><span 
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>253
-254
-255
+<pre><span></span>255
 256
 257
 258
@@ -917,7 +915,9 @@ bin_prd_clsf_info_pos<span class="p">(</span><span class="n">y_true</span><span 
 306
 307
 308
-309</pre>
+309
+310
+311</pre>
 </div>
 </td>
 <td class="code">
@@ -938,11 +938,11 @@ bin_prd_clsf_info_pos<span class="p">(</span><span class="n">y_true</span><span 
 <span class="sd">      y_true: param y_pred:</span>
 <span class="sd">      threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)</span>
 <span class="sd">      y_pred: </span>
-<span class="sd">      N_MORE:  (Default value = True)</span>
-<span class="sd">      epsilon:  (Default value = 1e-7)</span>
+<span class="sd">      N_MORE: (Default value = True)</span>
+<span class="sd">      epsilon: (Default value = 1e-7)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      accuracy, f1 for this batch... not the global one, we need to be careful!!</span>
+<span class="sd">      : accuracy, f1 for this batch... not the global one, we need to be careful!!</span>
 
 <span class="sd">    """</span>
     <span class="c1"># if FOCAL_LOSS_GAMMA == 2.0:</span>
@@ -1069,9 +1069,7 @@ binary_auc_probability<span class="p">(</span><span class="n">y_true</span><span
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>148
-149
-150
+<pre><span></span>150
 151
 152
 153
@@ -1103,7 +1101,9 @@ binary_auc_probability<span class="p">(</span><span class="n">y_true</span><span
 179
 180
 181
-182</pre>
+182
+183
+184</pre>
 </div>
 </td>
 <td class="code">
@@ -1117,11 +1117,11 @@ binary_auc_probability<span class="p">(</span><span class="n">y_true</span><span
 <span class="sd">      y_true: param y_pred:</span>
 <span class="sd">      threshold: return: accuracy, f1 for this batch... not the global one, we need to be careful!! (Default value = 0.5)</span>
 <span class="sd">      y_pred: </span>
-<span class="sd">      N_MORE:  (Default value = True)</span>
-<span class="sd">      epsilon:  (Default value = 1e-12)</span>
+<span class="sd">      N_MORE: (Default value = True)</span>
+<span class="sd">      epsilon: (Default value = 1e-12)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      accuracy, f1 for this batch... not the global one, we need to be careful!!</span>
+<span class="sd">      : accuracy, f1 for this batch... not the global one, we need to be careful!!</span>
 
 <span class="sd">    """</span>
 
@@ -1173,7 +1173,7 @@ binary_sensitivity<span class="p">(</span><span class="n">y_pred</span><span cla
 <td><code>y_pred(predicted</code></td>
 <td><code>values for a batch if samples (must be binary</code></td>
 <td>
-<p>0 or 1)): </p>
+<p>0 or 1)):</p>
 </td>
 <td><em>required</em></td>
 </tr>
@@ -1181,8 +1181,20 @@ binary_sensitivity<span class="p">(</span><span class="n">y_pred</span><span cla
 <td><code>y_true(correct</code></td>
 <td><code>values for the set of samples used (must be binary</code></td>
 <td>
-<p>0 or 1)): </p>
+<p>0 or 1)):</p>
 </td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>y_pred</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>y_true</code></td>
+<td><code></code></td>
+<td></td>
 <td><em>required</em></td>
 </tr>
 </tbody>
@@ -1214,7 +1226,8 @@ binary_sensitivity<span class="p">(</span><span class="n">y_pred</span><span cla
 117
 118
 119
-120</pre>
+120
+121</pre>
 </div>
 </td>
 <td class="code">
@@ -1223,11 +1236,12 @@ binary_sensitivity<span class="p">(</span><span class="n">y_pred</span><span cla
     <span class="sd">"""Compute the confusion matrix for a set of predictions.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)): </span>
-<span class="sd">      y_true(correct values for the set of samples used (must be binary: 0 or 1)): </span>
+<span class="sd">      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)):</span>
+<span class="sd">      y_true(correct values for the set of samples used (must be binary: 0 or 1)):</span>
+<span class="sd">      y_pred: </span>
+<span class="sd">      y_true: </span>
 
 <span class="sd">    Returns:</span>
-
 
 <span class="sd">    """</span>
     <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.5</span>
@@ -1271,7 +1285,7 @@ binary_specificity<span class="p">(</span><span class="n">y_pred</span><span cla
 <td><code>y_pred(predicted</code></td>
 <td><code>values for a batch if samples (must be binary</code></td>
 <td>
-<p>0 or 1)): </p>
+<p>0 or 1)):</p>
 </td>
 <td><em>required</em></td>
 </tr>
@@ -1279,8 +1293,20 @@ binary_specificity<span class="p">(</span><span class="n">y_pred</span><span cla
 <td><code>y_true(correct</code></td>
 <td><code>values for the set of samples used (must be binary</code></td>
 <td>
-<p>0 or 1)): </p>
+<p>0 or 1)):</p>
 </td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>y_pred</code></td>
+<td><code></code></td>
+<td></td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>y_true</code></td>
+<td><code></code></td>
+<td></td>
 <td><em>required</em></td>
 </tr>
 </tbody>
@@ -1291,8 +1317,7 @@ binary_specificity<span class="p">(</span><span class="n">y_pred</span><span cla
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>123
-124
+<pre><span></span>124
 125
 126
 127
@@ -1313,7 +1338,9 @@ binary_specificity<span class="p">(</span><span class="n">y_pred</span><span cla
 142
 143
 144
-145</pre>
+145
+146
+147</pre>
 </div>
 </td>
 <td class="code">
@@ -1322,11 +1349,12 @@ binary_specificity<span class="p">(</span><span class="n">y_pred</span><span cla
     <span class="sd">"""Compute the confusion matrix for a set of predictions.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)): </span>
-<span class="sd">      y_true(correct values for the set of samples used (must be binary: 0 or 1)): </span>
+<span class="sd">      y_pred(predicted values for a batch if samples (must be binary: 0 or 1)):</span>
+<span class="sd">      y_true(correct values for the set of samples used (must be binary: 0 or 1)):</span>
+<span class="sd">      y_pred: </span>
+<span class="sd">      y_true: </span>
 
 <span class="sd">    Returns:</span>
-
 
 <span class="sd">    """</span>
 
@@ -1455,8 +1483,8 @@ metric<span class="p">(</span><span class="n">probability</span><span class="p">
 <span class="sd">    Args:</span>
 <span class="sd">      probability: </span>
 <span class="sd">      truth: </span>
-<span class="sd">      threshold:  (Default value = 0.5)</span>
-<span class="sd">      reduction:  (Default value = "none")</span>
+<span class="sd">      threshold: (Default value = 0.5)</span>
+<span class="sd">      reduction: (Default value = "none")</span>
 
 <span class="sd">    Returns:</span>
 
