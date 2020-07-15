@@ -1,0 +1,1871 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Run kaggle kernels, for fast model prototyping." name="description"/>
+<link href="https://mrcue.gitlab.io/kaggle_runner/kaggle_runner/datasets/data_prepare/" rel="canonical"/>
+<link href="../../../assets/images/favicon.png" rel="shortcut icon"/>
+<meta content="mkdocs-1.1.2, mkdocs-material-5.4.0" name="generator"/>
+<title>data_prepare.py - kaggle runner</title>
+<link href="../../../assets/stylesheets/main.fe0cca5b.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
+<style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+<link href="../../../css/mkdocstrings.css" rel="stylesheet"/>
+</head>
+<body dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#kaggle_runner.datasets.data_prepare">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header-nav md-grid">
+<a aria-label="kaggle runner" class="md-header-nav__button md-logo" href="https://mrcue.gitlab.io/kaggle_runner" title="kaggle runner">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+<label class="md-header-nav__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
+</label>
+<div class="md-header-nav__title" data-md-component="header-title">
+<div class="md-header-nav__ellipsis">
+<span class="md-header-nav__topic md-ellipsis">
+            kaggle runner
+          </span>
+<span class="md-header-nav__topic md-ellipsis">
+            
+              data_prepare.py
+            
+          </span>
+</div>
+</div>
+<label class="md-header-nav__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" data-md-state="active" name="query" placeholder="Search" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</label>
+<button aria-label="Clear" class="md-search__icon md-icon" data-md-component="search-reset" tabindex="-1" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
+</button>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header-nav__source">
+<a class="md-source" href="https://github.com/pennz/kaggle_runner/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    pennz/kaggle_runner
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="kaggle runner" class="md-nav__button md-logo" href="https://mrcue.gitlab.io/kaggle_runner" title="kaggle runner">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+    kaggle runner
+  </label>
+<div class="md-nav__source">
+<a class="md-source" href="https://github.com/pennz/kaggle_runner/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    pennz/kaggle_runner
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../.." title="Overview">
+      Overview
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../credits/" title="Credits">
+      Credits
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="nav-3" id="nav-3" type="checkbox"/>
+<label class="md-nav__link" for="nav-3">
+      kaggle_runner
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="kaggle_runner" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="nav-3">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        kaggle_runner
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../callbacks/" title="callbacks">
+      callbacks
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../data_providers/" title="data_providers">
+      data_providers
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" id="nav-3-3" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-3">
+      datasets
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="datasets" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-3">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        datasets
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../bert/" title="bert.py">
+      bert.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../coders/" title="coders.py">
+      coders.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../data_handlers/" title="data_handlers.py">
+      data_handlers.py
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<a class="md-nav__link md-nav__link--active" href="./" title="data_prepare.py">
+      data_prepare.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../jigsaw_toxic_data/" title="jigsaw_toxic_data.py">
+      jigsaw_toxic_data.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../mock_dataset.md" title="mock_dataset.py">
+      mock_dataset.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../siim_dataset/" title="siim_dataset.py">
+      siim_dataset.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../transfomers/" title="transfomers.py">
+      transfomers.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../defaults/" title="defaults">
+      defaults
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-5" id="nav-3-5" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-5">
+      kernels
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="kernels" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-5">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        kernels
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/KernelRunningState/" title="KernelRunningState.py">
+      KernelRunningState.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/PSKernel/" title="PSKernel.py">
+      PSKernel.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/Shonenkov/" title="Shonenkov.py">
+      Shonenkov.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/bert/" title="bert.py">
+      bert.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/bert_torch/" title="bert_torch.py">
+      bert_torch.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/fastai_kernel/" title="fastai_kernel.py">
+      fastai_kernel.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/kernel/" title="kernel.py">
+      kernel.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/pytorchKernel/" title="pytorchKernel.py">
+      pytorchKernel.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../logs/" title="logs">
+      logs
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../losses/" title="losses">
+      losses
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-8" id="nav-3-8" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-8">
+      metrics
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="metrics" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-8">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        metrics
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../metrics/meters/" title="meters.py">
+      meters.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../metrics/metrics/" title="metrics.py">
+      metrics.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-9" id="nav-3-9" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-9">
+      modules
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="modules" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-9">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        modules
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../modules/ToxicSimpleNNModel/" title="ToxicSimpleNNModel.py">
+      ToxicSimpleNNModel.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../modules/attention/" title="attention.py">
+      attention.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../optimizers/" title="optimizers">
+      optimizers
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../plots/" title="plots">
+      plots
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../post_processers/" title="post_processers">
+      post_processers
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../predictors/" title="predictors">
+      predictors
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-14" id="nav-3-14" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-14">
+      runners
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="runners" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-14">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        runners
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../runners/coordinator/" title="coordinator.py">
+      coordinator.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../runners/runner/" title="runner.py">
+      runner.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../runners/tpu_trainer.md" title="tpu_trainer.py">
+      tpu_trainer.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../runners/trainer/" title="trainer.py">
+      trainer.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-15" id="nav-3-15" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-15">
+      utils
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="utils" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-15">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        utils
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/kernel_utils/" title="kernel_utils.py">
+      kernel_utils.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/tpu/" title="tpu.py">
+      tpu.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/utils/" title="utils.py">
+      utils.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/visualizer/" title="visualizer.py">
+      visualizer.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/wrapper/" title="wrapper.py">
+      wrapper.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/pennz/kaggle_runner/edit/master/docs/kaggle_runner/datasets/data_prepare.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"></path></svg>
+</a>
+<div class="doc doc-object doc-module">
+<h2 class="hidden-toc" href="#kaggle_runner.datasets.data_prepare" id="kaggle_runner.datasets.data_prepare" style="visibility: hidden; width: 0; height: 0;">
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare" title="Permanent link">¤</a></h2>
+<div class="doc doc-contents first">
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark">
+<code>BiasBenchmark</code>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark" title="Permanent link">¤</a></h2>
+<div class="doc doc-contents">
+<div class="doc doc-children">
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark.calculate_benchmark">
+<code class="highlight language-python">
+calculate_benchmark<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s1">'lstm'</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.calculate_benchmark" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>:param pred:
+:param model_name:
+:return: final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>619
+620
+621
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">calculate_benchmark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="n">MODEL_NAME</span><span class="p">):</span>
+    <span class="sd">"""</span>
+
+<span class="sd">    :param pred:</span>
+<span class="sd">    :param model_name:</span>
+<span class="sd">    :return: final metric score, bias auc for subgroups, subgroup classification distribution details, overall auc</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">validate_df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">"In caculating benchmark, the validate_df passed in None, use default validate_df, with given pred"</span>
+        <span class="p">)</span>
+        <span class="n">validate_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_df</span>
+        <span class="k">assert</span> <span class="n">validate_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+        <span class="n">validate_df</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span>  <span class="c1"># prediction</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"In caculating benchmark..."</span><span class="p">)</span>
+    <span class="n">validate_df</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">copy_convert_dataframe_to_bool</span><span class="p">(</span>
+        <span class="n">validate_df</span><span class="p">[</span><span class="n">IDENTITY_COLUMNS</span> <span class="o">+</span>
+                    <span class="p">[</span><span class="n">TARGET_COLUMN</span><span class="p">,</span> <span class="n">TEXT_COLUMN</span><span class="p">,</span> <span class="n">model_name</span><span class="p">]],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="p">(</span>
+        <span class="n">bias_metrics_df</span><span class="p">,</span>
+        <span class="n">subgroup_distribution</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_bias_metrics_for_model</span><span class="p">(</span>
+        <span class="n">validate_df</span><span class="p">,</span> <span class="n">IDENTITY_COLUMNS</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">TARGET_COLUMN</span>
+    <span class="p">)</span>
+    <span class="n">overall_auc_dist</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">calculate_overall_auc_distribution</span><span class="p">(</span>
+        <span class="n">validate_df</span><span class="p">,</span> <span class="n">model_name</span>
+    <span class="p">)</span>
+    <span class="n">final_score</span><span class="p">,</span> <span class="n">score_comp</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">get_final_metric</span><span class="p">(</span>
+        <span class="n">bias_metrics_df</span><span class="p">,</span> <span class="n">overall_auc_dist</span><span class="p">[</span><span class="n">OVERALL_AUC</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">final_score</span><span class="p">,</span>
+        <span class="n">score_comp</span><span class="p">,</span>
+        <span class="n">bias_metrics_df</span><span class="p">,</span>
+        <span class="n">subgroup_distribution</span><span class="p">,</span>
+        <span class="n">overall_auc_dist</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bias_metrics_for_model">
+<code class="highlight language-python">
+compute_bias_metrics_for_model<span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subgroups</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">include_asegs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bias_metrics_for_model" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Computes per-subgroup metrics for all subgroups and one model.</p>
+<h1 id="bias_metrics_df-biasbenchmarkcompute_bias_metrics_for_modelvalidate_df-identity_columns-model_name-target_column">bias_metrics_df = BiasBenchmark.compute_bias_metrics_for_model(validate_df, IDENTITY_COLUMNS, MODEL_NAME, TARGET_COLUMN)<a class="headerlink" href="#bias_metrics_df-biasbenchmarkcompute_bias_metrics_for_modelvalidate_df-identity_columns-model_name-target_column" title="Permanent link">¤</a></h1>
+<p>:param dataset: prediction result
+:param subgroups: all group names
+:param model: my model name
+:param label_col: target column name
+:param include_asegs: ?
+:return:</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">compute_bias_metrics_for_model</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">,</span> <span class="n">subgroups</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">include_asegs</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Computes per-subgroup metrics for all subgroups and one model.</span>
+<span class="sd">    # bias_metrics_df = BiasBenchmark.compute_bias_metrics_for_model(validate_df, IDENTITY_COLUMNS, MODEL_NAME, TARGET_COLUMN)</span>
+<span class="sd">    :param dataset: prediction result</span>
+<span class="sd">    :param subgroups: all group names</span>
+<span class="sd">    :param model: my model name</span>
+<span class="sd">    :param label_col: target column name</span>
+<span class="sd">    :param include_asegs: ?</span>
+<span class="sd">    :return:</span>
+<span class="sd">    """</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">subgroup_distribution</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">subgroup</span> <span class="ow">in</span> <span class="n">subgroups</span><span class="p">:</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"subgroup"</span><span class="p">:</span> <span class="n">subgroup</span><span class="p">,</span>
+            <span class="s2">"subgroup_size"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]]),</span>
+        <span class="p">}</span>
+        <span class="n">record_pn</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"subgroup"</span><span class="p">:</span> <span class="n">subgroup</span><span class="p">,</span>
+            <span class="s2">"subgroup_size"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]]),</span>
+        <span class="p">}</span>
+        <span class="n">record</span><span class="p">[</span><span class="n">SUBGROUP_AUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_subgroup_auc</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">model</span>
+        <span class="p">)</span>
+        <span class="n">record</span><span class="p">[</span><span class="n">BPSN_AUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_bpsn_auc</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">model</span>
+        <span class="p">)</span>
+        <span class="n">record</span><span class="p">[</span><span class="n">BNSP_AUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_bnsp_auc</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">model</span>
+        <span class="p">)</span>
+
+        <span class="n">record_pn</span><span class="p">[</span><span class="n">SUBGROUP_AUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_subgroup_classify_detail</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">model</span>
+        <span class="p">)</span>
+        <span class="n">record_pn</span><span class="p">[</span><span class="n">BPSN_AUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_bpsn_classify_detail</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">model</span>
+        <span class="p">)</span>
+        <span class="n">record_pn</span><span class="p">[</span><span class="n">BNSP_AUC</span><span class="p">]</span> <span class="o">=</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_bnsp_classify_detail</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">model</span>
+        <span class="p">)</span>
+
+        <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="n">subgroup_distribution</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record_pn</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">records</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"subgroup_auc"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">subgroup_distribution</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bnsp_auc">
+<code class="highlight language-python">
+compute_bnsp_auc<span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bnsp_auc" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Computes the AUC of the within-subgroup positive examples and the background negative examples.</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>490
+491
+492
+493
+494
+495
+496
+497
+498</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">compute_bnsp_auc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+    <span class="sd">"""Computes the AUC of the within-subgroup positive examples and the background negative examples."""</span>
+    <span class="n">subgroup_positive_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+    <span class="n">non_subgroup_negative_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+    <span class="n">examples</span> <span class="o">=</span> <span class="n">subgroup_positive_examples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">non_subgroup_negative_examples</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_auc</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">examples</span><span class="p">[</span><span class="n">model_name</span><span class="p">])</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bnsp_classify_detail">
+<code class="highlight language-python">
+compute_bnsp_classify_detail<span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bnsp_classify_detail" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Computes the AUC of the within-subgroup positive examples and the background negative examples.</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">compute_bnsp_classify_detail</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+    <span class="sd">"""Computes the AUC of the within-subgroup positive examples and the background negative examples."""</span>
+    <span class="n">subgroup_positive_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+    <span class="n">non_subgroup_negative_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+    <span class="n">examples</span> <span class="o">=</span> <span class="n">subgroup_positive_examples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">non_subgroup_negative_examples</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_predict_estimator</span><span class="p">(</span>
+        <span class="n">examples</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">examples</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+    <span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bpsn_auc">
+<code class="highlight language-python">
+compute_bpsn_auc<span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bpsn_auc" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Computes the AUC of the within-subgroup negative examples and the background positive examples.</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>468
+469
+470
+471
+472
+473
+474
+475
+476</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">compute_bpsn_auc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+    <span class="sd">"""Computes the AUC of the within-subgroup negative examples and the background positive examples."""</span>
+    <span class="n">subgroup_negative_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+    <span class="n">non_subgroup_positive_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+    <span class="n">examples</span> <span class="o">=</span> <span class="n">subgroup_negative_examples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">non_subgroup_positive_examples</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_auc</span><span class="p">(</span><span class="n">examples</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">examples</span><span class="p">[</span><span class="n">model_name</span><span class="p">])</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bpsn_classify_detail">
+<code class="highlight language-python">
+compute_bpsn_classify_detail<span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_bpsn_classify_detail" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Computes the AUC of the within-subgroup negative examples and the background positive examples.</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">compute_bpsn_classify_detail</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+    <span class="sd">"""Computes the AUC of the within-subgroup negative examples and the background positive examples."""</span>
+    <span class="n">subgroup_negative_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+    <span class="n">non_subgroup_positive_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+        <span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">df</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># background positive</span>
+    <span class="n">examples</span> <span class="o">=</span> <span class="n">subgroup_negative_examples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">non_subgroup_positive_examples</span><span class="p">)</span>
+
+    <span class="c1"># this example is background True positive, with subgroup True negative, and see our model's prediction's performance</span>
+
+    <span class="k">return</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_predict_estimator</span><span class="p">(</span>
+        <span class="n">examples</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">examples</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+    <span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_subgroup_auc">
+<code class="highlight language-python">
+compute_subgroup_auc<span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_subgroup_auc" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Compute AUC for spefic subgroup. AUC only cares about ordering, not threshold
+:param df: dataframe which contains predictions for all subgroups
+:param subgroup: compute AUC for this subgroup
+:param label: target column name
+:param model_name:
+:return: auc score</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">compute_subgroup_auc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Compute AUC for spefic subgroup. AUC only cares about ordering, not threshold</span>
+<span class="sd">    :param df: dataframe which contains predictions for all subgroups</span>
+<span class="sd">    :param subgroup: compute AUC for this subgroup</span>
+<span class="sd">    :param label: target column name</span>
+<span class="sd">    :param model_name:</span>
+<span class="sd">    :return: auc score</span>
+<span class="sd">    """</span>
+    <span class="n">subgroup_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># innter df[subgroup] will get out boolean list, which is used to select this</span>
+    <span class="c1"># subgroup examples</span>
+
+    <span class="k">return</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_auc</span><span class="p">(</span>
+        <span class="n">subgroup_examples</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">subgroup_examples</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+    <span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_subgroup_classify_detail">
+<code class="highlight language-python">
+compute_subgroup_classify_detail<span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-staticmethod"><code>staticmethod</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.BiasBenchmark.compute_subgroup_classify_detail" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Compute AUC for spefic subgroup
+:param df: dataframe which contains predictions for all subgroups
+:param subgroup: compute AUC for this subgroup
+:param label: target column name
+:param model_name:
+:return: just mean/std, for pos, neg, then we just use this information to make shift</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">compute_subgroup_classify_detail</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">subgroup</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Compute AUC for spefic subgroup</span>
+<span class="sd">    :param df: dataframe which contains predictions for all subgroups</span>
+<span class="sd">    :param subgroup: compute AUC for this subgroup</span>
+<span class="sd">    :param label: target column name</span>
+<span class="sd">    :param model_name:</span>
+<span class="sd">    :return: just mean/std, for pos, neg, then we just use this information to make shift</span>
+<span class="sd">    """</span>
+    <span class="n">subgroup_examples</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">subgroup</span><span class="p">]</span>
+    <span class="p">]</span>  <span class="c1"># innter df[subgroup] will get out boolean list, which is used to select this</span>
+    <span class="c1"># subgroup examples</span>
+
+    <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="n">TARGET_COLUMN</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_predict_estimator</span><span class="p">(</span>
+            <span class="n">subgroup_examples</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+            <span class="n">subgroup_examples</span><span class="p">[</span><span class="n">model_name</span><span class="p">],</span>
+            <span class="n">y_pred_continuous</span><span class="o">=</span><span class="n">subgroup_examples</span><span class="p">[</span><span class="n">label</span> <span class="o">+</span> <span class="s2">"_orig"</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BiasBenchmark</span><span class="o">.</span><span class="n">compute_predict_estimator</span><span class="p">(</span>
+            <span class="n">subgroup_examples</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">subgroup_examples</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span>
+        <span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.EmbeddingHandler">
+<code>EmbeddingHandler</code>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.EmbeddingHandler" title="Permanent link">¤</a></h2>
+<div class="doc doc-contents">
+<div class="doc doc-children">
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.EmbeddingHandler.build_matrix_prepare_data">
+<code class="highlight language-python">
+build_matrix_prepare_data<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">emb_matrix_existed</span><span class="p">,</span> <span class="n">convert_additional</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.EmbeddingHandler.build_matrix_prepare_data" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>build embedding matrix given tokenizer word_index and pre-trained embedding file</p>
+<p>:param word_index: word_index from tokenizer
+:param path: path to load pre-trained embedding
+:return: embedding matrix</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>2170
+2171
+2172
+2173
+2174
+2175
+2176
+2177
+2178
+2179
+2180
+2181
+2182
+2183
+2184
+2185
+2186
+2187
+2188
+2189
+2190
+2191
+2192
+2193
+2194
+2195
+2196
+2197
+2198
+2199
+2200
+2201
+2202
+2203
+2204
+2205
+2206
+2207
+2208
+2209
+2210
+2211
+2212
+2213
+2214
+2215
+2216
+2217
+2218
+2219
+2220
+2221
+2222
+2223
+2224
+2225
+2226
+2227
+2228
+2229
+2230
+2231
+2232
+2233
+2234
+2235
+2236
+2237
+2238
+2239
+2240
+2241
+2242
+2243
+2244
+2245
+2246
+2247
+2248
+2249
+2250
+2251
+2252
+2253
+2254
+2255
+2256
+2257
+2258
+2259
+2260
+2261
+2262
+2263
+2264
+2265
+2266
+2267
+2268
+2269
+2270
+2271
+2272
+2273
+2274
+2275
+2276
+2277</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">build_matrix_prepare_data</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">emb_matrix_existed</span><span class="p">,</span> <span class="n">convert_additional</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    build embedding matrix given tokenizer word_index and pre-trained embedding file</span>
+
+<span class="sd">    :param word_index: word_index from tokenizer</span>
+<span class="sd">    :param path: path to load pre-trained embedding</span>
+<span class="sd">    :return: embedding matrix</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">emb_matrix_existed</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">"Start cooking embedding matrix and train/test data: only train/test data, emb_matrix existed"</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prepare_data</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">convert_additional</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_additional_data</span><span class="p">()</span>
+
+            <span class="k">return</span>  <span class="c1"># only need process text</span>
+
+    <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="s2">"Start cooking embedding matrix and train/test data"</span><span class="p">)</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{path}</span><span class="s2"> is being processed"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"840B.300d"</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">emb_save_filename</span> <span class="o">=</span> <span class="s2">"matrix_840b"</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"300d-2M"</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">emb_save_filename</span> <span class="o">=</span> <span class="s2">"matrix_crawl"</span>
+
+    <span class="n">emb_from_file</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_obj_or_dump</span><span class="p">(</span><span class="n">emb_save_filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">emb_from_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">emb_from_file</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">file_exist</span><span class="p">(</span><span class="s2">"word_index"</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_vocab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">TEXT_COLUMN</span><span class="p">])</span>
+        <span class="n">vocab</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_obj_or_dump</span><span class="p">(</span>
+            <span class="s2">"vocab"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span>
+        <span class="p">)</span>  <span class="c1"># word to integer value index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prepare_data</span><span class="p">()</span>  <span class="c1"># tokenizer processed in this function, not related to embedding</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Text processed"</span><span class="p">)</span>
+
+        <span class="n">embedding_index</span> <span class="o">=</span> <span class="n">EmbeddingHandler</span><span class="o">.</span><span class="n">load_embeddings</span><span class="p">(</span>
+            <span class="n">path</span>
+        <span class="p">)</span>  <span class="c1"># embedding_index is an dict, value is the feature vector</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"loading embedding from </span><span class="si">{path}</span><span class="s2"> done"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_lower_to_embedding</span><span class="p">(</span>
+            <span class="n">embedding_index</span><span class="p">,</span> <span class="n">vocab</span>
+        <span class="p">)</span>  <span class="c1"># will change embedding_index, add lower words in the vocab to this embedding</span>
+
+        <span class="n">word_index</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_obj_or_dump</span><span class="p">(</span>
+            <span class="s2">"word_index"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">word_index</span>
+        <span class="p">)</span>  <span class="c1"># word to integer value index</span>
+        <span class="n">embedding_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word_index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># last one for unknown?</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Restore word index from files"</span><span class="p">)</span>
+        <span class="n">word_index</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_obj_or_dump</span><span class="p">(</span>
+            <span class="s2">"word_index"</span>
+        <span class="p">)</span>  <span class="c1"># word to integer value index</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">vocab</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_obj_or_dump</span><span class="p">(</span>
+                <span class="s2">"vocab"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span>
+            <span class="p">)</span>  <span class="c1"># word to integer value index</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span>
+
+            <span class="k">if</span> <span class="n">vocab</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">"vocab shoule be None, process embedding_index need it"</span>
+                <span class="p">)</span>
+
+        <span class="n">embedding_index</span> <span class="o">=</span> <span class="n">EmbeddingHandler</span><span class="o">.</span><span class="n">load_embeddings</span><span class="p">(</span>
+            <span class="n">path</span>
+        <span class="p">)</span>  <span class="c1"># embedding_index is an dict, value is the feature vector</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"loading embedding from </span><span class="si">{path}</span><span class="s2"> done"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_lower_to_embedding</span><span class="p">(</span>
+            <span class="n">embedding_index</span><span class="p">,</span> <span class="n">vocab</span>
+        <span class="p">)</span>  <span class="c1"># will change embedding_index, add lower words in the vocab to this embedding</span>
+
+        <span class="n">embedding_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word_index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># last one for unknown?</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"840B.300d"</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">avg_vector</span> <span class="o">=</span> <span class="n">EmbeddingHandler</span><span class="o">.</span><span class="n">avg_glove_vector_840b300d</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"300d-2M"</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">avg_vector</span> <span class="o">=</span> <span class="n">EmbeddingHandler</span><span class="o">.</span><span class="n">avg_fasttext_2m300d</span>
+
+    <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">word_index</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">embedding_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">embedding_index</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># for unk</span>
+            <span class="c1"># https://stackoverflow.com/questions/49239941/what-is-unk-in-the-pretrained-glove-vector-files-e-g-glove-6b-50d-txt</span>
+            <span class="n">embedding_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg_vector</span>
+
+    <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"Done cooking embedding matrix for </span><span class="si">{path}</span><span class="s2"> with train/test words"</span>
+    <span class="p">)</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">dump_obj</span><span class="p">(</span><span class="n">embedding_matrix</span><span class="p">,</span> <span class="n">emb_save_filename</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">embedding_matrix</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.EmbeddingHandler.data_prepare">
+<code class="highlight language-python">
+data_prepare<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.EmbeddingHandler.data_prepare" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Returns the iris dataset as (train_x, train_y), (test_x, test_y).
+we load this from the tfrecord, maybe save the ones just after embedding, so it can be faster</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>2407
+2408
+2409
+2410
+2411
+2412
+2413
+2414
+2415
+2416
+2417
+2418
+2419
+2420
+2421
+2422
+2423
+2424
+2425
+2426
+2427
+2428
+2429
+2430
+2431
+2432
+2433
+2434
+2435
+2436
+2437
+2438
+2439
+2440
+2441
+2442
+2443
+2444
+2445
+2446
+2447
+2448
+2449
+2450
+2451
+2452
+2453
+2454
+2455
+2456
+2457
+2458
+2459
+2460
+2461
+2462
+2463
+2464
+2465
+2466
+2467
+2468
+2469
+2470
+2471
+2472
+2473
+2474
+2475
+2476
+2477
+2478
+2479
+2480
+2481
+2482
+2483
+2484
+2485
+2486
+2487
+2488
+2489
+2490
+2491
+2492
+2493
+2494
+2495
+2496
+2497
+2498
+2499
+2500
+2501
+2502
+2503
+2504
+2505
+2506
+2507
+2508
+2509
+2510
+2511
+2512
+2513
+2514
+2515
+2516
+2517
+2518
+2519
+2520
+2521
+2522
+2523
+2524
+2525
+2526
+2527
+2528
+2529
+2530
+2531
+2532
+2533
+2534
+2535
+2536
+2537
+2538
+2539
+2540
+2541
+2542
+2543
+2544
+2545
+2546
+2547
+2548
+2549</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">data_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Returns the iris dataset as (train_x, train_y), (test_x, test_y).</span>
+<span class="sd">    we load this from the tfrecord, maybe save the ones just after embedding, so it can be faster</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"</span><span class="si">{}</span><span class="s2"> in data preparation"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>  <span class="c1"># just recover from record file</span>
+        <span class="n">emb</span><span class="p">,</span> <span class="n">data_train</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_emb_data_from_input</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_aux_train</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data_train</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_aux_train</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_aux_train</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"restored data from files for training"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">Data_Folder</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_aux_train</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">emb</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">"cannot restore emb, trainX from jigsaw kaggle file data"</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># if read out None for data_train</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">"cannot restore emb, trainX from jigsaw kaggle file data"</span>
+        <span class="p">)</span>
+
+    <span class="c1"># if os.path.isfile(DATA_FILE_FLAG) and not self.do_emb_matrix_preparation:  # in final stage, no need to check this...</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_emb_matrix_preparation</span><span class="p">:</span>
+        <span class="c1"># global embedding_matrix</span>
+
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">action</span> <span class="o">==</span> <span class="n">defaults</span><span class="o">.</span><span class="n">DATA_ACTION_NO_NEED_LOAD_EMB_M</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">embedding_matrix</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                    <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_M_FILE</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span> <span class="o">=</span> <span class="s2">"/content/gdrivedata/My Drive/"</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span> <span class="o">=</span> <span class="s2">"./"</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">file_exist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_M_FILE</span><span class="p">,</span> <span class="n">fullpath</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">Data_Folder</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">embedding_matrix</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                    <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_M_FILE</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">))</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">BIN_FOLDER</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span>  <span class="c1"># save file to the right place</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_M_FILE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># exist data, need to convert data</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">action</span> <span class="o">==</span> <span class="n">defaults</span><span class="o">.</span><span class="n">CONVERT_TRAIN_DATA</span>
+                <span class="ow">or</span> <span class="n">action</span> <span class="o">==</span> <span class="n">defaults</span><span class="o">.</span><span class="n">CONVERT_ADDITIONAL_NONTOXIC_DATA</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prepare_tfrecord_data</span><span class="p">(</span>
+                    <span class="n">train_test_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">embedding</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span>
+                <span class="p">)</span>  <span class="c1"># train data will rebuild, so we put it before read from pickle</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data_train</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_TRAIN_FILE</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span>
+            <span class="p">)</span>  <span class="c1"># (None, 2048)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span> <span class="o">=</span> <span class="s2">"/content/gdrivedata/My Drive/"</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span> <span class="o">=</span> <span class="s2">"./"</span>
+
+            <span class="n">utils</span><span class="o">.</span><span class="n">BIN_FOLDER</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span>  <span class="c1"># save file to the right place</span>
+            <span class="n">data_train</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_TRAIN_FILE</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span>
+            <span class="p">)</span>  <span class="c1"># (None, 2048)</span>
+
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_TRAIN_FILE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_test</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+            <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_TEST_FILE</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># (None, 2048) 2048 features from xception net</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_aux_train</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data_train</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_aux_train</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_aux_train</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># global test_df_id</span>
+        <span class="c1"># test_df_id = pd.read_csv('../input/jigsaw-unintended-bias-in-toxicity-classification/test.csv').id</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_df_id</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">INPUT_DATA_DIR</span> <span class="o">+</span> <span class="s2">"test.csv"</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># only id series is needed for generating submission csv file</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">INPUT_DATA_DIR</span> <span class="o">=</span> <span class="s2">"../input/"</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">INPUT_DATA_DIR</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">INPUT_DATA_DIR</span> <span class="o">=</span> <span class="s2">"/home/pengyu/works/input/jigsaw-unintended-bias-in-toxicity-classification/"</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">INPUT_DATA_DIR</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">INPUT_DATA_DIR</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">BIN_FOLDER</span>
+                <span class="p">)</span>  <span class="c1"># put same folder in google drive</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_df_id</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">INPUT_DATA_DIR</span> <span class="o">+</span> <span class="s2">"test.csv"</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">id</span>  <span class="c1"># only id series is needed for generating submission csv file</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>  <span class="c1"># exist data, need to convert data, so put after read from pickle</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="n">defaults</span><span class="o">.</span><span class="n">CONVERT_DATA_Y_NOT_BINARY</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prepare_tfrecord_data</span><span class="p">(</span>
+                    <span class="n">train_test_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">embedding</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span>
+                <span class="p">)</span>  <span class="c1"># train_test_data=False just not rebuild words, the y still need to change</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_train</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_aux_train</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_test</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_matrix</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DATA_TRAIN_FILE</span><span class="p">)</span>
+        <span class="c1"># (x_train, y_train, y_aux_train), x_test = prepare_tfrecord_data()</span>
+
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">action</span> <span class="o">==</span> <span class="n">defaults</span><span class="o">.</span><span class="n">CONVERT_TRAIN_DATA</span>
+            <span class="ow">or</span> <span class="n">action</span> <span class="o">==</span> <span class="n">defaults</span><span class="o">.</span><span class="n">CONVERT_ADDITIONAL_NONTOXIC_DATA</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">embedding_matrix</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E_M_FILE</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">))</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">"Only build train test data, embedding loaded from pickle"</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_tfrecord_data</span><span class="p">(</span><span class="n">embedding</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_tfrecord_data</span><span class="p">(</span><span class="n">embedding</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.TargetDistAnalyzer">
+<code>TargetDistAnalyzer</code>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.TargetDistAnalyzer" title="Permanent link">¤</a></h2>
+<div class="doc doc-contents">
+<div class="doc doc-children">
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.TargetDistAnalyzer.get_distribution">
+<code class="highlight language-python">
+get_distribution<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_data</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.TargetDistAnalyzer.get_distribution" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>target_data: pandas series, need to get index, so need series, in the series, values are target (prediction)</p>
+<p>:return: (type, cnt number, frequency, index) pair list for this distribution</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">get_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_data</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    target_data: pandas series, need to get index, so need series, in the series, values are target (prediction)</span>
+
+<span class="sd">    :return: (type, cnt number, frequency, index) pair list for this distribution</span>
+<span class="sd">    """</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">y_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discretizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">target_data</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">uniq_elements</span><span class="p">,</span> <span class="n">element_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_t</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">all_counts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_t</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">uniq_elements</span><span class="p">):</span>
+        <span class="n">dst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">e</span><span class="p">,</span>
+                <span class="n">element_counts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">element_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">all_counts</span><span class="p">,</span>
+                <span class="n">target_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">y_t</span> <span class="o">==</span> <span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dst</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.datasets.data_prepare.TargetDistAnalyzer.get_err_distribution">
+<code class="highlight language-python">
+get_err_distribution<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_data</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.datasets.data_prepare.TargetDistAnalyzer.get_err_distribution" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>:param err_data: series, contain both target values and error values
+:return: (type, cnt number, frequency, index) pair list for this distribution</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/datasets/data_prepare.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">get_err_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_data</span><span class="p">,</span> <span class="n">val_mask</span><span class="p">):</span>
+    <span class="sd">"""</span>
+
+<span class="sd">    :param err_data: series, contain both target values and error values</span>
+<span class="sd">    :return: (type, cnt number, frequency, index) pair list for this distribution</span>
+<span class="sd">    """</span>
+    <span class="n">dstr</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">err_data</span>
+
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">IDENTITY_COLUMNS</span><span class="p">:</span>
+        <span class="n">val_subgroup_idx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">val_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span>
+
+        <span class="n">val_subgroup</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">val_subgroup_idx</span><span class="p">,</span>
+                              <span class="p">[</span><span class="n">TARGET_COLUMN</span><span class="p">,</span> <span class="n">VAL_ERR_COLUMN</span><span class="p">]]</span>
+
+        <span class="n">dst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_distribution</span><span class="p">(</span>
+            <span class="n">val_subgroup</span><span class="p">[</span><span class="n">TARGET_COLUMN</span><span class="p">]</span>
+        <span class="p">)</span>  <span class="c1"># could use continuous data, might be helpful so calculate belongs (fuzzy logic)</span>
+
+        <span class="n">err_mean_in_split</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">val_subgroup</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">VAL_ERR_COLUMN</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dst</span>
+        <span class="p">]</span>
+        <span class="n">dstr</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">err_mean_in_split</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dstr</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-nav">
+<nav aria-label="Footer" class="md-footer-nav__inner md-grid">
+<a class="md-footer-nav__link md-footer-nav__link--prev" href="../data_handlers/" rel="prev" title="data_handlers.py">
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</div>
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                data_handlers.py
+              </div>
+</div>
+</a>
+<a class="md-footer-nav__link md-footer-nav__link--next" href="../jigsaw_toxic_data/" rel="next" title="jigsaw_toxic_data.py">
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Next
+                </span>
+                jigsaw_toxic_data.py
+              </div>
+</div>
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"></path></svg>
+</div>
+</a>
+</nav>
+</div>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+          Material for MkDocs
+        </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<script src="../../../assets/javascripts/vendor.d710d30a.min.js"></script>
+<script src="../../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+<script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+</body>
+</html>

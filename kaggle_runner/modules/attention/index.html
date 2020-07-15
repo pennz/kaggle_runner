@@ -1,0 +1,1417 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Run kaggle kernels, for fast model prototyping." name="description"/>
+<link href="https://mrcue.gitlab.io/kaggle_runner/kaggle_runner/modules/attention/" rel="canonical"/>
+<link href="../../../assets/images/favicon.png" rel="shortcut icon"/>
+<meta content="mkdocs-1.1.2, mkdocs-material-5.4.0" name="generator"/>
+<title>attention.py - kaggle runner</title>
+<link href="../../../assets/stylesheets/main.fe0cca5b.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
+<style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+<link href="../../../css/mkdocstrings.css" rel="stylesheet"/>
+</head>
+<body dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#kaggle_runner.modules.attention">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header-nav md-grid">
+<a aria-label="kaggle runner" class="md-header-nav__button md-logo" href="https://mrcue.gitlab.io/kaggle_runner" title="kaggle runner">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+<label class="md-header-nav__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
+</label>
+<div class="md-header-nav__title" data-md-component="header-title">
+<div class="md-header-nav__ellipsis">
+<span class="md-header-nav__topic md-ellipsis">
+            kaggle runner
+          </span>
+<span class="md-header-nav__topic md-ellipsis">
+            
+              attention.py
+            
+          </span>
+</div>
+</div>
+<label class="md-header-nav__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" data-md-state="active" name="query" placeholder="Search" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</label>
+<button aria-label="Clear" class="md-search__icon md-icon" data-md-component="search-reset" tabindex="-1" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
+</button>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header-nav__source">
+<a class="md-source" href="https://github.com/pennz/kaggle_runner/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    pennz/kaggle_runner
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="kaggle runner" class="md-nav__button md-logo" href="https://mrcue.gitlab.io/kaggle_runner" title="kaggle runner">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"></path></svg>
+</a>
+    kaggle runner
+  </label>
+<div class="md-nav__source">
+<a class="md-source" href="https://github.com/pennz/kaggle_runner/" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"></path></svg>
+</div>
+<div class="md-source__repository">
+    pennz/kaggle_runner
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../.." title="Overview">
+      Overview
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../credits/" title="Credits">
+      Credits
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="nav-3" id="nav-3" type="checkbox"/>
+<label class="md-nav__link" for="nav-3">
+      kaggle_runner
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="kaggle_runner" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="nav-3">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        kaggle_runner
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../callbacks/" title="callbacks">
+      callbacks
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../data_providers/" title="data_providers">
+      data_providers
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-3" id="nav-3-3" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-3">
+      datasets
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="datasets" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-3">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        datasets
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../datasets/bert/" title="bert.py">
+      bert.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../datasets/coders/" title="coders.py">
+      coders.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../datasets/data_handlers/" title="data_handlers.py">
+      data_handlers.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../datasets/data_prepare/" title="data_prepare.py">
+      data_prepare.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../datasets/jigsaw_toxic_data/" title="jigsaw_toxic_data.py">
+      jigsaw_toxic_data.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../datasets/mock_dataset.md" title="mock_dataset.py">
+      mock_dataset.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../datasets/siim_dataset/" title="siim_dataset.py">
+      siim_dataset.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../datasets/transfomers/" title="transfomers.py">
+      transfomers.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../defaults/" title="defaults">
+      defaults
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-5" id="nav-3-5" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-5">
+      kernels
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="kernels" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-5">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        kernels
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/KernelRunningState/" title="KernelRunningState.py">
+      KernelRunningState.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/PSKernel/" title="PSKernel.py">
+      PSKernel.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/Shonenkov/" title="Shonenkov.py">
+      Shonenkov.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/bert/" title="bert.py">
+      bert.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/bert_torch/" title="bert_torch.py">
+      bert_torch.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/fastai_kernel/" title="fastai_kernel.py">
+      fastai_kernel.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/kernel/" title="kernel.py">
+      kernel.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../kernels/pytorchKernel/" title="pytorchKernel.py">
+      pytorchKernel.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../logs/" title="logs">
+      logs
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../losses/" title="losses">
+      losses
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-8" id="nav-3-8" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-8">
+      metrics
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="metrics" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-8">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        metrics
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../metrics/meters/" title="meters.py">
+      meters.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../metrics/metrics/" title="metrics.py">
+      metrics.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" data-md-toggle="nav-3-9" id="nav-3-9" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-9">
+      modules
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="modules" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-9">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        modules
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../ToxicSimpleNNModel/" title="ToxicSimpleNNModel.py">
+      ToxicSimpleNNModel.py
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+        attention.py
+        <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"></path></svg>
+</span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./" title="attention.py">
+      attention.py
+    </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention">
+    kaggle_runner.modules.attention
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel">
+    AttentionRaffel
+  </a>
+<nav aria-label="AttentionRaffel" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.__init__">
+    __init__()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.build">
+    build()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.call">
+    call()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.compute_mask">
+    compute_mask()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.compute_output_shape">
+    compute_output_shape()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.get_config">
+    get_config()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.load_state_continue_run">
+    load_state_continue_run()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.run">
+    run()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.set_metrics">
+    set_metrics()
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../optimizers/" title="optimizers">
+      optimizers
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../plots/" title="plots">
+      plots
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../post_processers/" title="post_processers">
+      post_processers
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../predictors/" title="predictors">
+      predictors
+    </a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-14" id="nav-3-14" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-14">
+      runners
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="runners" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-14">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        runners
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../runners/coordinator/" title="coordinator.py">
+      coordinator.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../runners/runner/" title="runner.py">
+      runner.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../runners/tpu_trainer.md" title="tpu_trainer.py">
+      tpu_trainer.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../runners/trainer/" title="trainer.py">
+      trainer.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" data-md-toggle="nav-3-15" id="nav-3-15" type="checkbox"/>
+<label class="md-nav__link" for="nav-3-15">
+      utils
+      <span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"></path></svg>
+</span>
+</label>
+<nav aria-label="utils" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="nav-3-15">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+        utils
+      </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/kernel_utils/" title="kernel_utils.py">
+      kernel_utils.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/tpu/" title="tpu.py">
+      tpu.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/utils/" title="utils.py">
+      utils.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/visualizer/" title="visualizer.py">
+      visualizer.py
+    </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../utils/wrapper/" title="wrapper.py">
+      wrapper.py
+    </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention">
+    kaggle_runner.modules.attention
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel">
+    AttentionRaffel
+  </a>
+<nav aria-label="AttentionRaffel" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.__init__">
+    __init__()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.build">
+    build()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.call">
+    call()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.compute_mask">
+    compute_mask()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.compute_output_shape">
+    compute_output_shape()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.get_config">
+    get_config()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.load_state_continue_run">
+    load_state_continue_run()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.run">
+    run()
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#kaggle_runner.modules.attention.AttentionRaffel.set_metrics">
+    set_metrics()
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/pennz/kaggle_runner/edit/master/docs/kaggle_runner/modules/attention.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"></path></svg>
+</a>
+<h1>attention.py</h1>
+<div class="doc doc-object doc-module">
+<h2 class="hidden-toc" href="#kaggle_runner.modules.attention" id="kaggle_runner.modules.attention" style="visibility: hidden; width: 0; height: 0;">
+<a class="headerlink" href="#kaggle_runner.modules.attention" title="Permanent link">¤</a></h2>
+<div class="doc doc-contents first">
+<div class="doc doc-children">
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel">
+<code>AttentionRaffel</code>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel" title="Permanent link">¤</a></h2>
+<div class="doc doc-contents">
+<div class="doc doc-children">
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.__init__">
+<code class="highlight language-python">
+__init__<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_dim</span><span class="p">,</span> <span class="n">W_regularizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b_regularizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">W_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-special"><code>special</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.__init__" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Follows the work of Raffel et al. [https://arxiv.org/abs/1512.08756]
+:param step_dim: feature vector length
+:param W_regularizer:
+:param b_regularizer:
+:param W_constraint:
+:param b_constraint:
+:param bias:
+:param kwargs:</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">step_dim</span><span class="p">,</span>
+    <span class="n">W_regularizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">b_regularizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">W_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">b_constraint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Follows the work of Raffel et al. [https://arxiv.org/abs/1512.08756]</span>
+<span class="sd">    :param step_dim: feature vector length</span>
+<span class="sd">    :param W_regularizer:</span>
+<span class="sd">    :param b_regularizer:</span>
+<span class="sd">    :param W_constraint:</span>
+<span class="sd">    :param b_constraint:</span>
+<span class="sd">    :param bias:</span>
+<span class="sd">    :param kwargs:</span>
+<span class="sd">    """</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">AttentionRaffel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">supports_masking</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="s2">"glorot_uniform"</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">W_regularizer</span> <span class="o">=</span> <span class="n">regularizers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">W_regularizer</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">b_regularizer</span> <span class="o">=</span> <span class="n">regularizers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b_regularizer</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">W_constraint</span> <span class="o">=</span> <span class="n">constraints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">W_constraint</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">b_constraint</span> <span class="o">=</span> <span class="n">constraints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b_constraint</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">bias</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">step_dim</span> <span class="o">=</span> <span class="n">step_dim</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span> <span class="o">=</span> <span class="mi">0</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.build">
+<code class="highlight language-python">
+build<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.build" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Creates the variables of the layer (optional, for subclass implementers).</p>
+<p>This is a method that implementers of subclasses of <code>Layer</code> or <code>Model</code>
+can override if they need a state-creation step in-between
+layer instantiation and layer call.</p>
+<p>This is typically used to create the weights of <code>Layer</code> subclasses.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>input_shape</code></td>
+<td><code></code></td>
+<td>
+<p>Instance of <code>TensorShape</code>, or list of instances of
+<code>TensorShape</code> if the layer expects a list of inputs
+(one instance per input).</p>
+</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="c1"># Input shape 3D tensor with shape: `(samples, steps, features)`.</span>
+    <span class="c1"># one step is means one bidirection?</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_weight</span><span class="p">(</span>
+        <span class="s2">"</span><span class="si">{}</span><span class="s2">_W"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+        <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">input_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),),</span>
+        <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
+        <span class="n">regularizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">W_regularizer</span><span class="p">,</span>
+        <span class="n">constraint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">W_constraint</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span> <span class="o">=</span> <span class="n">input_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># features dimention of input</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_weight</span><span class="p">(</span>
+            <span class="s2">"</span><span class="si">{}</span><span class="s2">_b"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+            <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">input_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),),</span>
+            <span class="n">initializer</span><span class="o">=</span><span class="s2">"zero"</span><span class="p">,</span>
+            <span class="n">regularizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b_regularizer</span><span class="p">,</span>
+            <span class="n">constraint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b_constraint</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">built</span> <span class="o">=</span> <span class="kc">True</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.call">
+<code class="highlight language-python">
+call<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.call" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>This is where the layer's logic lives.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inputs</code></td>
+<td><code></code></td>
+<td>
+<p>Input tensor, or list/tuple of input tensors.</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>**kwargs</code></td>
+<td><code></code></td>
+<td>
+<p>Additional keyword arguments.</p>
+</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>A tensor or list/tuple of tensors.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># more like the alignment model, which scores how the inputs around</span>
+    <span class="c1"># position j and the output at position i match</span>
+    <span class="n">features_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span>
+    <span class="n">step_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_dim</span>
+
+    <span class="n">eij</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="n">K</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+            <span class="n">K</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">features_dim</span><span class="p">)</span>
+                      <span class="p">),</span> <span class="n">K</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="p">(</span><span class="n">features_dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="p">),</span>
+        <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">step_dim</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">:</span>
+        <span class="n">eij</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+
+    <span class="n">eij</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">eij</span><span class="p">)</span>  <span class="c1"># activation</span>
+
+    <span class="c1"># softmax</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eij</span><span class="p">)</span>
+
+    <span class="c1"># apply mask after the exp. will be re-normalized next</span>
+    <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Cast the mask to floatX to avoid float64 upcasting in theano</span>
+        <span class="n">a</span> <span class="o">*=</span> <span class="n">K</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">K</span><span class="o">.</span><span class="n">floatx</span><span class="p">())</span>
+
+    <span class="c1"># in some cases especially in the early stages of training the sum may</span>
+    <span class="c1"># be almost zero</span>
+    <span class="n">a</span> <span class="o">/=</span> <span class="n">K</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">K</span><span class="o">.</span><span class="n">epsilon</span><span class="p">(),</span> <span class="n">K</span><span class="o">.</span><span class="n">floatx</span><span class="p">())</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="c1"># context vector c_i (or for this, only one c_i)</span>
+    <span class="n">weighted_input</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">a</span>
+    <span class="c1"># print weigthted_input.shape</span>
+    <span class="k">return</span> <span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weighted_input</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.compute_mask">
+<code class="highlight language-python">
+compute_mask<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.compute_mask" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Computes an output mask tensor.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>inputs</code></td>
+<td><code></code></td>
+<td>
+<p>Tensor or list of tensors.</p>
+</td>
+<td><em>required</em></td>
+</tr>
+<tr>
+<td><code>mask</code></td>
+<td><code></code></td>
+<td>
+<p>Tensor or list of tensors.</p>
+</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>None or a tensor (or list of tensors,
+    one per output tensor of the layer).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>100
+101
+102</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">compute_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># do not pass the mask to the next layers</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.compute_output_shape">
+<code class="highlight language-python">
+compute_output_shape<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.compute_output_shape" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Computes the output shape of the layer.</p>
+<p>If the layer has not been built, this method will call <code>build</code> on the
+layer. This assumes that the layer will later be used with inputs that
+match the input shape provided here.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>input_shape</code></td>
+<td><code></code></td>
+<td>
+<p>Shape tuple (tuple of integers)
+or list of shape tuples (one per output tensor of the layer).
+Shape tuples can include None for free dimensions,
+instead of an integer.</p>
+</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>An input shape tuple.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>141
+142
+143</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">compute_output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="c1"># return input_shape[0], input_shape[-1]</span>
+    <span class="k">return</span> <span class="n">input_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_dim</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.get_config">
+<code class="highlight language-python">
+get_config<span class="p">(</span><span class="bp">self</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.get_config" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>Returns the config of the layer.</p>
+<p>A layer config is a Python dictionary (serializable)
+containing the configuration of a layer.
+The same layer can be reinstantiated later
+(without its trained weights) from this configuration.</p>
+<p>The config of a layer does not include connectivity
+information, nor the layer class name. These are handled
+by <code>Network</code> (one layer of abstraction above).</p>
+<p><strong>Returns:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code></code></td>
+<td>
+<p>Python dictionary.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"step_dim"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_dim</span><span class="p">,</span>
+        <span class="s2">"bias"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span>
+        <span class="s2">"W_regularizer"</span><span class="p">:</span> <span class="n">regularizers</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W_regularizer</span><span class="p">),</span>
+        <span class="s2">"b_regularizer"</span><span class="p">:</span> <span class="n">regularizers</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b_regularizer</span><span class="p">),</span>
+        <span class="s2">"W_constraint"</span><span class="p">:</span> <span class="n">constraints</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W_constraint</span><span class="p">),</span>
+        <span class="s2">"b_constraint"</span><span class="p">:</span> <span class="n">constraints</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b_constraint</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">base_config</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">AttentionRaffel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">"cell"</span> <span class="ow">in</span> <span class="n">base_config</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">base_config</span><span class="p">[</span><span class="s2">"cell"</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">base_config</span><span class="o">.</span><span class="n">items</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.load_state_continue_run">
+<code class="highlight language-python">
+load_state_continue_run<span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="s1">'run_state.pkl'</span><span class="p">)</span> </code>
+<span class="doc doc-properties">
+<small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+</span>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.load_state_continue_run" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>:param file_name:
+:return: the kernel object, need to continue</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>267
+268
+269
+270
+271
+272
+273
+274
+275</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">load_state_continue_run</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">"run_state.pkl"</span><span class="p">):</span>
+    <span class="sd">"""</span>
+
+<span class="sd">    :param file_name:</span>
+<span class="sd">    :return: the kernel object, need to continue</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_state</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">continue_run</span><span class="p">()</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.run">
+<code class="highlight language-python">
+run<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_stage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_stage</span><span class="o">=&lt;</span><span class="n">KernelRunningState</span><span class="o">.</span><span class="n">SAVE_SUBMISSION_DONE</span><span class="p">:</span> <span class="mi">5</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">dump_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force_dump</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.run" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>:param start_stage: if set, will overwrite the stage
+:param end_stage:
+:param dump_flag:
+:return:</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">start_stage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">end_stage</span><span class="o">=</span><span class="n">KernelRunningState</span><span class="o">.</span><span class="n">SAVE_SUBMISSION_DONE</span><span class="p">,</span>
+    <span class="n">dump_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">force_dump</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">"""</span>
+
+<span class="sd">    :param start_stage: if set, will overwrite the stage</span>
+<span class="sd">    :param end_stage:</span>
+<span class="sd">    :param dump_flag:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">continue_run</span><span class="p">(</span>
+        <span class="n">start_stage</span><span class="o">=</span><span class="n">start_stage</span><span class="p">,</span>
+        <span class="n">end_stage</span><span class="o">=</span><span class="n">end_stage</span><span class="p">,</span>
+        <span class="n">dump_flag</span><span class="o">=</span><span class="n">dump_flag</span><span class="p">,</span>
+        <span class="n">force_dump</span><span class="o">=</span><span class="n">force_dump</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="kaggle_runner.modules.attention.AttentionRaffel.set_metrics">
+<code class="highlight language-python">
+set_metrics<span class="p">(</span><span class="bp">self</span><span class="p">)</span> </code>
+<a class="headerlink" href="#kaggle_runner.modules.attention.AttentionRaffel.set_metrics" title="Permanent link">¤</a></h3>
+<div class="doc doc-contents">
+<p>set_metrics for model training</p>
+<p>:return: None</p>
+<details class="quote">
+<summary>Source code in <code>kaggle_runner/modules/attention.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>145
+146
+147
+148
+149
+150
+151</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">set_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    set_metrics for model training</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    """</span>
+    <span class="k">pass</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-nav">
+<nav aria-label="Footer" class="md-footer-nav__inner md-grid">
+<a class="md-footer-nav__link md-footer-nav__link--prev" href="../ToxicSimpleNNModel/" rel="prev" title="ToxicSimpleNNModel.py">
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
+</div>
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                ToxicSimpleNNModel.py
+              </div>
+</div>
+</a>
+<a class="md-footer-nav__link md-footer-nav__link--next" href="../../optimizers/" rel="next" title="optimizers">
+<div class="md-footer-nav__title">
+<div class="md-ellipsis">
+<span class="md-footer-nav__direction">
+                  Next
+                </span>
+                optimizers
+              </div>
+</div>
+<div class="md-footer-nav__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"></path></svg>
+</div>
+</a>
+</nav>
+</div>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+          Material for MkDocs
+        </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<script src="../../../assets/javascripts/vendor.d710d30a.min.js"></script>
+<script src="../../../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+<script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+</body>
+</html>
