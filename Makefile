@@ -591,6 +591,7 @@ setup:  setup_venv ## Setup the development environment (install dependencies).
 		  if ! which pipx &>/dev/null; then \
 			  python3 -m pip install --user pipx; \
 			fi; \
+		  echo "Install poetry now"; \
 		  python3 -m pipx install poetry; \
 		  pipx ensurepath; \
 		fi; \
