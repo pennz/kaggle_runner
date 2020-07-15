@@ -476,7 +476,6 @@ pydoc: setup_pip install_gitbook kr ## Set up pydoc and generate gitbook documen
 	-apt-get install -y python3-venv || yum install -y python3-venv
 	#pipx install 'pydoc-markdown>=3.0.0,<4.0.0'
 	$(PY) -m pip install pydoc-markdown
-	pipx ensurepath
 	pipx install mkdocs
 	#$$(head -n1 $$(which pydoc-markdown)  | sed 's/#!//') -m pip install -e .
 	#$$(head -n1 ~/.local/bin/pydoc-markdown  | sed 's/#!//') -m pip install tensorflow
@@ -593,6 +592,7 @@ setup:  setup_venv ## Setup the development environment (install dependencies).
 			  python3 -m pip install --user pipx; \
 			fi; \
 		  python3 -m pipx install poetry; \
+		  pipx ensurepath; \
 		fi; \
 	fi; \
 	poetry install -v
