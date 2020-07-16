@@ -5,7 +5,7 @@ export PATH := /nix/store/3ycgq0lva60yc2bw4qshmlsaqn0g90x4-nodejs-14.2.0/bin:$(H
 export DEBUG := $(DEBUG)
 export CC_TEST_REPORTER_ID := 501f2d3f82d0d671d4e2dab422e60140a9461aa51013ecca0e9b2285c1b4aa43 
 
-PY_SRC := src/ tests/ scripts/
+PY_SRC=$(wildcard */**.py)
 CI ?= false
 TESTING ?= false
 
