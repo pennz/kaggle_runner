@@ -468,11 +468,11 @@ gitbook fetch 3.2.3 ; ) ) # fetch final stable version and add any requested plu
 .PHONY: setup_pip
 setup_pip: ## setup_pip
 	python3 -m pip -h &>/dev/null || (curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py)
-	@poetry run python -m pip install --upgrade pip
+	-@poetry run python -m pip install --upgrade pip
 
 .PHONY: setup_venv
 setup_venv: setup_pip ## Install python3-venv
-	-apt update && apt install -y python3-venv
+	apt update && apt install -y python3-venv || true
 
 .PHONY: pydoc
 pydoc: setup_venv install_gitbook kr ## Set up pydoc and generate gitbook documentation.
@@ -682,3 +682,9 @@ endif
 		poetry run failprint -t "Publishing version" -- poetry publish; \
 		poetry run failprint -t "Deploying docs" -- poetry run mkdocs gh-deploy; \
 	fi
+
+
+.PHONY: copy_setup
+copy_setup: ## Copy the structure to another (python) project from base. 
+	cp -r $(BASE)/pyproject.toml $(BASE)/config $(BASE)/docs $(BASE)/Makefile .
+	make setup
