@@ -56,7 +56,7 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`atomicwrites`](https://github.com/untitaker/python-atomicwrites) |
 [`attrs`](https://www.attrs.org/) |
 [`backcall`](https://github.com/takluyver/backcall) |
-[`certifi`](https://certifi.io/) |
+[`certifi`](https://certifiio.readthedocs.io/en/latest/) |
 [`chardet`](https://github.com/chardet/chardet) |
 [`click`](https://palletsprojects.com/p/click/) |
 [`decorator`](https://github.com/micheles/decorator) |
@@ -69,7 +69,7 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`importlib-metadata`](http://importlib-metadata.readthedocs.io/) |
 [`ipython-genutils`](http://ipython.org) |
 [`jedi`](https://github.com/davidhalter/jedi) |
-[`Jinja2`](http://jinja.pocoo.org/) |
+[`Jinja2`](https://palletsprojects.com/p/jinja/) |
 [`joblib`](https://joblib.readthedocs.io) |
 [`livereload`](https://github.com/lepture/python-livereload) |
 [`lunr`](https://github.com/yeraydiazdiaz/lunr.py) |
@@ -77,7 +77,7 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`MarkupSafe`](https://palletsprojects.com/p/markupsafe/) |
 [`mccabe`](https://github.com/pycqa/mccabe) |
 [`mkdocs-material-extensions`](https://github.com/facelessuser/mkdocs-material-extensions) |
-[`more-itertools`](https://github.com/erikrose/more-itertools) |
+[`more-itertools`](https://github.com/more-itertools/more-itertools) |
 [`mypy-extensions`](https://github.com/python/mypy_extensions) |
 [`nltk`](http://nltk.org/) |
 [`packaging`](https://github.com/pypa/packaging) |
@@ -88,13 +88,13 @@ These projects were used to build `kaggle_runner`. **Thank you!**
 [`pickleshare`](https://github.com/pickleshare/pickleshare) |
 [`pika`](https://pika.readthedocs.io) |
 [`pluggy`](https://github.com/pytest-dev/pluggy) |
-[`prompt-toolkit`](https://github.com/jonathanslenders/python-prompt-toolkit) |
+[`prompt-toolkit`](https://github.com/prompt-toolkit/python-prompt-toolkit) |
 [`ptyprocess`](https://github.com/pexpect/ptyprocess) |
-[`py`](http://py.readthedocs.io/) |
+[`py`](https://py.readthedocs.io/) |
 [`pycodestyle`](https://pycodestyle.readthedocs.io/) |
 [`pydocstyle`](https://github.com/PyCQA/pydocstyle/) |
 [`pyflakes`](https://github.com/PyCQA/pyflakes) |
-[`Pygments`](http://pygments.org/) |
+[`Pygments`](https://pygments.org/) |
 [`pyparsing`](https://github.com/pyparsing/pyparsing/) |
 [`pytest-forked`](https://github.com/pytest-dev/pytest-forked) |
 [`python-dateutil`](https://dateutil.readthedocs.io) |

@@ -1,3 +1,4 @@
+from kaggle_runner import logger
 import logging
 from abc import ABCMeta, abstractmethod
 
@@ -10,7 +11,7 @@ from kaggle_runner.utils import kernel_utils
 
 class KernelGroup:
     """Kernel Group to try different combination of kernels hyperparameter
-    
+
     Follow this example:
     https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
@@ -31,8 +32,10 @@ class KernelGroup:
         """
         self.kernels = kernels
 
+
 class KaggleKernel(metaclass=ABCMeta):
     """Kernel for kaggle competitions/researchs"""
+
     def __init__(self, logger=None):
         """__init__.
 
@@ -70,7 +73,7 @@ class KaggleKernel(metaclass=ABCMeta):
         """_add_dependency just install pip dependency now
 
         Args:
-          dep: 
+          dep:
 
         Returns:
 
@@ -81,7 +84,7 @@ class KaggleKernel(metaclass=ABCMeta):
         """install_dependency.
 
         Args:
-          dep: 
+          dep:
 
         Returns:
 
@@ -92,7 +95,7 @@ class KaggleKernel(metaclass=ABCMeta):
         """_add_logger_handler.
 
         Args:
-          handler: 
+          handler:
 
         Returns:
 
@@ -103,7 +106,7 @@ class KaggleKernel(metaclass=ABCMeta):
         """set_logger.
 
         Args:
-          name: 
+          name:
           level: (Default value = logging.DEBUG)
           handler: (Default value = None)
 
@@ -152,7 +155,7 @@ class KaggleKernel(metaclass=ABCMeta):
         """set_loss.
 
         Args:
-          loss_func: 
+          loss_func:
 
         Returns:
 
@@ -161,11 +164,11 @@ class KaggleKernel(metaclass=ABCMeta):
 
     def set_metrics(self, metrics):
         """set_metrics for model training
-        
+
         :return: None
 
         Args:
-          metrics: 
+          metrics:
 
         Returns:
 
@@ -419,17 +422,15 @@ class KaggleKernel(metaclass=ABCMeta):
         """check_predict_details."""
         pass
 
-from kaggle_runner import logger
 
 class KaggleKernelOnlyPredict(KaggleKernel):
     """KaggleKernelOnlyPredict."""
-
 
     def __init__(self, model_path):
         """__init__.
 
         Args:
-          model_path: 
+          model_path:
 
         Returns:
 
